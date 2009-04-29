@@ -69,4 +69,31 @@ Once that is set up, you can load the revisions:
 $ ./load_data.py --clear_db meta/wiki-00114050.xml
 \end{verbatim}
 
+\subsection{19-Apr-2009}
+
+We also need to install the WikiTrust extension and
+create the database tables that are used.
+\begin{verbatim}
+$ sudo ln -s ~/research/wikitrust /var/lib/mediawiki/extensions/
+$ vi /var/lib/mediawiki/LocalSettings.php
+$ sudo /etc/init.d/mysql stop
+$ sudo /usr/sbin/mysqld --skip-grant-tables &
+$ mysql -u root
+mysql> UPDATE mysql.user SET Password=PASSWORD('info!age') WHERE User='root' AND Host='localhost';
+mysql> exit
+$ sudo /etc/init.d/mysql stop
+$ sudo /etc/init.d/mysql start
+$ cd sql
+$ ./create_db.php /var/lib/mediawiki root
+\end{verbatim}
+
+
+\section{Testing}
+
+\subsection{19-Apr-2009}
+
+\begin{verbatim}
+$ cp ~/research/wikitrust/remote/analysis/downloadwp .
+$ ./downloadwp -wt_db_rev_base_path unpack -db_pass wkuser -log_file dlwp.log -sync_log -dump_db_calls
+\end{verbatim}
 
