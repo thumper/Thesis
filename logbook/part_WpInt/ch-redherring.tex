@@ -1,0 +1,142 @@
+\chapter{Loading onto Redherring}
+
+\section{Introduction}
+
+\subsection{28-Apr-2009}
+
+Luca has unpacked the 20080103 dump of the Wikipedia into
+a set of flat files, separating the text from the metadata.
+Now the metadata needs to be loaded into a mysql database.
+
+\section{Initialization}
+
+\subsection{28-Apr-2009}
+
+To begin, a \textbf{mediawiki} installation must be created and
+initialized so that the database tables are created.
+Ian documents how to do this in an email on 9-Apr-2009,
+subject ``\textit{Directions to set up a wiki on redherring}.''
+There are several errors in this email, and points that are
+left to the imagination, but it conveys enough to figure
+out the actual commands.
+
+The particular instructions I followed were:
+\begin{enumerate}
+\item Download \textbf{mediawiki} and rename the directory 
+	to \url{/export/notbackedup/wikitrust1/hosted\_wikis/wikipedia-2008}
+\item Configure apache by doing the following:
+\begin{verbatim}
+$ sudo /usr/local/bin/wikitrust-ownwebconf
+$ vi /etc/httpd/conf.d/wikitrust.conf
+$ sudo /usr/local/bin/wikitrust-restartweb
+\end{verbatim}
+	and placed the following text into the file at the end:
+\begin{verbatim}
+Listen 10304
+NameVirtualHost *:10304
+<VirtualHost *:10304>
+  ServerAdmin thumper@cs.ucsc.edu
+  ServerName wikitrust.soe.ucsc.edu
+
+  DocumentRoot /export/notbackedup/wikitrust1/hosted_wikis/wikipedia-2008
+  <Directory />
+    Options FollowSymLinks
+    AllowOverride None
+    Order allow,deny
+    allow from all
+  </Directory>
+</VirtualHost>
+\end{verbatim}
+
+\item Then goto the mediawiki configuration page, at
+    \url{http://redherring.cse.ucsc.edu:10304}.
+    The configuration is standard, but a few items are worth noting:
+\begin{table}[h]
+\begin{tabular}{r l}
+Wiki name & Wikipedia \\
+Admin username & WikiSysop \\
+Admin password & wksysop \\
+Database name & wikidb-thumper \\
+DB username & wikuser \\
+DB password & wikiword \\
+Superuser name & wikidba \\
+Superuser password & taken from \texttt{/etc/.mypass} \\
+\end{tabular}
+\end{table}
+
+
+\end{enumerate}
+
+\section{Configuring the Ocaml Environment}
+
+\subsection{28-Apr-2009}
+
+The simplest way to get a working \textbf{Ocaml} environment is
+to use the \textbf{godi} package management system.
+
+Start by visiting the website:
+\url{http://godi.camlcity.org/godi/index.html}.
+Unpack the \texttt{rocketboost} package and run as:
+\begin{verbatim}
+$ cd /tmp/thumper/godi-rocketboost-20080630
+$ ./bootstrap --prefix /export/notbackedup/wikitrust1/thumper/godi
+$ set path= ( /export/notbackedup/wikitrust1/thumper/godi/sbin /export/notbackedup/wikitrust1/thumper/godi/bin /usr/local/bin /usr/sbin /usr/bin /sbin /bin )
+$ vi /export/notbackedup/wikitrust1/thumper/godi/etc/godi.conf
+$ ./bootstrap_stage2
+\end{verbatim}
+When editing the \texttt{godi.conf} file, uncomment the line
+for PCRE.
+
+
+\section{Configure Mediawiki with WikiTrust Extension}
+
+\subsection{28-Apr-2009}
+
+First, load the wikitrust extension into \textbf{mediawiki}:
+\begin{verbatim}
+$ cd /export/notbackedup/wikitrust1/hosted\_wikis/wikipedia-2008/extensions
+$ git clone ssh://thumper@trust.cse.ucsc.edu/pub/git/WikiTrust.git
+\end{verbatim}
+
+Then we run Ian's script to build the wikitrust mysql tables:
+\begin{verbatim}
+$ cd sql
+$ ./create_db.php /export/notbackedup/wikitrust1/hosted\_wikis/wikipedia-2008 wikidba
+\end{verbatim}
+
+\section{Loading the data}
+
+\subsection{28-Apr-2009}
+
+To load the data, we need to use the \textbf{load\_data.py} script,
+which needs a little configuration:
+\begin{verbatim}
+$ cd ../test-scripts
+$ cp db_access_data.ini.sample db_access_data.ini
+$ vi db_access_data.ini
+\end{verbatim}
+Fill the INI file with the information we configured above.
+Also put a recent copy of \texttt{mwdumper.jar} into the directory.
+
+As a performance tip, it is recommended to remove all indices
+before loading data.  This can be done with the following set
+of commands:
+\begin{verbatim}
+$ ./load_data.py --clear_db
+$ mysqldump -u wikidba -p wikidb-thumper > wikidb-thumper.sql
+$ mysql -u wikidba -p wikidb-thumper
+mysql> alter table page drop index name_title;
+mysql> alter table page drop index page_random;
+mysql> alter table page drop index page_len;
+mysql> alter table revision drop index rev_id;
+mysql> alter table revision drop index rev_timestamp;
+mysql> alter table revision drop index page_timestamp;
+mysql> alter table revision drop index user_timestamp;
+mysql> alter table revision drop index usertext_timestamp;
+
+Now we can process all the metadata files to load them into the DB:
+\begin{verbatim}
+$ ./load_data.py --clear_db
+$ find ~luca/wikitrust2/enwiki-20080103-metadata -name "*[0-9].xml" -print0 | xargs -0 ./load_data.py 
+\end{verbatim}
+

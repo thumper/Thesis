@@ -97,3 +97,13 @@ $ cp ~/research/wikitrust/remote/analysis/downloadwp .
 $ ./downloadwp -wt_db_rev_base_path unpack -db_pass wkuser -log_file dlwp.log -sync_log -dump_db_calls
 \end{verbatim}
 
+\subsection{28-Apr-2009}
+
+Since I am still debugging the loading process, the typical sequence
+of commands that I run is as follows:
+\begin{verbatim}
+$ ./load_data.py --clear_db meta/wiki-00114050.xml
+$ cp ~/research/wikitrust/remote/analysis/downloadwp .
+$ ./downloadwp -wt_db_rev_base_path unpack -db_pass wkuser -log_file download.log -dump_db_calls
+\end{verbatim}
+
