@@ -104,6 +104,39 @@ of commands that I run is as follows:
 \begin{verbatim}
 $ ./load_data.py --clear_db meta/wiki-00114050.xml
 $ cp ~/research/wikitrust/remote/analysis/downloadwp .
-$ ./downloadwp -wt_db_rev_base_path unpack -db_pass wkuser -log_file download.log -dump_db_calls
+$ ./downloadwp -wt_db_rev_base_path unpack -db_pass wkuser -log_file download.log -dump_db_calls > download-sql.log
 \end{verbatim}
+
+\section{The XML Parsing Problem}
+
+\subsection{28-Apr-2009}
+
+Previously, Ian and I had discovered that paragraph separators
+(double newline characters) were being lost in our code.
+With some prodding by Luca, I looked harder at this issue.
+The wikipedia API programmer added ``xml:space=preserve''
+to try to help.
+After looking at the \textbf{xml-light} source code, I've
+determined that there is no support for \texttt{xml:space}
+or CDATA sections or CDATA declarations in a DTD.
+Multiple carriage returns can be set to be parsed as multiple
+PCDATA sections (which you can then recombine with a newline
+separator), which pretty much solves the problem.
+
+I also discovered that the parser will mangle certain characters
+(such as quotes) into their respective entities, which you
+then have to decode to get the proper string.
+This is troublesome to me, because then we can't guarantee
+that the string we process is the one which is actually in
+the Wikipedia database.  For example,
+\begin{verbatim}
+<foo>&quot;moo"</foo>
+\end{verbatim}
+will get parsed into
+\begin{verbatim}
+<foo>&quot;moo&quot;</foo>
+\end{verbatim}
+Although these are functionally equivalent, I'm concerned that
+it would be easy for us to make a mistake and then have to
+examine many parts to understand where it was introduced.
 
