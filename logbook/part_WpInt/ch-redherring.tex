@@ -146,3 +146,24 @@ $ ./load_data.py --clear_db
 $ find ~luca/wikitrust2/enwiki-20080103-metadata -name "*[0-9].xml" -print0 | xargs -0 ./load_data.py 
 \end{verbatim}
 
+\subsection{29-Apr-2009}
+
+The process of loading all the revision metadata took less than 18 hours,
+resulting in 118,272,519 loaded revisions.
+
+To restore the system back to its previous functionality, we need to
+restore the indices.  Place the following SQL sequence into
+file \texttt{restore.sql}.
+%
+\begin{verbatim}
+alter table revision change `rev_id` `rev_id` int(10) unsigned NOT NULL AUTO_INCREMENT, ADD PRIMARY KEY (`rev_page`, `rev_id`);
+alter table text change `old_id` `old_id` int(10) unsigned NOT NULL AUTO_INCREMENT, ADD PRIMARY KEY (`old_id`);
+alter table page change `page_id` `page_id` int(10) unsigned NOT NULL AUTO_INCREMENT, ADD PRIMARY KEY (`page_id`), ADD UNIQUE KEY `name_title` (`page_namespace`, `page_title`), ADD KEY `page_random` (`page_random`), ADD KEY `page_len` (`page_len`), ADD UNIQUE KEY `rev_id` (`rev_id`), ADD KEY `rev_timestamp` (`rev_timestamp`), ADD KEY `page_timestamp` (`rev_page`,`rev_timestamp`), ADD KEY `user_timestamp` (`rev_user`,`rev_timestamp`), ADD KEY `usertext_timestamp` (`rev_user_text`,`rev_timestamp`);
+\end{verbatim}
+%
+And then run the following commands:
+\begin{verbatim}
+$ mysql -u wikidba -p wikidb-thumper
+mysql> source restore.sql
+\end{verbatim}
+
