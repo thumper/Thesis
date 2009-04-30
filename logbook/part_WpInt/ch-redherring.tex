@@ -133,6 +133,12 @@ mysql> alter table revision drop index rev_timestamp;
 mysql> alter table revision drop index page_timestamp;
 mysql> alter table revision drop index user_timestamp;
 mysql> alter table revision drop index usertext_timestamp;
+mysql> alter table revision drop primary key;
+mysql> alter table revision change `rev_id` `rev_id` int(10) unsigned NOT NULL;
+mysql> alter table page change `page_id` `page_id` int(10) unsigned NOT NULL;
+mysql> alter table text change `old_id` `old_id` int(10) unsigned NOT NULL;
+mysql> alter table page drop primary key;
+mysql> alter table text drop primary key;
 
 Now we can process all the metadata files to load them into the DB:
 \begin{verbatim}
