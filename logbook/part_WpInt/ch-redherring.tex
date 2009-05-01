@@ -158,7 +158,8 @@ file \texttt{restore.sql}.
 \begin{verbatim}
 alter table revision change `rev_id` `rev_id` int(10) unsigned NOT NULL AUTO_INCREMENT, ADD PRIMARY KEY (`rev_page`, `rev_id`);
 alter table text change `old_id` `old_id` int(10) unsigned NOT NULL AUTO_INCREMENT, ADD PRIMARY KEY (`old_id`);
-alter table page change `page_id` `page_id` int(10) unsigned NOT NULL AUTO_INCREMENT, ADD PRIMARY KEY (`page_id`), ADD UNIQUE KEY `name_title` (`page_namespace`, `page_title`), ADD KEY `page_random` (`page_random`), ADD KEY `page_len` (`page_len`), ADD UNIQUE KEY `rev_id` (`rev_id`), ADD KEY `rev_timestamp` (`rev_timestamp`), ADD KEY `page_timestamp` (`rev_page`,`rev_timestamp`), ADD KEY `user_timestamp` (`rev_user`,`rev_timestamp`), ADD KEY `usertext_timestamp` (`rev_user_text`,`rev_timestamp`);
+alter table page change `page_id` `page_id` int(10) unsigned NOT NULL AUTO_INCREMENT, ADD PRIMARY KEY (`page_id`), ADD UNIQUE KEY `name_title` (`page_namespace`, `page_title`), ADD KEY `page_random` (`page_random`), ADD KEY `page_len` (`page_len`);
+alter table revision ADD UNIQUE KEY `rev_id` (`rev_id`), ADD KEY `rev_timestamp` (`rev_timestamp`), ADD KEY `page_timestamp` (`rev_page`,`rev_timestamp`), ADD KEY `user_timestamp` (`rev_user`,`rev_timestamp`), ADD KEY `usertext_timestamp` (`rev_user_text`,`rev_timestamp`);
 \end{verbatim}
 %
 And then run the following commands:
