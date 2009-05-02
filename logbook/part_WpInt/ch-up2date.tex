@@ -107,6 +107,17 @@ $ cp ~/research/wikitrust/remote/analysis/downloadwp .
 $ ./downloadwp -wt_db_rev_base_path unpack -db_pass wkuser -log_file download.log -dump_db_calls > download-sql.log
 \end{verbatim}
 
+\subsection{1-May-2009}
+
+While debugging the JSON code, I reached the point where exceptions
+were getting thrown because of assertions failing in the code.
+To get a backtrace from the exception, you run the program as such:
+\begin{verbatim}
+$ ocamlrun -b ./downloadwp -wt_db_rev_base_path unpack -db_pass wkuser -log_file download.log -dump_db_calls > download-sql.log
+\end{verbatim}
+
+
+
 \section{The XML Parsing Problem}
 
 \subsection{28-Apr-2009}
