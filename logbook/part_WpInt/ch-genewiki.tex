@@ -1,0 +1,70 @@
+\chapter{GeneWiki Project}
+
+\section{Introduction}
+
+\subsection{30-Apr-2009}
+
+\index{GeneWiki}
+The GeneWiki is a subset of Wikipedia pages which is actively
+edited by a group of biologists using the Wikipedia as
+a collaboration tool.
+Our research group was contacted because some (several?)
+biologists were interested in using WikiTrust to help them
+understand the content evolution and spot potential errors
+more quickly.
+
+\section{A Progress Report}
+
+\subsection{30-Apr-2009}
+
+Received an email from Andrew Su today, about providing an
+update on our Wikipedia integration as it relates to the GeneWiki project.
+In particular, he suggests that some screen grabs of colored
+GeneWiki pages would be useful for the progress report.
+
+Andrew provides two links which provide a list of titles that
+are part of the GeneWiki:
+\begin{quote}
+Good timing... I just set up this service:
+
+\url{http://plugins.gnf.org/cgi-bin/what_links_PBB.cgi}
+
+(which basically parses this link: \url{http://en.wikipedia.org/w/index.php?title=Special%3AWhatLinksHere&target=Template%3AGNF+Protein+box&namespace=0})
+\end{quote}
+
+After more discussion, Andrew suggests a few particular articles
+that might lead to interesting colorization:
+\begin{itemize}
+\item Insulin
+\item FOXP2
+\item BRCA2
+\item Reelin
+\item Human chorionic gonadotropin
+\item Cannabinoid receptor
+\item Erythropoietin
+\end{itemize}
+
+
+\subsection{2-May-2009}
+
+For a decent looking demo, article text needed to be downloaded,
+analyzed, and then rendered.
+To simplify the process, I decided to use the \mediawiki installation
+on my laptop (as documented in Section~\ref{sec:up2date-testing}).
+
+\indexprogram{downloadwp}
+\indexprogram{eval\_online\_wiki}
+I placed the sample titles provided by Andrew into temporary
+file \file{titles.txt}.
+Downloading and analyzing the articles followed this sequence:
+\begin{verbatim}
+./downloadwp -db_pass wkuser -log_file download.log < titles.txt 
+./eval_online_wiki -n_events 1000000 -db_user wikiuser -db_pass wkuser -db_name wikidb -delete_all
+\end{verbatim}
+
+There was some problem with the coloring step, which Luca helped me clear up.
+During the database initialization, there had been some errors due
+to path changes in the code, and when I reran the initialization
+not all the steps completed.
+Clearing and recreating the \wikitrust tables fixed the problem.
+

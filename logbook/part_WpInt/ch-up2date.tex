@@ -17,7 +17,7 @@ already exisiting for previously downloaded information.
 Unfortunately, this leaves the little problem of how to create
 this test database.
 
-To setup a database, I installed \program{python-mysqldb}
+To setup a database, I installed \package{python-mysqldb}
 and \mediawiki onto my Ubuntu instance.
 Had to edit \file{/etc/mediawiki/mediawiki.conf} to 
 enable the \texttt{Alias} for the installation.
@@ -38,7 +38,7 @@ Superuser name & debian-sys-maint \\
 Superuser password & taken from \texttt{/etc/mysql/debian.cnf} \\
 \end{tabular}
 
-\index{evalwiki!revisions\_to\_text}
+\indexprogramarg{evalwiki}{revisions\_to\_text}
 To put some data into the database, I copied the
 file \file{wiki-00114050.xml.gz} from Luca's collection
 of files split out of the last dump
@@ -88,10 +88,11 @@ $ ./create_db.php /var/lib/mediawiki root
 
 
 \section{Testing}
+\label{sec:up2date-testing}
 
 \subsection{19-Apr-2009}
 
-\index{downloadwp}
+\indexprogram{downloadwp}
 \begin{verbatim}
 $ cp ~/research/wikitrust/remote/analysis/downloadwp .
 $ ./downloadwp -wt_db_rev_base_path unpack -db_pass wkuser -log_file dlwp.log -sync_log -dump_db_calls
@@ -99,8 +100,8 @@ $ ./downloadwp -wt_db_rev_base_path unpack -db_pass wkuser -log_file dlwp.log -s
 
 \subsection{28-Apr-2009}
 
-\index{load\_data.py}
-\index{downloadwp}
+\indexprogram{load\_data.py}
+\indexprogram{downloadwp}
 Since I am still debugging the loading process, the typical sequence
 of commands that I run is as follows:
 \begin{verbatim}
@@ -110,6 +111,10 @@ $ ./downloadwp -wt_db_rev_base_path unpack -db_pass wkuser -log_file download.lo
 \end{verbatim}
 
 \subsection{1-May-2009}
+
+Based on the analysis done in Section~\ref{sec:up2date-xml},
+I decided to switch away from the XML interface and
+instead use the JSON interface.
 
 While debugging the JSON code, I reached the point where exceptions
 were getting thrown because of assertions failing in the code.
@@ -121,15 +126,17 @@ $ ocamlrun -b ./downloadwp -wt_db_rev_base_path unpack -db_pass wkuser -log_file
 
 
 \section{The XML Parsing Problem}
+\label{sec:up2date-xml}
 
 \subsection{28-Apr-2009}
 
+\index{xml:space@\texttt{xml:space}}
 Previously, Ian and I had discovered that paragraph separators
 (double newline characters) were being lost in our code.
 With some prodding by Luca, I looked harder at this issue.
-The wikipedia API programmer added ``xml:space=preserve''
+The wikipedia API programmer added ``\texttt{xml:space=preserve}''
 to try to help.
-After looking at the \textbf{xml-light} source code, I've
+After looking at the \package{xml-light} source code, I've
 determined that there is no support for \texttt{xml:space}
 or CDATA sections or CDATA declarations in a DTD.
 Multiple carriage returns can be set to be parsed as multiple
