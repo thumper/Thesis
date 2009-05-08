@@ -12,7 +12,7 @@ Now the metadata needs to be loaded into a mysql database.
 
 \subsection{28-Apr-2009}
 
-To begin, a \textbf{mediawiki} installation must be created and
+To begin, a \mediawiki installation must be created and
 initialized so that the database tables are created.
 Ian documents how to do this in an email on 9-Apr-2009,
 subject ``\textit{Directions to set up a wiki on redherring}.''
@@ -22,7 +22,7 @@ out the actual commands.
 
 The particular instructions I followed were:
 \begin{enumerate}
-\item Download \textbf{mediawiki} and rename the directory 
+\item Download \mediawiki and rename the directory 
 	to \url{/export/notbackedup/wikitrust1/hosted\_wikis/wikipedia-2008}
 \item Configure apache by doing the following:
 \begin{verbatim}
@@ -60,7 +60,7 @@ Database name & wikidb-thumper \\
 DB username & wikuser \\
 DB password & wikiword \\
 Superuser name & wikidba \\
-Superuser password & taken from \texttt{/etc/.mypass} \\
+Superuser password & taken from \file{/etc/.mypass} \\
 \end{tabular}
 \end{table}
 
@@ -71,12 +71,12 @@ Superuser password & taken from \texttt{/etc/.mypass} \\
 
 \subsection{28-Apr-2009}
 
-The simplest way to get a working \textbf{Ocaml} environment is
-to use the \textbf{godi} package management system.
+The simplest way to get a working \program{Ocaml} environment is
+to use the \program{godi} package management system.
 
 Start by visiting the website:
 \url{http://godi.camlcity.org/godi/index.html}.
-Unpack the \texttt{rocketboost} package and run as:
+Unpack the \program{rocketboost} package and run as:
 \begin{verbatim}
 $ cd /tmp/thumper/godi-rocketboost-20080630
 $ ./bootstrap --prefix /export/notbackedup/wikitrust1/thumper/godi
@@ -84,7 +84,7 @@ $ set path= ( /export/notbackedup/wikitrust1/thumper/godi/sbin /export/notbacked
 $ vi /export/notbackedup/wikitrust1/thumper/godi/etc/godi.conf
 $ ./bootstrap_stage2
 \end{verbatim}
-When editing the \texttt{godi.conf} file, uncomment the line
+When editing the \file{godi.conf} file, uncomment the line
 for PCRE.
 
 
@@ -92,7 +92,7 @@ for PCRE.
 
 \subsection{28-Apr-2009}
 
-First, load the wikitrust extension into \textbf{mediawiki}:
+First, load the wikitrust extension into \mediawiki:
 \begin{verbatim}
 $ cd /export/notbackedup/wikitrust1/hosted\_wikis/wikipedia-2008/extensions
 $ git clone ssh://thumper@trust.cse.ucsc.edu/pub/git/WikiTrust.git
@@ -108,7 +108,7 @@ $ ./create_db.php /export/notbackedup/wikitrust1/hosted\_wikis/wikipedia-2008 wi
 
 \subsection{28-Apr-2009}
 
-To load the data, we need to use the \textbf{load\_data.py} script,
+To load the data, we need to use the \program{load\_data.py} script,
 which needs a little configuration:
 \begin{verbatim}
 $ cd ../test-scripts
@@ -116,7 +116,8 @@ $ cp db_access_data.ini.sample db_access_data.ini
 $ vi db_access_data.ini
 \end{verbatim}
 Fill the INI file with the information we configured above.
-Also put a recent copy of \texttt{mwdumper.jar} into the directory.
+Also put a recent copy of \program{mwdumper.jar}~\cite{mwdumper}
+into the directory.
 
 As a performance tip, it is recommended to remove all indices
 before loading data.  This can be done with the following set
@@ -153,7 +154,7 @@ resulting in 118,272,519 loaded revisions.
 
 To restore the system back to its previous functionality, we need to
 restore the indices.  Place the following SQL sequence into
-file \texttt{restore.sql}.
+file \file{restore.sql}.
 %
 \begin{verbatim}
 alter table revision change `rev_id` `rev_id` int(10) unsigned NOT NULL AUTO_INCREMENT, ADD PRIMARY KEY (`rev_page`, `rev_id`);

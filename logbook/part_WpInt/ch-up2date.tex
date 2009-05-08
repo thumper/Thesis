@@ -12,19 +12,19 @@ Luca is unpacking the 20080103 dump of the Wikipedia.
 
 Need to test code changes for downloading additional revisions
 of the wikipedia.
-Ian's interface, \texttt{wikipedia\_api.ml}, depends on the database
+Ian's interface, \file{wikipedia\_api.ml}, depends on the database
 already exisiting for previously downloaded information.
 Unfortunately, this leaves the little problem of how to create
 this test database.
 
-To setup a database, I installed \texttt{python-mysqldb}
-and \texttt{mediawiki} onto my Ubuntu instance.
-Had to edit \texttt{/etc/mediawiki/mediawiki.conf} to 
+To setup a database, I installed \program{python-mysqldb}
+and \mediawiki onto my Ubuntu instance.
+Had to edit \file{/etc/mediawiki/mediawiki.conf} to 
 enable the \texttt{Alias} for the installation.
 Then navigated to \url{http://localhost/mediawiki/},
 which prompted me to configure the installation.
 
-Configuring the \textit{mediawiki} installation has a
+Configuring the \mediawiki installation has a
 bunch of questions to answer, most of them intuitive.
 The only important ones to remember:
 \begin{tabular}{r l}
@@ -38,8 +38,9 @@ Superuser name & debian-sys-maint \\
 Superuser password & taken from \texttt{/etc/mysql/debian.cnf} \\
 \end{tabular}
 
+\index{evalwiki!revisions\_to\_text}
 To put some data into the database, I copied the
-file \texttt{wiki-00114050.xml.gz} from Luca's collection
+file \file{wiki-00114050.xml.gz} from Luca's collection
 of files split out of the last dump
 (\url{file://redherring.cse.ucsc.edu/~luca/wikitrust1/enwiki-20080103/114/wiki-00114050.xml.gz})
 and placed it into \url{file://localhost/~thumper/research/dat/orig/}.
@@ -50,8 +51,6 @@ $ cd ~/research/dat/
 $ ./evalwiki -revisions_to_text -rev_base_name unpack -d ./meta ./orig/wiki-00114050.xml.gz
 \end{verbatim}
 
-The next step is to load the unpacked revisions into the database,
-which requires \texttt{mwdumper}:
 \begin{verbatim}
 $ cd ~/research/dat/
 $ wget http://download.wikimedia.org/tools/mwdumper.jar
@@ -92,6 +91,7 @@ $ ./create_db.php /var/lib/mediawiki root
 
 \subsection{19-Apr-2009}
 
+\index{downloadwp}
 \begin{verbatim}
 $ cp ~/research/wikitrust/remote/analysis/downloadwp .
 $ ./downloadwp -wt_db_rev_base_path unpack -db_pass wkuser -log_file dlwp.log -sync_log -dump_db_calls
@@ -99,6 +99,8 @@ $ ./downloadwp -wt_db_rev_base_path unpack -db_pass wkuser -log_file dlwp.log -s
 
 \subsection{28-Apr-2009}
 
+\index{load\_data.py}
+\index{downloadwp}
 Since I am still debugging the loading process, the typical sequence
 of commands that I run is as follows:
 \begin{verbatim}
