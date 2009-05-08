@@ -1,10 +1,15 @@
 \newcommand{\indexfile}[1]{\index{#1@\texttt{#1}}}
 \newcommand{\file}[1]{\indexfile{#1}\texttt{#1}\xspace}
+
 \newcommand{\indexpackage}[1]{\index{#1@\textbf{#1}}}
 \newcommand{\package}[1]{\indexpackage{#1}\textbf{#1}\xspace}
+
 \newcommand{\indexprogram}[1]{\index{#1@\texttt{#1}}}
 \newcommand{\indexprogramarg}[2]{\index{#1@\texttt{#1}!#2@\texttt{#2}}}
 \newcommand{\program}[1]{\indexprogram{#1}\texttt{#1}\xspace}
+
 \newcommand{\mediawiki}{\package{mediawiki}\xspace}
-\newcommand{\wikitrust}{WikiTrust}
+\newcommand{\wikitrust}{WikiTrust\xspace}
+
+\newcommand{\article}[1]{\index{#1@\textit{#1}}``\textit{#1}''\xspace}
 

@@ -51,6 +51,11 @@ For a decent looking demo, article text needed to be downloaded,
 analyzed, and then rendered.
 To simplify the process, I decided to use the \mediawiki installation
 on my laptop (as documented in Section~\ref{sec:up2date-testing}).
+Luca wisely suggested that I temporarily modify the code to include
+the \texttt{rvexpandtemplates=1} parameter, so that the articles
+don't look so choppy.
+(Not all templates are expanded, it seems, but the articles
+are readable.)
 
 \indexprogram{downloadwp}
 \indexprogram{eval\_online\_wiki}
@@ -67,4 +72,15 @@ During the database initialization, there had been some errors due
 to path changes in the code, and when I reran the initialization
 not all the steps completed.
 Clearing and recreating the \wikitrust tables fixed the problem.
+
+\subsection{5-May-2009}
+
+Used Firefox extension \package{Screengrab} to capture
+the rendered coloring of a few pages.
+
+After sending around screenshots for \article{Insulin},
+\article{FOXP2}, and \article{Erythropoietin},
+Andrew suggests using a specific revision of \article{Insulin}
+which has been vandalized:
+\url{http://en.wikipedia.org/w/index.php?title=Insulin&oldid=275210688}.
 
