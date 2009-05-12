@@ -123,7 +123,71 @@ To get a backtrace from the exception, you run the program as such:
 $ ocamlrun -b ./downloadwp -wt_db_rev_base_path unpack -db_pass wkuser -log_file download.log -dump_db_calls > download-sql.log
 \end{verbatim}
 
+\subsection{9-May-2009}
 
+The rendering of the downloaded pages was already tested,
+as part of the demo described in Section~\ref{sec:genewiki-eval}.
+Luca also wants timing information of a disk-based analysis.
+\begin{verbatim}
+$ cp ~/research/wikitrust/analysis/eval_online_wiki .
+$ mkdir sigs
+$ mkdir colors
+$ time ./eval_online_wiki -n_events 100 -wt_db_rev_base_path unpack -wt_db_sig_base_path sigs -wt_db_colored_based_path colors -db_user wikiuser -db_pass wkuser -db_name wikidb -log_file eval.log -delete_all
+\end{verbatim}
+This command-line does not work.
+It erases the \file{sigs} and \file{colors} directories, but does
+not recreate them.
+
+By adding the option ``\texttt{-dump\_db\_calls},''
+I see that there are SQL states which are faiing.
+The message displayed is:
+\begin{verbatim}
+INSERT INTO wikitrust_colored_markup (revision_id, revision_text) VALUES (2212643, ) ON DUPLICATE KEY UPDATE revision_text = 
+Mysql.exec: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ') ON DUPLICATE KEY UPDATE revision_text =' at line 1
+\end{verbatim}
+There is no revision text being added to the database, which
+is correct -- but the problem seems to be that the empty string
+isn't being turned into SQL correctly.
+
+\subsection{11-May-2009}
+
+The bad empty string isn't the only problem.
+Now there is an exception raised by the \package{Gzip} module:
+\begin{verbatim}
+Fatal error: exception Gzip.Error("error during compression")
+Called from file "filesystem_store.ml", line 67, characters 20-21
+Called from file "online_page.ml", line 745, characters 48-69
+Called from file "online_page.ml", line 1291, characters 11-25
+Called from file "updater.ml", line 111, characters 9-14
+Re-raised at file "updater.ml", line 103, characters 1-1130
+Called from file "updater.ml", line 228, characters 62-63
+Re-raised at file "updater.ml", line 235, characters 10-11
+Called from file "eval_online_wiki.ml", line 134, characters 15-29
+\end{verbatim}
+The exception is being triggered because there is a zero-length
+colored page which is trying to be compressed, but the \package{Gzip}
+module does not support this.
+
+I am wondering if it's reasonable to get a zero-length colored page.
+Ah, but I see in the \file{colors} directory that the problem is
+with \texttt{\{page 14895, rev 259084\}}, which isn't in the
+corresponding \file{unpack} directory.
+To fix this involves clearing the database and reloading the metadata
+for the pages which have been unpacked:
+\begin{verbatim}
+$ ./load_data.py --clear_db meta/wiki-00114050.xml
+$ time ./downloadwp -wt_db_rev_base_path unpack -db_pass wkuser -log_file download.log < titles.txt
+$ time ./eval_online_wiki -n_events 100 -wt_db_rev_base_path unpack -wt_db_sig_base_path sigs -wt_db_colored_base_path colors -db_user wikiuser -db_pass wkuser -db_name wikidb -log_file eval.log -delete_all
+\end{verbatim}
+
+During the download process, I discovered that revision 10977256 of
+\article{Insulin} is empty, and this still triggers the \package{Gzip}
+error.
+I modified the code to explicity check for this case and write
+zero bytes to the file.  This results in a 20-byte file which
+uncompresses to zero bytes, so it seems that it will do the
+correct thing.
+I am now letting it redownload the articles from the Genewiki demo.
 
 \section{The XML Parsing Problem}
 \label{sec:up2date-xml}

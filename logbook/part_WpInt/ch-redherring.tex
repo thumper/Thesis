@@ -169,3 +169,18 @@ $ mysql -u wikidba -p wikidb-thumper
 mysql> source restore.sql
 \end{verbatim}
 
+\section{Testing the Analysis}
+
+\subsection{9-May-2009}
+
+At Friday's meeting, Luca and I discussed running some test timings
+of an analysis of the redherring data.
+He pointed out to me that there are a few extra options that
+I should specify, to store the colored information to disk
+rather than to the DB.
+\begin{verbatim}
+-wt_db_rev_base_path
+-wt_db_sig_base_path
+-wt_db_colored_base_path
+\end{verbatim}
+
