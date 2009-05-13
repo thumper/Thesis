@@ -169,12 +169,12 @@ $ mysql -u wikidba -p wikidb-thumper
 mysql> source restore.sql
 \end{verbatim}
 
-\section{Testing the Analysis}
+\section{Benchmarking the Analysis}
 
 \subsection{9-May-2009}
 
 At Friday's meeting, Luca and I discussed running some test timings
-of an analysis of the redherring data.
+of an analysis of the Redherring data.
 He pointed out to me that there are a few extra options that
 I should specify, to store the colored information to disk
 rather than to the DB.
@@ -183,4 +183,73 @@ rather than to the DB.
 -wt_db_sig_base_path
 -wt_db_colored_base_path
 \end{verbatim}
+
+\subsection{12-May-2009}
+
+Ran some initial testing over the last few days on my
+laptop (documented in Section~\ref{sec:up2date-testing}.
+Got things to be basically running, so that I am finally
+ready to run a benchmark on Redherring.
+Made sure to recompile all code with ``\texttt{make allopt}''
+to get the  best possible running time.
+Following the command line described in
+Section~\ref{sec:up2date-testing-eval}:
+\begin{verbatim}
+$ cd ~luca/wikitrust1/hosted_wikis/wikipedia-2008/extensions/WikiTrust
+$ make clean
+$ make allopt
+$ time ./analysis/eval_online_wiki -n_events 1000 -wt_db_rev_base_path ~luca/wikitrust2/enwiki-20080103-revs -wt_db_sig_base_path ~luca/wikitrust1/enwiki-20080103-sigs -wt_db_colored_base_path ~luca/wikitrust1/enwiki-20080103-colored -db_user wikiuser -db_pass wikiword -db_name wikidb-thumper -log_file eval.log -delete_all
+\end{verbatim}
+At the beginning of the run, I observed heavy disk reads (about 45MB/sec,
+using \program{dstat})
+and that \program{mysqld} was using about 50\% of one CPU (using \program{top}).
+No other processes were notably using CPU, and the \program{mysqld}
+load seemed to be split across two CPUs.
+Total running time was just shy of 49 minutes,
+but the CPU time was about 5.5 seconds.
+A did a second run, hoping that data would be cached in memory,
+and measured almost identical results.
+
+Clearly, there is some problem with \mysql accessing the
+various tables.
+Running a much shorter query while dumping the database calls
+might shed some light on what access is causing the problem:
+\begin{verbatim}
+$ time ./analysis/eval_online_wiki -n_events 10 -wt_db_rev_base_path ~luca/wikitrust2/enwiki-20080103-revs -wt_db_sig_base_path ~luca/wikitrust1/enwiki-20080103-sigs -wt_db_colored_base_path ~luca/wikitrust1/enwiki-20080103-colored -db_user wikiuser -db_pass wikiword -db_name wikidb-thumper -log_file eval.log -delete_all -dump_db_calls -sync_log
+\end{verbatim}
+Dumping the database calls reveals the following slow queries:
+\begin{verbatim}
+SELECT rev_id, rev_page, rev_text_id, rev_timestamp, rev_user, rev_user_text, rev_minor_edit, rev_comment FROM revision  ORDER BY rev_timestamp ASC, rev_id ASC LIMIT 100
+\end{verbatim}
+
+Asking \mysql to \texttt{EXPLAIN} how it executes the query
+reveals the problem: it does a filescan through the whole table!
+\begin{verbatim}
+mysql> explain SELECT rev_id, rev_page, rev_text_id, rev_timestamp, rev_user, rev_user_text, rev_minor_edit, rev_comment FROM revision  ORDER BY rev_timestamp ASC, rev_id ASC LIMIT 100;
++----+-------------+----------+------+---------------+------+---------+------+-----------+----------------+
+| id | select_type | table    | type | possible_keys | key  | key_len | ref  | rows      | Extra          |
++----+-------------+----------+------+---------------+------+---------+------+-----------+----------------+
+|  1 | SIMPLE      | revision | ALL  | NULL          | NULL | NULL    | NULL | 121184090 | Using filesort |
++----+-------------+----------+------+---------------+------+---------+------+-----------+----------------+
+1 row in set (0.00 sec)
+\end{verbatim}
+I experimented with removing some of the fields from the query
+and that helps slightly by allowing \mysql to use indices to
+collect the data, but was still ridiculously slow.
+I also experimented with sub-queries and temporary tables
+to try to limit the number of rows that needed scanning;
+these ideas didn't work because the \field{rev\_id} is out
+of order with respect to \field{rev\_timestamp}, and relying
+on the index for \field{rev\_id} can result in scanning
+200K+ rows to check for membership in the sub-query.
+
+Ultimately, the problem seems to boil down to the index
+created by WikiTrust: \field{wikitrust\_revision\_id\_timestamp\_idx}.
+This index has the order of the fields exactly backwards
+to what the query requires.
+I created a new index to attempt to solve this problem:
+\begin{verbatim}
+alter table revision add KEY `wikitrust_timestamp_revision_id_idx` (`rev_timestamp`, `rev_id`);
+\end{verbatim}
+
 

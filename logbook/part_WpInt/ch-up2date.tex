@@ -151,6 +151,8 @@ isn't being turned into SQL correctly.
 
 \subsection{11-May-2009}
 
+\label{sec:up2date-testing-eval}
+
 The bad empty string isn't the only problem.
 Now there is an exception raised by the \package{Gzip} module:
 \begin{verbatim}
@@ -187,7 +189,12 @@ I modified the code to explicity check for this case and write
 zero bytes to the file.  This results in a 20-byte file which
 uncompresses to zero bytes, so it seems that it will do the
 correct thing.
-I am now letting it redownload the articles from the Genewiki demo.
+
+Now I can color articles with \program{eval\_online\_wiki}.
+Running the optimized version on 100 revisions gives a running
+time of 17.566 seconds.
+A run over 1000 revisions gives a running time of 306.964 seconds.
+
 
 \section{The XML Parsing Problem}
 \label{sec:up2date-xml}
