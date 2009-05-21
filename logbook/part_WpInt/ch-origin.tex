@@ -1,0 +1,172 @@
+\chapter{The Origin Bug}
+
+\section{Introduction}
+
+\subsection{20-May-2009}
+
+Back in March, Ian and I noticed a problem with the origin information
+while debugging the Firefox extension.
+In a few articles, it seemed that the origin was being ascribed
+mainly to a single revision/author.
+We believe we saw this in the \article{Olwen} article
+(but the code was still changing at this point),
+and definitely confirmed it as being unexpected in
+the \article{Rio Grande} article.
+(Discussed in emails with Ian on 3-Mar-2009,
+with subject ``Try your extension now,
+on any page you like''.)
+
+The problem has been on the back-burner since then,
+while we work on other tasks.
+The impending need to analyze the Wikipedia, which we expect
+to take around 30 days, implies that it would be wise to
+investigate this problem now.
+
+At around the same time we noticed this bug, we
+also noticed that the articles were not showing
+paragraph breaks properly (see the discussion about
+the XML parsing problem~\ref{sec:up2date-xml}).
+This suggests that the problem might have been with
+the download procedure that Ian was using at the time,
+although we felt this to be unlikely.
+
+My plan is to try to reproduce the bug using the
+two data import methods we have: loading via XML files,
+and downloading via the Wikipedia API.
+
+\section{Reproduction via XML data}
+
+\subsection{20-May-2009}
+
+I want to end up with a small test database that contains
+the error, so I decided to use the test environment that
+I had previously setup in Section~\ref{sec:up2date-testenv}.
+
+Article \article{Rio Grande} is known to be have had a problem,
+so I looked up its page ID (43005) and searched through the
+metadata to find the \program{splitwiki} output containing
+the page data.
+\begin{verbatim}
+$ cd ~luca/wikitrust2/enwiki-20080103-metadata
+$ find . -name "*.xml" \! -name "*.info.*" -exec grep -q "<id>43005</id>" {} \; -print
+\end{verbatim}
+This returns a short list of matching files; there
+is more than one because userid 43005 also passes the \program{grep} test.
+(Possibly could have included a second \program{grep} test
+to search for ``Rio Grande'' in the title.)
+Downloaded metadata and revision info to my test environment:
+\begin{verbatim}
+$ cd ~/research/dat/meta
+$ scp 'redherring.cse.ucsc.edu:/export/notbackedup/wikitrust2/enwiki-20080103-metadata/000/wiki-*0374.*' .
+$ cd ../unpack/000/000
+$ mkdir -p 043/005
+$ cd 043/005
+$ rsync -av --progress 'redherring.cse.ucsc.edu:/export/notbackedup/wikitrust2/enwiki-20080103-revs/000/000/043/005/*' .
+\end{verbatim}
+
+
+Now the data needs to be loaded, and the evaluation run:
+\begin{verbatim}
+$ ./load_data.py --clear_db meta/wiki-00000374.xml
+$ time ./eval_online_wiki -n_events 29000 -wt_db_rev_base_path unpack -wt_db_sig_base_path sigs -wt_db_colored_base_path colors -db_user wikiuser -db_pass wkuser -db_name wikidb -log_file eval.log -delete_all
+\end{verbatim}
+This places the colored revisions into the filesytem.
+
+
+At this point, I ran into a little bit of trouble.
+There doesn't seem to be any way to get our extension to
+display colored articles from the filesystem.
+
+Instead, I located the latest colored revision, and
+inspected it manually:
+\begin{verbatim}
+$ cd colors/000/000/043/005
+$ ls -1 */*.gz | sed -e 's/^....//' | sort | tail -1
+\end{verbatim}
+There doesn't appear to be anything wrong with the origin
+information, so I went back to the Firefox extension to
+try to recreate the problem.
+Sure enough, the majority of the first paragraph of the ``Description''
+section is attributed to author ``67.174.187.41'', when using
+the Firefox extension in ``newapi'' mode.
+
+I confirmed that this paragraph seems to have correct origin
+information in the colored version I created.
+
+\section{Reproduction via Wikipedia API}
+
+\subsection{20-May-2009}
+
+To test the Wikipedia API, I can reload the database with the
+metadata from my original testing, and then download the
+entire \article{Rio Grande} article.
+\begin{verbatim}
+$ ./load_data.py --clear_db meta/wiki-00114050.xml
+$ echo "Rio Grande" > titles2.txt
+$ ./downloadwp -db_pass wkuser -log_file dlwp.log < titles2.txt
+$ ./eval_online_wiki -n_events 1000000 -db_user wikiuser -db_pass wkuser -db_name wikidb -delete_all
+\end{verbatim}
+To view the colored data, I used the WikiTrust extension
+set in ``local'' mode.
+
+This time, the problem definitely crops up.
+I have been tracking a paragraph that begins with:
+\begin{quote}
+``The Rio Grande rises in high mountains and flows for
+much of its length at high elevation\ldots''
+\end{quote}
+As of revision 65342218, the text was attributed to
+user Zundark, the author of the initial revision.
+The next revision, revid 65342717, ascribes the text
+to user Hajor.
+And the next revision, revid 65443458, ascribes the text
+to user 69.154.41.250 (who has not edited the article for
+many revisions before).
+
+Just to verify that the problem isn't with the tooltips,
+I logged into mysql to check directly.
+\begin{verbatim}
+$ mysql -u wikiuser -p wikidb
+mysql> select revision_text from wikitrust_colored_markup where revision_id = 65443458;
+\end{verbatim}
+Reviewing the result, I discovered that the attribution
+data appears to be correct.
+It seems that the tooltip code is to blame here.
+
+Just to verify, I sent the data to a file so that I
+could compare it with the colored version computed
+in my previous test.
+
+At first glance, they are a good match, but running \program{diff}
+reveals differences in the first line.
+Looking more closely, I see that the XML based import
+has entities in the text; for example, angle brackets
+are expanded as the typical \texttt{\&lt;} and \texttt{\&gt;}.
+And this, it turns out, is causing a problem -- albeit a
+different problem than I was initially investigating.
+
+In the downloaded text is the sequence:
+\begin{quote}
+$<$ref name="usgs"$>$\{\{cite paper\ldots
+\end{quote}
+which seems to get handled properly by the coloring code.
+The XML version of this revision shows the text as:
+\begin{quote}
+\&lt;ref name=\&quot;usgs\&quot;\&gt;\{\{cite paper\ldots
+\end{quote}
+which the coloring code sees as separate text segments
+and inserts coloring commands aplenty.
+
+
+As I see it, there are a few outstanding issues:
+\begin{enumerate}
+\item The XML extraction code needs to convert entities to their
+    proper values.
+\item The tooltip code needs to show the correct origin information
+    for text.
+\item The coloring code needs to be aware of markup sections
+    that should not be interrupted.
+\item The first trust value of each new line seems to be
+    duplicated unnecessarily.
+\end{enumerate}
+

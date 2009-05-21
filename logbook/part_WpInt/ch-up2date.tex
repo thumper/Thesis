@@ -7,6 +7,7 @@
 Luca is unpacking the 20080103 dump of the Wikipedia.
 
 \section{Test Environment}
+\label{sec:up2date-testenv}
 
 \subsection{18-Apr-2009}
 
@@ -132,7 +133,7 @@ Luca also wants timing information of a disk-based analysis.
 $ cp ~/research/wikitrust/analysis/eval_online_wiki .
 $ mkdir sigs
 $ mkdir colors
-$ time ./eval_online_wiki -n_events 100 -wt_db_rev_base_path unpack -wt_db_sig_base_path sigs -wt_db_colored_based_path colors -db_user wikiuser -db_pass wkuser -db_name wikidb -log_file eval.log -delete_all
+$ time ./eval_online_wiki -n_events 100 -wt_db_rev_base_path unpack -wt_db_sig_base_path sigs -wt_db_colored_base_path colors -db_user wikiuser -db_pass wkuser -db_name wikidb -log_file eval.log -delete_all
 \end{verbatim}
 This command-line does not work.
 It erases the \file{sigs} and \file{colors} directories, but does
