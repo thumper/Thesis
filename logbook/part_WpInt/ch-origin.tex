@@ -170,3 +170,77 @@ As I see it, there are a few outstanding issues:
     duplicated unnecessarily.
 \end{enumerate}
 
+
+\section{Fixing the Unpacked XML}
+
+\subsection{21-May-2009}
+
+I met with Luca today, and we decided that the most expedient
+way to fix the entities was to write a shell script that could
+be used in conjuntion with \program{find} to process every file.
+A first step was to inventory what entities were being used and
+make sure we handled all of them.
+The script to do this survey looks like:
+\begin{verbatim}
+#!/bin/sh
+gunzip -c $1 | grep \& | sed -e 's/.*\&/\&/' -e 's/;.*/;/
+\end{verbatim}
+and running the script becomes:
+\begin{verbatim}
+$ find ~luca/wikitrust2/enwiki-20080103-revs -name "*.gz" -exec /tmp/scan.sh | uniq > tmp.tmp
+$ sort tmp.tmp | uniq
+\end{verbatim}
+I interrupted the run after a reasonable amount of time (since this
+was only a survey, and got back only the standard entities defined by
+XML: \texttt{\&amp;}, \texttt{\&lt;}, \texttt{\&gt;}, and \texttt{\&quot;}.
+(XML also defines \texttt{\&apos;}.)
+
+While fiddling around with the next step, I ran into
+article \article{Sucre}, which includes the numerical
+entities (\eg, \texttt{\&\#1595;}) that XML also happens to allow.
+The question is whether Wikipedia expects these to be
+encoded as UTF-8 characters, or to leave them in their
+entity encoding.
+I don't think that it matters very much, since both methods
+are visually the same, but I ran a JSON download of the
+\article{Sucre} article and found that the numerical entities
+are present in the actual text.
+Thus, it is safe to translate only the five basic XML entities
+to their character representations.
+
+To do the conversion, I improved \file{scan.sh} to allow
+me to stop the translation and to recompress to a new directory.
+The new file, \file{fix.sh}, is presented here:
+\begin{verbatim}
+#!/bin/sh
+set -e
+if test -e "/tmp/find.stop"; then
+    exit 0;
+fi
+dir=`dirname $1`
+dest=/export/notbackedup/wikitrust1/enwiki-20080103-revs-thumper
+mkdir -p ${dest}/${dir}
+gunzip -c $1 | sed -e 's/\&amp;/\&/g' -e 's/\&lt;/</g' -e 's/\&gt;/>/g' -e 's/\&quot;/"/g' -e "s/\&apos;/\'/g" | gzip --best > ${dest}/$1
+exit 0
+\end{verbatim}
+Note that I tell the shell to abort on any error, which we
+can use in the \program{find} command to print out the file
+causing the error.
+And since Redherring has 8 CPUs, we can run multiple \program{find}
+commands to convert the files:
+\begin{verbatim}
+$ cd ~luca/wikitrust2/enwiki-20080103-revs
+$ find . -name "*[01].gz" \! -exec /tmp/fix.sh {} \; -print &
+$ find . -name "*[23].gz" \! -exec /tmp/fix.sh {} \; -print &
+$ find . -name "*[45].gz" \! -exec /tmp/fix.sh {} \; -print &
+$ find . -name "*[67].gz" \! -exec /tmp/fix.sh {} \; -print &
+$ find . -name "*[89].gz" \! -exec /tmp/fix.sh {} \; -print &
+\end{verbatim}
+
+I am a little surprised, because the process seems to be
+disk I/O bound.
+Monitoring just after starting the process shows the
+disk reading a maximum of 3MB/sec, and writing up to 8MB/sec;
+the CPU is spending up to 50\% in the WAIT state, but seems to be
+settling down at about 15\%.
+
