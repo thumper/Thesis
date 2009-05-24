@@ -252,4 +252,109 @@ I created a new index to attempt to solve this problem:
 alter table revision add KEY `wikitrust_timestamp_revision_id_idx` (`rev_timestamp`, `rev_id`);
 \end{verbatim}
 
+\section{Fixing the Unpacked XML}
+
+\subsection{21-May-2009}
+
+In preparation for running an evaluation, I started looking
+at the ``origin bug'' that Ian and I had noted a few months ago.
+This uncovered a problem in the XML files we extracted from
+the 20080103 Wikipedia dump: entities were not decoded as
+part of the extraction.
+
+See Section~\ref{sec:origin-fixxml} for information more information.
+
+\section{Downloading Wikipedia 0.7}
+
+\subsection{23-May-2009}
+
+``Wikipedia 0.7'' is a collection of articles that are being used
+to define a \textit{core} of useful information.
+The group working on this project has asked us to help them
+identify revisions from each article that are ``most trustworthy''
+around 6-Dec-2008.
+(This is all gleaned from an email exchange with
+\index{Martin Walker}
+Martin Walker, dated 24-Apr-2009 with
+subject ``Re: presentation for Wikimania''.)
+
+In Martin's last email, he gives links to two lists of
+the articles that they have chosen: one in HTML format,
+and another in a simple text format.
+
+I chose the simple text format, which has records like:
+\begin{verbatim}
+ARTICLE "Weird_Al"_Yankovic
+REVS    5909
+REVID   256156220
+REVUSER Esanchez7587
+REVTIME 20081206015207
+AUTHOR  17Drew
+AUTHOR  Zach Cohen
+IPAUTHORS
+\end{verbatim}
+but I found a questionable entry right near the beginning
+of the file:
+\begin{verbatim}
+ARTICLE "Weird_Al"_Yankovic|Yankovic,_"Weird_Al"
+REVS    0E0
+REVID   0
+REVUSER 
+REVTIME 
+\end{verbatim}
+I checked the official list of articles and found that
+there was no entry with this title.
+\indexfile{extract-wp0.7-articles.pl}
+I wrote a quick \program{perl} script
+(see Figure~\ref{fig:redherring-wp0.7-scan.pl})
+to print only valid articles.
+(Removing invalid articles is important because
+the \program{downloadwp} program aborts if it gets back
+an error from the Wikipedia API.)
+\begin{figure}
+\lstset{language=Perl}
+\begin{fminipage}
+\begin{lstlisting}
+#!/usr/bin/perl
+
+my $last = undef;
+while(<>) {
+    my ($key, $val) = split(' ', $_, 2);
+    $last = $val if $key eq 'ARTICLE';
+    print $last if $key eq 'REVS' && $val+0 > 0;
+}
+\end{lstlisting}
+\end{fminipage}
+\caption[File \texttt{extract-wp0.7-articles.pl}]{
+    Source code for \file{extract-wp0.7-articles.pl},
+used to extract the titles of articles being included
+in Wikipedia 0.7.
+}
+\label{fig:redherring-wp0.7-scan.pl}
+\end{figure}
+
+
+Currently, the process to fix the XML extracted files is
+still running, but I realized today that I could start the
+download and have the process write the files to a different
+disk location (to be merged later).
+\begin{verbatim}
+$ cd ~luca/wikitrust2/thumper/wikipedia-0.7
+$ ./extract-wp0.7-articles.pl release.20081213 > articles.txt
+$ ./downloadwp -wt_db_rev_base_path unpack -db_pass wikiword \
+    -db_name wikidb-thumper -log_file dlwp.log < articles.txt &
+\end{verbatim}
+
+
+Just as a note, while trying to get everything setup on Redherring,
+I had to install some \program{godi} packages.
+During this process, I ran into multiple problems compiling because
+\indexprogram{pcre\_free}
+the symbol \texttt{pcre\_free} was not defined.
+It was clearly an instance of a bug discussed at
+\url{http://www.mail-archive.com/godi-list@ocaml-programming.de/msg00236.html},
+but without any satisfactory resolution.
+After fighting with it, I managed to get things working by
+using the built-in \package{godi-pcre} package, and then
+compiling our WikiTrust code in optimized mode.
 

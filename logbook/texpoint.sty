@@ -1,0 +1,290 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%-*-TeX-*-%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+%%% IDENTIFICATION & PACKAGE LOADING
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% To use this package, create a symbolic link named ``latex-macros''
+% inside the directory you will be editing your latex files. Make this
+% link point to the directory that contains the unique copies of the
+% style (.sty) and data (.dat) files of this package. This guarantees
+% the entire teaching staff always use the correct files.
+\ProvidesPackage{texpoint}
+
+\RequirePackage{ifthen}
+\RequirePackage{amsmath}
+\RequirePackage{amsthm}
+\RequirePackage{amssymb}
+\RequirePackage{xspace}
+\RequirePackage{graphics}
+\RequirePackage[pdflatex]{graphicx}
+
+%% This is more than I need for a document that's being
+%% printed out.
+%\RequirePackage[
+%    colorlinks, bookmarksopen, pdfpagemode=UseOutlines,
+%    linkcolor=blue, citecolor=blue,
+%    urlcolor=blue, backref, pagebackref]{hyperref}
+
+
+%\RequirePackage{palatino}
+\RequirePackage{textcomp}
+%\usepackage{color}
+%\usepackage{colortbl}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+%%% TEXT & MATHEMATICS
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%% Parameters/Variables %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newlength{\strutheight}
+
+%%% Text --- Abbreviations %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\apriori}{{a~priori}\xspace~}
+\newcommand{\aposter}{{a~posteriori}\xspace~}
+\newcommand{\etal}{et~al.\@\xspace}
+\newcommand{\ie}{{i.e.}\xspace,\xspace}
+\newcommand{\eg}{{e.g.}\xspace,\xspace}
+\newcommand{\etc}{{etc}.\@\xspace}
+\newcommand{\cf}{{cf.}\xspace,\xspace}
+\newcommand{\viz}{{viz.}\xspace,\xspace}
+
+%%% Text --- Constructs %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\hint}{\emph{Hint: }}
+\newcommand{\brule}[1]{\underline{\hspace{#1}}}
+%\newenvironment{optional}[1]{\small [Optional] #1}{}
+\newenvironment{optional}[1]{\footnotesize [Optional] #1}{}
+%\newenvironment{optional}{\begin{quotation}\small [Optional]}{\end{quotation}}
+
+%%% Math --- General %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\paren}[1]{\left(#1\right)}
+\newcommand{\ang}[1]{\left\langle#1\right\rangle}
+
+\newcommand{\suchthat}{\mid}
+\newcommand{\eqdef}{\mathbin{::=}}
+\renewcommand{\bar}[1]{\overline{#1}}
+
+%%% Math --- Logic %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\renewcommand{\And}{\wedge}
+\newcommand{\conj}{\And}
+\newcommand{\smand}{\And}
+\newcommand{\AND}{\bigwedge}
+\newcommand{\Land}{\AND}
+\newcommand{\lgand}{\AND}
+
+\newcommand{\Or}{\vee}
+\newcommand{\disj}{\Or}
+\newcommand{\smor}{\Or}
+\newcommand{\OR}{\bigvee}
+\newcommand{\Lor}{\OR} 
+\newcommand{\lgor}{\OR}
+
+\renewcommand{\implies}{\Longrightarrow}
+\renewcommand{\iff}{\Longleftrightarrow}
+\newcommand{\bicond}{\longleftrightarrow}
+\newcommand{\equivalent}{\Longleftrightarrow}
+
+\newcommand{\Rule}[2] 
+{\[
+\begin{array}{c}
+#1 \\\hline #2
+\end{array}
+\]
+}
+
+\newcommand{\ruleref}[1]{Rule \ref{#1}}
+
+
+%%% Math --- Set theory %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\set}[1]{\left\{#1\right\}}
+\newcommand{\card}[1]{\left|#1\right|}
+
+\newcommand{\union}{\cup}
+\newcommand{\lgunion}{\bigcup}
+\newcommand{\intersect}{\cap}
+\newcommand{\lgintersect}{\bigcap}
+\newcommand{\cross}{\times}
+\newcommand{\compose}{\circ}
+\newcommand{\composition}{\circ} 
+\newcommand{\power}{\mathcal{P}}
+\newcommand{\range}[1]{\mathop{\textup{range}}\nolimits\left(#1\right)}
+\newcommand{\domain}[1]{\mathop{\textup{domain}}\nolimits\left(#1\right)}
+
+%%% Math --- Languages %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\emptystring}{\lambda}
+
+%%% Math --- Famous sets %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\naturals}{\mathbb{N}}
+\newcommand{\integers}{\mathbb{Z}}
+\newcommand{\rationals}{\mathbb{Q}}
+\newcommand{\reals}{\mathbb{R}}
+\newcommand{\complexes}{\mathbb{C}}
+
+%%% Math --- Arithmetic %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\abs}[1]{\left|#1\right|}
+\newcommand{\floor}[1]{\left\lfloor#1\right\rfloor}
+\newcommand{\ceil}[1]{\left\lceil#1\right\rceil}
+%\newcommand{\divides}{\mathbin{|}}
+\newcommand{\divides}{\mid}
+
+%%% Math --- Probability %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\sspace}{\mathcal{S}}
+
+\newcommand{\pr}[1]{\mathop{\textup{Pr}}\nolimits\left\{#1\right\}}
+\newcommand{\prob}[1]{\pr{#1}}
+\newcommand{\prsub}[2]{\mathop{\textup{Pr}_{#2}}\nolimits\left\{#1\right\}}
+\newcommand{\prcond}[2]{%
+  \ifinner \settoheight{\strutheight}{$#1 #2$}
+  \else    \settoheight{\strutheight}{$\displaystyle#1 #2$} \fi%
+  \mathop{\textup{Pr}}\nolimits\left\{
+    #1\,\left|\protect\rule{0cm}{\strutheight}\right.\,#2
+  \right\}}
+
+\newcommand{\Ex}{\mathop{\textup{E}}\nolimits}
+\newcommand{\Var}{\mathop{\textup{Var}}\nolimits}
+\newcommand{\Cov}{\mathop{\textup{Cov}}\nolimits}
+\newcommand{\expect}[1]{\Ex\left[#1\right]}
+\newcommand{\expectsq}[1]{{\Ex}^2\left[#1\right]}
+\newcommand{\expcond}[2]{\expect{#1\mid#2}}
+\newcommand{\variance}[1]{\Var\left[#1\right]}
+\newcommand{\varsq}[1]{{\Var}^2\left[#1\right]}
+\newcommand{\covar}[1]{\Cov\left[#1\right]}
+\newcommand{\covariance}[2]{\Cov\left[#1,#2\right]}
+
+%%% Math --- Theorems & Proofs %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\theoremstyle{plain}
+%\newcounter{section}
+%\newcounter{thmcount}
+\newtheorem{theorem}{Theorem}
+\newtheorem{falsethm}[theorem]{False Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{claim}[theorem]{Claim}
+\newtheorem{falseclm}[theorem]{False Claim}
+\newtheorem{rul}[theorem]{Rule}
+
+\newtheorem*{theorem*}{Theorem}
+\newtheorem*{falsethm*}{False Theorem}
+\newtheorem*{lemma*}{Lemma}
+\newtheorem*{proposition*}{Proposition}
+\newtheorem*{corollary*}{Corollary}
+\newtheorem*{claim*}{Claim}
+\newtheorem*{falseclm*}{False Claim}
+\newtheorem*{rul*}{Rule}
+
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{fact}[theorem]{Fact}
+\newtheorem{axiom}[theorem]{Axiom}
+
+\newtheorem*{definition*}{Definition}
+\newtheorem*{fact*}{Fact}
+\newtheorem*{axiom*}{Axiom}
+
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{example}[theorem]{Example}
+\newtheorem{xample}[theorem]{Example}
+
+\newtheorem*{remark*}{Remark}
+\newtheorem*{example*}{Example}
+\newtheorem*{xample*}{Example}
+
+\newenvironment{falseproof}
+{\begin{proof}[False proof]}
+{\end{proof}}
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+%%% FORMATTING
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+% 
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% %%% Page formatting %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \setlength{\parindent}{0in}                     
+% \setlength{\parskip}{\medskipamount}            
+% \hoffset        = -1.0 in
+% \voffset        = -1.0 in
+% \paperheight    = 11.0 in
+% \paperwidth     =  8.5 in
+% \topmargin      = 0.75 in
+% \headheight     = \baselineskip
+% \headsep        = \baselineskip
+% \footskip       = 1.00 in
+% \textheight     = \paperheight
+% \addtolength{\textheight}{-\topmargin}
+% \addtolength{\textheight}{-\headheight}
+% \addtolength{\textheight}{-\headsep}
+% \addtolength{\textheight}{-\footskip}
+% \textwidth      = \paperwidth
+% \oddsidemargin  = 1.0 in
+% \evensidemargin = 1.0 in
+% \addtolength{\textwidth}{-\oddsidemargin}
+% \addtolength{\textwidth}{-\evensidemargin}
+% \linewidth      = \textwidth
+
+\newcommand{\printlayout}{%
+  \typeout{----------------------- LaTeX Page Layout Parameters}
+  \typeout{\string\paperwidth\space\space\the\paperwidth}
+  \typeout{\string\paperheight\space\the\paperheight}
+  \typeout{\string\textwidth\space\space\the\textwidth}
+  \typeout{\string\textheight\space\the\textheight}
+  \typeout{\string\oddsidemargin\space\space\the\oddsidemargin}
+  \typeout{\string\evensidemargin\space\the\evensidemargin}
+  \typeout{\string\topmargin\space\space\the\topmargin}
+  \typeout{\string\headheight\space\the\headheight}
+  \typeout{\string\headsep\space\the\headsep}
+  \typeout{\string\footskip\space\space\space\the\footskip}
+  \typeout{\string\marginparwidth\space\the\marginparwidth}
+  \typeout{\string\marginparsep\space\space\space\the\marginparsep}
+  \typeout{\string\hoffset\space\the\hoffset}
+  \typeout{\string\voffset\space\the\voffset}
+  \typeout{(1in=72.27pt, 1cm=28.45pt)}
+  \typeout{-----------------------------------------}%
+}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Mini pages %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Generates a _framed_ minipage with its width as an optional argument.
+% If the width is not specified, \linewidth is used. 
+%
+% Usage  :  \begin{fminibox}[width] ... \end{fminibox}
+% Example:  \begin{fminibox}[3in]  blah, blah... \end{fminibox}
+%
+\newsavebox{\fminibox}
+\newlength{\fminilength}
+\newenvironment{fminipage}[1][\linewidth]%
+{% begin fminipage
+  \setlength{\fminilength}{#1}
+  \addtolength{\fminilength}{-2\fboxsep}
+  \addtolength{\fminilength}{-2\fboxrule}
+  \begin{lrbox}{\fminibox} %
+  \begin{minipage}{\fminilength} %
+}%
+{% end fminipage
+  \end{minipage}\end{lrbox}\noindent\fbox{\usebox{\fminibox}}}
+
+\endinput
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
