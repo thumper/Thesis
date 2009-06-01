@@ -358,3 +358,30 @@ After fighting with it, I managed to get things working by
 using the built-in \package{godi-pcre} package, and then
 compiling our WikiTrust code in optimized mode.
 
+\subsection{31-May-2009}
+
+Ran into problems with trying to download Wikipedia articles.
+\begin{enumerate}
+\item The article \article{``Weird Al'' Yankovic} seems to have changed
+	its \field{page\_id}, from 104,146 to 189,382,265.
+	This causes problems for our code because we don't expect
+	this kind of change, so we don't catch it and update the tables.
+\item The article \article{2005 Atlantic Hurricane Season} won't download.
+\end{enumerate}
+
+Luca declared that we should not waste time currently on these corner cases.
+Instead, we should make a note of these problem articles
+and download them later.
+
+I made a few modifications to handle these cases:
+\begin{enumerate}
+\item I added code to \package{Online\_db} to get the \field{page\_id}
+	of an article from its title.  An exception is thrown if the
+	title doesn't exist in the database.
+\item I added code to \package{Wikipedia\_api} to compare the
+	\field{page\_id} downloaded with that in the database,
+	and raise an exception if both exist but are different.
+\item Modified \package{downloadwp} to catch exceptions and record
+	the \field{page\_title} in the logger output.
+\end{enumerate}
+
