@@ -1,0 +1,72 @@
+\chapter{Mediawiki Extension}
+
+\section{Introduction}
+
+\subsection{7-May-2009}
+
+Ian has been the steward of the \program{mediawiki}
+extension, but with him on leave Luca and I have been
+trying to recall the details of the architecture.
+
+\section{A Meeting}
+
+\subsection{7-May-2009}
+
+Luca and I had a meeting, where much of the discussion was
+in trying to understand the organization of Ian's code
+for the extension.
+
+In trying to reason out the functionality, we determined that
+there are three use cases:
+\index{local mode}\index{remote mode}\index{wmf mode}
+\begin{enumerate}
+\item[local] - the wiki data and coloring is completely local on
+	a single machine.
+\item[remote] - the extension must color data as a remote service.
+	There is no notification when new revisions are added to
+	the wiki.
+\item[wmf] - the extension colors data as a remote service,
+	but receives revision notifications via an \textit{edit hook}.
+\end{enumerate}
+
+\subsubsection{Local Mode}
+\index{local mode}
+
+Normal wikis will just use ``local mode,'' where the WikiTrust extension
+is integrated into the wiki and can detect revisions as they added
+into the database.
+In this case, the extension code would directly trigger the
+OCaml code to color the revisions as they are made.
+
+\subsubsection{Remote Mode}
+\index{remote mode}
+
+Our original vision for the GeneWiki project was to run the
+system in ``remote mode.''
+In this use case, we would run a mediawiki instance at UCSC
+with the WikiTrust extension in remote mode.
+GeneWiki users of Wikipedia would have a special \textit{skin}
+available which would allow them to query our instance for
+colored revision information.
+
+The key point of this mode is that is allows administrative separation
+between the host wiki and the colorized wiki.
+We would not rely on notifications from Wikipedia about new revisions
+that needed coloring; instead, we would color articles
+on demand as they were requested by the GeneWiki users.
+
+On the UCSC side, a \program{mediawiki} instance is still required
+because the colorized article needs to be converted into HTML.
+The GeneWiki skin can only replace the HTML on the page it was
+trying to show.
+
+\subsubsection{WMF Mode}
+\index{wmf mode}
+
+This is a special case of our extension running at a Wiki Media Foundation site.
+The extension is still expected to not be integrated into Wikipedia,
+as the ``local'' mode expects.
+Instead, the extension ties into the \textit{edit hook} of
+\program{mediawiki} to make notifications to the coloring server
+of new revisions which are available.
+
