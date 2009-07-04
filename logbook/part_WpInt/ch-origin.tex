@@ -115,7 +115,7 @@ I have been tracking a paragraph that begins with:
 ``The Rio Grande rises in high mountains and flows for
 much of its length at high elevation\ldots''
 \end{quote}
-As of revision 65342218, the text was attributed to
+As of revision 65342218 (23-Jul-2006), the text was attributed to
 user Zundark, the author of the initial revision.
 The next revision, revid 65342717, ascribes the text
 to user Hajor.
@@ -170,6 +170,14 @@ As I see it, there are a few outstanding issues:
     duplicated unnecessarily.
 \end{enumerate}
 
+\subsection{4-Jul-2009}
+
+Looked further into the tooltip issue.
+
+The wrong tooltip is being displayed because there is a SPAN tag
+earlier in the document which isn't being closed.
+This is caused by a trust marker which appears at the end of a line.
+Need to look at how regular expressions are being used to close SPAN tags.
 
 \section{Fixing the Unpacked XML}
 

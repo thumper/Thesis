@@ -22,14 +22,24 @@ there are three use cases:
 \begin{enumerate}
 \item[local] - the wiki data and coloring is completely local on
 	a single machine.
-\item[remote] - the extension must color data as a remote service.
+\item[remote] - coloring data is a remote service.
 	There is no notification when new revisions are added to
-	the wiki.
+	the wiki.  There is no extension on the hosting wiki.
 \item[wmf] - the extension colors data as a remote service,
 	but receives revision notifications via an \textit{edit hook}.
 \end{enumerate}
 
-\subsubsection{Local Mode}
+\subsection{20-Jun-2009}
+
+Tracing through the git history, the file \file{RemoteTrustAjax.php}
+first makes an appearance on 18-Feb (commit 4e9a597\ldots).
+This coincides with my first email to Ian to collaborate on a Firefox demo.
+Most likely, then, the ``remote'' version isn't really what Luca and
+I speculated --- it's probably just an interface to the remote service
+that Ian implemented as part of the ``wmf'' mode, which allowed the
+Firefox demo to get back data as colored HTML.
+
+\section{Local Mode}
 \index{local mode}
 
 Normal wikis will just use ``local mode,'' where the WikiTrust extension
@@ -38,7 +48,27 @@ into the database.
 In this case, the extension code would directly trigger the
 OCaml code to color the revisions as they are made.
 
-\subsubsection{Remote Mode}
+\subsection{19-Jun-2009}
+
+Trying to understand the organization of the extension files.  Found a few weirdnesses, which I marked with ``TODO(Bo)''.
+
+File \file{LocalTrust.php} looks like it initializes all the hooks.
+\begin{enumerate}
+\item Autoloads \file{LocalTrustImpl.php} and \file{RemoteTrustUpdate.php}.
+\item Adds \function{TextTrust::init} as an extension function.
+\item Exports \function{TextTrustImpl::handleVote} as an AJAX function.
+\item Register \function{TextTrustUpdate::updateDB} to handle schema updates.
+\item Add \function{TextTrust::ucscTrustTemplate} to hook \function{SkinTemplateTabs}.
+\item Add \function{TextTrust::ucscArticleSaveComplete} to hook \function{ArticleSaveComplete}.
+\item If the trust tab is selected, then add \function{TextTrust::ucscOutputBeforeHTML} to hook \function{OutputPageBeforeHTML}.
+\end{enumerate}
+
+Of special note is the function \function{runEvalEdit} in
+\file{LocalTrustImpl.php}.
+This function knows how to run our ocaml code directly to evaluate revisions.
+
+
+\section{Remote Mode}
 \index{remote mode}
 
 Our original vision for the GeneWiki project was to run the
@@ -60,7 +90,20 @@ because the colorized article needs to be converted into HTML.
 The GeneWiki skin can only replace the HTML on the page it was
 trying to show.
 
-\subsubsection{WMF Mode}
+To implement this, a \program{mediawiki} AJAX call is made
+from the GeneWiki skin to our remote colorized wiki code.
+
+\subsection{19-Jun-2009}
+
+The remote mode depends on the file \file{RemoteTrustAjax.php}.
+This file is organized similarly to \file{LocalTrust.php},
+with the following differences:
+\begin{enumerate}
+\item Another AJAX function is available: \function{TextTrustImpl::getColoredText}.
+\item A different function is tied to the \function{OutputPageBeforeHTML} hook.  This one just adds buttons to the top of the page.
+\end{enumerate}
+
+\section{WMF Mode}
 \index{wmf mode}
 
 This is a special case of our extension running at a Wiki Media Foundation site.
@@ -69,4 +112,11 @@ as the ``local'' mode expects.
 Instead, the extension ties into the \textit{edit hook} of
 \program{mediawiki} to make notifications to the coloring server
 of new revisions which are available.
+
+\subsection{19-Jun-2009}
+
+This code seems the most like \file{LocalTrust.php}.
+In fact, in the init file, the only difference is that the skin is not optional.
+The implementations are different, because the WMF version posts
+a request to a remote server.
 
