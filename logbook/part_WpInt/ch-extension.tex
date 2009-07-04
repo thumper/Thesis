@@ -52,20 +52,10 @@ OCaml code to color the revisions as they are made.
 
 Trying to understand the organization of the extension files.  Found a few weirdnesses, which I marked with ``TODO(Bo)''.
 
-File \file{LocalTrust.php} looks like it initializes all the hooks.
-\begin{enumerate}
-\item Autoloads \file{LocalTrustImpl.php} and \file{RemoteTrustUpdate.php}.
-\item Adds \function{TextTrust::init} as an extension function.
-\item Exports \function{TextTrustImpl::handleVote} as an AJAX function.
-\item Register \function{TextTrustUpdate::updateDB} to handle schema updates.
-\item Add \function{TextTrust::ucscTrustTemplate} to hook \function{SkinTemplateTabs}.
-\item Add \function{TextTrust::ucscArticleSaveComplete} to hook \function{ArticleSaveComplete}.
-\item If the trust tab is selected, then add \function{TextTrust::ucscOutputBeforeHTML} to hook \function{OutputPageBeforeHTML}.
-\end{enumerate}
-
-Of special note is the function \function{runEvalEdit} in
-\file{LocalTrustImpl.php}.
-This function knows how to run our ocaml code directly to evaluate revisions.
+Refactoring the code is harder than I expected.
+Each mode is very similar, but there are small differences
+as the code evolved separately for each mode,
+in addition to the intended differences between the mode.
 
 
 \section{Remote Mode}
