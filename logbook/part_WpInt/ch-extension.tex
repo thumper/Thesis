@@ -39,6 +39,7 @@ I speculated --- it's probably just an interface to the remote service
 that Ian implemented as part of the ``wmf'' mode, which allowed the
 Firefox demo to get back data as colored HTML.
 
+
 \section{Local Mode}
 \index{local mode}
 
@@ -109,4 +110,175 @@ This code seems the most like \file{LocalTrust.php}.
 In fact, in the init file, the only difference is that the skin is not optional.
 The implementations are different, because the WMF version posts
 a request to a remote server.
+
+\section{Testing: Local Mode (DB revcolors)}
+
+\subsection{5-Jul-2009}
+
+Finished refactoring the code.
+Tested on my laptop installation of WikiTrust (as documented
+in Section~\ref{sec:up2date-testenv}).
+The new code now sets default configuration values which
+you can override in \file{LocalSettings.php}.
+My new \file{LocalSettings.php} looks like:
+\begin{verbatim}
+$wgUseTidy = true;
+$wgUseAjax = true;
+require_once( $IP . "/extensions/WikiTrust/WikiTrust.php" );
+$wgWikiTrustGadget = NULL;              // enable for everyone
+\end{verbatim}
+
+\section{Testing: Local Mode (file revcolors)}
+
+\subsection{8-Jul-2009}
+
+At our meeting yesterday, Luca described his plans for testing
+the new batch coloring process.
+We realized that this means that the ``local mode'' needs
+to support reading colored data from disk (as opposed to
+reading from the database, which would be the normal use case).
+Ian and I have added some new configuration variables to
+support this functionality.
+
+I finished adding the support for reading colored revisions from
+disk, and did some testing using my existing installation.
+That turned out to be annoying, because I had to delete the
+color data I already had in the database, but I did this from
+the command line which created all the directories as owned by
+me --- so the web process couldn't write to the directories.
+In the end, I got it working but I feel that I should double-check
+from a fresh install since that is what Luca will be doing next.
+
+The additions to \file{LocalSettings.php} that I ended up with
+are:
+\begin{verbatim}
+$wgUseTidy = true;
+$wgUseAjax = true;
+require_once( $IP . "/extensions/WikiTrust/WikiTrust.php" );
+$wgWikiTrustGadget = NULL;              // enable for everyone
+$wgWikiTrustColorPath = "/home/thumper/research/tmp/colors";
+$wgWikiTrustCmdExtraArgs = "-wt_db_sig_base_path /home/thumper/research/tmp/sigs -wt_db_colored_base_path /home/thumper/research/tmp/colors -n_events 10000";
+\end{verbatim}
+
+\subsection{8-Jul-2009}
+
+For a fresh installation, I decided to start with the latest
+Ubuntu distribution, 9.04.
+Additional packages are described by our \file{README}:
+\begin{verbatim}
+aptitude install mediawiki
+aptitude install php5-cli
+aptitude install mysql-server
+aptitude install mysql-client
+aptitude install tidy
+\end{verbatim}
+
+Past that, I generally follow the steps described in
+Section~\ref{sec:up2date-testenv}.
+
+First fix the alias for \mediawiki, by editing
+\file{/etc/mediawiki/apache.conf}.
+Uncomment the line:
+\begin{verbatim}
+Alias /mediawiki /var/lib/mediawiki
+\end{verbatim}
+and restart \mediawiki.
+\begin{verbatim}
+# /etc/init.d/apache2 restart
+\end{verbatim}
+
+Now you can configure \mediawiki by launching
+a browser and navigating to \url{http://localhost/mediawiki/}.
+
+Configuring the \mediawiki installation has a
+bunch of questions to answer, most of them intuitive.
+The only important ones to remember are:
+\begin{tabular}{|r|l|}
+\hline
+Wiki name & WikiTest \\
+Admin username & WikiSysop \\
+Admin password & wksysop \\
+Database name & wikidb \\
+DB username & wikuser \\
+DB password & wkuser \\
+Superuser name & debian-sys-maint \\
+Superuser password & taken from \texttt{/etc/mysql/debian.cnf} \\
+\hline
+\end{tabular}
+Once configured, move the config file to its proper place:
+\begin{verbatim}
+# cd /var/lib/mediawiki
+# mv config/LocalSettings.php .
+# chmod 0 config
+# chmod 0640 LocalSettings.php
+\end{verbatim}
+
+To put some data into the database, I copied the
+file \file{wiki-00114050.xml.gz} from Luca's collection
+of files split out of the last dump
+(\url{file://redherring.cse.ucsc.edu/~luca/wikitrust1/enwiki-20080103/114/wiki-00114050.xml.gz})
+and placed it into \url{file://localhost/~thumper/research/dat/orig/}.
+The actual loading of the data requires the use of \program{mwdumper},
+and the Java JRE (which isn't installed by default):
+\begin{verbatim}
+$ cd ~/research/dat/
+$ wget http://download.wikimedia.org/tools/mwdumper.jar
+$ sudo aptitude install sun-java6-jre
+\end{verbatim}
+
+Loading the test data with \program{mwdumper}:
+\begin{verbatim}
+$ cd ~/research/data/
+$ gunzip -c orig/wiki-00114050.xml.gz | uniq > tmp.tmp
+$ cat tmp.tmp | java -Xmx600M -server -jar mwdumper.jar --format=sql:1.5 | mysql -u wikiuser --password=wkuser wikidb
+52 pages (140.921/sec), 57 revs (154.472/sec)
+\end{verbatim}
+Note that there's a weird step for removing the last line of
+the file, which is a duplicate closing tag.
+Double-checking the Special:AllPages page shows that
+the pages were successfully loaded into the database.
+
+Now we need to load the WikiTrust extension.
+\begin{verbatim}
+$ sudo aptitude install git-core gitk
+$ cd ~/research
+$ git clone ssh://thumper@trust.cse.ucsc.edu/pub/git/WikiTrust.git
+Initialized empty Git repository in /home/thumper/research/WikiTrust/.git/
+The authenticity of host 'trust.cse.ucsc.edu (128.114.63.37)' can't be established.
+RSA key fingerprint is ca:c2:91:32:4b:02:88:80:4c:c0:15:3e:c5:50:8a:2a.
+Are you sure you want to continue connecting (yes/no)? yes
+Warning: Permanently added 'trust.cse.ucsc.edu,128.114.63.37' (RSA) to the list of known hosts.
+thumper@trust.cse.ucsc.edu's password: 
+remote: Generating pack...
+remote: Counting objects: 759
+remote: Done counting 5695 objects.
+remote: Deltifying 5695 objects...
+remote:  100% (5695/5695) done
+remote: Total 5695 (delta 3658), reused 925 (delta 582)
+Receiving objects: 100% (5695/5695), 4.22 MiB | 1092 KiB/s, done.
+Resolving deltas: 100% (3658/3658), done.
+\end{verbatim}
+
+TODO: Need instructions for building WikiTrust!  Last time I checked,
+godi isn't working any longer.
+
+We need to create the path for storing the wikitrust data on disk:
+\begin{verbatim}
+$ mkdir ~/research/dat/test-data
+$ sudo chown www-data.www-data ~/research/dat/test-data
+\end{verbatim}
+And link in the extension:
+\begin{verbatim}
+$ sudo ln -s /home/thumper/research/WikiTrust /var/lib/mediawiki/extensions/
+\end{verbatim}
+
+Finally, we need to edit \file{LocalSettings.php} to add the following lines:
+\begin{verbatim}
+$wgUseTidy = true;
+$wgUseAjax = true;
+require_once( $IP . "/extensions/WikiTrust/WikiTrust.php" );
+$wgWikiTrustGadget = NULL;              // enable for everyone
+$wgWikiTrustColorPath = "/home/thumper/research/dat/test-data";
+$wgWikiTrustCmdExtraArgs = "-wt_db_sig_base_path /home/thumper/research/test-data/sigs -wt_db_colored_base_path /home/thumper/research/test-data/colors -n_events 10000";
+\end{verbatim}
 
