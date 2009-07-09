@@ -259,8 +259,39 @@ Receiving objects: 100% (5695/5695), 4.22 MiB | 1092 KiB/s, done.
 Resolving deltas: 100% (3658/3658), done.
 \end{verbatim}
 
-TODO: Need instructions for building WikiTrust!  Last time I checked,
-godi isn't working any longer.
+Godi is the best way to get OCaml running on a new machine.
+Visit \url{http://godi.camlcity.org/godi/index.html} to download
+the latest version of it.
+The steps I followed to get it are:
+\begin{verbatim}
+$ sudo aptitude install m4
+$ cd ~/research/tmp
+$ wget http://download.camlcity.org/download/godi-rocketboost-20080630.tar.gz
+$ tar -xzvf godi-rocketboost-*.tar.gz
+$ cd godi-rocketboost-20080630
+$ ./bootstrap --prefix ~/godi
+$ export PATH=~/godi/bin:~/godi/sbin:$PATH
+$ ./bootstrap_stage2
+\end{verbatim}
+At this point, the compilation fails because of PCRE being missing.
+Edit \file{~/godi/etc/godi.conf} to uncomment the line which
+uses the GODI version of PCRE.
+\begin{verbatim}
+$ ./bootstrap_stage2
+$ cd ..
+$ sudo aptitude install libmysqlclient16-dev
+$ godi_console
+\end{verbatim}
+We also need the \package{OcamlLdaLibs} package:
+\begin{verbatim}
+$ cd ~/research/
+$ git clone git://trust.cse.ucsc.edu/share/git/OcamlLdaLibs.git
+$ cd OcamlLdaLibs
+$ make all-godi
+$ cd ../WikiTrust
+$ make clean ; make all ; make allopt
+\end{verbatim}
+
 
 We need to create the path for storing the wikitrust data on disk:
 \begin{verbatim}
@@ -278,7 +309,7 @@ $wgUseTidy = true;
 $wgUseAjax = true;
 require_once( $IP . "/extensions/WikiTrust/WikiTrust.php" );
 $wgWikiTrustGadget = NULL;              // enable for everyone
-$wgWikiTrustColorPath = "/home/thumper/research/dat/test-data";
+$wgWikiTrustColorPath = "/home/thumper/research/test-data/colors";
 $wgWikiTrustCmdExtraArgs = "-wt_db_sig_base_path /home/thumper/research/test-data/sigs -wt_db_colored_base_path /home/thumper/research/test-data/colors -n_events 10000";
 \end{verbatim}
 
