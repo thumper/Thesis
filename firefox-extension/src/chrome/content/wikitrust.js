@@ -277,15 +277,18 @@
 	log("lang = " + lang);
 	if (lang != 'en') return null;
 
+
 	var mainTab = page.getElementById('ca-nstab-main');
 	if (!mainTab) return null;		// must not be a main article!
 	if (mainTab.getAttribute("class") != "selected") return null;
 
 	var articleURL = getTrustURL(page.location);
 	
+	var trust_li = page.getElementById('ca-trust');
+	if (trust_li) return null;	// already done, eh?
 
 	// And modify page to display "check trust" tab
-	var trust_li = page.createElement('li');
+	trust_li = page.createElement('li');
 	trust_li.setAttribute("id", "ca-trust");
 	trust_li.innerHTML = '<a href="'
 	    + articleURL + '" title="Trust colored version of this page">'
