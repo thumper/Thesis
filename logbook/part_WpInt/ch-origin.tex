@@ -179,6 +179,55 @@ earlier in the document which isn't being closed.
 This is caused by a trust marker which appears at the end of a line.
 Need to look at how regular expressions are being used to close SPAN tags.
 
+\subsection{9-Aug-2009}
+
+Trying to pick up where I left off, I am investigating
+previously mentioned revision 65342717 (23-Jul-2006).
+I am able to verify that my current installation still
+exhibits the origin bug.
+
+A check of the database shows that my installation has
+changed, however:
+\begin{verbatim}
+$ mysql -u wikiuser -p wikidb
+mysql> select revision_text from wikitrust_colored_markup where revision_id = 65342717;
+Empty set (0.00 sec)
+\end{verbatim}
+Reviewing my \file{LocalSettings.php} shows that I last used
+this installation to test reading colored data from the filesystem,
+and the colored data is stored in
+\noidxfile{/home/thumper/research/tmp/colors}.
+This puts the actual file to inspect at
+\noidxfile{000/000/043/005/342/000000043005\_000065342717.gz}
+under that directory.
+
+Looking through the file, I see two SPAN tags which aren't closed.
+One is at the end up the first line of the \article{Rio Grande},
+which is encoded as a DL tag.
+The second is at the end of a DIV for a figure caption.
+
+Just noticed another problem with attribution, though -- this
+one in the trust system.
+There is a sentence which ends ``liberal colonization policies and
+abolitionist stance.''
+The word ``policies'' is ascribed to use Hajor, but
+clicking on it takes you to a diff which shows that
+user Itai is responsible for that word.
+
+\subsection{11-Aug-2009}
+
+Luca noted that the problem with attribution was because the
+punctuation made a different word.
+He has fixed it in his branch.
+
+Ian came up with a great patch to the regex technique for
+generating SPAN tags.
+In the patch, he restricts the regex to only create SPAN tags
+around sections of text, up to the next trust tag or HTML tag.
+I added some more code to wrap \texttt{[[Image:\ldots]]} sections,
+but it turns out that the DIV tags don't take up the SPAN tag properties.
+Ian and I decided that we will fix that later, since it only affects figures.
+
 \section{Fixing the Unpacked XML}
 
 \subsection{21-May-2009}
@@ -252,4 +301,11 @@ Monitoring just after starting the process shows the
 disk reading a maximum of 3MB/sec, and writing up to 8MB/sec;
 the CPU is spending up to 50\% in the WAIT state, but seems to be
 settling down at about 15\%.
+
+\subsection{9-Aug-2009}
+
+We abandoned the \program{sed} script to replace the entities.
+Instead, Luca is supposed to have fixed the unpacking code to
+decode the entities before writing them to disk.
+
 

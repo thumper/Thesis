@@ -17,6 +17,16 @@
 	}
     }
 
+    function getPrefStr(pref, defval) {
+	var prefname = "extensions.wikitrust." + pref;
+	try {
+	    var value = prefService.getCharPref(prefname);
+	    return value;
+	} catch (ex) {
+	    return defval;
+	}
+    }
+
     var aConsoleService = Components.classes["@mozilla.org/consoleservice;1"].
 		getService(Components.interfaces.nsIConsoleService);
 
@@ -87,7 +97,13 @@
 	}
 
 	if (getPrefBool('newapi', false)) {
-	    return 'http://redherring.cse.ucsc.edu/firefox/frontend/index.php?action=ajax&rs=TextTrustImpl::getColoredText&rsargs[]=' + escape(title) + '&rsargs[]=&rsargs[]=' + revID;
+	    var defaultUrl = 'http://redherring.cse.ucsc.edu/firefox/frontend/index.php';
+	    var url = getPrefStr('ajaxurl', defaultUrl);
+	    url = url + '?action=ajax&rs=WikiTrust::ajax_getColoredText'
+		+ '&rsargs[]=' + escape(title)
+		+ '&rsargs[]='
+		+ '&rsargs[]=' + revID;
+	    return url;
 	} else {
 	    return 'http://wiki-trust.cse.ucsc.edu/index.php?title=' + escape(title) + '&oldid=' + revID;
 	}

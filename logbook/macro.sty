@@ -1,5 +1,6 @@
 \newcommand{\indexfile}[1]{\index{#1@\texttt{#1}}}
-\newcommand{\file}[1]{\indexfile{#1}\texttt{#1}\xspace}
+\newcommand{\noidxfile}[1]{\texttt{#1}\xspace}
+\newcommand{\file}[1]{\indexfile{#1}\noidxfile{#1}\xspace}
 
 \newcommand{\indexpackage}[1]{\index{#1@\textbf{#1}}}
 \newcommand{\package}[1]{\indexpackage{#1}\textbf{#1}\xspace}
