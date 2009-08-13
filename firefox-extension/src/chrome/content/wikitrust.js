@@ -1,8 +1,6 @@
 // Copyright 2009, B. Thomas Adler
 
 (function() {
-    const hostname = ".wikipedia.org";
-
     var prefService = Components.classes["@mozilla.org/preferences-service;1"].
 		getService(Components.interfaces.nsIPrefBranch);
 
@@ -67,10 +65,11 @@
 	return '';
     }
 
-    function getWikiLang(loc) {
-	var dom = loc.host.indexOf(hostname);
-	if (dom < 0) return null;
-	else return loc.host.substr(0, dom);
+    function isEnabledWiki(loc) {
+	var hostname = "en.wikipedia.org";
+	hostname = getPrefStr('hostname', hostname);
+	if (loc.host == hostname) return true;
+	else return false;
     }
 
     function getTitleFUrl(loc) {
@@ -121,7 +120,7 @@
 	return loc.pathname + loc.search;
     }
 
-    function getTrustURL(loc) {
+    function getTrustTabURL(loc) {
 	if (/[?&]trust/.test(loc.search)) return loc.href;
 	var url = getStrippedURL(loc);
 	if (/\?/.test(url)) return url + '&trust';
@@ -288,20 +287,19 @@
 
 
     function maybeAddTrustTab(page) {
-	var lang = getWikiLang(page.location);
-	if (!lang) return null;
-	log("lang = " + lang);
-	if (lang != 'en') return null;
-
+	if (!isEnabledWiki(page.location)) return null;
 
 	var mainTab = page.getElementById('ca-nstab-main');
 	if (!mainTab) return null;		// must not be a main article!
 	if (mainTab.getAttribute("class") != "selected") return null;
 
-	var articleURL = getTrustURL(page.location);
+	var articleURL = getTrustTabURL(page.location);
 	
 	var trust_li = page.getElementById('ca-trust');
-	if (trust_li) return null;	// already done, eh?
+	if (trust_li) {
+	    log("trust tab already on page.");
+	    return null;	// already done, eh?
+	}
 
 	// And modify page to display "check trust" tab
 	trust_li = page.createElement('li');
