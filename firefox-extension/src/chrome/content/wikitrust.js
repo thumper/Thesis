@@ -96,9 +96,8 @@
 	}
 
 	if (getPrefBool('newapi', false)) {
-	    var defaultUrl = 'http://redherring.cse.ucsc.edu/firefox/frontend/index.php';
-	    var url = getPrefStr('ajaxurl', defaultUrl);
-	    url = url + '?action=ajax&rs=WikiTrust::ajax_getColoredText'
+	    var url = getPrefStr('wgScriptPath', 'http://redherring.cse.ucsc.edu/firefox/frontend/');
+	    url = url + 'index.php?action=ajax&rs=WikiTrust::ajax_getColoredText'
 		+ '&rsargs[]=' + escape(title)
 		+ '&rsargs[]='
 		+ '&rsargs[]=' + revID;
