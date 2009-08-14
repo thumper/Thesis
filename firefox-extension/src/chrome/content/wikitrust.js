@@ -104,7 +104,9 @@
 		+ '&rsargs[]=' + revID;
 	    return url;
 	} else {
-	    return 'http://wiki-trust.cse.ucsc.edu/index.php?title=' + escape(title) + '&oldid=' + revID;
+	    return 'http://wiki-trust.cse.ucsc.edu/index.php';
+			+ '?title=' + escape(title)
+			+ '&oldid=' + revID;
 	}
     }
 
@@ -164,61 +166,29 @@
     }
 
     function addTrustHeaders(page) {
-	var css = page.createElement('style');
-	//css.setAttribute('type', 'text/css');
-	css.innerHTML= ".trust0 {\n"
-	    + "background-color:#FFB947;\n"
-	    + "}\n"
-	    + ".trust1 {\n"
-	    + "background-color:#FFC05C;\n"
-	    + "}\n"
-	    + ".trust2 {\n"
-	    + "background-color:#FFC870;\n"
-	    + "}\n"
-	    + ".trust3 {\n"
-	    + "background-color:#FFD085;\n"
-	    + "}\n"
-	    + ".trust4 {\n"
-	    + "background-color:#FFD899;\n"
-	    + "}\n"
-	    + ".trust5 {\n"
-	    + "background-color:#FFE0AD;\n"
-	    + "}\n"
-	    + ".trust6 {\n"
-	    + "background-color:#FFE8C2;\n"
-	    + "}\n"
-	    + ".trust7 {\n"
-	    + "background-color:#FFEFD6;\n"
-	    + "}\n"
-	    + ".trust8 {\n"
-	    + "background-color:#FFF7EB;\n"
-	    + "}\n"
-	    + ".trust9 {\n"
-	    + "background-color:#FFFFFF;\n"
-	    + "}\n"
-	    + ".trust10 {\n"
-	    + "background-color:#FFFFFF;\n"
-	    + "}\n";
+	var css = page.createElement('link');
+	css.setAttribute('rel', 'stylesheet');
+	css.setAttribute('type', 'text/css');
+	var url = getPrefStr('wgScriptPath', 'http://redherring.cse.ucsc.edu/firefox/frontend/');
+	url = url + "/extensions/WikiTrust/css/trust.css";
+	css.setAttribute('href', url);
 
 	var script = page.createElement('script');
-	script.innerHTML = 'function showOrigin(revnum) { document.location.href = "/w/index.php?title=" + wgPageName + "&oldid=" + revnum; }';
+	var url = getPrefStr('wgScriptPath', 'http://redherring.cse.ucsc.edu/firefox/frontend/');
+	url = url + '/extensions/WikiTrust/js/trust.js';
+	script.setAttribute('src', url);
+	// script.innerHTML = 'function showOrigin(revnum) { document.location.href = "/w/index.php?title=" + wgPageName + "&oldid=" + revnum; }';
 
 	var head = page.getElementsByTagName('head')[0];
 	head.appendChild(css);
 	head.appendChild(script);
 
-	var tooltipURL = 'http://redherring.cse.ucsc.edu/firefox/frontend/extensions/Trust/js/wz_tooltip.js';
-	// var tooltipURL = 'http://www.soe.ucsc.edu/~thumper//wz_tooltip.js';
-	log("Requesting tooltip url = " + tooltipURL);
-	http_get(tooltipURL,
-	    function (req) {
-		var script = page.createElement('script');
-		script.innerHTML = req.responseText;
-		head.appendChild(script);
-	    },
-	    function (req) {
-		log("ERROR downloading tooltip code, status = " + req.status);
-	    });
+	var tscript = page.createElement('script');
+	var turl = getPrefStr('wgScriptPath', 'http://redherring.cse.ucsc.edu/firefox/frontend/');
+	turl = turl + '/extensions/WikiTrust/js/wz_tooltip.js';
+	tscript.setAttribute('src', turl);
+	head.appendChild(tscript);
+
 	return null;
     }
 
@@ -290,7 +260,7 @@
 	if (!isEnabledWiki(page.location)) return null;
 
 	var mainTab = page.getElementById('ca-nstab-main');
-	if (!mainTab) return null;		// must not be a main article!
+	if (!mainTab) return null;		// we only add to main articles
 	if (mainTab.getAttribute("class") != "selected") return null;
 
 	var articleURL = getTrustTabURL(page.location);
