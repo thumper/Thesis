@@ -232,3 +232,20 @@ Although these are functionally equivalent, I'm concerned that
 it would be easy for us to make a mistake and then have to
 examine many parts to understand where it was introduced.
 
+\section{Templates}
+
+\subsection{16-Aug-2009}
+
+In preparation for our demo, we would like to include templates
+in our copy of Wikipedia so that they are expanded properly in
+the colored version of the text.
+I modified \program{downloadwp} to accept a revision id to start
+requests from, separated from the title by a tab character.
+It is important to remember that template expansion happens
+inside the \program{mediawiki} wiki parsing engine;
+therefore, the templates need to be available inside the
+database (instead of using our disk-based system for storing files).
+
+For information on how I loaded the templates onto Redherring,
+see Section~\ref{ch:redherring-templates}.
+

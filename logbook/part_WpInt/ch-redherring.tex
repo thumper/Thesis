@@ -401,3 +401,48 @@ At this point, progress was about 1.5\% per day.
 Divided download list in half, and launched second process.
 Have currently downloaded about 32\% of articles.
 
+\section{Templates}
+\label{ch:redherring-templates}
+
+\subsection{16-Aug-2009}
+
+In order to have working template expansion, the templates need
+to be loaded into the database (don't use the disk-based download).
+We don't need every revision for the templates, only the latest revision.
+(Even Wikipedia only uses the latest revision of a template when
+viewing historical revisions of an article.)
+
+The first step was to get a list of templates and the latest
+revision for each template.
+I used my recently acquired login to the Wikipedia Tool Server
+to query the database and the information required:
+\begin{verbatim}
+thumper@nightshare:~$ sql enwiki_p
+mysql> select count(*) from page where page_namespace=10;+----------+
+| count(*) |
++----------+
+|   233566 | 
++----------+
+1 row in set (0.53 sec)
+
+mysql> quit
+Bye
+thumper@nightshare:~$ sql enwiki_p > templates.txt
+select page_title, page_latest from page where page_namespace=10;
+\end{verbatim}
+
+Examining the file, we obviously have to delete the first line.
+But there are also several entries that are documentation for the templates,
+which should be removed.
+Also, templates are referred to by specifying the ``Template:'' prefix.
+We can clean it up like so:
+\begin{verbatim}
+$ grep -v -P '/doc[\t]' templates.txt | sed -e 's/^/Template:/' > templates1.txt
+\end{verbatim}
+
+And finally, on Redherring we can download the templates and
+place them into the database:
+\begin{verbatim}
+$ time ./downloadwp -db_name wikidb-thumper -db_pass wikiword -log_file templates.log < templates1.txt &
+\end{verbatim}
+
