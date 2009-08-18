@@ -76,9 +76,9 @@
 	var title = getQueryVariable(loc.search, 'title');
 	if (title != '') return title;
 	var match = /^\/wiki\/(.*)$/.exec(loc.pathname);
-	if (match[1] != '') return match[1];
+	if (match[1] != '') return unescape(match[1]);
 	match = /^\/w\/index\.php\/(.*)$/.exec(loc.pathname);
-	if (match[1] != '') return match[1];
+	if (match[1] != '') return unescape(match[1]);
 	
 	return null;
     }
@@ -87,10 +87,14 @@
 	if (/&diff=/.test(loc.search)) return null;
 	if (/&action=/.test(loc.search)) return null;
 	var title = getTitleFUrl(loc);
-	var wgArticleId = window.content.wrappedJSObject.wgArticleId;
+	var wgArticleId = '';
 	var revID = getQueryVariable(loc.search, 'oldid');
 	if (revID == '') revID = getQueryVariable(loc.search, 'diff');
-	if (revID == '') revID = window.content.wrappedJSObject.wgCurRevisionId;
+	try {
+	    if (revID == '')
+		revID = window.content.wrappedJSObject.wgCurRevisionId;
+	    wgArticleId = window.content.wrappedJSObject.wgArticleId;
+	} catch (x) { alert(x); }
 
 	if (revID == '' && wgArticleId == '' && title == '') {
 	    log("Couldn't figure out vars from: " + loc.href);
@@ -98,10 +102,11 @@
 	}
 
 	if (getPrefBool('newapi', false)) {
-	    var url = getPrefStr('wgScriptPath', 'http://redherring.cse.ucsc.edu/firefox/frontend/');
+	    var url = getPrefStr('wgScriptPath',
+			'http://redherring.cse.ucsc.edu/firefox/frontend/');
 	    url += 'index.php?action=ajax&rs=WikiTrust::ajax_getColoredText'
 		+ '&rsargs[]=' + escape(title)
-		+ '&rsargs[]=' + wgArtileId
+		+ '&rsargs[]=' + wgArticleId
 		+ '&rsargs[]=' + revID;
 	    return url;
 	} else {
@@ -333,7 +338,7 @@
     function maybeColorPage(page, tab) {
 	if (!tab) return;
 	addTrustHeaders(page);
-	if (!/[?&]trust$/.test(page.location.search)) return;
+	if (!/[?&]trust\b/.test(page.location.search)) return;
 	var wtURL = getWikiTrustURL(page.location);
 	if (!wtURL) return;
 	tab.setAttribute('class', 'selected');
