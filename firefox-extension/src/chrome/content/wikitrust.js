@@ -87,19 +87,21 @@
 	if (/&diff=/.test(loc.search)) return null;
 	if (/&action=/.test(loc.search)) return null;
 	var title = getTitleFUrl(loc);
+	var wgArticleId = window.content.wrappedJSObject.wgArticleId;
 	var revID = getQueryVariable(loc.search, 'oldid');
 	if (revID == '') revID = getQueryVariable(loc.search, 'diff');
+	if (revID == '') revID = window.content.wrappedJSObject.wgCurRevisionId;
 
-	if (revID == '' && title == '') {
+	if (revID == '' && wgArticleId == '' && title == '') {
 	    log("Couldn't figure out vars from: " + loc.href);
 	    return null;
 	}
 
 	if (getPrefBool('newapi', false)) {
 	    var url = getPrefStr('wgScriptPath', 'http://redherring.cse.ucsc.edu/firefox/frontend/');
-	    url = url + 'index.php?action=ajax&rs=WikiTrust::ajax_getColoredText'
+	    url += 'index.php?action=ajax&rs=WikiTrust::ajax_getColoredText'
 		+ '&rsargs[]=' + escape(title)
-		+ '&rsargs[]='
+		+ '&rsargs[]=' + wgArtileId
 		+ '&rsargs[]=' + revID;
 	    return url;
 	} else {
@@ -296,7 +298,12 @@
 		var wgPageName = window.content.wrappedJSObject.wgPageName;
 		var wgCurRevisionId = window.content.wrappedJSObject.wgCurRevisionId;
 		if (revID == '') revID = wgCurRevisionId;
-		var url = 'http://redherring.cse.ucsc.edu/firefox/frontend/index.php?action=ajax&rs=TextTrustImpl::handleVote&rsargs[]='+escape(wgUserName)+'&rsargs[]=' + wgArticleId + '&rsargs[]=' + revID + '&rsargs[]=' + escape(wgPageName);
+		var url = getPrefStr('wgScriptPath', 'http://redherring.cse.ucsc.edu/firefox/frontend/');
+		url += 'index.php?action=ajax&rs=WikiTrust::ajax_recordVote'
+			+ '&rsargs[]='+escape(wgUserName)
+			+ '&rsargs[]=' + wgArticleId
+			+ '&rsargs[]=' + revID
+			+ '&rsargs[]=' + escape(wgPageName);
 		log("voting url: " + url);
 		http_get(url,
 		    function (req) {
