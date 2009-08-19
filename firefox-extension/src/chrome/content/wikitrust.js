@@ -161,16 +161,6 @@
         }
     }
 
-    function getWarningBox(page) {
-	var div = page.createElement('div');
-	div.setAttribute('id', 'mw-revision-info');
-	var provider = "the <a href='http://wiki-trust.cse.ucsc.edu/' class='external text'>WikiTrust</a> project";
-	if (getPrefBool('newapi', false))
-	    provider = "the new WikiTrust AJAX API";
-	div.innerHTML="<table id='revision-info' class='plainlinks fmbox fmbox-warning' style='clear: both; margin: 0.2em 0; border: 1px solid #aaa; background: #f9f9f9; width: 100%; background: #FFDBDB; border: 1px solid #BB7070;'><tr><td class='mbox-text'><b>This is an old revision, as provided by "+provider+".  It may differ significantly from the current revision.</b></td></tr></table>";
-	return div;
-    }
-
     function addTrustHeaders(page) {
 	var css = page.createElement('link');
 	css.setAttribute('rel', 'stylesheet');
@@ -357,7 +347,6 @@
 		
 		if (req.responseXML != null) {
 		    bodyContent.innerHTML = '';
-		    bodyContent.appendChild(getWarningBox(page));
 		    bodyContent.appendChild(trustDiv);
 		    var trustContent = req.responseXML.getElementsByTagName('trustdata')[0].firstChild.nodeValue;
 		    trustDiv.innerHTML = trustContent;
@@ -368,12 +357,15 @@
 			var catlinks = page.getElementById('catlinks');
 			bodyContent.innerHTML = '';
 			bodyContent.appendChild(siteSub);
-			bodyContent.appendChild(getWarningBox(page));
 			bodyContent.appendChild(contentSub);
 			bodyContent.appendChild(trustDiv);
 			if (catlinks) bodyContent.appendChild(catlinks);
 			trustDiv.innerHTML = req.responseText;
 			fixHrefs(bodyContent);
+			var expl = page.getElementById('wt-expl');
+			if (expl) bodyContent.insertBefore(expl, bodyContent.firstChild);
+			var coords = page.getElementById('coordinates');
+			coords.style.top = "-20px !important";
 		    } else {
 			bodyContent.innerHTML = '';
 			var marker = 'id="bodyContent">';
@@ -391,7 +383,6 @@
 			}
 			bodyContent.innerHTML  = req.responseText.substring(startPos, endPos);
 			fixHrefs(bodyContent);
-			bodyContent.insertBefore(getWarningBox(page), bodyContent.firstChild);
 		    }
 		}
 	    },
