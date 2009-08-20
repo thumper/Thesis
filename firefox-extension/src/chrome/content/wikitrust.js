@@ -365,7 +365,7 @@
 			var expl = page.getElementById('wt-expl');
 			if (expl) bodyContent.insertBefore(expl, bodyContent.firstChild);
 			var coords = page.getElementById('coordinates');
-			coords.style.top = "-20px !important";
+			coords.style.cssText = 'top: -20px !important';
 		    } else {
 			bodyContent.innerHTML = '';
 			var marker = 'id="bodyContent">';
