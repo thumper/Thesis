@@ -101,19 +101,13 @@
 	    return null;
 	}
 
-	if (getPrefBool('newapi', false)) {
-	    var url = getPrefStr('wgScriptPath',
-			'http://redherring.cse.ucsc.edu/firefox/frontend/');
-	    url += 'index.php?action=ajax&rs=WikiTrust::ajax_getColoredText'
-		+ '&rsargs[]=' + escape(title)
-		+ '&rsargs[]=' + wgArticleId
-		+ '&rsargs[]=' + revID;
-	    return url;
-	} else {
-	    return 'http://wiki-trust.cse.ucsc.edu/index.php';
-			+ '?title=' + escape(title)
-			+ '&oldid=' + revID;
-	}
+	var url = getPrefStr('wgScriptPath',
+		    'http://redherring.cse.ucsc.edu/firefox/frontend/');
+	url += 'index.php?action=ajax&rs=WikiTrust::ajax_getColoredText'
+	    + '&rsargs[]=' + escape(title)
+	    + '&rsargs[]=' + wgArticleId
+	    + '&rsargs[]=' + revID;
+	return url;
     }
 
     function getStrippedURL(loc) {
@@ -139,8 +133,6 @@
         if (node.nodeName == 'A') {
             var url = node.getAttribute('HREF');
 	    if (url) {
-		if (!getPrefBool('newapi', false))
-		    url = url.replace(/^\/index\.php\//, '/wiki/');
 		var sep = '&';
 		if (url.indexOf('?') == -1) {
 		    sep = '?';
@@ -351,39 +343,20 @@
 		    var trustContent = req.responseXML.getElementsByTagName('trustdata')[0].firstChild.nodeValue;
 		    trustDiv.innerHTML = trustContent;
 		} else if (req.responseText != null) {
-		    if (getPrefBool('newapi', false)) {
-			var siteSub = page.getElementById('siteSub');
-			var contentSub = page.getElementById('contentSub');
-			var catlinks = page.getElementById('catlinks');
-			bodyContent.innerHTML = '';
-			bodyContent.appendChild(siteSub);
-			bodyContent.appendChild(contentSub);
-			bodyContent.appendChild(trustDiv);
-			if (catlinks) bodyContent.appendChild(catlinks);
-			trustDiv.innerHTML = req.responseText;
-			fixHrefs(bodyContent);
-			var expl = page.getElementById('wt-expl');
-			if (expl) bodyContent.insertBefore(expl, bodyContent.firstChild);
-			var coords = page.getElementById('coordinates');
-			coords.style.cssText = 'top: -20px !important';
-		    } else {
-			bodyContent.innerHTML = '';
-			var marker = 'id="bodyContent">';
-			var startPos = req.responseText.indexOf(marker);
-			if (startPos < 0) {
-			    log("Could not find ["+marker+"] in response.");
-			    return;
-			}
-			startPos += marker.length;
-			var endMarker = '<div id="column-one">';
-			var endPos = req.responseText.indexOf(endMarker);
-			if (endPos < 0) {
-			    log("Could not find ["+endMarker+"] in response.");
-			    return;
-			}
-			bodyContent.innerHTML  = req.responseText.substring(startPos, endPos);
-			fixHrefs(bodyContent);
-		    }
+		    var siteSub = page.getElementById('siteSub');
+		    var contentSub = page.getElementById('contentSub');
+		    var catlinks = page.getElementById('catlinks');
+		    bodyContent.innerHTML = '';
+		    bodyContent.appendChild(siteSub);
+		    bodyContent.appendChild(contentSub);
+		    bodyContent.appendChild(trustDiv);
+		    if (catlinks) bodyContent.appendChild(catlinks);
+		    trustDiv.innerHTML = req.responseText;
+		    fixHrefs(bodyContent);
+		    var expl = page.getElementById('wt-expl');
+		    if (expl) bodyContent.insertBefore(expl, bodyContent.firstChild);
+		    var coords = page.getElementById('coordinates');
+		    coords.style.cssText = 'top: -20px !important';
 		}
 	    },
 	    function (req) {
