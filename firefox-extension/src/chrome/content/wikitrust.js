@@ -1,6 +1,7 @@
 // Copyright 2009, B. Thomas Adler
 
 (function() {
+    var default_url = 'http://redherring.cse.ucsc.edu/firefox/frontend/';
     var prefService = Components.classes["@mozilla.org/preferences-service;1"].
 		getService(Components.interfaces.nsIPrefBranch);
 
@@ -101,8 +102,7 @@
 	    return null;
 	}
 
-	var url = getPrefStr('wgScriptPath',
-		    'http://redherring.cse.ucsc.edu/firefox/frontend/');
+	var url = getPrefStr('wgScriptPath', default_url);
 	url += 'index.php?action=ajax&rs=WikiTrust::ajax_getColoredText'
 	    + '&rsargs[]=' + escape(title)
 	    + '&rsargs[]=' + wgArticleId
@@ -157,12 +157,12 @@
 	var css = page.createElement('link');
 	css.setAttribute('rel', 'stylesheet');
 	css.setAttribute('type', 'text/css');
-	var url = getPrefStr('wgScriptPath', 'http://redherring.cse.ucsc.edu/firefox/frontend/');
+	var url = getPrefStr('wgScriptPath', default_url);
 	url = url + "/extensions/WikiTrust/css/trust.css";
 	css.setAttribute('href', url);
 
 	var script = page.createElement('script');
-	var url = getPrefStr('wgScriptPath', 'http://redherring.cse.ucsc.edu/firefox/frontend/');
+	var url = getPrefStr('wgScriptPath', default_url);
 	url = url + '/extensions/WikiTrust/js/trust.js';
 	script.setAttribute('src', url);
 	// script.innerHTML = 'function showOrigin(revnum) { document.location.href = "/w/index.php?title=" + wgPageName + "&oldid=" + revnum; }';
@@ -172,7 +172,7 @@
 	head.appendChild(script);
 
 	var tscript = page.createElement('script');
-	var turl = getPrefStr('wgScriptPath', 'http://redherring.cse.ucsc.edu/firefox/frontend/');
+	var turl = getPrefStr('wgScriptPath', default_url);
 	turl = turl + '/extensions/WikiTrust/js/wz_tooltip.js';
 	tscript.setAttribute('src', turl);
 	head.appendChild(tscript);
@@ -257,7 +257,7 @@
 	    var wgCurRevisionId = window.content.wrappedJSObject.wgCurRevisionId;
 	    if (vote_a) vote_a.innerHTML = 'Voting...';
 	    if (revID == '') revID = wgCurRevisionId;
-	    var url = getPrefStr('wgScriptPath', 'http://redherring.cse.ucsc.edu/firefox/frontend/');
+	    var url = getPrefStr('wgScriptPath', default_url);
 	    url += 'index.php?action=ajax&rs=WikiTrust::ajax_recordVote'
 		    + '&rsargs[]='+escape(wgUserName)
 		    + '&rsargs[]=' + wgArticleId
