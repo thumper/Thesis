@@ -38,7 +38,7 @@
 	if (!path) return failure(null);
 	var request = new XMLHttpRequest();
 	request.onreadystatechange = function() {
-	    log("http_get: readyState=" + request.readyState + ", status=" + request.status + ", path=" + path);
+	    // log("http_get: readyState=" + request.readyState + ", status=" + request.status + ", path=" + path);
 	    if(request.readyState == 4)
 	      if(request.status == 200) {
 		success(request);
@@ -242,7 +242,47 @@
 	}
     }
 
-
+    function addVotingHandler(page, el) {
+	var revID = getQueryVariable(page.location.search, 'oldid');
+	if (revID == '') revID = getQueryVariable(page.location.search, 'diff');
+	var clickHandler = function (e) {
+	  try {
+	    var vote_a = page.getElementById('wt-vote-link');
+	    var vote_1 = page.getElementById('vote-button');
+	    var vote_2 = page.getElementById('vote-button-done');
+	    var wgUserName = window.content.wrappedJSObject.wgUserName;
+	    if (wgUserName == null) wgUserName = '';
+	    var wgArticleId = window.content.wrappedJSObject.wgArticleId;
+	    var wgPageName = window.content.wrappedJSObject.wgPageName;
+	    var wgCurRevisionId = window.content.wrappedJSObject.wgCurRevisionId;
+	    if (vote_a) vote_a.innerHTML = 'Voting...';
+	    if (revID == '') revID = wgCurRevisionId;
+	    var url = getPrefStr('wgScriptPath', 'http://redherring.cse.ucsc.edu/firefox/frontend/');
+	    url += 'index.php?action=ajax&rs=WikiTrust::ajax_recordVote'
+		    + '&rsargs[]='+escape(wgUserName)
+		    + '&rsargs[]=' + wgArticleId
+		    + '&rsargs[]=' + revID
+		    + '&rsargs[]=' + escape(wgPageName);
+	    log("voting url: " + url);
+	    if (vote_1) vote_1.style.visibility='hidden';
+	    if (vote_2) vote_2.style.visibility='visible';
+	    http_get(url,
+		function (req) {
+		    if (vote_a) vote_a.innerHTML = 'Thanks for voting!'
+		    log("Voting request text: " + req.responseText);
+		    el.click = null;
+		},
+		function (req) {
+		    if (vote_a) vote_a.innerHTML = 'Voting error.';
+		    log("Voting request status: " + req.status);
+		    log("Voting request text: " + req.responseText);
+		    el.click = null;
+		});
+	    return false;
+	  } catch (ex) { log(ex); }
+	};
+	el.addEventListener("click", clickHandler, false);
+    }
 
     function maybeAddTrustTab(page) {
 	if (!isEnabledWiki(page.location)) return null;
@@ -272,47 +312,19 @@
 	var cite_li = page.getElementById('t-cite');
 	if (!cite_li) return null;	
 
-	var revID = getQueryVariable(page.location.search, 'oldid');
-	if (revID == '') revID = getQueryVariable(page.location.search, 'diff');
 	var vote_a = page.createElement('a');
+	vote_a.setAttribute('id', 'wt-vote-link');
 	vote_a.href = '#voted';
+	vote_a.onClick = function (e) { return false; };
+	addVotingHandler(page, vote_a);
 	vote_a.innerHTML ='Vote for this page';
-	var clickHandler = function (e) {
-		vote_a.innerHTML = 'Voting...';
-		wgUserName = window.content.wrappedJSObject.wgUserName;
-		if (wgUserName == null) wgUserName = '';
-		var wgArticleId = window.content.wrappedJSObject.wgArticleId;
-		var wgPageName = window.content.wrappedJSObject.wgPageName;
-		var wgCurRevisionId = window.content.wrappedJSObject.wgCurRevisionId;
-		if (revID == '') revID = wgCurRevisionId;
-		var url = getPrefStr('wgScriptPath', 'http://redherring.cse.ucsc.edu/firefox/frontend/');
-		url += 'index.php?action=ajax&rs=WikiTrust::ajax_recordVote'
-			+ '&rsargs[]='+escape(wgUserName)
-			+ '&rsargs[]=' + wgArticleId
-			+ '&rsargs[]=' + revID
-			+ '&rsargs[]=' + escape(wgPageName);
-		log("voting url: " + url);
-		http_get(url,
-		    function (req) {
-			vote_a.innerHTML = 'Thanks for voting!'
-			log("Voting request text: " + req.responseText);
-			vote_a.click = null;
-		    },
-		    function (req) {
-			vote_a.innerHTML = 'Voting error.';
-			log("Voting request status: " + req.status);
-			log("Voting request text: " + req.responseText);
-			vote_a.click = null;
-		    });
-		return false;
-	    };
-	vote_a.addEventListener("click", clickHandler, false);
 	var vote_li = page.createElement('li');
 	vote_li.setAttribute('id', 't-vote');
 	vote_li.appendChild(vote_a);
 
 	ul = cite_li.parentNode;
 	ul.appendChild(vote_li);
+
 
 	return trust_li;
     }
@@ -356,7 +368,9 @@
 		    var expl = page.getElementById('wt-expl');
 		    if (expl) bodyContent.insertBefore(expl, bodyContent.firstChild);
 		    var coords = page.getElementById('coordinates');
-		    coords.style.cssText = 'top: -20px !important';
+		    if (coords) coords.style.cssText = 'top: -20px !important';
+		    var voteButton = page.getElementById('wt-vote-button');
+		    addVotingHandler(page, voteButton);
 		}
 	    },
 	    function (req) {
@@ -377,12 +391,12 @@
 		if (!page.location) return;
 
 
-//		try {
+		try {
 		    var tab = maybeAddTrustTab(page);
 		    maybeColorPage(page, tab);
-//		} catch (e) {
-//		    log(e);
-//		};
+		} catch (e) {
+		    log(e);
+		};
 	    }, false);
     }, false);
 })();
