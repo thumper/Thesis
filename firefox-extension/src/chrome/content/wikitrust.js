@@ -1,7 +1,7 @@
 // Copyright 2009, B. Thomas Adler
 
 (function() {
-    var default_url = 'http://redherring.cse.ucsc.edu/firefox/frontend/';
+    var default_url = 'http://wikitrust.fastcoder.net:10032/';
     var prefService = Components.classes["@mozilla.org/preferences-service;1"].
 		getService(Components.interfaces.nsIPrefBranch);
 
