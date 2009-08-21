@@ -1,0 +1,55 @@
+\subsection{Summary of Completed Research}
+
+We start with some definitions.
+There are two basic ``quantity'' measures that
+form the basis of our contribution measures:
+$\txt(r)$ is the amount of text added in
+revision $r$ of an article, and $\dist(r)$
+is the edit distance of revision $r$ from
+the revision previous to it.
+There are also three basic ``quality'' measures
+that we are able to define based on our previous
+reputation research:
+$\tlong(r)$ is a measure of the text longevity
+of text added in revision $r$,
+$\elong(r)$ is a measure of the edit longevity
+of changes made for revision $r$,
+and $\tenrevsq(r)$ simply is the sum of the amount
+of text added in revision $r$ which is left over
+in each of the ten revisions after $r$ divided by
+the amount of text originally added.
+We define $\editset(a)$ as the set of revisions
+made by author $a$ across all pages.
+This allows us to define the several contribution measures
+presented in Table~\ref{tab-measures}.
+
+
+\begin{table*}[!tp]
+\begin{center}
+\begin{tabular}{|rl|l|}
+	\hline
+\numedits(a) &$= \sum_{r\in\editset(a)} 1 \cdot 1 $&
+	\text{Counts the number of edits made by the author.} \\
+\textonly(a) &$= \sum_{r\in\editset(a)} 1 \cdot \txt(r)  $&
+	\text{Counts the number of words added.} \\
+\editonly(a) &$= \sum_{r\in\editset(a)} 1 \cdot \dist(r) $&
+	\text{Sums the size of the edits made.} \\
+\textlong(a) &$= \sum_{r\in\editset(a)} \tlong(r) \cdot \txt(r) $&
+	\text{Sums the number of words added, factoring in quality.}\\
+\editlong(a) &$= \sum_{r\in\editset(a)} \elong(r) \cdot \dist(r) $&
+	\text{Sums the size of edits made, factoring in quality.}\\
+\tenrevs(a)  &$= \sum_{r\in\editset(a)} \tenrevsq(r) \cdot \txt(r) $&
+	\text{Sums the amount of text left over the next ten revisions.}\\
+\hline
+\end{tabular}
+\end{center}
+\caption[Contributions measures]{
+This table presents the contribution measures we considered,
+written so that each measure is clearly multiplying
+``quality'' by ``quantity.''
+}\label{tab-measures}
+\end{table*}
+
+
+\input{paper-contrib/analysis-quality.tex}
+\input{paper-contrib/analysis-ranking.tex}

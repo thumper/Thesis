@@ -1,0 +1,124 @@
+\subsection{Author Attribution}
+
+The foundation of our content-driven reputation system
+is an author attribution system: who is to receive
+credit or blame for text that is added to Wikipedia?
+As a document is revised, text can be added and deleted,
+but it can also be rearranged.
+For example, consider the following two sentences:
+\begin{quote}
+\textbf{a)} the cat runs after the mouse; after catching it, the cat sleeps.
+\\[0.5ex]
+\textbf{b)} the cat chases the mouse; after catching it, the cat runs home.
+\end{quote}
+Was the phrase ``runs after'' changed to ``chases,''
+or was the phrase ``the cat runs'' moved to the end of the sentence?
+This problem is a variation of the common task of
+computing document revision differences, which has a wide variety of
+solutions~\cite{EditDist74, TichyEditDist, BurnsLong97}.
+
+Our initial work in the area of author attribution~\cite{www07}
+presents one solution to the problem, but leaves several
+open questions.
+After some experimentation, we adopted an algorithm that greedily
+matches maximal common text blocks between the two
+revisions~\cite{TichyEditDist}.
+While this algorithm performs reasonably well in practice, it is not
+perfect; in the example above, it matches ``the cat runs''
+in the two sentences,
+rather than noting the global text correspondence
+which suggests that the initial strings ``the cat'' should
+be matched instead.
+In many of the standard applications of difference algorithms, such as data
+compression~\cite{BurnsLong97} and edit distance
+estimation~\cite{Levenshtein66,EditDist74,TichyEditDist,EditDistanceMoves},
+such mismatches do not matter much.
+Our problem is different, however: we would like to reward
+and punish users for their work, so we would like to minimize
+the occurrence of such mismatches.
+
+
+\subsubsection{Alternatives}
+
+There are several variations that can be
+considered for improving our model of author attribution.
+The example of the cat immediately suggests that an algorithm which
+matches the longest common text blocks located anywhere in both
+strings might perform better.
+In fact, this is very similar to
+the Unix {\tt diff\/} and {\tt wdiff\/}
+algorithm~\cite{HuntMcIlroy75,Hirchberg77,Myers86};
+unfortunately, they do not handle reordering of text very well.
+The problem is also similar to the \intro{multiple alignment}
+problem of computational biology~\cite{Align91,Gusfield97,Ssmall98},
+which tries to minimize the amount of text which is not
+matched between two strings by adding ``gaps'' until the
+text is aligned.
+Multiple alignment is perhaps better suited to our problem,
+because of the general correspondence that we expect between
+two versions.
+
+Another variation that merits consideration is on the minimum
+length of a phrase, for purposes of identifying a copied
+piece of text.
+The examples of Section~\ref{sec-diff} and this section
+suggest that,
+in the ideal case, we care about the authorship of ideas ---
+that is, which author originally introduced a concept into an article.
+Without advanced natural language processing capabilities
+to identify and compare concepts,
+this level of accuracy is impossible to achieve.
+An approximation to this notion, which is relatively simple,
+is to track phrases (sequences of words).
+Consider the following set of phrases:
+\begin{quote}
+\textbf{a)} is \\[0.5ex]
+\textbf{b)} quidditch \\[0.5ex]
+\textbf{c)} the course of human events \\[0.5ex]
+\textbf{d)} as a matter of fact
+\end{quote}
+In our existing algorithm, we ignore short phrases
+such as the single-word in the first phrase (a), on the
+premise that such short phrases aren't sufficient
+to reasonably identify an author.
+And yet, most children can identify the author
+of the second single-word phrase (b).
+At the opposite extreme are long phrases:
+the third phrase (c) is easily recognizable as part of the
+opening sentence of the U.S. Declaration of Independence,
+and it could be argued that any phrase of such length is
+likely to uniquely identify the text.
+Except, the last phrase (d) is of equal length and is
+about as anonymous as the first phrase (a).
+These examples suggest that the
+frequency of a word or phrase plays a role in
+determining how large a phrase should be.
+We propose incorporating n-gram frequency data
+collected by Google~\cite{GoogleNGram2006} to
+develop a language-dependent refinement of our
+author attribution algorithm.
+
+\subsubsection{Evaluation}
+\label{sec-attribution-eval}
+
+The evaluation of an author attribution algorithm
+is an extremely difficult one.
+At its essence, the problem of attribution is
+really one of tracing ideas and word choice
+to their original author,
+which we approximate by considering
+phrases as a proxy for ideas.
+Ideally, there would be some data-driven metric
+we could use to evaluate an author attribution
+analysis of a document history; there is currently
+no such metric which can be clearly related to attribution.
+An indirect method of evaluation would be to measure
+the predictive power of our reputation system under
+each attribution method; theoretically, the predictive
+power should increase as the attribution more closely
+matches the intent of the edits.
+A more practical evaluation is to implement several
+algorithms, search for cases where the algorithms
+disagree, and perform a manual evaluation on these
+instances.
+

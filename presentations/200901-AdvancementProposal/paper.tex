@@ -1,0 +1,70 @@
+\documentclass[11pt,letterpaper,onecolumn]{article}
+
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+
+\usepackage{fullpage}
+\usepackage{ifthen}
+\usepackage{times}
+%\usepackage{draftcopy}
+\usepackage{texpoint}
+\usepackage{subfigure}
+\usepackage[hang,small,bf]{caption}
+\usepackage{wrapfig}
+\usepackage{epsfig}
+%\usepackage{url}
+\usepackage{hyperref}
+\usepackage{breakurl}
+\usepackage{macro,luca}
+\usepackage{comment}
+
+\newif \iflong \longfalse
+\newif \ifshort \shorttrue
+
+
+\allowdisplaybreaks
+
+\setlength{\captionmargin}{30pt}
+
+\hypersetup{
+%    bookmarks=true,         % show bookmarks bar?
+%    unicode=false,          % non-Latin characters in Acrobat's bookmarks
+%    pdftoolbar=true,        % show Acrobat's toolbar?
+%    pdfmenubar=true,        % show Acrobat's menu?
+    pdffitwindow=true,      % page fit to window when opened
+    pdftitle={A Reputation System for the Wikipedia},    % title
+    pdfauthor={B. Thomas Adler},     % author
+    pdfsubject={Wikipedia Reputation},   % subject of the document
+    pdfnewwindow=true,      % links in new window
+%    pdfkeywords={keywords}, % list of keywords
+    colorlinks=false,       % false: boxed links; true: colored links
+    linkcolor=black,          % color of internal links
+    citecolor=black,        % color of links to bibliography
+    filecolor=black,      % color of file links
+    urlcolor=blue,           % color of external links
+    breaklinks=true
+}
+
+
+\begin{document}
+
+\input{paper-frontmatter/main}
+
+\pagestyle{plain}
+
+\input{paper-intro/main}
+\input{paper-defs/main}
+% \input{paper-diff/main}
+\input{paper-rep/main}
+\input{paper-contrib/main}
+\input{paper-trust/main}
+\input{paper-future/main}
+\input{paper-conclusion/main}
+
+\bibliographystyle{alpha}
+\bibliography{dvlab,paper}
+
+\end{document}
+

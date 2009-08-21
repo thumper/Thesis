@@ -1,0 +1,104 @@
+
+Visualizing trust by the coloring of
+text~\cite{WikiMTWtrust06,Cr06,McGuinness06}
+is only one possible application of a reputation system.
+Another common idea is to sandbox articles
+after they have been edited by a low-reputation user,
+thus protecting casual users from exposure to
+article versions which haven't been vetted.
+We propose to investigate the following
+applications of a reputation system for
+the Wikipedia: stable revisions and category-specific
+reputation.
+
+\subsection{Stable Revisions}
+
+As a casual user of the Wikipedia, one of the most vexing problems is in
+not knowing what version of an article is considered
+to be in a ``publishable'' state, without at least doing some
+review of the revision history of the article.
+Ready access to a set of high-quality revisions is
+desirable to more than just casual users, however: 
+schools and parents might prefer to censor vandalized
+revisions, and search engines would certainly
+prefer to direct users to a high-quality revision.
+Indeed, many in the Wikipedia community are pushing for
+being able to serve hand-picked ``stable''
+revisions~\cite{flagged-revisions}.
+
+We propose that a better alternative to hand-picked revisions is
+the selection of high-quality revisions by automatic analysis of the
+revision history of each article.
+One method for achieving this is to exploit the same idea
+we used for evaluating our reputation metric: use knowledge
+from future revisions to improve what we know about past revisions.
+For example, suppose that we have a revision in which the text
+is generally high trust except for some small portions under revisement.
+Due to text tracking, we can know that the ``final revisement''
+will gain high trust in later revisions, even as some other
+portion of the article then gets revised.
+By propagating this high trust information back to the revision
+where it was introduced, we can estimate that the overall
+trust of the revision is higher than was originally
+determined by the trust system.
+
+% The revision-selection algorithms will be quantitatively evaluated
+% with respect to their ability to pick recent revisions that, once
+% future revisions are added to the dataset, will prove to mark stable
+% points in article evolution.
+
+We believe that automatic algorithms for revision selection will prove
+to be superior to the hand-picking behind the {\em flagged revisions\/}
+approach \cite{flagged-revisions}.
+As the articles evolve, their revisions need constant re-flagging, to
+prevent the flagged revisions from becoming outdated.
+This requires a large amount of manual labor, which could be put to
+more creative uses for the Wikipedia.
+Furthermore, currently a single editor can flag a revision: the
+consensus process that we have built into the accumulation of trust by
+revision text is not built-in into the flagging solution.
+
+
+\subsection{Category Reputation}
+
+A typical question that arises when discussing
+author reputations is the problem of the egotistical
+author: can we trust an established expert on sports to make
+a legitimate edit on politics~\cite{Erroneous2007}?
+Our construction of a text trust system based
+on author reputation~\cite{WikiTrust2008}
+addresses the problem by capping the
+initial trust of inserted text to no more than half
+the author's reputation.
+Nonetheless, the Wikipedia edit history provides an
+excellent opportunity to measure whether this situation
+is commonplace in a semi-anonymous environment.
+Depending on the author behaviors we discover,
+it might be appropriate to refine our reputation
+models to consider this idea.
+
+It also seems likely that
+we can identify domain experts by looking for authors
+with high text survival values in particular categories.
+This could prove useful in applications that extend
+beyond the confines of the Wikipedia project,
+such as identifying potential book reviewers for
+Amazon.com.
+Similarly, we would expect to see that authors
+with high edit survival rates and lower text survival
+rates have skills which cross category boundaries,
+because they are primarily masters of the written word.
+
+One obstacle to the clean abstraction presented for this
+bit of research is the question of how to determine subject areas,
+which we propose can be estimated by using Wikipedia's
+``category'' labels.
+A problem with Wikipedia categories is that there
+is only a loose uniformity in their creation,
+with many categories describing specific years
+or geographic regions or even ``Google employees.''
+The ``categorical index'' tries to put a more
+familiar structure on the categories, which
+we can exploit to reduce the specificity
+that Wikipedia enthusiasts have proliferated.
+

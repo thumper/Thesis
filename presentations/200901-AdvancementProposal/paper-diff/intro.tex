@@ -1,0 +1,71 @@
+
+A first iteration for a content-driven reputation system
+might start with the simplest of rules: the more content
+an author contributes, the more reputation they gain.
+To measure the content added by an author during some edit,
+we compare the resulting version to the version immediately before,
+using a basic difference algorithm~\cite{Myers86,TichyEditDist,BurnsLong97}.
+The \intro{diff algorithm} will return a list of insertions
+and deletions that transform the previous version into
+the new version, and we can attribute the insertions
+as contributions by the new author.
+
+The underlying basis for both our reputation and trust systems
+is an algorithm which attributes each word to some user.
+Insertions of new words, and deletions of old words,
+are easy to trace, but words that are copied are a problem.
+For example, consider this section of text:
+%
+\begin{quote}
+Since 27 November 2001, the economist Anders Fogh Rasmussen
+has been Prime Minister to Denmark~\cite{wiki:Denmark-Fogh}.
+\textit{As Prime Minister to Denmark, the economist Anders Fogh Rasmussen
+leads the government with the consent of Queen Margrethe II.}
+\end{quote}
+%
+The italicized text has been added, but it primarily repeats
+what appears in the previous sentence.
+Clearly, a model of attribution which simply tracks insertions
+and deletions is too simple, as the author of the italicized
+text would receive credit for words that are not his own.
+In a similar vein,
+regular maintainers may accidentally or purposefully receive
+false credit.
+A common phenonemon in the Wikipedia is the emergence
+of a \intro{caretaker} for an article, a user who takes
+special interest in the article and devotes much time
+to revising and adding text to it.
+On occasion, however, the caretaker will take exception to
+anyone else editing the article, and completely revert all other edits.
+At this point, the caretaker could then reintroduce
+the same text, thereby receiving credit for the addition.
+
+Instead, a better model of attribution would give credit
+to the author who originally created the text,
+regardless of edit wars.
+For example, the WikiTravel site creates a tree representing
+the version history of an article: two consecutive versions
+have a parent-child relationship in the tree, except when
+the second version is identical to an earlier version;
+versions that are identical are merged into a single node
+in the tree (which is attributed to the author of the earliest
+such version)~\cite{WikiTravelAuthorship}.
+Using this revision tree, the WikiTravel site computes the
+authors of the article as being the set of authors starting
+from the most recent version and following parent links
+to the root of the tree.
+Unscrupulous authors can subvert this system as
+well, but must put some effort into changing
+the wording around a little.
+
+Historians of computer science will note a relation
+to \textit{transclusions}~\cite{Nelson81}.
+Nelson's vision for hypertext included the notion
+of micropayments to authors, which required detailed,
+and manual, attributions of text.
+Our solution automatically detects attribution
+(equivalently, transclusions of portions from earlier revisions)
+in the context of a revisioned document edited
+by multiple authors.
+
+

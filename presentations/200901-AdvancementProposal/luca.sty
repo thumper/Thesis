@@ -1,0 +1,156 @@
+% $id$ 
+% luca.sty
+% by Luca de Alfaro
+% Includes also: 
+
+% ========================================================== (old tl.sty, edited)
+
+% Generic mathematical symbols 
+
+\def\eqpun{\;}				% space after eq for punct
+\def\subs{\subseteq}
+\def\Dom{\mbox{\rm Dom}\,}
+\def\Im{\mbox{\rm Im}\,}
+\def\sat{\models}			% |=
+\def\stsat{\mid\!\sat}			% ||=
+\def\defined{\stackrel{\textrm{def}}{=}}	% = w. 'def' on top
+%\def\union{\cup}
+\def\inters{\cap}
+\def\eqspa{\hspace*{2em}}	% space betw. equation on the same line 
+\def\semb#1{[\![ #1 ]\!]}		% [[ #1 ]]
+\def\tuple#1{\langle #1 \rangle}		% < #1 >
+%\def\set#1{\{ #1 \}}			% { #1 }
+\def\go{\rightarrow} 			% -->
+\def\setm{\setminus}			% \
+\def\ita#1{{\text{\textit{#1}}}}        % to italicise something
+
+% Logical operators 
+
+\def\im{\rightarrow}			% implication
+\def\biim{\,\leftrightarrow\,}		% biimplication
+\def\no{\neg}				% negation (alias for \neg)
+\def\und{\wedge}			% and 
+\def\oder{\vee}				% or
+\def\true{\mbox{\sc t}}			% T for true
+\def\false{\mbox{\sc f}}		% F for false
+\def\qdot{\:.\:}			% . for quantification
+\def\@spartx{\hspace{0.4em}}
+\def\tiff{\ita{\@spartx iff \@spartx}}
+\def\tand{\ita{\@spartx and \@spartx}}
+\def\tor{\ita{\@spartx or \@spartx}}
+\def\timplies{\ita{\@spartx implies \@spartx}}
+\def\tnot{\ita{\@spartx not \@spartx}}
+
+% text fonts
+
+\def\xit#1{{\text{\textit{#1}}}}
+\def\xem#1{{\text{\emph{#1}}}}
+\def\xtt#1{{\text{\texttt{#1}}}} 
+\def\xbf#1{{\text{\textbf{#1}}}} 
+
+% standard TL operators
+
+\def\@bo{{\raisebox{-0.2ex}{$\Box$}}}		% internal 
+\def\@dia{{\raisebox{-0.2ex}{$\Diamond$}}}	% internal 
+\def\bo{\@bo}					% box
+\def\diam{{\@dia}}				% diamond
+\def\until{\mbox{$\:\cal U\,$}}		        % U
+\def\unless{\mbox{$\:\cal W\:$}}		% W
+\def\awaits{\mbox{$\:\cal W\:$}}		% W
+\def\since{\mbox{$\:\cal S\:$}}		        % S
+\def\backto{\mbox{$\:\cal B\:$}}		% B
+\def\pbox{\mbox{\rm\makebox[0em][l]{$\@bo$}\makebox[0.8em]{--}}} % past box
+\def\pdiam{\mbox{\rm\makebox[0em][l]{$\@dia$}\makebox[0.8em]{--}\hspace{0.05em}}} % past diamond
+%\def\prev{\mbox{\rm\makebox[0em][l]{$\next$}\makebox[1.0em]{$-$}\,}} % previous 
+
+%\def\next{\begin{picture}(8,6)(-4,-2) \put(0,1){\circle{6}} \end{picture}}
+\def\prev{\begin{picture}(8,6)(-4,-2)
+\put(0,1){\circle{6}} 
+\put(-3,1){\line(1,0){6}}
+\end{picture}}
+
+% To put notes
+\def\mynote#1{$\clubsuit$ {\textsf{#1}} $\clubsuit$}
+%\def\mynote#1{}
+
+% Misc enhancements to LaTeX
+
+\def\beq{\begin{equation}}
+\def\eeq{\end{equation}}
+
+% Naming equations or axioms: use \begin{namedeq}{EQ} to obtain
+% an equation labelled with name (EQ). This does not disrupt the 
+% numbering of the equations. It is to be used when the \theequation
+% comand is normally set to \arabic{equation}, otherwise a new environment
+% with the appropriate end text should be defined.
+
+% Naming equations or axioms, for eqnarray: use \begin{namedeqar}{EQ-} to
+% obtain equations named (EQ-1), (EQ-2), ...
+% As the above, this works if arabic is the default.
+% \newenvironment{namedeqar}[1]{\renewcommand{\theequation}{#1\arabic{
+% to be completed: need to declare a counter
+
+% This fixes a bug in equations.sty, having to do with the way
+% equations behave when fleqn.sty is also used.
+% do not use eqalign. Instead:
+% better version of eqalignno (with number):
+
+% bold letters from llncs:
+
+\def\bbbb{{\rm I\!B}}
+\def\bbbr{{\rm I\!R}} %reelle Zahlen
+\def\bbbm{{\rm I\!M}}
+\def\bbbn{{\rm I\!N}} %natuerliche Zahlen
+\def\bbbf{{\rm I\!F}}
+\def\bbbh{{\rm I\!H}}
+\def\bbbk{{\rm I\!K}}
+\def\bbbp{{\rm I\!P}}
+\def\bbbone{{\mathchoice {\rm 1\mskip-4mu l} {\rm 1\mskip-4mu l}
+{\rm 1\mskip-4.5mu l} {\rm 1\mskip-5mu l}}}
+\def\bbbc{{\mathchoice {\setbox0=\hbox{$\displaystyle\rm C$}\hbox{\hbox
+to0pt{\kern0.4\wd0\vrule height0.9\ht0\hss}\box0}}
+{\setbox0=\hbox{$\textstyle\rm C$}\hbox{\hbox
+to0pt{\kern0.4\wd0\vrule height0.9\ht0\hss}\box0}}
+{\setbox0=\hbox{$\scriptstyle\rm C$}\hbox{\hbox
+to0pt{\kern0.4\wd0\vrule height0.9\ht0\hss}\box0}}
+{\setbox0=\hbox{$\scriptscriptstyle\rm C$}\hbox{\hbox
+to0pt{\kern0.4\wd0\vrule height0.9\ht0\hss}\box0}}}}
+\def\bbbq{{\mathchoice {\setbox0=\hbox{$\displaystyle\rm
+Q$}\hbox{\raise
+0.15\ht0\hbox to0pt{\kern0.4\wd0\vrule height0.8\ht0\hss}\box0}}
+{\setbox0=\hbox{$\textstyle\rm Q$}\hbox{\raise
+0.15\ht0\hbox to0pt{\kern0.4\wd0\vrule height0.8\ht0\hss}\box0}}
+{\setbox0=\hbox{$\scriptstyle\rm Q$}\hbox{\raise
+0.15\ht0\hbox to0pt{\kern0.4\wd0\vrule height0.7\ht0\hss}\box0}}
+{\setbox0=\hbox{$\scriptscriptstyle\rm Q$}\hbox{\raise
+0.15\ht0\hbox to0pt{\kern0.4\wd0\vrule height0.7\ht0\hss}\box0}}}}
+\def\bbbt{{\mathchoice {\setbox0=\hbox{$\displaystyle\rm
+T$}\hbox{\hbox to0pt{\kern0.3\wd0\vrule height0.9\ht0\hss}\box0}}
+{\setbox0=\hbox{$\textstyle\rm T$}\hbox{\hbox
+to0pt{\kern0.3\wd0\vrule height0.9\ht0\hss}\box0}}
+{\setbox0=\hbox{$\scriptstyle\rm T$}\hbox{\hbox
+to0pt{\kern0.3\wd0\vrule height0.9\ht0\hss}\box0}}
+{\setbox0=\hbox{$\scriptscriptstyle\rm T$}\hbox{\hbox
+to0pt{\kern0.3\wd0\vrule height0.9\ht0\hss}\box0}}}}
+\def\bbbs{{\mathchoice
+{\setbox0=\hbox{$\displaystyle     \rm S$}\hbox{\raise0.5\ht0\hbox
+to0pt{\kern0.35\wd0\vrule height0.45\ht0\hss}\hbox
+to0pt{\kern0.55\wd0\vrule height0.5\ht0\hss}\box0}}
+{\setbox0=\hbox{$\textstyle        \rm S$}\hbox{\raise0.5\ht0\hbox
+to0pt{\kern0.35\wd0\vrule height0.45\ht0\hss}\hbox
+to0pt{\kern0.55\wd0\vrule height0.5\ht0\hss}\box0}}
+{\setbox0=\hbox{$\scriptstyle      \rm S$}\hbox{\raise0.5\ht0\hbox
+to0pt{\kern0.35\wd0\vrule height0.45\ht0\hss}\raise0.05\ht0\hbox
+to0pt{\kern0.5\wd0\vrule height0.45\ht0\hss}\box0}}
+{\setbox0=\hbox{$\scriptscriptstyle\rm S$}\hbox{\raise0.5\ht0\hbox
+to0pt{\kern0.4\wd0\vrule height0.45\ht0\hss}\raise0.05\ht0\hbox
+to0pt{\kern0.55\wd0\vrule height0.45\ht0\hss}\box0}}}}
+\def\bbbz{{\mathchoice {\hbox{$\sf\textstyle Z\kern-0.4em Z$}}
+{\hbox{$\sf\textstyle Z\kern-0.4em Z$}}
+{\hbox{$\sf\scriptstyle Z\kern-0.3em Z$}}
+{\hbox{$\sf\scriptscriptstyle Z\kern-0.2em Z$}}}}
+
+%\def\reals{\bbbr}			% the set of reals R
+%\def\naturals{\bbbn}			% the set of naturals N
+
+

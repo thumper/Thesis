@@ -1,0 +1,103 @@
+\subsection{Unproposed}
+
+Our initial works in author reputation and trust within
+the Wikipedia present very positive results
+based on a data-driven evaluation of trying
+to predict future deletions of text~\cite{www07,WikiTrust2008}.
+Although we are not proposing to investigate these directions,
+some additional topics under our consideration would strengthen
+the original results:
+
+\subsubsection{Algorithm Comparison}
+
+Our original work made some comparisons with
+common suggestions for reputation, such as edit count
+and text age~\cite{www07}.
+We did not attempt to make comparisons with other
+related works~\cite{McGuinness06,WikiMTWtrust06},
+due to the complexity of their implementations.
+It may be possible to compare against~\cite{WikiMTWtrust06}
+by duplicating one of the evaluation criteria
+and evaluating our own work in the same manner:
+derive a single trust value for an article,
+and predict whether it is a featured article or not.
+We feel that this is a weak comparison that would
+not illuminate the differences between the two approaches.
+
+\subsubsection{Evaluation Stabilization}
+
+Another direction to pursue is in stabilizing
+the precision and recall of our content-driven reputation.
+More recent tests have revealed that there can
+be substantial variation in the precision and recall over time,
+which we believe is due to bulk edits performed by bots.
+For the sake of completeness, this should be investigated.
+The most likely result will be to identify bots by the
+pattern of their edits and separate them from human users.
+
+\subsubsection{Attribution Evaluations}
+
+As mentioned in Section~\ref{sec-attribution-eval},
+the question of how to evaluate author attribution
+systems is open.
+We suggested that an indirect evaluation would be
+to measure the predictive power of our reputation system,
+which should theoretically increase as the attribution more closely
+assigns text to the correct author.
+Given more time, there are two concrete steps that can also be taken.
+The first is to analyze several documents by hand
+and create a test corpus with known attributions;
+this is limited by the time and effort required to
+perform the analysis.
+The second step towards building an evaluation metric
+is to conduct a user study:
+choose limited sections of text from Wikipedia
+articles, show sections of potentially copied text,
+and ask users to select their best guess at the author
+of the text.
+User studies are often limited by the number of
+people that participate, but we propose that
+the Amazon Mechanical Turk\footnote{\url{http://www.mturk.com}}
+service might offer easy access to motivated users.
+By collecting a large enough sample of user opinions
+on how text should be attributed, the statistics will
+give us a good approximation of what decisions people
+make in each case; the statistics may also be able to
+highlight unusual cases where there is significant disagreement
+between people.
+
+\subsubsection{User Dynamics}
+
+Besides how users risk their own reputation in
+unfamiliar subject areas, we can also ask questions
+about the lifecycle of authors.
+For instance, there are many anecdotal stories
+of academics that contribute to Wikipedia in their
+area of expertise, but are reverted by established users.
+A user study to evaluate anonymous contributions,
+in the same vein as conducted in~\cite{www07},
+can be used to reveal these contributions.
+We hypothesize that reverts of good material
+are primarily due to authors who view themselves
+as caretakers of specific articles.
+This raises another question about user beginnings:
+if an anonymous user is not reverted early on,
+does he go on to become a full Wikipedian?
+Similarly, can we classify how users stop participating?
+For instance, does participating in an edit war
+increase the likelihood of leaving the project?
+
+
+Looking at the how the progression of reputation
+changes over time can help identify unusual users,
+automating some of the work of the Wikidetective.
+In~\cite{Durova2007}, a pattern of small edits early in
+the editing history is used as a sockpuppet indicator;
+we can use reputation increments to identify such accounts.
+We can also build a social network (with positive and negative
+relations) between authors, to expose cliques of authors.
+These same tools can also be used to scrutinize the
+work of self-organized groups within the Wikipedia project.
+
+\input{paper-future/attacks.tex}
+

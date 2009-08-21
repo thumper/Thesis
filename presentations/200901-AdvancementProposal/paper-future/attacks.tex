@@ -1,0 +1,79 @@
+\subsection{Attack Resistance}
+
+The primary threat concern in the Wikipedia project is the
+\intro{Sybil attack}~\cite{Douceur02,Sybil05,TrustSybil05,SybilOverview} ---
+multiple accounts (also known as \intro{sockpuppets} within
+the Wikipedia community)
+which are controlled by a single bad actor,
+but cannot be distinguished from ordinary users.
+In the current Internet environment,
+a dedicated bad actor can easily have hundreds of sockpuppets.
+Coordinating these accounts can enable the bad actor
+to manipulate the reputation and trust systems,
+while masking the fact that a single person is
+responsible for the edits.
+
+For the reputation system, we want to ensure that each
+user is judged by other community members.
+The existance of sockpuppets enables the bad actor
+to make a sizable contribution (not necessarily useful!),
+then use the sockpuppets to give positive feedback on
+this contribution up to the time horizon which the reputation
+system evaluates.
+One possibility of repairing this scenario is to track
+the social networks that arise from users editing each other
+and using the social network to identify collusion~\cite{HMS02,MSI02}.
+Each time a user makes an edit to an article, they are implicitly
+making positive and negative judgements about previous users,
+which we can take to be links in a social network.
+The bad actor is at a distinct advantage here, though,
+since they can create ``links'' between the sockpuppets
+and unrelated users at their own whim.
+
+Another variation, which we believe can thwart a Sybil attack,
+uses the reputation of the author as a threshold on who
+can make judgements.
+For example, consider the reputation increase due to
+edit survival (explained in Section~\ref{sec-reputation}
+and Figure~\ref{fig-editlong}).
+The author \editor{k} of version \version{k} is punished or
+rewarded by comparing \version{k} against two reference
+versions: \version{k-1} and \version{j}, for $j > k$.
+By requiring that each reference version author have a higher
+reputation than author \editor{k}, we ensure that a bad
+actor cannot raise his reputation via Sybil attack
+to a value higher than the highest he has already attained.
+In order for regular users to gain reputation, we propose
+to lower the threshold for reference reputations if all feedback
+is positive for many revisions.
+
+
+For the trust system, our current assessment is that there are two
+main types of attack.
+One type of attack tries to raise the trust in a portion of text by
+repeatedly performing minor revisions of the page.
+The reputation system provides a first line of defense against this
+attack: authors can raise text trust only up to their reputation
+value.
+To further strengthen the system, we plan to develop a randomized
+signature algorithm, which tags each word of the text of the most
+recent revision of each article with a signature.
+The signature is computed from the IDs of the authors who raise the
+trust of the word, using a hashing scheme derived from Bloom filters
+\cite{Bloom70,Mitzenmacher02}
+or approximate membership techniques \cite{ApproxMemb06}.
+The goal is to remember the authors who have recently raised the trust
+of a word, and prevent them from doing so again until a sufficient
+number of unrelated authors has also affected the trust of the word.
+This signature problem is related to problems in network design, where
+network flows must be tracked, and ``forgotten'' after some time
+\cite{BroderMitzen04,ApproxMemb06}.
+
+The second type of attack consists in repeatedly re-arranging the text
+of an article, causing it to lose trust.
+We propose developing algorithms that will enable us to quickly find the
+past article revision most similar to the current one, so that once
+the article is fixed, its old trust values can be reinstated.
+The problem is related to finding closely-similar page pairs on the Web
+\cite{Gusfield97,Lopresti99,Bilenko03}.
+

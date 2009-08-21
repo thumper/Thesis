@@ -1,0 +1,34 @@
+
+Proposed Plan for Research:
+
+* Author Attribution
+  - parsing problem (word, sentence, paragraph)
+  - diff algorithm (letter, word)
+
+* Content Driven Reputation
+  - previous paper
+  - stability of precision/recall?
+    Investigate why the prec/rcl vary so much.
+  - category-based reputation (start with Gillian's work)
+  - do comparison with Stanford work
+
+* Group Consensus
+  - 
+  - do early users primarily train later users?
+    (how often are admins reverted compared to other users?)
+  - does a core of users dictate content
+  - page views?
+  - relation to Git?
+
+* Manual Reputation
+  - run another user study, with two choices: "revert" and "leave".
+    Maybe this takes out some of the ambiguity of contributions
+    which are positive, but require more editing?
+    This will allow us to analyze a sampling of the reverts
+    in the English wikipedia, to see if they are the result
+    of over-zealous admins.
+  - do comparison against evaluation from content driven reputation
+  - how to automatically evaluate (previous work, other ideas?)
+
+* Trust ?
+

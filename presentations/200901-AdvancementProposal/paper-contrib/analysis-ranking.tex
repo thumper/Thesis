@@ -1,0 +1,61 @@
+\subsubsection*{Ranking Authors}
+
+A different direction we explored was how these different
+measures end up ranking different authors.
+Since the contribution measures varied over such a
+wide range of values, with most people within
+a smaller region around zero, we hoped that
+ranking the authors would give us better insight into how
+the measures differed.
+
+To this end,  we computed the percentile rank
+(rounded up to the next even value for clarity in the image)
+of all non-anonymous authors, including those
+that we had classified as vandals, and then plotted
+them in 3-dimensional histograms; see
+Figure~\ref{fig-prct-editlong-textlong}.
+An important point to remember about
+Figure~\ref{fig-prct-editlong-textlong}
+is that the low-lying regions of the graph are
+rarely zero --- there are roughly between one and ten
+authors at each intersection, but this is so small compared
+to the areas that correlate that we cannot see it on the graph.
+%
+\begin{figure}[tbph]
+    \begin{center}
+    \includegraphics[width=0.45\textwidth]{paper-contrib/prct-editlong-textlong}
+    \end{center}
+    \caption[$\editlong$ vs $\textlong$]{
+    	$\editlong$ vs $\textlong$
+    }
+    \label{fig-prct-editlong-textlong}
+\end{figure}
+%
+
+We also include a 3-dimensional histogram comparing the
+percentile rankings as determined by \editlong and \numedits,
+in Figure~\ref{fig-prct-editlong-numedits}.
+The ``rows of fences'' we see
+in Figure~\ref{fig-prct-editlong-numedits}
+are due to the large number of authors who
+make only a handful of edits; the \numedits measure
+neither distinguishes them from each other,
+nor is it capable of distinguishing good contributions from 
+bad contributions.
+This last point is important, that even users in
+the lowest percentile of \editlong can be rated
+very highly by \numedits --- demonstrating
+that it is much easier to game the \numedits
+measure to achieve a high rank, while doing bad work.
+%
+
+\begin{figure}[tbph]
+    \begin{center}
+    \includegraphics[width=0.45\textwidth]{paper-contrib/prct-editlong-numedits}
+    \end{center}
+    \caption[$\editlong$ vs $\numedits$]{
+    	$\editlong$ vs $\numedits$
+    }
+    \label{fig-prct-editlong-numedits}
+\end{figure}
+

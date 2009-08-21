@@ -1,0 +1,188 @@
+
+\newcommand{\editor}[1]{\ensuremath{A_{#1}}}
+\newcommand{\version}[1]{\ensuremath{v_{#1}}}
+\newcommand{\revision}[1]{\ensuremath{e_{#1}}}
+\newcommand{\rep}{R}
+
+\newcommand{\voom}{\rightsquigarrow}
+
+\newcommand{\txt}{{\text{\textit{txt}}}}
+\newcommand{\dist}{d}
+\newcommand{\tot}{{\text{\textit{tot}}}}
+\newcommand{\tlong}{\ensuremath{\alpha_\text{\textit{text}}}\xspace}
+\newcommand{\elong}{\ensuremath{\alpha_\text{\textit{edit}}}\xspace}
+\newcommand{\tenrevsq}{\ensuremath{\beta_\text{\textit{text}}}\xspace}
+\newcommand{\editq}{{\text{\textit{EQual}}}}
+
+
+% contribution measures
+\newcommand{\editset}{\ensuremath{E}\xspace}
+\newcommand{\numedits}{\text{NumEdits}\xspace}
+\newcommand{\textonly}{\text{TextOnly}\xspace}
+\newcommand{\editonly}{\text{EditOnly}\xspace}
+\newcommand{\textlong}{\text{TextLongevity}\xspace}
+\newcommand{\editlong}{\text{EditLongevity}\xspace}
+\newcommand{\tenrevs}{\text{TenRevisions}\xspace}
+
+% The famous parameters
+\newcommand{\slack}{{c_{{\text{\textit{slack}}}}}}
+\newcommand{\coeffrep}{{c_{{\text{\textit{scale}}}}}}
+\newcommand{\coeffpunish}{{c_{{\text{\textit{punish}}}}}}
+\newcommand{\coefftext}{{c_{{\text{\textit{text}}}}}}
+\newcommand{\lengthexp}{{c_{{\text{\textit{len}}}}}}
+\newcommand{\coeffmaxrep}{{c_{{\text{\textit{maxrep}}}}}}
+%
+\newcommand{\edgeeffect}{{c_{{\text{\textit{edge}}}}}}
+\newcommand{\trustinherit}{{c_{{\text{\textit{inherit}}}}}}
+\newcommand{\partrust}{{c_{{\text{\textit{par}}}}}}
+\newcommand{\orangeav}{\mathit{Org}_\mathit{avg}}
+
+
+
+
+\newcommand{\goesto}{\rightsquigarrow}
+
+
+\newcommand{\bydef}{\triangleq}
+\newcommand{\eventually}{\mathop{\Diamond}}
+\newcommand{\always}{\mathop{\Box}}
+
+\newcommand{\intro}[1]{\index{#1}{\emph{#1}}}
+
+%%%%%%%%%%%%%%%USEFUL SHORT NOTATIONS%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\arity}{\mbox{\sc Deg}}
+\def\mitl {\mbox{{\sc Mitl}}}
+\def\ltl {\mbox{{\sc Ltl}}}
+\def\tctl{{\sc Tctl}}
+
+\def\ctl{{\sc Ctl}}
+\def\nat{\mathcal N}
+%\def\nat{{\Bbb N}}
+\def\pD#1{\Diamond_{#1}}
+\def\pB#1{\Box_{#1}}
+\def\D{\Diamond}
+\def\B{\Box}
+\def\U{{\mathcal U}}
+\def\N{{\begin{picture}(8,6)(-4,-2) \put(0,1){\circle{6}} \end{picture}}}
+\def\pU#1{\U_{{#1}}}
+\def\L{\mbox{{\sc Pltl}}}
+\def\DL{\mbox{\L$_{\Diamond}$}}
+\def\BL{\mbox{\L$_{\Box}$}}
+\def\cl{{\it cl}}
+\def\proj#1#2{[{#1}]_{#2}}
+\def\Be{{\mathcal B}}
+\newcommand{\stackrelb}[1]{\stackrel{#1}{\longrightarrow}}
+%\newcommand{\out}{\mbox{\emph{Plays}}}
+\def\pl#1{\mbox{$Player_{#1}$}}
+\newcommand{\n} {\mbox{$\nu$}}
+% \newcommand{\ta} {\mbox{$\tau$}} used? -luca
+\newcommand{\p} {\mbox{$\pi$}}
+\newcommand{\De} {\mbox{$\Delta$}}
+\newcommand{\de} {\mbox{$\delta$}}
+\newcommand{\al} {\mbox{$\alpha$}}
+\newcommand{\la} {\mbox{$\lambda$}}
+\def\exp{{\sc Exptime}}
+\def\pspace{{\sc Pspace}}
+
+\newcommand{\ignore}[1]{}
+\newcommand{\class}[2]{\{\, #1 \;|\; #2 \,\}}
+%\def\Acts{\mathit{Acts}}
+\def\hist{\rho}
+\def\PrI{Pr_{\mathit{I}}}
+\def\PrII{Pr_{\mathit{II}}}
+\def\eps{\mathit{eps}}
+\def\regeq{\approx}
+\def\Hist{\mathit{Hist}}
+
+% some defs by Luca
+\def\movs{{\text{\textit{Moves}}}}
+\def\guard{\theta}
+\def\reset{\rho}
+\def\initq{q_{in}}
+\def\glc{z} % global time
+\def\posreals{\reals_{\geq 0}}
+\def\cval{\kappa} % clock valuation
+\def\cvals{K} % set of all clock valuations
+\def\acval{\kappa'} 
+\def\adelay{\Lambda} 
+\def\clocks{C}
+\def\aclocks{C'}
+\def\clk{x}
+\def\aclk{y}
+\def\clkcond{{\text{\textit{ClkConds}}}} % set of clock conditions
+\def\clkc{\alpha} 
+% \def\mov{\gamma} do we use it? luca
+\def\stform{P} % state formulas 
+%\def\eg{\star}
+\def\etimestr{A^\star}
+\def\tk{{\text{\textit{tk}}}}
+\def\blone{{\text{\textit{bl1}}}}
+\def\bltwo{{\text{\textit{bl2}}}}
+\def\samer#1{\sim_{#1}}
+\def\maxclk{c} % max value for a clock equivalence region. 
+\def\maxc#1{c_{#1}}
+
+\def\td{{\text{\textit{td}}}}
+\def\blame{{\text{\textit{bl}}}}
+\def\blameto{{\text{\textit{blame}}}}
+\def\timestep{{\text{\textit{tstep}}}}
+
+
+\def\ftraces{{\text{\textit{FTraces}}}}
+\def\first#1{{\text{\textit{first}}}(#1)}
+\def\qout{\mathit{dest}_{l}}
+\def\dest{\delta}
+%\def\sout{\mathit{\dest}}
+
+\def\wco{{\text{\textit{WC}}}}
+\def\wc#1#2{{\text{\textit{WC}}}_{#1}(#2)} % winning condition, the set
+\def\wctl#1#2{{\text{\textit{TLWC}}}_{#1}(#2)} % winning condition,
+				% the TL formula
+\def\win#1#2{\tuple{#1}#2} % winning states
+
+% \def\floor#1{{\lfloor #1 \rfloor}}
+\def\tickf{\mathit{tick}}
+\def\aAlphabet{{\cala_Q}} % alphabet of rabin-chain automaton for wc 
+\def\block{\calb} % of mu-calculus formula 
+\def\elle{\ell}
+\def\lgoal{\Phi} % the omega-regular language that is the goal of the game
+\def\combdest{\delta} % of the original game
+%\def\tcombdest{t\delta} % of the original game
+%\def\combdest{\delta} % of the original game
+%\def\combdesti{\delta'} % of the game with blame 
+%\def\combdestii{\delta''} % of the game with blame and tick 
+\def\sexti{S'} % with blame 
+\def\sextii{S''} % with blame and tick 
+\def\movesi{\Gamma'} % with blame
+\def\movesii{\Gamma''} % with blame and tick
+\def\semgamestr{\semb{\gamestr}} % with blame
+\def\semgamestri{\semb{\gamestr}'} % with blame
+\def\semgamestrii{\semb{\gamestr}''} % with blame and tick 
+\def\rabin{H} % parity automaton for the winning condition
+\def\fixf{\psi} % mu-calculus formula used for solving the game
+\def\atr{\gamma} % automaton transition relation
+\def\asemq#1{\semb{#1}_{\text{\textit{loc}}}}
+\def\asebl#1{\semb{#1}_{\text{\textit{bl}}}}
+\def\asemq#1{\semb{#1}_{\text{\textit{tk}}}}
+\def\asem#1{\semb{#1}}
+\def\atr{\tau}
+\def\muphi{\Phi}
+\def\awin{\Omega}
+\def\maxindex{{\text{\textit{MaxIndex}}}}
+\def\lang{{\mathcal L}}
+\def\alphtrace{\rho} 
+\def\sext{S}
+\def\wdt#1{\widetilde{#1}}
+\def\wci#1#2{winning(#1,#2)}
+\def\CPre{\mathit{CPre}} % controllable predecessor operator 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\inv}[1]{{\text{\it Inv}_{#1}}}
+\newcommand{\invsat}[1]{\text{\it inv}_{#1}}
+%\newcommand{\bydef}{\stackrel{\text{def}}{=}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\formally}{\textit{Formal statement:}}

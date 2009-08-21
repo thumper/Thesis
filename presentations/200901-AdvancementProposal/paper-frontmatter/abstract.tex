@@ -1,0 +1,53 @@
+\begin{abstract}
+The Wikipedia is an experiment in group collaboration to
+build an encyclopedia in an open way.
+Perennial criticism centers around the lack of accountability
+for authors, and the potential for misinformation.
+The large community around the Wikipedia project actively
+fixes errors as they are discovered, but an unending
+stream of vandals and spammers chip
+away at the good will of volunteers who
+maintain the project for the collective good.
+We suggest that an author reputation system and
+an article text trust system can be used to focus
+the volunteer effort on edits more likely to be a problem,
+making more efficient use of the project's human resources.
+
+In order to minimize the human effort diverted towards a reputation system,
+we choose to preserve the current user experience as much as
+possible.
+To that end, we propose \textit{content-driven} reputation:
+using only the version history, the content evolution of an
+article is used to measure how well the authors
+contribute to the Wikipedia.
+When authors make contributions that are preserved over many
+revisions, their reputation goes up.
+We desire that author reputation be correlated with the
+stability of the text they contribute ---
+low reputation should be a predictor of author
+contributions which will be edited or deleted.
+
+Author reputation and article history are used as
+inputs to our content-driven trust system.
+Trust is computed on a per-word basis, with the
+goal of highlighting changing portions of article text.
+We desire that low trust correlate with text that
+is deleted on the next revision, but we also don't want
+to habituate users to our flagging.
+These goals are somewhat contradictory, so we describe
+how to measure and combine them.
+
+We propose automated methods for evaluating the quality of
+authors, and (separately) the text they create.
+By relying on the history of edits, we can draw inferences about
+the quality of the text that has come earlier in the history.
+Instead of measuring ``truth,'' our reputation ideas
+measure the ``group consensus'' in a piece of text.
+As the article text stabilizes over time, we conclude that
+it has reached a form which most members of the community can
+reasonably agree on.
+As group collaboration increases in prominence on the Internet,
+we feel that this research will open the door on new applications
+and quality measures.
+
+\end{abstract}

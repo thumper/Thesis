@@ -1,0 +1,145 @@
+\subsection{Related Work}
+
+As the Wikipedia becomes a standard resource for the Internet
+public, there is rising interest in quality measures.
+A series of incidents show that the Wikipedia can be manipulated,
+despite the ``many eyes'' reviewing the site:
+a prank biography~\cite{Seigenthaler05,NewYorkTimes05a,NewYorkTimes05b},
+congressional aides adjusting political
+biographies~\cite{TheSun06,NewZelandHerald06,BBC06},
+a user pretending to be a professor~\cite{BBC07},
+and a slew of other self-interested parties making
+inappropriate edits~\cite{Wired07,Wikiscanner07,NPR08}.
+Articles have been written questioning the
+general credibility of the Wikipedia~\cite{NewYorkTimes06,TheNewYorker06},
+and a scientific study addressing the question
+has been published~\cite{Giles05}.
+
+
+The idea of assigning trust to specific sections of text of Wikipedia
+articles as a guide to readers has been previously proposed in the scientific
+literature~ \cite{WikiMTWtrust06,Cr06,McGuinness06}, as well as in white
+papers~ \cite{King07} and blogs~\cite{PaoloMassa07}; these papers also contain
+the idea of using text background color to visualize trust values.
+% Luca: changed this section, to make the difference better stand
+% out.
+The work most closely related to our trust coloring is~\cite{McGuinness06},
+where the idea of computing text trust from the
+revision history was introduced.
+The methods are different from ours:
+% That work introduced two ideas that proved influential for our
+% approach:
+% that the trust of a piece of text could be computed from the
+% reputation of the original author, and the reputations of the authors
+% who subsequently revised the article, and that the quality of a trust
+% labeling could be evaluated via its ability to predict text
+% stability.
+in~\cite{McGuinness06}, the analysis is performed at the granularity
+level of sentences.
+% ; all sentences introduced in the same revision form
+% a {\em fragment,} and share the same trust.
+% The trust values of the fragments are computed using a Bayesian
+% network, which takes as input at every version the previous trust of
+% the fragment, the amount of surviving fragment text, and the
+% reputation of the version's author.
+Flagging individual text changes is not a goal of the algorithm: text
+insertions are not displayed at word level, and fragment reorderings
+and deletions are not flagged via the trust labels.
+Deleted text is not tracked: if text is deleted, and then re-inserted,
+it is counted as new.
+Among other things, this creates an incentive to vandalism:
+blanking an article suffices to reset its entire trust assignment.
+% To validate the trust assignment, \cite{McGuinness06} computes the
+% correlation between the trust of a fragment, and the probability that
+% the fragment appears in the most recent version of the article.
+% We refine this criterion into one of our evaluation criteria, namely,
+% the predictive power of trust with respect to word longevity.
+In~\cite{WikiMTWtrust06}, the trust of authors and fragments is
+computed on the basis of the author-to-fragment and
+fragment-of-article graphs; the authors claim in~\cite{McGuinness06}
+that the subsequent approach of using the revision history yielded
+superior results.
+% The white paper \cite{King07} focuses on the user interface aspects of
+% displaying information related to trust and author contributions.
+% Related work that relies on an analysis of revision information to
+% infer trust has been performed in the context of software, where logs
+% are mined in order to find revision patterns that point to possible
+% software defects and weak points (see, e.g., \cite{Livshits05}).
+
+Other studies of Wikipedia quality have focused on trust as
+article-level, rather than word-level, information.
+These studies can be used to answer the question of whether an
+article is of good quality, or reliable overall, but cannot be used to
+locate within an article the portions of text which deserve the most
+scrutiny, as our approach can.
+In~\cite{WikiTrust06}, which inspired~\cite{McGuinness06}, the
+revision history of a Wikipedia article is used to compute a trust
+value for the entire article.
+In~\cite{Emigh05b,Mingus07}, metrics derived via natural language processing
+are used to classify articles according to their quality.
+In~\cite{Lih04}, the number of edits and unique editors are used to
+estimate article quality.
+The use of revert times for quality estimation has been proposed
+in~\cite{Viegas04}, where a visualization of the Wikipedia editing
+process is presented; an approach based on edit frequency and dynamics
+is discussed in~\cite{WilkinsonHuberman07}.
+There is a fast-growing body of literature reporting on
+statistical studies of the evolution of Wikipedia content,
+including~\cite{Viegas04,Voss05,Ortega07}; we refer to~\cite{Ortega07} for an
+insightful overview of this line of work.
+The history flow of text contributed by Wikipedia authors has
+been studied with flow visualization methods in~\cite{Viegas04}.
+% the results have been used to analyze a number of interesting patterns
+% in the content evolution of Wikipedia articles.
+% Work on mining software revision logs (see, e.g., \cite{Livshits05})
+% is similar in its emphasis of in-depth analysis of revision logs; the
+% aim, however, is to find revision patterns and indicators that point
+% to software defects, rather than to develop a notion of author
+% reputation.
+
+In our work on the Wikipedia, we keep the notions of reputation and
+trust distinct, as they refer to different entities: reputation to
+authors, and trust to content.
+This distinction is not always present in other work; when reputation
+and trust are applied to the same entity, the computed values of
+reputation are directly intended to suggest the trust that can be
+placed in an entity.
+Reputation systems have been the topic of much research; a general
+overview can be found in~\cite{ResnickZFK00}, where several classes of
+approaches are described and compared.
+Systems that infer reputation from content analysis have a long
+history.
+The PageRank algorithm~\cite{PageRank98}, as well as the
+hubs-and-authorities approach of~\cite{Kleinberg99}, infer the
+reputation of hyper-linked documents from the link structure; this idea
+spurred a very large amount of work on ranking of Web pages, the
+fundamental problem for Web search engines.
+Reputation systems based on content analysis have also been proposed
+for the filtering of email~\cite{GolbeckEmail04}, for electronic
+marketplaces~\cite{Zacharia99,YuSingh00,Wilensky06},
+and for grid computing~\cite{PatelTeacyJennings05}, among other
+applications.
+
+The notion of information trust is extremely broad, with entire
+conferences dedicated to it~\cite{itrust}; for a general overview, see
+e.g.~\cite{Grandison00}.
+Much work on the notion of trust has been done in the context of
+social networks; see
+e.g.~\cite{Dellarocas03,Kamvar03,Guha04,Golbeck05}.
+These notions of trust are generally based on user feedback, rather
+than on algorithmic content analysis.
+Our approach is also related to {\em collaborative filtering,} where
+feedback from diverse participants or information sources is
+aggregated into a single notion of information trust
+(see, e.g.,~\cite{Tapestry,Filtering95,Upendra95,Breeseetal-UAI98}).
+% In particular, regarding collaboration for content creation,
+% a reputation system for automating paper review has been considered in
+% \cite{ReviewerRating01}: reviewers who in the past predicted the
+% correct outcome of paper acceptance gain reputation, and their
+% reputation is used to influence future acceptance/rejection decisions.
+% In our system, authors whose edits go in the general direction of page
+% change gain reputation, and their reputation lends trust to the text
+% they add or leave in place (see Section~\ref{sec-base-system}); the
+% principles are clearly related, even though the underlying techniques
+% are different.
+
