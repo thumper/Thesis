@@ -261,11 +261,11 @@ giving us access to the Wikipedia images.
 \subsection{13-Sept-2009}
 
 The English Wikipedia is still too big to do anything reasonable with.
-In preparation for our Argentina demo, I tried to move the \program{mysql}
+In preparation for our Argentina demo, I tried to move the \mysql
 stored metadata to a server at Amazon EC2.
 The file was 5GB compressed (18GB uncompressed), so it was easy
 to transfer.
-The difficulty was in reloading the data into \program{mysql}.
+The difficulty was in reloading the data into \mysql.
 I even set up a 4-disk RAID array, but the process was so slow
 that after four days I terminated the instance.
 I expect that it was the indices that were causing trouble,
@@ -276,4 +276,14 @@ copy of the English Wikipedia running --- it would be too difficult
 to transfer the data to another server, so it would only be useful
 for generating dumps.
 But then, why not just generate dump files directly?
+
+To that end, I wrote a script which would take the \program{splitwiki}
+output chunks of the \enwiki dataset, and generate a new set
+of chunks\ldots one per article.
+On host Redherring, I ran the following sequence:
+\begin{verbatim}
+$ cd ~luca/wikitrust2/thumper
+$ ./split-chunks2articles.pl
+\end{verbatim}
+This ran overnight, and was complete by morning.
 
