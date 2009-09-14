@@ -249,3 +249,31 @@ database (instead of using our disk-based system for storing files).
 For information on how I loaded the templates onto Redherring,
 see Section~\ref{ch:redherring-templates}.
 
+\subsection{27-Aug-2009}
+
+Ian had the great idea to use the Wikipedia API to convert our
+markup into HTML, thus getting the template expansion ``for free.''
+He modified the PHP code to do this, and it worked great, even
+giving us access to the Wikipedia images.
+
+\section{The English Wikipedia}
+
+\subsection{13-Sept-2009}
+
+The English Wikipedia is still too big to do anything reasonable with.
+In preparation for our Argentina demo, I tried to move the \program{mysql}
+stored metadata to a server at Amazon EC2.
+The file was 5GB compressed (18GB uncompressed), so it was easy
+to transfer.
+The difficulty was in reloading the data into \program{mysql}.
+I even set up a 4-disk RAID array, but the process was so slow
+that after four days I terminated the instance.
+I expect that it was the indices that were causing trouble,
+but didn't want to experiment so close to our trip.
+
+In the longer run, I think it's impractical to try to keep a ``live''
+copy of the English Wikipedia running --- it would be too difficult
+to transfer the data to another server, so it would only be useful
+for generating dumps.
+But then, why not just generate dump files directly?
+
