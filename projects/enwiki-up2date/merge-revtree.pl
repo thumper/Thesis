@@ -28,6 +28,7 @@ local $last_cleanup = undef;
 local $dbh = DBI->connect(WIKIDB, DBUSER, DBPASS);
 die "Bad db: ".$dbh->errstr if !defined $dbh;
 local $sth_rev = $dbh->prepare("SELECT rev_id, rev_timestamp, rev_user, rev_user_text, rev_minor_edit, rev_comment FROM revision WHERE rev_id = ?");
+local $sth_page = $dbh->prepare("SELECT page_title FROM page WHERE page_id = ?");
 
 find({ wanted => \&wanted, no_chdir=>1 }, SRCDIR);
 $last_cleanup->() if defined $last_cleanup;
@@ -73,9 +74,19 @@ sub wanted {
     my $destfile = $outdir . "/revisions.txt.gz";
     my $tmpfile = $outdir . "/.tmp.revs.txt.gz";
 
+    my $meta = $outdir . "/meta.txt";
+
     if ($pageid != $last_pageid) {
 	$last_cleanup->() if defined $last_cleanup;
 	$last_pageid = $pageid;
+
+	# write meta data
+	open(OUT, ">$meta") || die "open($meta): $!";
+	print OUT "$title\n";
+	print OUT "$id\n";
+	close(OUT);
+
+
 	$last_tmp = IO::Zlib->new($tmpfile, "wb9") || die "open($tmpfile): $!";
 
 	# need to copy original revs first
