@@ -38,7 +38,7 @@ exit(0);
 
 sub wanted {
     my $file = $File::Find::name;
-    next if -d $file;
+    return if -d $file;
 
     my ($pageid, $revid);
     if ($file =~ m#/(\d+)_(\d+)\.gz$#) {
