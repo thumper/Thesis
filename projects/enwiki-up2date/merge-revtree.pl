@@ -13,6 +13,8 @@ use constant WIKIDB => "DBI:mysql:database=wikidb-thumper:host=localhost";
 use constant DBUSER => "wikiuser";
 use constant DBPASS => "wikiword";
 
+use strict;
+use warnings;
 use File::Find;
 use IO::Zlib;
 use Data::Dumper;
@@ -21,14 +23,14 @@ use DBD::mysql;
 use DBI;
 
 
-local $last_pageid = undef;
-local $last_tmp = undef;
-local $last_cleanup = undef;
+my $last_pageid = undef;
+my $last_tmp = undef;
+my $last_cleanup = undef;
 
-local $dbh = DBI->connect(WIKIDB, DBUSER, DBPASS);
+my $dbh = DBI->connect(WIKIDB, DBUSER, DBPASS);
 die "Bad db: ".$dbh->errstr if !defined $dbh;
-local $sth_rev = $dbh->prepare("SELECT rev_id, rev_timestamp, rev_user, rev_user_text, rev_minor_edit, rev_comment FROM revision WHERE rev_id = ?");
-local $sth_page = $dbh->prepare("SELECT page_title FROM page WHERE page_id = ?");
+my $sth_rev = $dbh->prepare("SELECT rev_id, rev_timestamp, rev_user, rev_user_text, rev_minor_edit, rev_comment FROM revision WHERE rev_id = ?");
+my $sth_page = $dbh->prepare("SELECT page_title FROM page WHERE page_id = ?");
 
 find({ wanted => \&wanted, no_chdir=>1 }, SRCDIR);
 $last_cleanup->() if defined $last_cleanup;
@@ -50,7 +52,7 @@ sub wanted {
 
     $sth_rev->execute($revid) || die $dbh->errstr;
     my $row = $sth_rev->fetchrow_hashref();
-    die "No meta data for p=$pageid,r=$revid" if !defined $row;
+    die "No metadata for p=$pageid,r=$revid" if !defined $row;
 
     my $fh = IO::Zlib->new();
     $fh->open($file, "rb") || die "open: $!";
@@ -80,10 +82,14 @@ sub wanted {
 	$last_cleanup->() if defined $last_cleanup;
 	$last_pageid = $pageid;
 
+	$sth_page->execute($pageid) || die $dbh->errstr;
+	my $row = $sth_page->fetchrow_hashref();
+	die "No page metadata for p=$pageid,r=$revid" if !defined $row;
+
 	# write meta data
 	open(OUT, ">$meta") || die "open($meta): $!";
-	print OUT "$title\n";
-	print OUT "$id\n";
+	print OUT $$row{page_title}, "\n";
+	print OUT $pageid, "\n";
 	close(OUT);
 
 
@@ -93,7 +99,7 @@ sub wanted {
 	copy($destfile, $last_tmp);
 	$last_cleanup = sub {
 	    $last_tmp->close();
-	    print "Moving $tmpfile\n\tto $destfile\n";
+	    #print "Moving $tmpfile\n\tto $destfile\n";
 	    if (-e $destfile) {
 		unlink($destfile) || die "unlink($destfile): $!";
 	    }
@@ -117,15 +123,15 @@ sub wanted {
     $last_tmp->print("      <text xml:space=\"preserve\">$text</text>\n");
     $last_tmp->print("    </revision>\n");
 
-print "Appended to $tmpfile\n";
+#print "Appended to $tmpfile\n";
 }
 
 sub copy {
-    my ($destfile, $outfh) = @_;
+    my ($srcfile, $outfh) = @_;
 
-    return if !-e $destfile;
+    return if !-e $srcfile;
     my $infh = IO::Zlib->new();
-    $infh->open($tmpfile, "rb") || die "open: $!";
+    $infh->open($srcfile, "rb") || die "open: $!";
     while (!$infh->eof()) {
 	my $line = $infh->getline();
 	last if !defined $line;
