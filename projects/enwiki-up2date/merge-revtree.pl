@@ -84,7 +84,10 @@ sub wanted {
 
 	$sth_page->execute($pageid) || die $dbh->errstr;
 	my $row = $sth_page->fetchrow_hashref();
-	die "No page metadata for p=$pageid,r=$revid" if !defined $row;
+	if (!defined $row) {
+	    warn "No page metadata for p=$pageid,r=$revid";
+	    $row = { page_title => '' };
+	}
 
 	# write meta data
 	open(OUT, ">$meta") || die "open($meta): $!";
