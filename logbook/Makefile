@@ -1,6 +1,7 @@
 .PHONY: clean
 
-export TEXINPUTS=./memoir::
+export TEXINPUTS=./memoir:./apacite::
+export BSTINPUTS=./apacite
 
 
 all: logbook.pdf
@@ -10,7 +11,15 @@ clean:
 	./latexmk -c
 	rm -f *.log *.aux *.dvi *.bbl *.blg *~  *.brf *.out *.pdf
 
-logbook.dvi: logbook*.tex *.tex */*.tex *.bib
+APACITE=apacite/apacite.bst
+$(APACITE):
+	cd apacite; latex apacite.ins
+
+MEMOIR=memoir/memoir.cls
+$(MEMOIR):
+	cd memoir; latex memoir.ins
+
+logbook.dvi: $(APACITE) $(MEMOIR) logbook*.tex *.tex */*.tex *.bib
 
 .SUFFIXES: .ps .dvi .aux .tex .pdf .log .bib .bbl .xml
 .PRECIOUS: %.dvi

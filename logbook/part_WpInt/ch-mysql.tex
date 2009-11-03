@@ -1,0 +1,100 @@
+\chapter{Optimizing MySQL}
+
+\section{Introduction}
+
+\subsection{3-Nov-2009}
+
+Luca recently got an offer of help to optimize \mysql from Deitmar Julius Gabby.
+We had a conference call before our trip to WikiSym; we gave Julius copies
+of the schema and data so that he could experiment on his machine at home.
+
+This finally inspired me to make it a priority to try my idea at optimizing
+\mysql by implementing a genetic algorithm to search the parameter space.
+
+
+\section{Manual Optimization}
+
+\subsection{27-Oct-2009}
+
+After searching Google, I found a site~\cite{InnodbOpt} which had some
+good information on optimizing an \package{InnoDB} installation.
+The final configuration I came up with was:
+\begin{verbatim}
+[mysqld]
+innodb_flush_method     = O_DIRECT
+innodb_buffer_pool_size = 5G
+innodb_log_file_size = 256M
+innodb_log_buffer_size=8M
+innodb_flush_log_at_trx_commit=1
+innodb_thread_concurrency=8
+innodb_file_per_table
+innodb_autoextend_increment=1000                # in MB
+innodb_data_file_path=ibdata1:2G:autoextend
+innodb_log_group_home_dir=/big/mysql
+
+tmpdir=/big/mysql/tmp
+datadir=/giant/mysql
+max_allowed_packet=64M
+\end{verbatim}
+This takes into account Julius's advice about using different disks
+for the logdir and datadir.
+
+\section{Optimizing Mysqldump}
+
+\subsection{2-Nov-2009}
+
+I wrote up a program, \program{mysql-GA.pl}, which uses genetic algorithm
+techniques to explore parts of the configuration space.
+As a test input file, I used a \program{mysqldump} of the Portuguese wikitrust
+metadata; it is about 3GB large.
+I seeded the program with the configuration I manually found,
+and then let it evolve for 20 generations with a population of 30
+at each generation.
+This finally found a configuration that can load the dump file
+in 303 seconds.
+
+\begin{verbatim}
+[mysqld]
+innodb_autoextend_increment=1000
+innodb_data_file_path=ibdata1:2G:autoextend
+max_allowed_packet=64M
+innodb_flush_method=O_DIRECT
+innodb_buffer_pool_size=3733M
+innodb_log_file_size=1874M
+innodb_log_buffer_size=456M
+innodb_flush_log_at_trx_commit=2
+innodb_thread_concurrency=6
+innodb_file_per_table
+innodb_log_group_home_dir=/giant/mysql-ga/logdir
+tmpdir=/tmp/mysql-ga/tmpdir
+datadir=/big/mysql-ga/datadir
+\end{verbatim}
+
+\section{Optimizing Wikitrust Load}
+
+\subsection{3-Nov-2009}
+
+I initially had the idea, after pondering an email from Julius, that we weren't
+taking advantage of the threading in \mysql while doing the load.
+I wrote \program{load\_db.pl} to fork multiple processes which would
+do the loading into the database.
+I made some changes to how Ian was doing the processing, to give
+the genetic algorithms more to explore.
+I let this run for eight hours on a single test (of itwiki) before giving up.
+Some email exchanges with Ian and Luca this morning had them
+questioning why my new test was so slow.
+Things that are different:
+\begin{itemize}
+\item \program{mysqldump} includes extra (commented?) commands at the top of the file
+\item \program{mysqldump} is a single file, ian-loader is based on thousands of files (lots of seeking)
+\item \program{mysqldump} packs many INSERTs into a single statement
+\item \program{mysqldump} uses INSERT, and we use REPLACE.
+\item \program{mysqldump} output is just over half the size of ours because it does not name fields.
+\end{itemize}
+
+I used Ian's original \program{load\_db.sh} to generate a single file with all the commands in,
+and ran a timing test using the best configuration previously found by the GA.
+This ran for over an hour before I gave up, and eliminates seeking as a serious problem.
+
+Luca pointed out that he now uses INSERT so I am generating a new input file with this change.
+
