@@ -13,8 +13,8 @@ foreach my $genes (
 #        [1,3733,1874,106,2,4,1,2,2,1,4,1,0,0,2],		# 312
 #        [1,3906,1874,456,2,12,1,2,0,1,4,1,0,0,2],		# 313
 #        [1,3733,1874,106,2,4,1,2,0,1,4,1,0,0,2],		# 309
-        [1,3733,1874,456,2,6,1,2,2,1,4,1,1,0,2],		# 308
         [1,3906,1874,456,2,16,1,2,0,1,4,1,1,0,2],		# 303
+        [1,3733,1874,456,2,6,1,2,2,1,4,1,1,0,2],		# 308
         [1,3733,1874,456,2,12,1,2,0,1,4,1,1,0,2],		# 304
     ) {
     show_individual(@$genes);
@@ -125,7 +125,9 @@ if (0) {
 	$sth->execute();
 #	if ($sth->rows > 0) {
 	    my @result = $sth->fetchrow_array();
-	    if ($result[0] == 11439893) { $ok = 1 }
+	    #if ($result[0] == 11439893) { $ok = 1 }
+	    if ($result[0] == 11439887) { $ok = 1 }
+	    #if ($result[0] == 11434537) { $ok = 1 }
 	    else {
 		print STDERR "Wrong row count: ", $result[0], "\n";
 	    }
@@ -170,16 +172,19 @@ CREATE TABLE wikitrust_global (
        rep_7                      float,
        rep_8                      float,
        rep_9                      float
-) ENGINE=InnoDB;
+) ENGINE=InnoDB DEFAULT CHARSET=binary;
 
 INSERT INTO wikitrust_global VALUES (0,0,0,0,0,0,0,0,0,0,0);
 
 CREATE TABLE wikitrust_page (
-       page_id             int PRIMARY KEY,
-       page_title          varbinary(255) UNIQUE,
+       page_id             int,
+       page_title          varbinary(255),
        page_info           text $notnull,
        last_blob           int DEFAULT 8
-) ENGINE=InnoDB;
+/*,
+	PRIMARY KEY (`page_id`),
+	UNIQUE KEY `page_title` (`page_title`) */
+) ENGINE=InnoDB DEFAULT CHARSET=binary;
 
 
 CREATE TABLE wikitrust_vote (
@@ -188,12 +193,13 @@ CREATE TABLE wikitrust_vote (
        voter_name          varbinary(255) $notnull,
        voted_on            varchar(32) $notnull,
        processed           bool DEFAULT false,
-       PRIMARY KEY (revision_id, voter_name)
-) ENGINE=InnoDB;
+       PRIMARY KEY (revision_id, voter_name),
+	KEY `wikitrust_voted_processed_idx` (`voted_on`,`processed`)
+) ENGINE=InnoDB DEFAULT CHARSET=binary;
 
 
 CREATE TABLE wikitrust_revision (
-        revision_id             int PRIMARY KEY,
+        revision_id             int,
         page_id                 int,
         text_id                 int,
         time_string             binary(14),
@@ -204,36 +210,43 @@ CREATE TABLE wikitrust_revision (
         blob_id                 int $notnull,
         reputation_delta        float DEFAULT 0.0,
         overall_trust           float DEFAULT 0.0,
-        overall_quality         float
-) ENGINE=InnoDB;
+        overall_quality         float /*, 
+	PRIMARY KEY (`page_id`, `time_string`, `revision_id`) */
+) ENGINE=InnoDB DEFAULT CHARSET=binary;
 
 
 CREATE TABLE wikitrust_blob (
-        blob_id                 decimal(24) PRIMARY KEY, 
-        blob_content            longblob $notnull
-) ENGINE=InnoDB;
+        blob_id                 decimal(24),
+        blob_content            longblob $notnull,
+	PRIMARY KEY (`blob_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=binary;
 
 CREATE TABLE wikitrust_user (
-       user_id     serial PRIMARY KEY,
+       user_id     serial,
        username    varchar(255),
-       user_rep    float DEFAULT 0.0
-) ENGINE=InnoDB;
-
+       user_rep    float DEFAULT 0.0,
+  PRIMARY KEY  (`user_id`),
+  KEY `wikitrust_usernames_idx` (`username`)
+) ENGINE=InnoDB DEFAULT CHARSET=binary;
 
 CREATE TABLE wikitrust_queue (
        page_id         int $notnull,
-       page_title      varchar(255) PRIMARY KEY, 
+       page_title      varchar(255),
        requested_on    timestamp DEFAULT now(),
        processed       ENUM('unprocessed', 'processing', 'processed') $notnull DEFAULT 'unprocessed',
-       priority        int unsigned DEFAULT 0
-) ENGINE=InnoDB;
+       priority        int unsigned DEFAULT 0,
+	PRIMARY KEY (`page_title`),
+	KEY `wikitrust_queue_idx` (`processed`, `requested_on`)
+) ENGINE=InnoDB DEFAULT CHARSET=binary;
 
 CREATE TABLE wikitrust_text_cache (
-       revision_id     int PRIMARY KEY,
+       revision_id     int,
        page_id         int,
        time_string     binary(14),
-       revision_text   longtext $notnull
-) ENGINE=InnoDB;
+       revision_text   longtext $notnull,
+  PRIMARY KEY  (`revision_id`),
+  KEY `wikitrust_text_cache` (`revision_id`,`time_string`,`page_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=binary;
 
 _END_
 
@@ -248,6 +261,7 @@ my $indexcmds = <<"_END_";
 CREATE INDEX wikitrust_page_title_idx ON wikitrust_page (page_title);
 CREATE INDEX wikitrust_voted_processed_idx ON wikitrust_vote (voted_on, processed);
 CREATE INDEX wikitrust_revision_id_timestamp_idx ON wikitrust_revision (page_id, time_string, revision_id);
+ALTER ONLINE TABLE `wikitrust_revision` ADD CONSTRAINT PRIMARY KEY (`revision_id`);
 CREATE INDEX wikitrust_usernames_idx ON wikitrust_user (username);
 
 CREATE INDEX wikitrust_queue_idx ON wikitrust_queue (processed, requested_on); 
