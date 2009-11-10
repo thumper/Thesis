@@ -4,8 +4,13 @@ use strict;
 use warnings;
 use File::Find;
 
+my $dbname = shift @ARGV;
+my $dbuser = shift @ARGV;
+my $dbpass = shift @ARGV;
 my $threads = shift @ARGV;
 my $startdir = shift @ARGV;
+
+die "Bad dir: $startdir" if !-d $startdir;
 
 my @queue = getSqlDirs($startdir);
 
@@ -47,20 +52,34 @@ sub processDir {
     my $pid = fork();
     return if $pid != 0;
 
-    close(STDOUT);
-    open(STDOUT, "| mysql -u debian-sys-maint -pOSNZHR9DOKOf5lfT ptwikidb");
+    open(MYSQL, "| mysql -u $dbuser -p$dbpass $dbname");
 
     find({
 	wanted => sub {
 	    return if ! -f $File::Find::name;
+	    my $lastTable = '';
+	    my $statement = undef;
 	    open(INPUT, $File::Find::name) || die "open($File::Find::name): $!";
 	    while (<INPUT>) {
-		print;
+		next if !m/^(?:INSERT|REPLACE)/;
+		if (m/^(?:INSERT|REPLACE) INTO (\w+) (.*?) VALUES \((.*)\);/) {
+		    if ($1 ne $lastTable || length($statement) > 2*1024*1024) {
+			print MYSQL $statement, ";\n" if defined $statement;
+			$statement = undef;
+			$lastTable = $1;
+		    }
+		    if (!defined $statement) {
+			$statement = "INSERT INTO $1 VALUES ($3)";
+		    } else {
+			$statement .= ",($3)";
+		    }
+		}
 	    }
+	    print MYSQL $statement, ";\n" if defined $statement;
 	    close(INPUT);
 	}}, $dir);
-    print "\nquit\n";
-    close(STDOUT);
+    print MYSQL "\nquit\n";
+    close(MYSQL);
     exit(0);
 }
 

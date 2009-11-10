@@ -2,61 +2,94 @@
 
 use strict;
 use warnings;
+use Getopt::Long;
 use AI::Genetic;
 use Data::Dumper;
 use Error qw(:try);
 use DBI;
 use Time::HiRes qw(gettimeofday tv_interval);
 
-my $ga = AI::Genetic->new(
-	-population => 30,
-	-fitness => \&test_mysql,
-	-type => 'rangevector',
-	-terminate => \&test_terminate,
-    );
 
-$ga->init([
-	[0,2],
-	[256,4096],
-	[128,1000],
-	[2,1024],
-	[0,2],
-	[0,64],
-	[0,1],
-	[0,2],
-	[0,2],
-	[0,2],
-	[1,4],
-	[0,1],
-	[0,1],
-	[0,64],
-	[2,4],
-    ]);
-
-$ga->inject(8,
+my @population = (
 #	[2,512,1024,64,1,8,1,1,0,2,1,0,0,64,3],
-#	[0,3145,1600,874,1,0,0,2,0,0,2,1,0,64,3],
-#	[0,3145,1600,874,1,0,0,2,0,1,3,0,1,64,3],
-#	[0,3145,1600,874,1,0,0,1,0,2,4,1,1,64,3],
-#	[0,3145,1600,874,1,0,0,2,0,1,1,0,0,64,3],
-#	[0,3145,1600,874,1,0,0,0,2,1,2,1,0,64,3],
-#	[0,3145,1600,874,1,0,0,0,1,2,3,0,1,64,3],
-        [1,3733,1874,456,2,6,1,2,0,1,4,1,1,64,3],
-        [1,3733,1874,456,2,4,1,2,0,1,4,0,0,64,3],
-        [1,3733,1874,106,2,4,1,2,0,1,4,1,0,64,3],
-        [1,3733,1874,456,2,6,1,2,2,1,4,0,1,64,3],
-        [1,3733,1874,106,2,4,1,2,2,1,4,1,1,64,3],
+#	[1,3145,1600,874,1,0,0,2,0,0,2,1,0,64,3],
+#	[1,3145,1600,874,1,0,0,2,0,1,3,0,1,64,3],
+#	[1,3145,1600,874,1,0,0,1,0,2,4,1,1,64,3],
+#	[1,3145,1600,874,1,0,0,2,0,1,8,0,0,64,3],
+#	[1,3145,1600,874,1,0,0,0,2,1,8,1,0,64,3],
+#	[1,3145,1600,874,1,0,0,0,1,2,8,0,1,64,3],
+#        [1,3733,1874,456,2,6,1,2,0,1,4,1,1,64,3],
+#        [1,3733,1874,456,2,4,1,2,0,1,4,0,0,64,3],
+#        [1,3733,1874,106,2,4,1,2,0,1,4,1,0,64,3],
+#        [1,3733,1874,456,2,6,1,2,2,1,4,0,1,64,3],
+#        [1,3733,1874,106,2,4,1,2,2,1,4,1,1,64,3],
         [1,3906,1874,456,2,12,1,2,0,1,4,0,0,64,3],
         [1,3906,1874,456,2,16,1,2,0,1,4,1,0,64,3],
         [1,3733,1874,456,2,12,1,2,0,1,4,0,1,64,3],
-    );
-$ga->evolve(rouletteTwoPoint => 20);
-print "Final Winners\n";
-for my $i ($ga->getFittest(10)) {
-    print "Score: ", $i->score, "\n";
-    my @genes = $i->genes;
-    print Dumper(\@genes), "\n";
-    show_individual($i->genes);
+	[1,3733,1874,106,2,58,1,2,0,2,4,0,0,38,3],		# 260
+	[1,3733,1874,456,2,4,1,1,2,2,4,0,0,64,3],
+	[1,3733,1874,106,2,58,1,2,0,1,4,0,1,38,3],
+	[1,3733,1874,106,2,4,1,2,2,1,4,1,1,27,3],
+	[1,3906,1874,456,2,21,1,2,0,1,4,0,0,64,3],
+);
+
+my $opt = {
+	'population' => 20,
+	'generations' => 15,
+	'timing' => 0,
+	'mutation' => 0.05,
+	'dbname' => 'ptwikidb',
+	'dbuser' => 'debian-sys-maint',
+	'dbpass' => 'OSNZHR9DOKOf5lfT',
+    };
+GetOptions($opt, 'timing', 'dir=s', 'population=i', 'dbname=s', 'dbuser=s', 'dbpass=s');
+
+die "Need directory of blobs" if !defined $opt->{dir};
+
+if ($opt->{timing}) {
+    foreach my $genes (@population) {
+	my $fitness = test_mysql($genes);
+	show_individual(@$genes);
+	print "TIMING = ", 1/$fitness, "\n\n";
+    }
+} else {
+    my $ga = AI::Genetic->new(
+	    -population => $opt->{population},
+	    -mutation => $opt->{mutation},
+	    -fitness => \&test_mysql,
+	    -type => 'rangevector',
+	    -terminate => \&test_terminate,
+	);
+
+    $ga->init([
+	    [0,2],
+	    [256,4096],
+	    [128,1000],
+	    [2,1024],
+	    [0,2],
+	    [0,64],
+	    [0,1],
+	    [0,2],
+	    [0,2],
+	    [0,2],
+	    [1,16],		# loadThreads
+	    [0,1],		# notnull
+	    [0,1],		# indexbefore
+	    [0,64],		# fileThreads
+	    [2,4],		# logfiles
+	]);
+
+    $ga->inject(scalar(@population), @population);
+
+    $ga->evolve(rouletteTwoPoint => $opt->{generations});
+
+    print "Final Winners\n";
+    for my $i ($ga->getFittest(10)) {
+	print "Score: ", $i->score, "\n";
+	my @genes = $i->genes;
+	print Dumper(\@genes), "\n";
+	show_individual($i->genes);
+    }
 }
 
 exit(0);
@@ -140,32 +173,39 @@ sub test_mysql {
     my $t0 = [gettimeofday];
     while(1) { my $ps = `/etc/init.d/mysql status`; last if $ps !~ m/stopped/ || tv_interval($t0) > 300; };
     print "Loading database...\n";
-    system("echo 'create database ptwikidb;' | mysql -u debian-sys-maint -pOSNZHR9DOKOf5lfT mysql");
+    system("echo 'create database ".$opt->{dbname}.";' | mysql -u ".$opt->{dbuser}." -p".$opt->{dbpass}." mysql");
     system("/bin/sync");
 
     my $start = [gettimeofday];
     # run the test
-if (1) {
+if (0) {
     system("mysql -u debian-sys-maint -pOSNZHR9DOKOf5lfT ptwikidb < ptwikidb.dump");
 } else {
     create_schema($notnull);
     create_index() if $indexbefore;
-    system("./load_db.pl $loadThreads /giant/thumper/ptwiki-20091002/sql");
+    system("./load_db.pl ". join(' ', (map { $opt->{$_} } qw(dbname dbuser dbpass)), $loadThreads, $opt->{dir}));
     create_index() if !$indexbefore;
 }
     system("/bin/sync");
     my $ok = 0;
     try {
-	my $dbh = DBI->connect('DBI:mysql:database=ptwikidb:host=localhost', 'debian-sys-maint', 'OSNZHR9DOKOf5lfT', { RaiseError => 1, AutoCommit => 1 } );
+	my $dbh = DBI->connect('DBI:mysql:database='.$opt->{dbname}.':host=localhost', $opt->{dbuser}, $opt->{dbpass}, { RaiseError => 1, AutoCommit => 1 } );
 	my $sth = $dbh->prepare('SELECT COUNT(*) from wikitrust_revision');
 	$sth->execute();
-#	if ($sth->rows > 0) {
+	if ($sth->rows > 0) {
 	    my @result = $sth->fetchrow_array();
-	    $ok = 1 if $result[0] == 11439893;
-#	}
+#	    $ok = 1 if $result[0] == 11439893;
+#	    print "Bad results:$result[0]\n" if $result[0] != 11439893;
+#	    exit(0) if $result[0] != 11439893;
+	    $ok = 1 if $result[0] == 11439887;
+	    print "Bad results:$result[0]\n" if $result[0] != 11439887;
+	}
+	$sth->finish();
+	$dbh->disconnect();
     } otherwise { print shift, "\n"; };
 
     my $diff = tv_interval($start);
+
     if ((!$ok) || ($diff < 20)) {
 	$diff = 1E6;
 	print "BAD CONFIG: ", Dumper($genes), "\n";
@@ -176,7 +216,7 @@ if (1) {
 
 sub test_terminate {
     my $ga = shift;
-    print "===> ", $ga->getFittest->score, "\n";
+    print "FITTEST ===> ", $ga->getFittest->score, "\n";
     my @genes = $ga->getFittest->genes;
     print Dumper(\@genes), "\n";
     show_individual($ga->getFittest->genes);
@@ -208,10 +248,11 @@ CREATE TABLE wikitrust_global (
 INSERT INTO wikitrust_global VALUES (0,0,0,0,0,0,0,0,0,0,0);
 
 CREATE TABLE wikitrust_page (
-       page_id             int PRIMARY KEY,
+       page_id             int,
        page_title          varbinary(255) UNIQUE,
        page_info           text $notnull,
        last_blob           int DEFAULT 8
+/* ,	PRIMARY KEY (page_id) */
 ) ENGINE=InnoDB;
 
 
@@ -226,7 +267,7 @@ CREATE TABLE wikitrust_vote (
 
 
 CREATE TABLE wikitrust_revision (
-        revision_id             int PRIMARY KEY,
+        revision_id             int,
         page_id                 int,
         text_id                 int,
         time_string             binary(14),
@@ -238,6 +279,7 @@ CREATE TABLE wikitrust_revision (
         reputation_delta        float DEFAULT 0.0,
         overall_trust           float DEFAULT 0.0,
         overall_quality         float
+/* , PRIMAY KEY (revision_id) */
 ) ENGINE=InnoDB;
 
 
@@ -270,13 +312,14 @@ CREATE TABLE wikitrust_text_cache (
 
 _END_
 
-    open(OUT, "| mysql -u debian-sys-maint -pOSNZHR9DOKOf5lfT ptwikidb") || die "open: $!";
+    open(OUT, "| mysql -u ".$opt->{dbuser}." -p".$opt->{dbpass}." ".$opt->{dbname}) || die "open: $!";
     print OUT $createcmds;
     close(OUT);
 }
 
 
 sub create_index {
+return;
 my $indexcmds = <<"_END_";
 CREATE INDEX wikitrust_page_title_idx ON wikitrust_page (page_title);
 CREATE INDEX wikitrust_voted_processed_idx ON wikitrust_vote (voted_on, processed);
@@ -287,7 +330,7 @@ CREATE INDEX wikitrust_queue_idx ON wikitrust_queue (processed, requested_on);
 CREATE INDEX wikitrust_text_cache ON wikitrust_text_cache (revision_id, time_string, page_id);
 _END_
 
-    open(OUT, "| mysql -u debian-sys-maint -pOSNZHR9DOKOf5lfT ptwikidb") || die "open: $!";
+    open(OUT, "| mysql -u ".$opt->{dbuser}." -p".$opt->{dbpass}." ".$opt->{dbname}) || die "open: $!";
     print OUT $indexcmds;
     close(OUT);
 }
