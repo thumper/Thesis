@@ -11,31 +11,28 @@ use Time::HiRes qw(gettimeofday tv_interval);
 
 
 my @population = (
-#	[2,512,1024,64,1,8,1,1,0,2,1,0,0,64,3],
-#	[1,3145,1600,874,1,0,0,2,0,0,2,1,0,64,3],
-#	[1,3145,1600,874,1,0,0,2,0,1,3,0,1,64,3],
-#	[1,3145,1600,874,1,0,0,1,0,2,4,1,1,64,3],
-#	[1,3145,1600,874,1,0,0,2,0,1,8,0,0,64,3],
-#	[1,3145,1600,874,1,0,0,0,2,1,8,1,0,64,3],
-#	[1,3145,1600,874,1,0,0,0,1,2,8,0,1,64,3],
-#        [1,3733,1874,456,2,6,1,2,0,1,4,1,1,64,3],
-#        [1,3733,1874,456,2,4,1,2,0,1,4,0,0,64,3],
-#        [1,3733,1874,106,2,4,1,2,0,1,4,1,0,64,3],
-#        [1,3733,1874,456,2,6,1,2,2,1,4,0,1,64,3],
-#        [1,3733,1874,106,2,4,1,2,2,1,4,1,1,64,3],
-        [1,3906,1874,456,2,12,1,2,0,1,4,0,0,64,3],
-        [1,3906,1874,456,2,16,1,2,0,1,4,1,0,64,3],
-        [1,3733,1874,456,2,12,1,2,0,1,4,0,1,64,3],
-	[1,3733,1874,106,2,58,1,2,0,2,4,0,0,38,3],		# 260
-	[1,3733,1874,456,2,4,1,1,2,2,4,0,0,64,3],
-	[1,3733,1874,106,2,58,1,2,0,1,4,0,1,38,3],
-	[1,3733,1874,106,2,4,1,2,2,1,4,1,1,27,3],
-	[1,3906,1874,456,2,21,1,2,0,1,4,0,0,64,3],
+#        [1,3733,1874,456,2,6,1,1,0,0,4,1,1,64,3],
+#        [1,3733,1874,456,2,4,1,1,0,0,4,0,0,64,3],
+#        [1,3733,1874,106,2,4,1,1,0,0,4,1,0,64,3],
+#        [1,3733,1874,456,2,6,1,1,2,0,4,0,1,64,3],
+#        [1,3733,1874,106,2,4,1,1,2,0,4,1,1,64,3],
+        [1,3906,1874,456,2,12,1,1,0,0,4,0,0,64,3],
+        [1,3906,1874,456,2,16,1,1,0,0,4,1,0,64,3],
+        [1,3733,1874,456,2,12,1,1,0,0,4,0,1,64,3],
+	[1,3733,1874,106,2,58,1,1,0,1,4,0,0,38,3],		# 260
+	[1,3733,1874,456,2,4,1,0,2,1,4,0,0,64,3],
+	[1,3733,1874,106,2,58,1,1,0,0,4,0,1,38,3],
+	[1,3733,1874,106,2,4,1,1,2,0,4,1,1,27,3],
+	[1,3906,1874,456,2,21,1,1,0,0,4,0,0,64,3],
+	[1,1665,1666,216,1,54,0,1,2,1,5,1,1,10,4],		# 112.8
+	[1,1665,1666,216,1,54,0,1,2,1,5,1,1,16,4],
+	[1,2018,1459,343,1,54,1,1,2,1,5,1,1,27,4],
+	[1,1665,1459,343,2,54,1,0,0,1,5,1,1,16,4],		# 113.3
 );
 
 my $opt = {
-	'population' => 20,
-	'generations' => 15,
+	'population' => 30,
+	'generations' => 30,
 	'timing' => 0,
 	'mutation' => 0.05,
 	'dbname' => 'ptwikidb',
@@ -62,21 +59,21 @@ if ($opt->{timing}) {
 	);
 
     $ga->init([
-	    [0,2],
-	    [256,4096],
-	    [128,1000],
-	    [2,1024],
-	    [0,2],
-	    [0,64],
-	    [0,1],
-	    [0,2],
-	    [0,2],
-	    [0,2],
+	    [0,2],		# default, O_DIRECT, O_DSYNC
+	    [1024,4096],	# buffer pool size
+	    [750,2048],		# logfile size
+	    [100,1024],		# log buffer size
+	    [0,2],		# flush_log_at_trx_commit
+	    [8,64],		# thread_concurrency
+	    [0,1],		# file_per_table
+	    [0,1],		# log_group_home_dir: /tmp /big /giant
+	    [0,2],		# tmpdir
+	    [0,1],		# datadir
 	    [1,16],		# loadThreads
 	    [0,1],		# notnull
 	    [0,1],		# indexbefore
-	    [0,64],		# fileThreads
-	    [2,4],		# logfiles
+	    [8,64],		# file_io_threads
+	    [2,5],		# log_files_in_group
 	]);
 
     $ga->inject(scalar(@population), @population);
@@ -107,7 +104,7 @@ sub show_individual {
     print <<_END_;
 [mysqld]
 innodb_autoextend_increment=1000
-innodb_data_file_path=ibdata1:10G
+innodb_data_file_path=ibdata1:2G:autoextend
 innodb_additional_mem_pool_size=256M
 max_allowed_packet=64M
 thread_cache_size=64
@@ -123,9 +120,9 @@ _END_
     printChoice("innodb_thread_concurrency", $threads-1, 1..64) if $threads;
     my $table = shift @genes;
     print "innodb_file_per_table\n" if $table;
-    printChoice("innodb_log_group_home_dir", shift @genes, '/tmp/mysql-ga/logdir', '/big/mysql-ga/logdir', '/giant/mysql-ga/logdir');
+    printChoice("innodb_log_group_home_dir", shift @genes, '/big/mysql-ga/logdir', '/giant/mysql-ga/logdir');
     printChoice("tmpdir", shift @genes, '/tmp/mysql-ga/tmpdir', '/big/mysql-ga/tmpdir', '/giant/mysql-ga/tmpdir');
-    my $datadir = printChoice("datadir", shift @genes, '/tmp/mysql-ga/datadir', '/big/mysql-ga/datadir', '/giant/mysql-ga/datadir');
+    my $datadir = printChoice("datadir", shift @genes, '/big/mysql-ga/datadir', '/giant/mysql-ga/datadir');
     my $loadThreads = shift @genes;
     print "# loadThreads = $loadThreads\n";
     my $notnull = shift @genes;
