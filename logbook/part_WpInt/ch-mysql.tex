@@ -98,3 +98,56 @@ This ran for over an hour before I gave up, and eliminates seeking as a serious 
 
 Luca pointed out that he now uses INSERT so I am generating a new input file with this change.
 
+\subsection{5-Nov-2009}
+
+Continuing to pursue the loading time discrepancy, I experimented with making changes to Ian's
+\program{load\_db.sh} script until the output was as much the same as I could make it.
+Even with this effort, the load times were still vastly differently.
+And then I realized that the sort order of the records was different.
+The records from \program{mysqldump} were in order of the primary key (revision\_id),
+but our load file was in (page\_id, revision\_id) order.
+I was able to establish this the problem by removing the primary key from the table.
+
+\subsection{18-Nov-2009}
+
+After the last discovery, I modified the testing to remove the primary key.
+According to the \mysql documentation, this creates a hidden primary key which
+amounts to the row number.
+
+After discussing this with Julius, he suggested that I also investigate varying
+the number of threads used to load the data.
+I wrote a new \program{load\_db.pl} which forks multiple mysql processes to
+load the data, and then launched some new runs.
+I first ran this on the Portuguese wikipedia, and after 29 hours found a best time of
+112.8 seconds:
+\begin{verbatim}
+[1,1665,1666,216,1,54,0,1,2,1,5,1,1,10,4]
+\end{verbatim}
+
+I then ran a test on the Italian wikipedia data with a population of 30 for 30 generations,
+and received a result in 103 hours.
+The best result runs in 125.2 seconds, and the configuration is:
+\begin{verbatim}
+[mysqld]
+innodb_autoextend_increment=1000
+innodb_data_file_path=ibdata1:2G:autoextend
+innodb_additional_mem_pool_size=256M
+max_allowed_packet=64M
+thread_cache_size=64
+innodb_flush_method=O_DSYNC
+innodb_buffer_pool_size=2760M
+innodb_log_file_size=1472M
+innodb_log_buffer_size=538M
+innodb_flush_log_at_trx_commit=1
+innodb_thread_concurrency=61
+innodb_file_per_table
+innodb_log_group_home_dir=/giant/mysql-ga/logdir
+tmpdir=/tmp/mysql-ga/tmpdir
+datadir=/giant/mysql-ga/datadir
+# loadThreads = 6
+# notnull = 0
+# indexbefore = 1
+innodb_file_io_threads=52
+innodb_log_files_in_group=4
+\end{verbatim}
+

@@ -8,6 +8,7 @@ use Data::Dumper;
 use Error qw(:try);
 use DBI;
 use Time::HiRes qw(gettimeofday tv_interval);
+use DB_File;
 
 
 my @population = (
@@ -16,18 +17,32 @@ my @population = (
 #        [1,3733,1874,106,2,4,1,1,0,0,4,1,0,64,3],
 #        [1,3733,1874,456,2,6,1,1,2,0,4,0,1,64,3],
 #        [1,3733,1874,106,2,4,1,1,2,0,4,1,1,64,3],
-        [1,3906,1874,456,2,12,1,1,0,0,4,0,0,64,3],
-        [1,3906,1874,456,2,16,1,1,0,0,4,1,0,64,3],
+        [1,3906,1874,456,2,12,1,1,0,0,4,0,1,64,3],
+        [1,3906,1874,456,2,16,1,1,0,0,4,1,1,64,3],
         [1,3733,1874,456,2,12,1,1,0,0,4,0,1,64,3],
-	[1,3733,1874,106,2,58,1,1,0,1,4,0,0,38,3],		# 260
-	[1,3733,1874,456,2,4,1,0,2,1,4,0,0,64,3],
+	[1,3733,1874,106,2,58,1,1,0,1,4,0,1,38,3],		# 260
+	[1,3733,1874,456,2,4,1,0,2,1,4,0,1,64,3],
 	[1,3733,1874,106,2,58,1,1,0,0,4,0,1,38,3],
 	[1,3733,1874,106,2,4,1,1,2,0,4,1,1,27,3],
-	[1,3906,1874,456,2,21,1,1,0,0,4,0,0,64,3],
+	[1,3906,1874,456,2,21,1,1,0,0,4,0,1,64,3],
 	[1,1665,1666,216,1,54,0,1,2,1,5,1,1,10,4],		# 112.8
 	[1,1665,1666,216,1,54,0,1,2,1,5,1,1,16,4],
 	[1,2018,1459,343,1,54,1,1,2,1,5,1,1,27,4],
 	[1,1665,1459,343,2,54,1,0,0,1,5,1,1,16,4],		# 113.3
+	[2,2760,1472,538,1,61,1,1,0,1,6,0,1,52,4],		# itwiki: 125
+	[1,1665,1666,216,1,54,1,1,2,1,6,1,1,38,3],
+	[1,1665,1933,216,1,54,1,1,2,1,6,1,1,38,3],
+	[1,1665,1864,456,1,54,1,1,2,1,6,1,1,10,4],
+	[1,1665,1449,216,1,54,1,1,0,1,6,0,1,38,4],
+	[1,3733,1423,216,2,61,1,1,0,1,6,0,1,38,5],		# itwiki: 128
+	[2,2760,1666,216,1,61,0,1,0,1,6,0,1,38,4],
+	[1,1665,1449,216,1,54,1,1,0,1,6,0,1,38,4],
+	[1,1665,1666,456,1,54,0,1,0,1,6,0,1,38,4],
+	[1,1665,1666,216,1,54,1,1,0,1,6,1,1,38,3],
+
+
+
+
 );
 
 my $opt = {
@@ -71,7 +86,7 @@ if ($opt->{timing}) {
 	    [0,1],		# datadir
 	    [1,16],		# loadThreads
 	    [0,1],		# notnull
-	    [0,1],		# indexbefore
+	    [1,1],		# indexbefore
 	    [8,64],		# file_io_threads
 	    [2,5],		# log_files_in_group
 	]);
@@ -152,6 +167,16 @@ sub test_mysql {
 	}
     }
 
+    my $config = join(',', @$genes);
+    my $key = $opt->{dir}.';'.$config;
+    my %timing;
+    tie %timing, 'DB_File', "timing.db", O_RDWR|O_CREAT, 0666, $DB_HASH;
+    if (exists $timing{$key}) {
+	my $diff = $timing{$key};
+	untie(%timing);
+        return 1.0/$diff;
+    }
+
 
     # write config
     open(OUT, ">/etc/mysql/conf.d/wikitrust.cnf") || die "open: $!";
@@ -179,9 +204,8 @@ if (0) {
     system("mysql -u debian-sys-maint -pOSNZHR9DOKOf5lfT ptwikidb < ptwikidb.dump");
 } else {
     create_schema($notnull);
-    create_index() if $indexbefore;
     system("./load_db.pl ". join(' ', (map { $opt->{$_} } qw(dbname dbuser dbpass)), $loadThreads, $opt->{dir}));
-    create_index() if !$indexbefore;
+    create_index();
 }
     system("/bin/sync");
     my $ok = 0;
@@ -196,6 +220,8 @@ if (0) {
 #	    exit(0) if $result[0] != 11439893;
 	    $ok = 1 if $result[0] == 11439887;
 	    print "Bad results:$result[0]\n" if $result[0] != 11439887;
+#	    print "Bad results:$result[0]\n" if $result[0] != 18381293;
+#	    $ok = 1 if $result[0] == 18381293;
 	}
 	$sth->finish();
 	$dbh->disconnect();
@@ -207,6 +233,9 @@ if (0) {
 	$diff = 1E6;
 	print "BAD CONFIG: ", Dumper($genes), "\n";
     }
+
+    $timing{$key} = $diff;
+    untie(%timing);
 
     return 1.0/$diff;
 }
