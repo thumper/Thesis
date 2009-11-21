@@ -95,13 +95,14 @@ sub wanted {
 	print OUT $pageid, "\n";
 	close(OUT);
 
-
+        die "Bad filehandle" if defined $last_tmp;
 	$last_tmp = IO::Zlib->new($tmpfile, "wb9") || die "open($tmpfile): $!";
 
 	# need to copy original revs first
 	copy($destfile, $last_tmp);
 	$last_cleanup = sub {
 	    $last_tmp->close();
+	    $last_tmp = undef;
 	    #print "Moving $tmpfile\n\tto $destfile\n";
 	    if (-e $destfile) {
 		unlink($destfile) || die "unlink($destfile): $!";
