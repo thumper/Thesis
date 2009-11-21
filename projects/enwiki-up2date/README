@@ -1,0 +1,11 @@
+split-chunks2articles.pl
+   - convert splitwiki output into a series of files, one per article,
+	containing revisions.
+
+merge-revtree.pl
+   - takes a tree of revisions (one file per revision),
+	and appends data to the compressed "one per article"
+	files.
+
+sort-articles.pl
+   - sort the revisions in each "one file per article"
