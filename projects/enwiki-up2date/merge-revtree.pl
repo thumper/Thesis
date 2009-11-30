@@ -10,8 +10,10 @@ use constant SRCDIR => "./wikipedia-0.7/unpack/";
 use constant OUTDIR => "./ensplit-20080103/";
 
 use constant WIKIDB => "DBI:mysql:database=wikidb-thumper:host=localhost";
-use constant DBUSER => "wikiuser";
-use constant DBPASS => "wikiword";
+#use constant DBUSER => "wikiuser";
+#use constant DBPASS => "wikiword";
+use constant DBUSER => "debian-sys-maint";
+use constant DBPASS => "OSNZHR9DOKOf5lfT";
 
 use strict;
 use warnings;
@@ -23,7 +25,7 @@ use DBD::mysql;
 use DBI;
 
 
-my $last_pageid = undef;
+my $last_pageid = -1;
 my $last_tmp = undef;
 my $last_cleanup = undef;
 
