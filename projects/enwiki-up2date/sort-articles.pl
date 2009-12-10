@@ -17,6 +17,8 @@ use XML::Simple;
 use Encode;
 use Error qw(:try);
 
+my $subprocesses = 0;
+
 binmode STDOUT, ":utf8";
 find({ wanted => \&wanted, no_chdir=>1 }, OUTDIR);
 exit(0);
@@ -26,6 +28,15 @@ sub wanted {
     return if -d $file;
     return if $file !~ m/\.gz$/;
 print "FILE [$file]\n";
+    while ($subprocesses > 10) {
+	my $kid = waitpid(-1, 0);
+	die "bad kid: $kid" if $kid < 0;
+	die "child died badly: $?" if $? != 0;
+	$subprocesses--;
+    }
+    $subprocesses++;
+    return if fork();		# return in parent
+
     my $fh = IO::Zlib->new();
     $fh->open($file, "rb") || die "open: $!";
     my (@recs, %revidSeen);
@@ -38,7 +49,6 @@ print "FILE [$file]\n";
     }
     $fh->close();
     if (@recs > 0) {
-print "Sorting recs...\n";
 	@recs = sort sortByTimeRev @recs;
 	$fh = IO::Zlib->new($file.".tmp", "wb9") || die "open($file): $!";
 	foreach my $revxml (@recs) {
@@ -48,7 +58,7 @@ print "Sorting recs...\n";
 	unlink($file) || die "unlink($file): $!";
 	rename($file.".tmp", $file) || die "rename($file): $!";
     }
-print "Done with $file\n";
+    exit(0);
 }
 
 sub sortByTimeRev {
@@ -76,6 +86,11 @@ sub getRevision {
 	return if $first < 0;
 	$first += length($open);
 	my $last = rindex($data, $close);
+
+	# Luca's generated files aren't properly escaped, but ones
+	# that were downloaded later, are.  D'oh!
+	return if substr($data, $first, $last-$first) =~ m#\&lt\;/#;
+
 	substr($data, $first, $last-$first) =~ s/\&/&amp;/g;
 	$last = rindex($data, $close);
 	substr($data, $first, $last-$first) =~ s/\"/&quot;/g;
@@ -87,6 +102,16 @@ sub getRevision {
     try {
 	$cleanup->('<text xml:space="preserve">', '</text>');
 	$cleanup->('<comment>', '</comment>');
+	#$data =~ s/\x{EFBF}/\?/g;
+$data =~ s/\x{EF}\x{BF}/\?/g;
+if (length($data) > 500) {
+my $c = ord(substr($data, 458, 1));
+warn "char @ 458 = $c" if $c > 127;
+$c = ord(substr($data, 457, 1));
+warn "char @ 457 = $c" if $c > 127;
+$c = ord(substr($data, 459, 1));
+warn "char @ 459 = $c" if $c > 127;
+}
 	$xml = XMLin($data);
     } otherwise {
 	my $E = shift;

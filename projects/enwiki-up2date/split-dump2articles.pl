@@ -7,9 +7,10 @@ use warnings;
 use utf8;
 use open IN => ":utf8", OUT => ":utf8";
 
-use constant OUTDIR => "./ensplit2-20080103/";
+use constant OUTDIR => "./ensplit3-20080103/";
 
 use File::Path qw(mkpath);
+use IO::Handle '_IOLBF';
 
 $SIG{CHLD} = 'IGNORE';
 
@@ -17,14 +18,19 @@ my ($line, $collected);
 
 my $counter = 0;
 
-while (defined($line = <STDIN>)) {
+my $io = new IO::Handle;
+$io->fdopen(fileno(STDIN),"r") || die "fdopen: $!";
+$io->setvbuf($buffer, _IOLBF, 0x1000000);
+
+
+while (defined($line = $io->getline)) {
     $collected = "";
     pageStart();
     my $id = pageId();
     die "Bad id" if !defined $id;
     my $longid = sprintf("%012d", $id);
-    my $dir = substr($longid, -3);
-    my $outdir = OUTDIR . $dir;
+    my @dirs = map { substr($longid, $_, 3) } (0, 3, 6);
+    my $outdir = OUTDIR . join('/', @dirs);
     mkpath($outdir, { verbose => 1, mode => 0750 }) if !-d $outdir;
     my $base = $outdir.'/'.$longid;
     open(OUT, '>'.$base.".meta") || die "open($base.meta): $!";
@@ -38,7 +44,7 @@ exit(0);
 
 sub pageStart {
     while (defined $line && $line !~ m/^\s*<page>/) {
-	$line = <STDIN>;
+	$line = $io->getline;
     }
 }
 
@@ -48,7 +54,7 @@ sub pageId {
 	if ($line =~ m#^\s*<id>(\d+)</id>#) {
 	    return $1;
 	}
-	$line = <STDIN>
+	$line = $io->getline;
     }
     return undef;
 }
@@ -56,7 +62,7 @@ sub pageId {
 sub copyRevisions {
     my $base = shift @_;
     open(OUT, ">".$base) || die "open($base): $!";
-    while (defined($line = <STDIN>)) {
+    while (defined($line = $io->getline)) {
 	last if $line =~ m#^\s*</page>#;
 	print OUT $line;
     }
