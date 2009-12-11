@@ -20,12 +20,14 @@ my $counter = 0;
 
 my $io = new IO::Handle;
 $io->fdopen(fileno(STDIN),"r") || die "fdopen: $!";
+my $buffer;
 $io->setvbuf($buffer, _IOLBF, 0x1000000);
 
 
 while (defined($line = $io->getline)) {
     $collected = "";
     pageStart();
+    last if !defined $line;
     my $id = pageId();
     die "Bad id" if !defined $id;
     my $longid = sprintf("%012d", $id);
