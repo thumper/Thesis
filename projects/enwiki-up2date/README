@@ -9,3 +9,11 @@ merge-revtree.pl
 
 sort-articles.pl
    - sort the revisions in each "one file per article"
+
+split-dump2articles.pl
+   - convert splitwiki output into a series of files, one per article, containing revisions.
+
+merge-arttree.pl
+    - takes two trees of articles and merges them.
+      Note that the two trees have different input formats.
+

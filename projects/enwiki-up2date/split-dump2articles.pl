@@ -20,8 +20,9 @@ my $counter = 0;
 
 my $io = new IO::Handle;
 $io->fdopen(fileno(STDIN),"r") || die "fdopen: $!";
-my $buffer;
-$io->setvbuf($buffer, _IOLBF, 0x1000000);
+# NOTE: does not work on perlio mode
+##my $buffer;
+##$io->setvbuf($buffer, _IOLBF, 0x1000000);
 
 
 while (defined($line = $io->getline)) {
