@@ -151,3 +151,33 @@ innodb_file_io_threads=52
 innodb_log_files_in_group=4
 \end{verbatim}
 
+\subsection{23-Nov-2009}
+
+Since the configuration space has changed a bit since I last ran for
+the Portuguese wikipedia, I reran that test (runs in 109.2 seconds):
+\texttt{time ./mysql-GA.pl --dir /giant/thumper/ptwiki-20091002/sql}.
+
+\begin{verbatim}
+[mysqld]
+innodb_autoextend_increment=1000
+innodb_data_file_path=ibdata1:2G:autoextend
+innodb_additional_mem_pool_size=256M
+max_allowed_packet=64M
+thread_cache_size=64
+innodb_flush_method=O_DIRECT
+innodb_buffer_pool_size=1665M
+innodb_log_file_size=1150M
+innodb_log_buffer_size=343M
+innodb_flush_log_at_trx_commit=2
+innodb_thread_concurrency=54
+innodb_file_per_table
+innodb_log_group_home_dir=/big/mysql-ga/logdir
+tmpdir=/tmp/mysql-ga/tmpdir
+datadir=/giant/mysql-ga/datadir
+# loadThreads = 5
+# notnull = 1
+# indexbefore = 1
+innodb_file_io_threads=16
+innodb_log_files_in_group=4
+\end{verbatim}
+
