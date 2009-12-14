@@ -31,7 +31,6 @@ while ($offset < $maxsize) {
 	die "child died badly: $?" if $? != 0;
 	$subprocesses--;
     }
-if (0) {
     $subprocesses++;
     my $pid = fork();
     if (!$pid) {
@@ -40,10 +39,6 @@ if (0) {
     } else {
 	$offset += $handlesize;
     }
-} else {
-	processFile($input, $offset, $handlesize);
-	$offset += $handlesize;
-}
 }
 while ($subprocesses > 0) {
     my $kid = waitpid(-1, 0);
@@ -71,20 +66,16 @@ warn "Scanning $offset to $endpos";
 
     my $pos = $offset;
     while ($pos < $endpos) {
-warn "START pos=$pos";
 	pos($data) = $pos;
-warn "(pos=$pos) set begining to " . pos($data);
 	my $page_start = undef;
 	if ($data =~ m{<page>}g) { $page_start = pos($data) - length("<page>"); }
 	else { last; };
 	last if $page_start >= $endpos;	# next page starts past boundary
-warn "found page start $page_start";
 
 	my $rev_start = undef;
 	if ($data =~ m#<revision>#g) { $rev_start = pos($data) - length("<revision>"); }
 	else { die "No revision found after $page_start"; }
 	die "Happens before: $rev_start < $page_start" if $rev_start < $page_start;
-warn "found rev_start start $rev_start";
 
 	my $page_end = undef;
 	if ($data =~ m#</page>#g) { $page_end = pos($data) - length("</page>"); }
@@ -119,7 +110,7 @@ warn "found rev_start start $rev_start";
 	# Copy all revisions, plus those we downloaded previously
 	my $len = $page_end - $rev_start;
 	$pos = $rev_start;
-	open(OUT, "| gzip --best > $base.gz") || die "open($base.gz): $!";
+	open(OUT, "| pbzip2 -9 -c > $base.bz2") || die "open($base.gz): $!";
 	# First, copy from our dump file
 	while ($len > 0) {
 	    my $s = min($len , 1 * 1024 * 1024);
@@ -127,6 +118,7 @@ warn "found rev_start start $rev_start";
 	    $pos += $s;
 	    $len -= $s;
 	}
+if (0) {
 	# and now also find what we downloaded
 	my $olddir = SRCDIR2 . join("/", map { substr($longid, $_, 3) } (0,3,6,9) );
 	if (-f "$olddir/revisions.txt.gz") {
@@ -139,9 +131,9 @@ warn "found rev_start start $rev_start";
 	    }
 	    close(INPUT);
 	}
+}
 	close(OUT);
 	$pos = $page_end + length("</page>");
-warn "pos now @ $pos";
     }
     munmap($data) || die "munmap: $!";
     close(ORIG);

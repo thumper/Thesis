@@ -7,7 +7,7 @@ use warnings;
 use utf8;
 use open IN => ":utf8", OUT => ":utf8";
 
-use constant OUTDIR => "./ensplit3-20080103/";
+use constant OUTDIR => "./ensplit4-20080103/";
 
 use File::Path qw(mkpath);
 use IO::Handle '_IOLBF';
@@ -72,7 +72,7 @@ sub copyRevisions {
     close(OUT);
     my $pid = fork();
     if (!$pid) {
-	exec("bzip2 -9 -q $base");
+	exec("pbzip2 -9 -q $base");
 	exit(0);
     }
 }
