@@ -11,18 +11,21 @@ use warnings;
 use utf8;
 use open IN => ":utf8", OUT => ":utf8";
 use Sys::Mmap;
+use File::Path qw(mkpath);
 
 use constant OUTDIR => "./ensplit4-20080103/";
 use constant SRCDIR2 => "./ensplit-20080103/";		# previously sorted articles
 
-use File::Path qw(mkpath);
+use constant STATE_MULTIPAGE => 0;
+use constant STATE_LASTPAGE => 1;
+use constant STATE_DONE => 2;
 
 my $input = shift @ARGV;
 
 my $subprocesses = 0;
 my $offset = 0;
 my $maxsize = -s $input;
-my $handlesize = 16 * 1024 * 1024;
+my $handlesize = 1 * 1024 * 1024 * 1024;
 
 while ($offset < $maxsize) {
     while ($subprocesses > 10) {
@@ -34,10 +37,10 @@ while ($offset < $maxsize) {
     $subprocesses++;
     my $pid = fork();
     if (!$pid) {
-	processFile($input, $offset, $handlesize);
+	processChunk($input, $offset, $handlesize);
 	exit(0);
     } else {
-	$offset += $handlesize;
+	$offset += $handlesize - (length("<page>")-1);
     }
 }
 while ($subprocesses > 0) {
@@ -52,48 +55,104 @@ sub min {
     else { return $b; }
 }
 
-sub processFile {
+sub processChunk {
     my ($input, $offset, $handlesize) = @_;
 
     my $maxsize = -s $input;
-    my $endpos = min($maxsize, $offset + $handlesize);
+
+    my $state = STATE_MULTIPAGE;
+    while ($state != STATE_DONE && $offset < $maxsize) {
+	my $len = min($handlesize, $maxsize - $offset);
+	($offset, $state) = doChunkAction($input, $offset, $len, $state);
+warn "doChunkAction = ($offset, $state)\n";
+    }
+}
+
+
+sub doChunkAction {
+    my ($input, $offset, $len, $state) = @_;
+    my $next_state = STATE_DONE;
+my $endpos = $offset+$len;
 warn "Scanning $offset to $endpos";
 
     my $data;
     open(ORIG, $input) || die "open($input): $!";
-    mmap($data, 0, PROT_READ, MAP_SHARED, ORIG) || die "mmap: $!";
+    mmap($data, $len, PROT_READ, MAP_SHARED, ORIG, $offset) || die "mmap: $!";
 
 
-    my $pos = $offset;
-    while ($pos < $endpos) {
+    my $pos = 0;
+    while ($pos < $len) {
 	pos($data) = $pos;
 	my $page_start = undef;
+
 	if ($data =~ m{<page>}g) { $page_start = pos($data) - length("<page>"); }
-	else { last; };
-	last if $page_start >= $endpos;	# next page starts past boundary
+	else {
+	    # No page data in this chunk, so someone else handled it.
+	    last;
+	}
 
 	my $rev_start = undef;
-	if ($data =~ m#<revision>#g) { $rev_start = pos($data) - length("<revision>"); }
-	else { die "No revision found after $page_start"; }
+	if ($data =~ m#<revision>#g) {$rev_start = pos($data) - length("<revision>"); }
+	else {
+	    # Were we too close to end of the chunk?
+	    if ($page_start > 0) {
+		$pos = $page_start;
+		$next_state = STATE_LASTPAGE;
+		last;
+	    }
+	    die "No revision found after $offset+$page_start";
+	}
 	die "Happens before: $rev_start < $page_start" if $rev_start < $page_start;
+
+	pos($data) = $page_start;
+	my $id = undef;
+	if ($data =~ m#<id>(\d+)</id>#g) {
+	    $id = $1;
+	    die "Id too far @ ".pos($data).", page @ $offset+$page_start" if pos($data) - $page_start > 100;
+	} else {
+	    if ($page_start > 0) {
+		$pos = $page_start;
+		$next_state = STATE_LASTPAGE;
+		last;
+	    }
+	    die "No id found, starting at $page_start";
+	}
+	pos($data) = $page_start;
+	my $title = undef;
+	if ($data =~ m#<title>(.*)</title>#g) {
+	    $title = $1;
+	    die "Title too far @ ".pos($data).", page @ $offset+$page_start" if pos($data) - $page_start > 200;
+	} else {
+	    if ($page_start > 0) {
+		$pos = $page_start;
+		$next_state = STATE_LASTPAGE;
+		last;
+	    }
+	    die "No title found, starting at $page_start";
+	}
 
 	my $page_end = undef;
 	if ($data =~ m#</page>#g) { $page_end = pos($data) - length("</page>"); }
-	else { die "No page end found after $rev_start"; }
+	else {
+	    if ($page_start > 0) {
+		$pos = $page_start;
+		$next_state = STATE_LASTPAGE;
+		last;
+	    }
+	    die "No page end found after $offset+$rev_start";
+	}
 
-	my $id = undef;
-	if (substr($data, $page_start, $rev_start-$page_start) =~ m#<id>(\d+)</id>#) {
-	    $id = $1;
-	} else { die "No id found, starting at $page_start"; }
-	my $title = undef;
-	if (substr($data, $page_start, $rev_start-$page_start) =~ m#<title>(.*)</title>#) {
-	    $title = $1;
-	} else { die "No title found, starting at $page_start"; }
+	if ($rev_start > $page_end) {
+	    $pos = $page_end + length("</page>");
+	    last if $state == STATE_LASTPAGE;
+	    next;
+	}
 
 	# Skip all articles that aren't in the main name space
 	if ($title =~ m/^(Media|Special|Talk|User|User talk|Wikipedia|Wikipedia talk|Image|Image talk|MediaWiki|MediaWiki talk|Template|Template talk|Help|Help talk|Category|Category talk|Portal|Portal talk):/)
 	{
 	    $pos = $page_end + length("</page>");
+	    last if $state == STATE_LASTPAGE;
 	    next;
 	}
 
@@ -134,8 +193,10 @@ if (0) {
 }
 	close(OUT);
 	$pos = $page_end + length("</page>");
+	last if $state == STATE_LASTPAGE;
     }
     munmap($data) || die "munmap: $!";
     close(ORIG);
+    return ($offset+$pos, $next_state);
 }
 
