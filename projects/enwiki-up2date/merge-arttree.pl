@@ -44,11 +44,15 @@ sub mergeFDownload {
     chomp($title);
     close(INPUT);
 
+    next if ($title =~ m/<title>(?:Media|Special|Talk|User|User talk|Wikipedia|Wikipedia talk|Image|Image talk|MediaWiki|MediaWiki talk|Template|Template talk|Help|Help talk|Category|Category talk|Portal|Portal talk):/);
+    next if $title eq '';
+    die "Bad title: $file" if $title eq '';
+
     my $outdir = OUTDIR . join("/", map { substr($pageid, $_, 3) } (0,3,6) );
     mkpath($outdir, { verbose => 1, mode => 0750 });
 
     open(OUTPUT, ">$outdir/$pageid.meta") || die "open($outdir/$pageid.meta): $!";
-    print "<page>\n<title>", xmlEscape($title), "</title>\n<id>$pageid</id>\n";
+    print OUTPUT "<page>\n<title>", xmlEscape($title), "</title>\n<id>$pageid</id>\n";
     close(OUTPUT);
 
     rename($file, "$outdir/$pageid.gz") || die "rename($file): $!";

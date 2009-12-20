@@ -7,7 +7,7 @@ use warnings;
 use utf8;
 use open IN => ":utf8", OUT => ":utf8";
 
-use constant OUTDIR => "./ensplit4-20080103/";
+use constant OUTDIR => "./ensplit4-20080103.norm/";
 
 use File::Path qw(mkpath);
 use IO::Handle '_IOLBF';
@@ -31,6 +31,8 @@ while (defined($line = $io->getline)) {
     last if !defined $line;
     my $id = pageId();
     die "Bad id" if !defined $id;
+    next if ($collected =~ m/<title>(?:Media|Special|Talk|User|User talk|Wikipedia|Wikipedia talk|Image|Image talk|MediaWiki|MediaWiki talk|Template|Template talk|Help|Help talk|Category|Category talk|Portal|Portal talk):/);
+
     my $longid = sprintf("%012d", $id);
     my @dirs = map { substr($longid, $_, 3) } (0, 3, 6);
     my $outdir = OUTDIR . join('/', @dirs);

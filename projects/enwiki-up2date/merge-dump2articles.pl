@@ -13,8 +13,8 @@ use open IN => ":utf8", OUT => ":utf8";
 use Sys::Mmap;
 use File::Path qw(mkpath);
 
-use constant OUTDIR => "./ensplit4-20080103/";
-use constant SRCDIR2 => "./ensplit-20080103/";		# previously sorted articles
+use constant OUTDIR => "./ensplit4-20080103.mmap/";
+use constant SRCDIR2 => "./ensplit-20080103.mmap/";		# previously sorted articles
 
 use constant STATE_MULTIPAGE => 0;
 use constant STATE_LASTPAGE => 1;
@@ -25,7 +25,7 @@ my $input = shift @ARGV;
 my $subprocesses = 0;
 my $offset = 0;
 my $maxsize = -s $input;
-my $handlesize = 1 * 1024 * 1024 * 1024;
+my $handlesize = 1800 * 1024 * 1024;
 
 while ($offset < $maxsize) {
     while ($subprocesses > 10) {
@@ -108,7 +108,7 @@ warn "Scanning $offset to $endpos";
 	my $id = undef;
 	if ($data =~ m#<id>(\d+)</id>#g) {
 	    $id = $1;
-	    die "Id too far @ ".pos($data).", page @ $offset+$page_start" if pos($data) - $page_start > 100;
+	    die "Id too far @ ".pos($data).", page @ $offset+$page_start" if pos($data) - $page_start > 400;
 	} else {
 	    if ($page_start > 0) {
 		$pos = $page_start;
@@ -139,7 +139,11 @@ warn "Scanning $offset to $endpos";
 		$next_state = STATE_LASTPAGE;
 		last;
 	    }
-	    die "No page end found after $offset+$rev_start";
+	    # We should die here, but there are some talk pages
+	    # which are longer than 1GB.  So set the maxlen
+	    # (which is actually impossible), and check for
+	    # it later.  This allows us to "skip" Talk pages.
+	    $page_end = $len;
 	}
 
 	if ($rev_start > $page_end) {
@@ -156,6 +160,10 @@ warn "Scanning $offset to $endpos";
 	    next;
 	}
 
+	# Check for impossible case here, which means a "real" page
+	# is longer than our $handlesize.
+	die "No page end found for $offset+$page_start" if $page_end == $len;
+
 	my $longid = sprintf("%012d", $id);
 	my @dirs = map { substr($longid, $_, 3) } (0, 3, 6);
 	my $outdir = OUTDIR . join('/', @dirs);
@@ -169,7 +177,7 @@ warn "Scanning $offset to $endpos";
 	# Copy all revisions, plus those we downloaded previously
 	my $len = $page_end - $rev_start;
 	$pos = $rev_start;
-	open(OUT, "| pbzip2 -9 -c > $base.bz2") || die "open($base.gz): $!";
+	open(OUT, "| pbzip2 -9 -q -c > $base.bz2") || die "open($base.gz): $!";
 	# First, copy from our dump file
 	while ($len > 0) {
 	    my $s = min($len , 1 * 1024 * 1024);
@@ -177,7 +185,6 @@ warn "Scanning $offset to $endpos";
 	    $pos += $s;
 	    $len -= $s;
 	}
-if (0) {
 	# and now also find what we downloaded
 	my $olddir = SRCDIR2 . join("/", map { substr($longid, $_, 3) } (0,3,6,9) );
 	if (-f "$olddir/revisions.txt.gz") {
@@ -190,7 +197,6 @@ if (0) {
 	    }
 	    close(INPUT);
 	}
-}
 	close(OUT);
 	$pos = $page_end + length("</page>");
 	last if $state == STATE_LASTPAGE;
