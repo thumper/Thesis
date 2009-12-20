@@ -25,10 +25,10 @@ my $input = shift @ARGV;
 my $subprocesses = 0;
 my $offset = 0;
 my $maxsize = -s $input;
-my $handlesize = 1800 * 1024 * 1024;
+my $handlesize = 1 * 1024 * 1024 * 1024;
 
 while ($offset < $maxsize) {
-    while ($subprocesses > 10) {
+    while ($subprocesses > 14) {
 	my $kid = waitpid(-1, 0);
 	die "bad kid: $kid" if $kid < 0;
 	die "child died badly: $?" if $? != 0;
@@ -64,7 +64,6 @@ sub processChunk {
     while ($state != STATE_DONE && $offset < $maxsize) {
 	my $len = min($handlesize, $maxsize - $offset);
 	($offset, $state) = doChunkAction($input, $offset, $len, $state);
-warn "doChunkAction = ($offset, $state)\n";
     }
 }
 
@@ -108,7 +107,7 @@ warn "Scanning $offset to $endpos";
 	my $id = undef;
 	if ($data =~ m#<id>(\d+)</id>#g) {
 	    $id = $1;
-	    die "Id too far @ ".pos($data).", page @ $offset+$page_start" if pos($data) - $page_start > 400;
+	    die "Id too far @ ".pos($data).", page @ $offset+$page_start" if pos($data) - $page_start > 1000;
 	} else {
 	    if ($page_start > 0) {
 		$pos = $page_start;
@@ -121,7 +120,7 @@ warn "Scanning $offset to $endpos";
 	my $title = undef;
 	if ($data =~ m#<title>(.*)</title>#g) {
 	    $title = $1;
-	    die "Title too far @ ".pos($data).", page @ $offset+$page_start" if pos($data) - $page_start > 200;
+	    die "Title too far @ ".pos($data).", page @ $offset+$page_start" if pos($data) - $page_start > 1000;
 	} else {
 	    if ($page_start > 0) {
 		$pos = $page_start;
