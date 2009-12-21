@@ -28,7 +28,7 @@ my $maxsize = -s $input;
 my $handlesize = 1 * 1024 * 1024 * 1024;
 
 while ($offset < $maxsize) {
-    while ($subprocesses > 14) {
+    while ($subprocesses > 11) {
 	my $kid = waitpid(-1, 0);
 	die "bad kid: $kid" if $kid < 0;
 	die "child died badly: $?" if $? != 0;
@@ -75,8 +75,8 @@ my $endpos = $offset+$len;
 warn "Scanning $offset to $endpos";
 
     my $data;
-    open(ORIG, $input) || die "open($input): $!";
-    mmap($data, $len, PROT_READ, MAP_SHARED, ORIG, $offset) || die "mmap: $!";
+    open(my $mmap, $input) || die "open($input): $!";
+    mmap($data, $len, PROT_READ, MAP_SHARED, $mmap, $offset) || die "mmap: $!";
 
 
     my $pos = 0;
@@ -159,9 +159,12 @@ warn "Scanning $offset to $endpos";
 	    next;
 	}
 
+	warn "Weird title: $title" if $title =~ m/:/;
+
 	# Check for impossible case here, which means a "real" page
 	# is longer than our $handlesize.
-	die "No page end found for $offset+$page_start" if $page_end == $len;
+	## old code: die "No page end found for $offset+$page_start" if $page_end == $len;
+	# It turns out that the "Ronald Reagan" page is also longer than 1GB.
 
 	my $longid = sprintf("%012d", $id);
 	my @dirs = map { substr($longid, $_, 3) } (0, 3, 6);
@@ -169,39 +172,84 @@ warn "Scanning $offset to $endpos";
 	mkpath($outdir, { verbose => 1, mode => 0750 }) if !-d $outdir;
 	my $base = $outdir.'/'.$longid;
 
-	open(OUT, '>'.$base.".meta") || die "open($base.meta): $!";
-	print OUT substr($data, $page_start, $rev_start-$page_start);
-	close(OUT);
+	open(my $meta, '>'.$base.".meta") || die "open($base.meta): $!";
+	print $meta substr($data, $page_start, $rev_start-$page_start);
+	close($meta);
 
-	# Copy all revisions, plus those we downloaded previously
+	# Copy all revisions
 	my $len = $page_end - $rev_start;
 	$pos = $rev_start;
-	open(OUT, "| pbzip2 -9 -q -c > $base.bz2") || die "open($base.gz): $!";
+	open(my $out, "| pbzip2 -9 -q -c > $base.bz2") || die "open($base.gz): $!";
 	# First, copy from our dump file
-	while ($len > 0) {
-	    my $s = min($len , 1 * 1024 * 1024);
-	    print OUT substr($data, $pos, $s);
-	    $pos += $s;
-	    $len -= $s;
+	$pos = copySubstr($out, \$data, $pos, $len);
+	if ($page_end == $len) {
+	    # This is a special case where the revision history is
+	    # longer than our chunk size.  We must keep reading
+	    # chunks until we find the end.
+warn "Long article:(id=$longid) $title";
+	    copyUntilPageend($out, $input, $pos, $handlesize);
 	}
 	# and now also find what we downloaded
-	my $olddir = SRCDIR2 . join("/", map { substr($longid, $_, 3) } (0,3,6,9) );
-	if (-f "$olddir/revisions.txt.gz") {
-	    open(INPUT, "gunzip -c $olddir/revisions.txt.gz |") || die "open: $!";
-	    my $buffer;
-	    while (1) {
-		my $read = sysread(INPUT, $buffer, 1 * 1024 * 1024, 0);
-		last if $read == 0;
-		print OUT $buffer;
-	    }
-	    close(INPUT);
-	}
-	close(OUT);
+	copyDownloads($out, $longid);
+	close($out);
+
 	$pos = $page_end + length("</page>");
 	last if $state == STATE_LASTPAGE;
     }
     munmap($data) || die "munmap: $!";
-    close(ORIG);
+    close($mmap);
     return ($offset+$pos, $next_state);
+}
+
+sub copyUntilPageend {
+    my ($out, $input, $offset, $len) = @_;
+    my $found = 0;
+    do {
+warn "Copying multichunk article from $offset";
+	my $data;
+	open(my $mmap, $input) || die "open($input): $!";
+	mmap($data, $len, PROT_READ, MAP_SHARED, $mmap, $offset) || die "mmap: $!";
+
+	my $end = index($data, "</page>");
+	if ($end < 0) {
+	    # can't set $end to the end of the string, because
+	    # "</page>" might straddle the boundary of two chunks
+	    $end = $len - length("</page>");
+	} else { $found = 1; }
+	copySubstr($out, \$data, 0, $end);
+
+	munmap($data) || die "munmap: $!";
+	close($mmap);
+
+	$offset += $end;
+    } while (!$found);
+}
+
+sub copySubstr {
+    my ($out, $pStr, $pos, $len) = @_;
+
+    while ($len > 0) {
+	my $s = min($len , 1 * 1024 * 1024);
+	print $out substr($$pStr, $pos, $s);
+	$pos += $s;
+	$len -= $s;
+    }
+    return $pos;
+}
+
+sub copyDownloads {
+    my ($out, $longid) = @_;
+
+    my $olddir = SRCDIR2 . join("/", map { substr($longid, $_, 3) } (0,3,6,9) );
+    if (-f "$olddir/revisions.txt.gz") {
+	open(INPUT, "gunzip -c $olddir/revisions.txt.gz |") || die "open: $!";
+	my $buffer;
+	while (1) {
+	    my $read = sysread(INPUT, $buffer, 1 * 1024 * 1024, 0);
+	    last if $read == 0;
+	    print $out $buffer;
+	}
+	close(INPUT);
+    }
 }
 
