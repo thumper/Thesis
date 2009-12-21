@@ -7,12 +7,11 @@ use warnings;
 use utf8;
 use open IN => ":utf8", OUT => ":utf8";
 
-use constant OUTDIR => "./ensplit-20080103/";
+use constant OUTDIR => "./ensplit4-20080103.mmap/";
 
+use IO::Handle;
 use File::Find;
-use IO::Zlib;
 use Data::Dumper;
-use File::Path qw(mkpath);
 use XML::Simple;
 use Encode;
 use Error qw(:try);
@@ -21,14 +20,21 @@ my $subprocesses = 0;
 
 binmode STDOUT, ":utf8";
 find({ wanted => \&wanted, no_chdir=>1 }, OUTDIR);
+while ($subprocesses > 0) {
+warn "Waiting on $subprocesses children";
+    my $kid = waitpid(-1, 0);
+    die "bad kid: $kid" if $kid < 0;
+    die "child died badly: $?" if $? != 0;
+    $subprocesses--;
+}
 exit(0);
 
 sub wanted {
     my $file = $File::Find::name;
     return if -d $file;
-    return if $file !~ m/\.gz$/;
+    return if $file !~ m/\.bz2$/;
 print "FILE [$file]\n";
-    while ($subprocesses > 10) {
+    while ($subprocesses > 8) {
 	my $kid = waitpid(-1, 0);
 	die "bad kid: $kid" if $kid < 0;
 	die "child died badly: $?" if $? != 0;
@@ -37,8 +43,7 @@ print "FILE [$file]\n";
     $subprocesses++;
     return if fork();		# return in parent
 
-    my $fh = IO::Zlib->new();
-    $fh->open($file, "rb") || die "open: $!";
+    open(my $fh, "pbzip2 -d -c -q $file |") || die "open($file): $!";
     my (@recs, %revidSeen);
     while (my $revxml = getRevision($fh, $file)) {
 	my $revid = $revxml->{id};
@@ -50,11 +55,11 @@ print "FILE [$file]\n";
     $fh->close();
     if (@recs > 0) {
 	@recs = sort sortByTimeRev @recs;
-	$fh = IO::Zlib->new($file.".tmp", "wb9") || die "open($file): $!";
+	open(my $out, "| pbzip2 -9 -q -c > $file.tmp") || die "open($file.tmp): $!";
 	foreach my $revxml (@recs) {
-	    printRevision($fh, $revxml);
+	    printRevision($out, $revxml);
 	}
-	$fh->close();
+	$out->close();
 	unlink($file) || die "unlink($file): $!";
 	rename($file.".tmp", $file) || die "rename($file): $!";
     }
@@ -80,38 +85,17 @@ sub getRevision {
     } while (!$fh->eof() && $line !~ m/<(\/revision)>/);
     return undef if $data =~ m/^\s*$/;
     my $xml = undef;
-    my $cleanup = sub {
-	my ($open, $close) = @_;
-	my $first = index($data, $open);
-	return if $first < 0;
-	$first += length($open);
-	my $last = rindex($data, $close);
-
-	# Luca's generated files aren't properly escaped, but ones
-	# that were downloaded later, are.  D'oh!
-	return if substr($data, $first, $last-$first) =~ m#\&lt\;/#;
-
-	substr($data, $first, $last-$first) =~ s/\&/&amp;/g;
-	$last = rindex($data, $close);
-	substr($data, $first, $last-$first) =~ s/\"/&quot;/g;
-	$last = rindex($data, $close);
-	substr($data, $first, $last-$first) =~ s/\</&lt;/g;
-	$last = rindex($data, $close);
-	substr($data, $first, $last-$first) =~ s/\>/&gt;/g;
-    };
     try {
-	$cleanup->('<text xml:space="preserve">', '</text>');
-	$cleanup->('<comment>', '</comment>');
 	#$data =~ s/\x{EFBF}/\?/g;
 $data =~ s/\x{EF}\x{BF}/\?/g;
-if (length($data) > 500) {
-my $c = ord(substr($data, 458, 1));
-warn "char @ 458 = $c" if $c > 127;
-$c = ord(substr($data, 457, 1));
-warn "char @ 457 = $c" if $c > 127;
-$c = ord(substr($data, 459, 1));
-warn "char @ 459 = $c" if $c > 127;
-}
+#if (length($data) > 500) {
+#my $c = ord(substr($data, 458, 1));
+#warn "char @ 458 = $c" if $c > 127;
+#$c = ord(substr($data, 457, 1));
+#warn "char @ 457 = $c" if $c > 127;
+#$c = ord(substr($data, 459, 1));
+#warn "char @ 459 = $c" if $c > 127;
+#}
 	$xml = XMLin($data);
     } otherwise {
 	my $E = shift;
