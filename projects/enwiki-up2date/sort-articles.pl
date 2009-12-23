@@ -7,7 +7,7 @@ use warnings;
 use utf8;
 use open IN => ":utf8", OUT => ":utf8";
 
-use constant OUTDIR => "./ensplit4-20080103.mmap/";
+use constant OUTDIR => "./ensplit3-20080103/";
 
 use IO::Handle;
 use File::Find;
@@ -32,7 +32,8 @@ exit(0);
 sub wanted {
     my $file = $File::Find::name;
     return if -d $file;
-    return if $file !~ m/\.bz2$/;
+#    return if $file !~ m/\.bz2$/;
+    return if $file !~ m/\.gz$/;
 print "FILE [$file]\n";
     while ($subprocesses > 8) {
 	my $kid = waitpid(-1, 0);
@@ -43,7 +44,8 @@ print "FILE [$file]\n";
     $subprocesses++;
     return if fork();		# return in parent
 
-    open(my $fh, "pbzip2 -d -c -q $file |") || die "open($file): $!";
+#    open(my $fh, "pbzip2 -d -c -q $file |") || die "open($file): $!";
+    open(my $fh, "gunzip -c $file |") || die "open($file): $!";
     my (@recs, %revidSeen);
     while (my $revxml = getRevision($fh, $file)) {
 	my $revid = $revxml->{id};
@@ -61,8 +63,11 @@ print "FILE [$file]\n";
 	}
 	$out->close();
 	unlink($file) || die "unlink($file): $!";
-	rename($file.".tmp", $file) || die "rename($file): $!";
+	my $tmp = $file.".tmp";
+$file =~ s/\.gz$/.bz2/;
+	rename($tmp, $file) || die "rename($tmp): $!";
     }
+die "END: $file" if $file =~ m/1217/;
     exit(0);
 }
 
@@ -81,21 +86,34 @@ sub getRevision {
     my $data = '';
     do {
 	$line = $fh->getline();
-	$data .= $line if defined $line;
+	$data .= $line if defined $line && $line !~ m/<restrictions>/;
     } while (!$fh->eof() && $line !~ m/<(\/revision)>/);
     return undef if $data =~ m/^\s*$/;
     my $xml = undef;
     try {
 	#$data =~ s/\x{EFBF}/\?/g;
-$data =~ s/\x{EF}\x{BF}/\?/g;
-#if (length($data) > 500) {
-#my $c = ord(substr($data, 458, 1));
-#warn "char @ 458 = $c" if $c > 127;
-#$c = ord(substr($data, 457, 1));
-#warn "char @ 457 = $c" if $c > 127;
-#$c = ord(substr($data, 459, 1));
-#warn "char @ 459 = $c" if $c > 127;
-#}
+if (length($data) > 500 && $file =~ m/1217/) {
+my @lines = split(/\n/, $data);
+my $line = $lines[7];
+$data =~ s#<comment>.*</comment>#<comment>moved [[Anguilla]] to ???</comment># if length($line) > 125 && ord(substr($line,120,1)) == 0;
+#warn "$file: $line\n";
+#my $c = ord(substr($line, 122, 1));
+#warn "$file: char @ 122 = $c\n";
+#my $c = ord(substr($line, 123, 1));
+#warn "$file: char @ 123 = $c\n";
+#my $c = ord(substr($line, 124, 1));
+#warn "$file: char @ 124 = $c\n";
+#my $c = ord(substr($line, 125, 1));
+#warn "$file: char @ 125 = $c\n";
+#my $c = ord(substr($line, 126, 1));
+#warn "$file: char @ 126 = $c\n";
+#$c = ord(substr($line, 127, 1));
+#warn "$file: char @ 127 = $c\n";
+#$c = ord(substr($line, 128, 1));
+#warn "$file: char @ 128 = $c\n";
+#warn "$file: str = ".substr($line,123,19)."\n";
+}
+#$data =~ s/\x{EF}\x{BF}/\?/g;
 	$xml = XMLin($data);
     } otherwise {
 	my $E = shift;
