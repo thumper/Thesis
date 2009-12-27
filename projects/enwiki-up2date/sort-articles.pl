@@ -7,8 +7,6 @@ use warnings;
 use utf8;
 use open IN => ":utf8", OUT => ":utf8";
 
-use constant OUTDIR => "./ensplit3-20080103/";
-
 use IO::Handle;
 use File::Find;
 use Data::Dumper;
@@ -16,59 +14,107 @@ use XML::Simple;
 use Encode;
 use Error qw(:try);
 
-my $subprocesses = 0;
+use Carp;
+use DB_File;
+use IO::Select;
+use File::Path qw(mkpath);
+use Storable qw(store_fd fd_retrieve);
+
+
+my $indir = shift @ARGV;
+my $outdir = shift @ARGV;
+my %lastrevid;
+tie %lastrevid, 'DB_File', 'lastrev.db', O_RDWR|O_CREAT, 0644, $DB_BTREE;
+
+my @subprocesses;
 
 binmode STDOUT, ":utf8";
-find({ wanted => \&wanted, no_chdir=>1 }, OUTDIR);
-while ($subprocesses > 0) {
-warn "Waiting on $subprocesses children";
-    my $kid = waitpid(-1, 0);
-    die "bad kid: $kid" if $kid < 0;
-    die "child died badly: $?" if $? != 0;
-    $subprocesses--;
-}
+find({ wanted => \&wanted, no_chdir=>1 }, $indir);
+while (@subprocesses > 0) { waitForChildren(); }
+untie(%lastrevid);
 exit(0);
+
+sub waitForChildren {
+    my $s = IO::Select->new(@subprocesses);
+
+    my @ready = $s->can_read(10);
+    foreach my $fh (@ready) {
+#while (my $line = $fh->getline()) {
+#    print $line;
+#    last if $line =~ m/DATA/;
+#}
+	my $hash = fd_retrieve($fh) || die "can't read $fh";
+	while (my ($pageid, $newlast) = each %$hash) {
+	    $lastrevid{$pageid} = $newlast;
+	}
+	$fh->close();
+	@subprocesses = grep { $_ != $fh } @subprocesses;
+    }
+}
+
 
 sub wanted {
     my $file = $File::Find::name;
     return if -d $file;
-#    return if $file !~ m/\.bz2$/;
     return if $file !~ m/\.gz$/;
-print "FILE [$file]\n";
-    while ($subprocesses > 8) {
-	my $kid = waitpid(-1, 0);
-	die "bad kid: $kid" if $kid < 0;
-	die "child died badly: $?" if $? != 0;
-	$subprocesses--;
-    }
-    $subprocesses++;
-    return if fork();		# return in parent
 
-#    open(my $fh, "pbzip2 -d -c -q $file |") || die "open($file): $!";
-    open(my $fh, "gunzip -c $file |") || die "open($file): $!";
-    my (@recs, %revidSeen);
-    while (my $revxml = getRevision($fh, $file)) {
+    my $longid = $file;
+    $longid =~ s#.*/##;
+    $longid =~ s#\.gz##;
+    die "Bad pageid[$file -> $longid]" if length($longid) != 12;
+    my $pageid = $longid;
+    $pageid =~ s/^0+//;
+
+    while (@subprocesses > 20) { waitForChildren(); }
+print "FILE [$file]\n";
+    my $pid = open my $fh, "-|";
+    die unless defined $pid;
+    if ($pid) {
+	push @subprocesses, $fh;
+	return;		# return in parent
+    }
+
+    open(my $gz, "gunzip -c $file |") || die "open($file): $!";
+    my (@recs, %revidSeen, $lastrevid);
+    while (my $revxml = getRevision($gz, $file)) {
+	$revxml->{id} =~ s/^0+//;
 	my $revid = $revxml->{id};
 	die "Bad revid:[$revid]" if !defined $revid;
 	next if $revidSeen{$revid};
+	$lastrevid = $revid if (defined $revid) || ($revid > $lastrevid);
 	$revidSeen{$revid} = 1;
 	push @recs, $revxml;
     }
-    $fh->close();
+    $gz->close();
+
     if (@recs > 0) {
+	my $outfile = getOutfile($longid);
 	@recs = sort sortByTimeRev @recs;
-	open(my $out, "| pbzip2 -9 -q -c > $file.tmp") || die "open($file.tmp): $!";
+	my $tmp = $outfile.".tmp";
+	open(my $out, "| gzip -9 -c > $tmp") || die "open($tmp): $!";
 	foreach my $revxml (@recs) {
 	    printRevision($out, $revxml);
 	}
 	$out->close();
-	unlink($file) || die "unlink($file): $!";
-	my $tmp = $file.".tmp";
-$file =~ s/\.gz$/.bz2/;
-	rename($tmp, $file) || die "rename($tmp): $!";
+	unlink($outfile);
+	rename($tmp, $outfile) || die "rename($tmp): $!";
     }
-die "END: $file" if $file =~ m/1217/;
+
+    my $lastrev = { $pageid => $lastrevid };
+#    print "Here comes the data.\n";
+#    print "DATA\n";
+    store_fd($lastrev, \*STDOUT) || die "can't store result";
+
     exit(0);
+}
+
+sub getOutfile {
+    my $longid = shift @_;
+    my $outfiledir = $outdir
+	.'/'. join("/", map { substr($longid, $_, 3) } (0,3,6) );
+    mkpath($outfiledir, { verbose => 0, mode => 0750 }) if !-d $outfiledir;
+    my $outfile = $outfiledir . "/" . $longid . ".gz";
+    return $outfile;
 }
 
 sub sortByTimeRev {
@@ -91,34 +137,12 @@ sub getRevision {
     return undef if $data =~ m/^\s*$/;
     my $xml = undef;
     try {
-	#$data =~ s/\x{EFBF}/\?/g;
-if (length($data) > 500 && $file =~ m/1217/) {
-my @lines = split(/\n/, $data);
-my $line = $lines[7];
-$data =~ s#<comment>.*</comment>#<comment>moved [[Anguilla]] to ???</comment># if length($line) > 125 && ord(substr($line,120,1)) == 0;
-#warn "$file: $line\n";
-#my $c = ord(substr($line, 122, 1));
-#warn "$file: char @ 122 = $c\n";
-#my $c = ord(substr($line, 123, 1));
-#warn "$file: char @ 123 = $c\n";
-#my $c = ord(substr($line, 124, 1));
-#warn "$file: char @ 124 = $c\n";
-#my $c = ord(substr($line, 125, 1));
-#warn "$file: char @ 125 = $c\n";
-#my $c = ord(substr($line, 126, 1));
-#warn "$file: char @ 126 = $c\n";
-#$c = ord(substr($line, 127, 1));
-#warn "$file: char @ 127 = $c\n";
-#$c = ord(substr($line, 128, 1));
-#warn "$file: char @ 128 = $c\n";
-#warn "$file: str = ".substr($line,123,19)."\n";
-}
-#$data =~ s/\x{EF}\x{BF}/\?/g;
 	$xml = XMLin($data);
     } otherwise {
 	my $E = shift;
 	warn "ERROR in file: $file\n";
 	warn "Troubled input: [[$data]]\n\n";
+	store_fd({}, \*STDOUT) || die "can't store result";
 	die $E;
     };
     return $xml;
@@ -126,8 +150,10 @@ $data =~ s#<comment>.*</comment>#<comment>moved [[Anguilla]] to ???</comment># i
 
 
 sub printRevision {
-    my $fh = shift @_;
-    my $obj = shift @_;
+    my ($fh, $obj) = @_;
+
+confess "No id" if !exists $obj->{id};
+confess "Bad id" if $obj->{id} eq '';
 
     my $data = "";
     $data .="    <revision>\n";
@@ -145,7 +171,7 @@ sub printRevision {
     my $text = $obj->{text}->{content} || '';
     $data .="      <text xml:space=\"preserve\">". xmlEscape($text) . "</text>\n";
     $data .="    </revision>\n";
-    $fh->print(Encode::encode_utf8($data));
+    $fh->print($data);
 }
 
 sub xmlEscape {
@@ -153,5 +179,6 @@ sub xmlEscape {
     $_[0] =~ s/\"/&quot;/g;
     $_[0] =~ s/\</&lt;/g;
     $_[0] =~ s/\>/&gt;/g;
+    return $_[0];
 }
 
