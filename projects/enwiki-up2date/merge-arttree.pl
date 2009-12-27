@@ -142,6 +142,7 @@ sub xmlEscape {
     $_[0] =~ s/\"/&quot;/g;
     $_[0] =~ s/\</&lt;/g;
     $_[0] =~ s/\>/&gt;/g;
+    return $_[0];
 }
 
 
