@@ -20,18 +20,13 @@ tie %lastrevid, 'DB_File', 'lastrev.db', O_RDWR|O_CREAT, 0644, $DB_BTREE;
 tie %userid, 'DB_File', 'userid.db', O_RDWR|O_CREAT, 0644, $DB_BTREE;
 tie %pageid, 'DB_File', 'pageid.db', O_RDWR|O_CREAT, 0644, $DB_BTREE;
 
-    #fetch_page(title_selector('Main_Page', 333503364));
-   fetch_page('Anguilla');
-   # fetch_page(title_selector('Copenhagen', 333503364));
-   # fetch_page(title_selector('Copenhagen', 33350));
-untie %pageid;
-untie %userid;
-untie %lastrevid;
-exit(0);
 while (<>) {
     chomp;
     fetch_page($_);
 }
+untie %pageid;
+untie %userid;
+untie %lastrevid;
 exit(0);
 
 sub fetch_page {
