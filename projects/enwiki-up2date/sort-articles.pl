@@ -67,6 +67,7 @@ sub wanted {
 
     while (@subprocesses > 20) { waitForChildren(); }
 print "FILE [$file]\n";
+    # TODO: need to untie hash before fork!
     my $pid = open my $fh, "-|";
     die unless defined $pid;
     if ($pid) {

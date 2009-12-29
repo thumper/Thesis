@@ -11,37 +11,94 @@ use DB_File;
 use File::Path qw(mkpath);
 use Encode;
 use Carp;
+use IO::Select;
+use Storable qw(store_fd fd_retrieve);
 
 use constant WIKIAPI => 'http://en.wikipedia.org/w/api.php';
 use constant USERAPI => 'http://toolserver.org/~Ipye/UserName2UserId.php';
 
 my $outdir = shift @ARGV;
+my @subprocesses;
 my (%lastrevid, %userid, %pageid);
-tie %lastrevid, 'DB_File', 'lastrev.db', O_RDWR|O_CREAT, 0644, $DB_BTREE;
-tie %userid, 'DB_File', 'userid.db', O_RDWR|O_CREAT, 0644, $DB_BTREE;
-tie %pageid, 'DB_File', 'pageid.db', O_RDWR|O_CREAT, 0644, $DB_BTREE;
 
 while (<>) {
     chomp;
-    fetch_page($_);
+    my $title = $_;
+
     last if -f "stop.txt";
+    while (@subprocesses > 3) { waitForChildren(); }
+
+    tieHashes();
+    my @args = getPageInfo($title);
+    untieHashes();
+
+    my $pid = open my $fh, "-|";
+    die unless defined $pid;
+    if ($pid) {
+	push @subprocesses, $fh;
+    } else {
+	my $lastrevid = fetch_page(@args);
+	my $result = {
+	    'pageid' => $args[1],
+	    'lastrevid' => $lastrevid,
+	    'userids' => \%userid,
+	};
+	store_fd($result, \*STDOUT) || die "can't store result";
+	exit(0);
+    }
 }
-untie %pageid;
-untie %userid;
-untie %lastrevid;
+while (@subprocesses > 0) { waitForChildren(); }
 exit(0);
 
-sub fetch_page {
-    my $title = shift @_;
+sub waitForChildren {
+    my $s = IO::Select->new(@subprocesses);
 
+    my @ready = $s->can_read(10);
+    tieHashes();
+    foreach my $fh (@ready) {
+	my $result = fd_retrieve($fh) || die "can't read $fh";
+	$fh->close();
+	@subprocesses = grep { $_ != $fh } @subprocesses;
+
+	my $pageid = $result->{pageid};
+	$lastrevid{$pageid} = $result->{lastrevid};
+	while (my ($name, $userid) = each %{$result->{userids}}) {
+	    $userid{$name} = $userid;
+	}
+    }
+    untieHashes();
+}
+
+sub tieHashes {
+    tie %lastrevid, 'DB_File', 'lastrev.db', O_RDWR|O_CREAT, 0644, $DB_BTREE;
+    tie %userid, 'DB_File', 'userid.db', O_RDWR|O_CREAT, 0644, $DB_BTREE;
+    tie %pageid, 'DB_File', 'pageid.db', O_RDWR|O_CREAT, 0644, $DB_BTREE;
+}
+
+sub untieHashes {
+    untie %pageid;
+    untie %userid;
+    untie %lastrevid;
+}
+
+sub getPageInfo {
+    my ($title) = @_;
     my $pageid = getPageid($title);
     my $nextrev = getLastrevid($pageid);
+    return ($title, $pageid, $nextrev);
+}
+
+sub fetch_page {
+    my ($title, $pageid, $nextrev) = @_;
+
+    my $lastrevid = $nextrev;
     my $page;
     do {
-	print "$pageid: Working on rev $nextrev of title $title\n";
+	warn "$pageid: Working on rev $nextrev of title $title\n";
 	($page, $nextrev) = download_page(titlerevs_selector($title, $nextrev));
-	saveRevisions($page);
+	$lastrevid = saveRevisions($page, $lastrevid);
     } while (defined $nextrev);
+    return $lastrevid;
 }
 
 
@@ -106,13 +163,12 @@ sub download_page {
 }
 
 sub saveRevisions {
-    my ($page) = @_;
+    my ($page, $lastrevid) = @_;
 
     my $pageid = $page->{pageid} || die "No pageid defined";
 
     my $revs = $page->{revisions};
     my $newrevs = 0;
-    my $lastrevid = $lastrevid{$pageid};
     foreach my $rev (@$revs) {
 	if ($rev->{revid} > $lastrevid) {
 	    $newrevs++;
@@ -125,7 +181,7 @@ sub saveRevisions {
     my $longid = sprintf("%012d", $pageid);
 
     my $outdir = $outdir ."/". join("/", map { substr($longid, $_, 3) } (0,3,6) );
-    mkpath($outdir, { verbose => 1, mode => 0750 });
+    mkpath($outdir, { verbose => 0, mode => 0750 });
 
     my $file = $outdir . "/" . $longid . ".gz";
 
@@ -151,13 +207,23 @@ sub saveRevisions {
     }
     close($file);
 
-    $lastrevid{$pageid} = $lastrevid;
+    return $lastrevid;
 }
 
 sub getUserid {
     my $name = shift @_;
     my $utf8name = encode_utf8($name);
     return $userid{$utf8name} if exists $userid{$utf8name};
+
+    my %userid2;
+    tie %userid2, 'DB_File', 'userid.db', O_RDONLY, 0644, $DB_BTREE;
+    my $uid = $userid2{$utf8name};
+    untie(%userid2);
+    if (defined $uid) {
+	# cache result away
+	$userid{$utf8name} = $uid;
+	return $uid;
+    }
 
     my $url = USERAPI . "?n=".uri_escape($utf8name);
     my $userid = get $url;
