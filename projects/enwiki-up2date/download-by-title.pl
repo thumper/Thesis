@@ -136,6 +136,7 @@ sub saveRevisions {
 	$out->print("      <id>$$rev{revid}</id>\n");
 	$out->print("      <timestamp>$$rev{timestamp}</timestamp>\n");
 	$out->print("      <contributor>\n");
+	$$rev{user} = '256.256.256.256' if !exists $$rev{user};
 	if ($$rev{user} =~ m/^\d+\.\d+\.\d+\.\d+$/) {
 	    $out->print("        <ip>$$rev{user}</ip>\n");
 	} else {
