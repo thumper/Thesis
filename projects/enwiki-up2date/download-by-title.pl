@@ -9,6 +9,7 @@ use JSON::XS;
 use Data::Dumper;
 use DB_File;
 use File::Path qw(mkpath);
+use Encode;
 use Carp;
 
 use constant WIKIAPI => 'http://en.wikipedia.org/w/api.php';
@@ -23,6 +24,7 @@ tie %pageid, 'DB_File', 'pageid.db', O_RDWR|O_CREAT, 0644, $DB_BTREE;
 while (<>) {
     chomp;
     fetch_page($_);
+    last if -f "stop.txt";
 }
 untie %pageid;
 untie %userid;
@@ -36,7 +38,7 @@ sub fetch_page {
     my $nextrev = getLastrevid($pageid);
     my $page;
     do {
-	print "Working on rev $nextrev\n";
+	print "$pageid: Working on rev $nextrev of title $title\n";
 	($page, $nextrev) = download_page(titlerevs_selector($title, $nextrev));
 	saveRevisions($page);
     } while (defined $nextrev);
@@ -110,10 +112,11 @@ sub saveRevisions {
 
     my $revs = $page->{revisions};
     my $newrevs = 0;
+    my $lastrevid = $lastrevid{$pageid};
     foreach my $rev (@$revs) {
-	if ($rev->{revid} > $lastrevid{$pageid}) {
+	if ($rev->{revid} > $lastrevid) {
 	    $newrevs++;
-	    $lastrevid{$pageid} = $rev->{revid};
+	    $lastrevid = $rev->{revid};
 	};
     }
 
@@ -146,16 +149,20 @@ sub saveRevisions {
 	$out->print("    </revision>\n");
     }
     close($file);
+
+    $lastrevid{$pageid} = $lastrevid;
 }
 
 sub getUserid {
     my $name = shift @_;
-    return $userid{$name} if exists $userid{$name};
+    my $utf8name = encode_utf8($name);
+    return $userid{$utf8name} if exists $userid{$utf8name};
 
-    my $url = USERAPI . "?n=".uri_escape($name);
+    my $url = USERAPI . "?n=".uri_escape($utf8name);
     my $userid = get $url;
+    die "Unable to find userid for [$utf8name]" if !defined $userid;
     $userid =~ s/\`//g;
-    $userid{$name} = $userid;
+    $userid{$utf8name} = $userid;
     return $userid;
 }
 

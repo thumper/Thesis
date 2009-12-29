@@ -91,7 +91,7 @@ print "FILE [$file]\n";
 	my $outfile = getOutfile($longid);
 	@recs = sort sortByTimeRev @recs;
 	my $tmp = $outfile.".tmp";
-	open(my $out, "| gzip -9 -c > $tmp") || die "open($tmp): $!";
+	open(my $out, "| gzip -c > $tmp") || die "open($tmp): $!";
 	foreach my $revxml (@recs) {
 	    printRevision($out, $revxml);
 	}
