@@ -13,6 +13,8 @@ use Encode;
 use Carp;
 use IO::Select;
 use Storable qw(store_fd fd_retrieve);
+use XML::Simple;
+use Error qw(:try);
 
 use constant WIKIAPI => 'http://en.wikipedia.org/w/api.php';
 use constant USERAPI => 'http://toolserver.org/~Ipye/UserName2UserId.php';
@@ -26,7 +28,7 @@ while (<>) {
     my $title = $_;
 
     last if -f "stop.txt";
-    while (@subprocesses > 3) { waitForChildren(); }
+    while (@subprocesses > 4) { waitForChildren(); }
 
     tieHashes();
     my @args = getPageInfo($title);
@@ -38,11 +40,13 @@ while (<>) {
 	push @subprocesses, $fh;
     } else {
 	my $lastrevid = fetch_page(@args);
+	my $pageid = $args[1];
 	my $result = {
-	    'pageid' => $args[1],
+	    'pageid' => $pageid,
 	    'lastrevid' => $lastrevid,
 	    'userids' => \%userid,
 	};
+warn "$pageid: Storing lastrev = $lastrevid\n";
 	store_fd($result, \*STDOUT) || die "can't store result";
 	exit(0);
     }
@@ -60,11 +64,14 @@ sub waitForChildren {
 	$fh->close();
 	@subprocesses = grep { $_ != $fh } @subprocesses;
 
-	my $pageid = $result->{pageid};
-	$lastrevid{$pageid} = $result->{lastrevid};
 	while (my ($name, $userid) = each %{$result->{userids}}) {
 	    $userid{$name} = $userid;
 	}
+	delete $result->{userids};
+	my $pageid = $result->{pageid};
+	$lastrevid{$pageid} = $result->{lastrevid};
+warn "$pageid: lastrev = [".$result->{lastrevid}."]\n";
+warn Dumper($result) if !defined $result->{lastrevid};
     }
     untieHashes();
 }
@@ -85,11 +92,20 @@ sub getPageInfo {
     my ($title) = @_;
     my $pageid = getPageid($title);
     my $nextrev = getLastrevid($pageid);
+    die "$pageid: Bad nextrev [$nextrev] for [$title]" if defined $nextrev && $nextrev eq '';
     return ($title, $pageid, $nextrev);
 }
 
 sub fetch_page {
     my ($title, $pageid, $nextrev) = @_;
+
+    if (!defined $nextrev) {
+	my $file = getOutfile($pageid);
+	die "$pageid: No file [$file]" if !-f $file;
+	my ($lastrev, $recs) = readRecords($pageid);
+	$nextrev = $lastrev;
+    }
+    die "$pageid: No nextrev" if !defined $nextrev;
 
     my $lastrevid = $nextrev;
     my $page;
@@ -97,6 +113,7 @@ sub fetch_page {
 	warn "$pageid: Working on rev $nextrev of title $title\n";
 	($page, $nextrev) = download_page(titlerevs_selector($title, $nextrev));
 	$lastrevid = saveRevisions($page, $lastrevid);
+die "$pageid: Bad lastrev" if !defined $lastrevid;
     } while (defined $nextrev);
     return $lastrevid;
 }
@@ -176,14 +193,9 @@ sub saveRevisions {
 	};
     }
 
-    return if $newrevs < 1;
+    return $lastrevid if $newrevs < 1;
 
-    my $longid = sprintf("%012d", $pageid);
-
-    my $outdir = $outdir ."/". join("/", map { substr($longid, $_, 3) } (0,3,6) );
-    mkpath($outdir, { verbose => 0, mode => 0750 });
-
-    my $file = $outdir . "/" . $longid . ".gz";
+    my $file = getOutfile($pageid);
 
     open(my $out, "| gzip --best -c >> $file") || die "open($file): $!";
     foreach my $rev (@$revs) {
@@ -210,6 +222,17 @@ sub saveRevisions {
     return $lastrevid;
 }
 
+sub getOutfile {
+    my $pageid = shift @_;
+    my $longid = sprintf("%012d", $pageid);
+
+    my $outdir = $outdir ."/". join("/", map { substr($longid, $_, 3) } (0,3,6) );
+    mkpath($outdir, { verbose => 0, mode => 0750 });
+
+    my $file = $outdir . "/" . $longid . ".gz";
+    return $file;
+}
+
 sub getUserid {
     my $name = shift @_;
     my $utf8name = encode_utf8($name);
@@ -227,7 +250,7 @@ sub getUserid {
 
     my $url = USERAPI . "?n=".uri_escape($utf8name);
     my $userid = get $url;
-    die "Unable to find userid for [$utf8name]" if !defined $userid;
+    die "url[$url]\nUnable to find userid for [$utf8name]" if !defined $userid;
     $userid =~ s/\`//g;
     $userid{$utf8name} = $userid;
     return $userid;
@@ -235,7 +258,12 @@ sub getUserid {
 
 sub getLastrevid {
     my $pageid = shift @_ || confess "No pageid set";
-    return $lastrevid{$pageid} if exists $lastrevid{$pageid};
+    my $lastrevid = $lastrevid{$pageid};
+    return $lastrevid{$pageid} if defined $lastrevid && $lastrevid ne '';
+
+    my $file = getOutfile($pageid);
+    return undef if -f $file;
+
     $lastrevid{$pageid} = 0;
     return 0;
 }
@@ -246,4 +274,91 @@ sub xmlEscape {
     $_[0] =~ s/\</&lt;/g;
     $_[0] =~ s/\>/&gt;/g;
     return $_[0];
+}
+
+sub readRecords {
+    my ($pageid) = @_;
+    my $file = getOutfile($pageid);
+
+    open(my $gz, "gunzip -c $file |") || die "open($file): $!";
+    local $/ = '</revision>';
+    binmode $gz, ":bytes";
+    my (@recs, %revidSeen, $lastrevid);
+    while (my $revxml = getRevision($gz, $file)) {
+	$revxml->{id} =~ s/^0+//;
+	my $revid = $revxml->{id};
+	die "Bad revid:[$revid]" if !defined $revid;
+	next if $revidSeen{$revid};
+	$lastrevid = $revid if (defined $revid) || ($revid > $lastrevid);
+	$revidSeen{$revid} = 1;
+	push @recs, $revxml;
+    }
+    $gz->close();
+
+    return ($lastrevid, \@recs);
+}
+
+sub writeRecords {
+    my ($pageid, $recs) = @_;
+    my $file = getOutfile($pageid);
+    @$recs = sort sortByTimeRev @$recs;
+    my $tmp = $file.".tmp";
+    open(my $out, "| gzip -c > $tmp") || die "open($tmp): $!";
+    foreach my $revxml (@$recs) {
+	printRevision($out, $revxml);
+    }
+    $out->close();
+    unlink($file);
+    rename($tmp, $file) || die "rename($tmp): $!";
+}
+
+sub sortByTimeRev {
+    if ($a->{timestamp} eq $b->{timestamp}) {
+	return ($a->{id} <=> $b->{id})
+    }
+    return ($a->{timestamp} cmp $b->{timestamp});
+}
+
+sub getRevision {
+    my ($fh, $file) = @_;
+    return undef if $fh->eof();
+    my $data = <$fh>;
+    $data =~ s#<restrictions>.*?</restrictions>##;
+    return undef if $data =~ m/^\s*$/;
+    my $xml = undef;
+    try {
+	$xml = XMLin($data);
+    } otherwise {
+	my $E = shift;
+	warn "ERROR in file: $file\n";
+	warn "Troubled input: [[$data]]\n\n";
+	die $E;
+    };
+    return $xml;
+}
+
+
+sub printRevision {
+    my ($fh, $obj) = @_;
+
+confess "No id" if !exists $obj->{id};
+confess "Bad id" if $obj->{id} eq '';
+
+    my $data = "";
+    $data .="    <revision>\n";
+    $data .="      <id>". xmlEscape($obj->{id}). "</id>\n";
+    $data .="      <timestamp>". xmlEscape($obj->{timestamp}). "</timestamp>\n";
+    $data .="      <contributor>\n";
+    if (exists $obj->{contributor}->{ip}) {
+	$data .="        <ip>". xmlEscape($obj->{contributor}->{ip}). "</ip>\n";
+    } else {
+	$data .="        <username>". xmlEscape($obj->{contributor}->{username}). "</username>\n";
+	$data .="        <id>". xmlEscape($obj->{contributor}->{id}). "</id>\n";
+    }
+    $data .="      </contributor>\n";
+    $data .="      <comment>". xmlEscape($obj->{comment}). "</comment>\n" if exists $obj->{comment};
+    my $text = $obj->{text}->{content} || '';
+    $data .="      <text xml:space=\"preserve\">". xmlEscape($text) . "</text>\n";
+    $data .="    </revision>\n";
+    $fh->print($data);
 }

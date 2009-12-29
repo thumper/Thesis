@@ -39,10 +39,6 @@ sub waitForChildren {
 
     my @ready = $s->can_read(10);
     foreach my $fh (@ready) {
-#while (my $line = $fh->getline()) {
-#    print $line;
-#    last if $line =~ m/DATA/;
-#}
 	my $hash = fd_retrieve($fh) || die "can't read $fh";
 	while (my ($pageid, $newlast) = each %$hash) {
 	    $lastrevid{$pageid} = $newlast;
@@ -126,8 +122,7 @@ sub sortByTimeRev {
 }
 
 sub getRevision {
-    my $fh = shift @_;
-    my $file = shift @_;
+    my ($fh, $file) = @_;
     return undef if $fh->eof();
     my $line;
     my $data = '';
