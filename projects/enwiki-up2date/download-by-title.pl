@@ -262,7 +262,7 @@ sub getUserid {
 	$tries++;
 	sleep(120);
     }
-    die "url[$url]\nUnable to find userid for [$utf8name]" if !defined $userid;
+    die "url[$url]\nUnable to find userid for [$utf8name]";
 }
 
 sub getLastrevid {
