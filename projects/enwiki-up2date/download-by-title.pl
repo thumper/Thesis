@@ -250,12 +250,19 @@ sub getUserid {
 	return $uid;
     }
 
+    my $tries = 0;
     my $url = USERAPI . "?n=".uri_escape($utf8name);
-    my $userid = get $url;
+    while ($tries < 5) {
+	my $userid = get $url;
+	if (defined $userid) {
+	    $userid =~ s/\`//g;
+	    $userid{$utf8name} = $userid;
+	    return $userid;
+	}
+	$tries++;
+	sleep(120);
+    }
     die "url[$url]\nUnable to find userid for [$utf8name]" if !defined $userid;
-    $userid =~ s/\`//g;
-    $userid{$utf8name} = $userid;
-    return $userid;
 }
 
 sub getLastrevid {
