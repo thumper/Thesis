@@ -200,18 +200,20 @@ sub saveRevisions {
     open(my $out, "| gzip --best -c >> $file") || die "open($file): $!";
     foreach my $rev (@$revs) {
 	my $text = $rev->{'*'};
+	$$rev{user} = '256.256.256.256' if !exists $$rev{user};
+	my $contrib = '';
+	if ($$rev{user} =~ m/^\d+\.\d+\.\d+\.\d+$/) {
+	    $contrib = "        <ip>$$rev{user}</ip>\n";
+	} else {
+	    my $userid = getUserid($rev->{user});
+	    $contrib = "        <username>".xmlEscape($$rev{user})."</username>\n"
+		    ."        <id>$userid</id>\n";
+	}
 	$out->print("    <revision>\n");
 	$out->print("      <id>$$rev{revid}</id>\n");
 	$out->print("      <timestamp>$$rev{timestamp}</timestamp>\n");
 	$out->print("      <contributor>\n");
-	$$rev{user} = '256.256.256.256' if !exists $$rev{user};
-	if ($$rev{user} =~ m/^\d+\.\d+\.\d+\.\d+$/) {
-	    $out->print("        <ip>$$rev{user}</ip>\n");
-	} else {
-	    my $userid = getUserid($rev->{user});
-	    $out->print("        <username>".xmlEscape($$rev{user})."</username>\n");
-	    $out->print("        <id>$userid</id>\n");
-	}
+	$out->print($contrib);
 	$out->print("      </contributor>\n");
 	$out->print("      <comment>".xmlEscape($$rev{comment})."</comment>\n") if exists $$rev{comment};
 	$out->print("      <text xml:space=\"preserve\">".xmlEscape($text)."</text>\n");
