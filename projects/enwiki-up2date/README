@@ -1,19 +1,52 @@
 split-chunks2articles.pl
    - convert splitwiki output into a series of files, one per article,
-	containing revisions.
+	containing revisions.  This didn't work out because the splitwiki
+	data I found had XML errors in it.
 
 merge-revtree.pl
    - takes a tree of revisions (one file per revision),
 	and appends data to the compressed "one per article"
-	files.
+	files.  Only useful to correct my mistake of "one file
+	per revision."
 
 sort-articles.pl
    - sort the revisions in each "one file per article"
 
 split-dump2articles.pl
-   - convert splitwiki output into a series of files, one per article, containing revisions.
+   - convert dump output into a series of files, one per article, containing revisions.
 
 merge-arttree.pl
     - takes two trees of articles and merges them.
       Note that the two trees have different input formats.
+
+merge-dump2articles.pl
+   - like split-dump2articles.pl, but will also merge in the additionally downloaded
+	data from Sept 2009.
+
+============================
+
+** These files are the final ones used:
+
+selected-titles.pl
+    - grab the list of titles being included in Wikipedia 0.7.
+
+download-by-title.pl
+    - given a list of titles on STDIN, downloads them in parallel.
+	Uses several *.db files to track information about the
+	articles downloaded.  (Used "sort-articles.pl" to initially
+	create these *.db files for the data I had already downloaded.)
+	Output is a list of page ids that are done being downloaded
+	(and thus need to be sorted in chronological order).
+
+sort-one-article.pl
+    - reads list of page ids from STDIN, and sorts each file to
+	a temporary file (same disk), which is swapped in when complete.
+
+reset-one-article.pl
+    - earlier versions of download-by-title.pl would leave partial XML records
+	in the article files, breaking the XML parsing in sort-one-article.pl.
+	This program removes the article file and resets the last revid for the
+	page to be 0 so that the entire article is downloaded.
+	This isn't necessary any longer since download-by-title.pl now
+	checks for errors before outputing a record.
 
