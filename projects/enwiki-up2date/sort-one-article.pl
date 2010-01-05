@@ -8,24 +8,44 @@ use utf8;
 use open IN => ":utf8", OUT => ":utf8";
 
 use IO::Handle;
-use File::Find;
 use Data::Dumper;
 use XML::Simple;
-use Encode;
 use Error qw(:try);
 
 use Carp;
-use DB_File;
-use IO::Select;
 use File::Path qw(mkpath);
-use Storable qw(store_fd fd_retrieve);
 
 
 my $outdir = shift @ARGV;
 my $pageid = shift @ARGV;
+if (defined $pageid) {
+    sortArticle($pageid);
+    exit(0);
+}
 
-sortArticle($pageid);
+my $subprocesses = 0;
+while (<>) {
+    chomp;
+    my $pid = fork();
+    if ($pid) {
+	$subprocesses++;
+	while ($subprocesses > 7) { waitForChildren(); }
+    } else {
+warn "sort: working on $_\n";
+	sortArticle($_);
+	exit(0);
+    }
+}
+while ($subprocesses > 0) { waitForChildren(); }
+
 exit(0);
+
+sub waitForChildren {
+    my $kid = waitpid(-1, 0);
+    die "bad kid: $kid" if $kid < 0;
+    die "child died badly: $?" if $? != 0;
+    $subprocesses--;
+}
 
 sub sortArticle {
     my $pageid = shift @_;
@@ -88,7 +108,7 @@ sub getRevision {
 	my $E = shift;
 	warn "ERROR in file: $file\n";
 	warn "Troubled input: [[$data]]\n\n";
-	die $E;
+	die $file.": ".$E;
     };
     return $xml;
 }

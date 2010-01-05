@@ -33,21 +33,34 @@ while (<>) {
     tieHashes();
     my @args = getPageInfo($title);
     untieHashes();
+    my $pageid = $args[1];
 
     my $pid = open my $fh, "-|";
     die unless defined $pid;
     if ($pid) {
 	push @subprocesses, $fh;
     } else {
-	my $lastrevid = fetch_page(@args);
-	my $pageid = $args[1];
-	my $result = {
-	    'pageid' => $pageid,
-	    'lastrevid' => $lastrevid,
-	    'userids' => \%userid,
-	};
+	my $limit = 50;
+	while ($limit > 0) {
+	    try {
+		my $lastrevid = fetch_page(@args);
+		my $result = {
+		    'pageid' => $pageid,
+		    'lastrevid' => $lastrevid,
+		    'userids' => \%userid,
+		};
 warn "$pageid: Storing lastrev = $lastrevid\n";
-	store_fd($result, \*STDOUT) || die "can't store result";
+		store_fd($result, \*STDOUT) || die "can't store result";
+		$limit = 0;
+	    } otherwise {
+		my $E = shift;
+		warn "ERROR processing pageid [$pageid], limit=$limit";
+		$limit = int($limit/2);
+		die $E if $limit == 0;
+		warn $E;
+		sleep(30);
+	    };
+	}
 	exit(0);
     }
 }
@@ -72,6 +85,7 @@ sub waitForChildren {
 	$lastrevid{$pageid} = $result->{lastrevid};
 warn "$pageid: lastrev = [".$result->{lastrevid}."]\n";
 warn Dumper($result) if !defined $result->{lastrevid};
+	print "$pageid\n";
     }
     untieHashes();
 }
@@ -97,7 +111,7 @@ sub getPageInfo {
 }
 
 sub fetch_page {
-    my ($title, $pageid, $nextrev) = @_;
+    my ($title, $pageid, $nextrev, $limit) = @_;
 
     if (!defined $nextrev) {
 	my $file = getOutfile($pageid);
@@ -111,7 +125,7 @@ sub fetch_page {
     my $page;
     do {
 	warn "$pageid: Working on rev $nextrev of title $title\n";
-	($page, $nextrev) = download_page(titlerevs_selector($title, $nextrev));
+	($page, $nextrev) = download_page(titlerevs_selector($title, $nextrev, $limit));
 	$lastrevid = saveRevisions($page, $lastrevid);
 die "$pageid: Bad lastrev" if !defined $lastrevid;
     } while (defined $nextrev);
