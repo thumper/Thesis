@@ -28,7 +28,7 @@ while (<>) {
     my $title = $_;
 
     last if -f "stop.txt";
-    while (@subprocesses > 4) { waitForChildren(); }
+    while (@subprocesses > 6) { waitForChildren(); }
 
     tieHashes();
     my @args = getPageInfo($title);
@@ -128,7 +128,7 @@ sub fetch_page {
 	($page, $nextrev) = download_page(titlerevs_selector($title, $nextrev, $limit));
 	$lastrevid = saveRevisions($page, $lastrevid);
 die "$pageid: Bad lastrev" if !defined $lastrevid;
-    } while (defined $nextrev);
+    } while (defined $nextrev && !-f "stop.txt");
     return $lastrevid;
 }
 

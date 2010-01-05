@@ -25,6 +25,7 @@ if (defined $pageid) {
 
 my $subprocesses = 0;
 while (<>) {
+    last if -f "stop.txt";
     chomp;
     my $pid = fork();
     if ($pid) {
