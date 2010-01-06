@@ -50,3 +50,7 @@ reset-one-article.pl
 	This isn't necessary any longer since download-by-title.pl now
 	checks for errors before outputing a record.
 
+
+Example run:
+redherring:/giant/thumper/data> ../research/wt-project/projects/enwiki-up2date/download-by-title.pl ensplit6 < ../research/wt-project/projects/enwiki-up2date/titles.txt | ../research/wt-project/projects/enwiki-up2date/sort-one-article.pl ensplit6
+

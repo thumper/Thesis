@@ -230,7 +230,7 @@ sub saveRevisions {
 	$out->print($contrib);
 	$out->print("      </contributor>\n");
 	$out->print("      <comment>".xmlEscape($$rev{comment})."</comment>\n") if exists $$rev{comment};
-	$out->print("      <text xml:space=\"preserve\">".xmlEscape($text)."</text>\n");
+	$out->print("      <text xml:space=\"preserve\">".xmlEscape($text)."</text>\n") if defined $text;
 	$out->print("    </revision>\n");
     }
     close($file);
