@@ -19,6 +19,7 @@ use Error qw(:try);
 use constant WIKIAPI => 'http://en.wikipedia.org/w/api.php';
 use constant USERAPI => 'http://toolserver.org/~Ipye/UserName2UserId.php';
 
+$| = 1;
 my $outdir = shift @ARGV;
 my @subprocesses;
 my (%lastrevid, %userid, %pageid);
@@ -49,7 +50,6 @@ while (<>) {
 		    'lastrevid' => $lastrevid,
 		    'userids' => \%userid,
 		};
-warn "$pageid: Storing lastrev = $lastrevid\n";
 		store_fd($result, \*STDOUT) || die "can't store result";
 		$limit = 0;
 	    } otherwise {
@@ -64,6 +64,7 @@ warn "$pageid: Storing lastrev = $lastrevid\n";
 	exit(0);
     }
 }
+warn "Finishing up";
 while (@subprocesses > 0) { waitForChildren(); }
 exit(0);
 
@@ -83,7 +84,7 @@ sub waitForChildren {
 	delete $result->{userids};
 	my $pageid = $result->{pageid};
 	$lastrevid{$pageid} = $result->{lastrevid};
-warn "$pageid: lastrev = [".$result->{lastrevid}."]\n";
+#warn "$pageid: lastrev = [".$result->{lastrevid}."]\n";
 warn Dumper($result) if !defined $result->{lastrevid};
 	print "$pageid\n";
     }
