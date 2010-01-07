@@ -44,11 +44,12 @@ while (<>) {
 	my $limit = 50;
 	while ($limit > 0) {
 	    try {
-		my $lastrevid = fetch_page(@args);
+		my ($newrevs, $lastrevid) = fetch_page(@args);
 		my $result = {
 		    'pageid' => $pageid,
 		    'lastrevid' => $lastrevid,
 		    'userids' => \%userid,
+		    'newrevs' => $newrevs,
 		};
 		store_fd($result, \*STDOUT) || die "can't store result";
 		$limit = 0;
@@ -86,7 +87,7 @@ sub waitForChildren {
 	$lastrevid{$pageid} = $result->{lastrevid};
 #warn "$pageid: lastrev = [".$result->{lastrevid}."]\n";
 warn Dumper($result) if !defined $result->{lastrevid};
-	print "$pageid\n";
+	print "$pageid\n" if $result->{newrevs} > 0;
     }
     untieHashes();
 }
@@ -123,14 +124,17 @@ sub fetch_page {
     die "$pageid: No nextrev" if !defined $nextrev;
 
     my $lastrevid = $nextrev;
+    my $newrevs = 0;
     my $page;
     do {
 	warn "$pageid: Working on rev $nextrev of title $title\n";
 	($page, $nextrev) = download_page(titlerevs_selector($title, $nextrev, $limit));
-	$lastrevid = saveRevisions($page, $lastrevid);
+	my $nrevs;
+	($nrevs, $lastrevid) = saveRevisions($page, $lastrevid);
 die "$pageid: Bad lastrev" if !defined $lastrevid;
+	$newrevs += $nrevs;
     } while (defined $nextrev && !-f "stop.txt");
-    return $lastrevid;
+    return ($newrevs, $lastrevid);
 }
 
 
@@ -184,9 +188,9 @@ sub download_page {
     my $data = $json->decode($content);
 
     my @pageids = keys %{$data->{query}->{pages}};
-    die "Wrong number of pageids" if @pageids != 1;
+    die "Wrong number of pageids:[".join(',', @pageids)."]: $url" if @pageids != 1;
     my $key = shift @pageids;
-    die "API raised error -1" if $key == -1;
+    die "API raised error -1: $url" if $key == -1;
     my $page = $data->{query}->{pages}->{$key};
 
     return (undef, undef) if $page->{ns} != 0;
@@ -208,7 +212,7 @@ sub saveRevisions {
 	};
     }
 
-    return $lastrevid if $newrevs < 1;
+    return ($newrevs, $lastrevid) if $newrevs < 1;
 
     my $file = getOutfile($pageid);
 
@@ -236,7 +240,7 @@ sub saveRevisions {
     }
     close($file);
 
-    return $lastrevid;
+    return ($newrevs, $lastrevid);
 }
 
 sub getOutfile {
