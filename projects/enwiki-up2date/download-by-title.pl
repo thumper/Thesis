@@ -44,7 +44,7 @@ while (<>) {
 	my $limit = 50;
 	while ($limit > 0) {
 	    try {
-		my ($newrevs, $lastrevid) = fetch_page(@args);
+		my ($newrevs, $lastrevid) = fetch_page(@args, $limit);
 		my $result = {
 		    'pageid' => $pageid,
 		    'lastrevid' => $lastrevid,
@@ -125,15 +125,16 @@ sub fetch_page {
 
     my $lastrevid = $nextrev;
     my $newrevs = 0;
+    my $nrevs;
     my $page;
     do {
-	warn "$pageid: Working on rev $nextrev of title $title\n";
+	warn "$pageid: Working on rev $nextrev (limit $limit) of title $title\n";
 	($page, $nextrev) = download_page(titlerevs_selector($title, $nextrev, $limit));
-	my $nrevs;
 	($nrevs, $lastrevid) = saveRevisions($page, $lastrevid);
 die "$pageid: Bad lastrev" if !defined $lastrevid;
 	$newrevs += $nrevs;
-    } while (defined $nextrev && !-f "stop.txt");
+warn "$pageid: nextrev $nextrev (limit $limit) for $title, but nrevs $nrevs" if $nrevs == 0 && defined $nextrev;
+    } while (defined $nextrev && !-f "stop.txt" && $nrevs > 0);
     return ($newrevs, $lastrevid);
 }
 

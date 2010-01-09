@@ -30,7 +30,7 @@ while (<>) {
     my $pid = fork();
     if ($pid) {
 	$subprocesses++;
-	while ($subprocesses > 7) { waitForChildren(); }
+	while ($subprocesses > 3) { waitForChildren(); }
     } else {
 warn "sort: working on $_\n";
 	sortArticle($_);
@@ -66,16 +66,31 @@ sub sortArticle {
     $gz->close();
 
     if (@recs > 0) {
-	@recs = sort sortByTimeRev @recs;
+	# Sort the records.  Create new file if order has changed.
+	my @sortedrecs = sort sortByTimeRev @recs;
+	if (equalArrays(\@sortedrecs, \@recs)) {
+warn "$pageid: file already sorted.\n";
+	    return;
+	}
 	my $tmp = $file.".tmp";
 	open(my $out, "| gzip -c > $tmp") || die "open($tmp): $!";
-	foreach my $revxml (@recs) {
+	foreach my $revxml (@sortedrecs) {
 	    printRevision($out, $revxml);
 	}
 	$out->close();
 	unlink($file);
 	rename($tmp, $file) || die "rename($tmp): $!";
     }
+}
+
+sub equalArrays {
+    my ($a, $b) = @_;
+
+    return 0 if @$a != @$b;
+    for (my $i = 0; $i < @$a; $i++) {
+	return 0 if $a->[$i] != $b->[$i];
+    }
+    return 1;
 }
 
 sub getOutfile {
