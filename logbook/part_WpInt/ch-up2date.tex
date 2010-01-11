@@ -334,3 +334,46 @@ quite cumbersome to write correct code for every case.
 But really, it seems to me that the linear version makes several assumptions
 that are similar to the problems I'm trying to solve in the sliding-window case.
 
+\subsection{11-Jan-2010}
+
+I did the changes to implement a sliding window,
+with the assumption that no single page would go over 1GB in revision size.
+This didn't quite work, as two pages failed that assumption
+(``Ronald Reagan'' and ``Talk::Intelligent Design''),
+so I modified the code to skip over such pages.
+
+Despite all these performance enhancements, the processing time
+was still quite slow.
+It eventually finished, probably in about 7 days of running.
+With all the debugging, this was right around the end of the year.
+
+Just before Christmas, I spoke with Luca and he suggested that
+he should modify the batch code to read from my article tree
+and that I should focus only on getting the newer revisions.
+I agreed that this was maybe a good idea, because I had some worries
+about still trying to merge the dump data with the partial download
+from summer.
+By focusing on just the downloads, I could skip a step or
+two that were likely to require some debugging.
+
+I worked on the downloading code over Christmas and New Year's,
+and this finally completed updating yesterday.
+Even with the download, there were various errors I encountered
+like partial JSON results and file corruption from hitting ctrl-C.
+I put in some error checking and a way to gracefully stop the
+programs, and was eventually able to do away with all the errors.
+
+Performance wise, I've discovered that the \program{sort-one-article.pl}
+script uses a lot of CPU.
+I added checks so that it does not write out a few file if
+the input was already sorted, but it still uses too much CPU.
+My conclusion is that the XML parsing is quite slow.
+
+Rather than fix the speed of XML parsing, an alternate solution
+is to better know when a file needs resorting.
+(Most of the time it doesn't.)
+This would require a change to \program{download-by-title.pl}
+so that it tracks the last timestamp of the file,
+and verifies that each new revision downloaded is monotonically
+increasing.
+
