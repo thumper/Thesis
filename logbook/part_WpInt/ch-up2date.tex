@@ -287,3 +287,50 @@ $ ./split-chunks2articles.pl
 \end{verbatim}
 This ran overnight, and was complete by morning.
 
+\subsection{13-Dec-2009}
+
+Unfortunately, I ran into a problem which I didn't document here.
+Basically, the \program{splitwiki} code had transformed the XML entities
+so that the resulting files could not be parsed by an XML parser.
+
+I have written a variety of tools to experiment with how to handle the data,
+both directly from the dump and from an article tree that I created.
+None have performed very quickly, which is disappointing.
+\begin{itemize}
+\item \program{bzip2} only decompresses at about 2MB/s.
+	There is a variant, \program{pbzip2}, which uses multiple cores,
+	but the compressed file must have used this parallel version.
+\item An early version of my article tree placed 10K+ files per directory
+	(using only the last three digits to name the directory),
+	but this turns out to be very slow when accessing the directories.
+\item I forgot that the complete dump includes pages in other namespaces,
+	which is a significant overhead when handling the files.
+\item Perl's \function{substr} function can't handle strings larger than 2GB.
+\item Other perl functions (like regex) seem to fail at 2GB.
+\end{itemize}
+
+Running some timings on a smaller 1GB set of data:
+\begin{verbatim}
+redherring:/giant/thumper> time bash -c 'bzcat enwiki2.xml.bz2 | ./research/wt-project/projects/enwiki-up2date/split-dump2articles.pl'
+processed 15 pages
+51.130u 4.140s 0:38.99 141.7%   0+0k 2712+2103856io 5pf+0w
+\end{verbatim}
+This has the problem that it doesn't track the children processes.
+When I add in that time, \program{bzip2} requires 4 minutes total
+and \program{pbzip2} uses 69 seconds.
+
+The \textit{WideFinder}-based solution also runs in 38 seconds,
+when using \program{pbzip2} at maximum compression (but this time
+the children processes are included in the time).
+Turning this down to the fastest compression yields a 22 second result:
+\begin{verbatim}
+time bash -c './research/wt-project/projects/enwiki-up2date/merge-dump3articles.pl enwiki2.xml'
+157.650u 9.150s 0:22.51 741.0%  0+0k 0+492904io 0pf+0w
+\end{verbatim}
+
+This argues that I should fix the WideFinder solution to handle files larger than 2GB.
+Except that the perl limitation of 2GB for \function{mmap} makes it
+quite cumbersome to write correct code for every case.
+But really, it seems to me that the linear version makes several assumptions
+that are similar to the problems I'm trying to solve in the sliding-window case.
+

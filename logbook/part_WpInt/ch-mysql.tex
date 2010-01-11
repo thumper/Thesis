@@ -124,8 +124,11 @@ I first ran this on the Portuguese wikipedia, and after 29 hours found a best ti
 [1,1665,1666,216,1,54,0,1,2,1,5,1,1,10,4]
 \end{verbatim}
 
-I then ran a test on the Italian wikipedia data with a population of 30 for 30 generations,
+I then ran a test on the Italian wikipedia data (about 8.6GB) with a population of 30 for 30 generations,
 and received a result in 103 hours.
+\begin{verbatim}
+.../mysql-optimization# time ./mysql-GA.pl --dir /giant/thumper/itwiki-oct-09-v2/sql
+\end{verbatim}
 The best result runs in 125.2 seconds, and the configuration is:
 \begin{verbatim}
 [mysqld]
@@ -154,7 +157,7 @@ innodb_log_files_in_group=4
 \subsection{23-Nov-2009}
 
 Since the configuration space has changed a bit since I last ran for
-the Portuguese wikipedia, I reran that test (runs in 109.2 seconds):
+the Portuguese wikipedia (about 5.4GB), I reran that test (runs in 109.2 seconds):
 \texttt{time ./mysql-GA.pl --dir /giant/thumper/ptwiki-20091002/sql}.
 
 \begin{verbatim}
@@ -179,5 +182,13 @@ datadir=/giant/mysql-ga/datadir
 # indexbefore = 1
 innodb_file_io_threads=16
 innodb_log_files_in_group=4
+\end{verbatim}
+
+This configuration took 52 hours to run.
+\begin{verbatim}
+root@redherring:/giant/thumper/research/wt-project/projects/mysql-optimization# time ./mysql-GA.pl --dir /giant/thumper/ptwiki-20091002/sql
+real    3090m11.602s
+user    1024m8.550s
+sys     235m35.520s
 \end{verbatim}
 
