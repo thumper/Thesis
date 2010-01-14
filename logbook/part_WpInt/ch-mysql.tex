@@ -192,3 +192,33 @@ user    1024m8.550s
 sys     235m35.520s
 \end{verbatim}
 
+\subsection{13-Jan-2010}
+
+We had our LANL mentor meeting today.
+Beforehand, I downloaded \program{ggobi} and played around with
+its visualization capabilities.
+It is a really interesting program, but my initial reactions to the
+mysql timing data that I have collected is that there isn't a clearcut
+relation between any of the parameters and the resulting run time.
+What I need is a way to cluster datapoints which are nearly identical
+(for example, differing only in one parameter) and then try to establish
+relations based on those parameters.
+Then, the next step would be to find a different cluster which vary
+only in that same parameter, and see if the same relation holds true.
+
+At the LANL meeting, Shelley suggested running a multivariate
+regression.
+Gary Grider added that there is a technique in statistics known
+as ``jackknifing'' which might help to find the parameters
+which are most influential in the result.
+Luca suggested that I turn it into a machine learning problem
+and see if any of those algorithms could find a way to predict
+the running time based on the parameters.
+
+An idea that was floating around my head this morning was to look
+at it from an information theoretic point of view.
+In this case, parameters with the least mutual information would be the
+ones that are the most correlated with the resulting running time.
+However, given the seemingly random result with respect to any
+single parameter, I fear that this won't lead to anything useful.
+
