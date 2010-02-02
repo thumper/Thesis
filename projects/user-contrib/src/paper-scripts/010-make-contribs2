@@ -1,0 +1,8 @@
+#!/bin/sh
+
+gzcat ~thumper/research/wikitrust-res/batch/category-rep/src/converter/en-converted-3.txt.gz | /Users/vishwa/wiki/wikitrust-res/batch/user-contrib/src/analysis/generate_reputation -firstcut -end 2006.1001 -u /Volumes/LucaWikiMac/stats-vishwa/reph.textonly.txt -u_contrib /Volumes/LucaWikiMac/stats-vishwa/contrib-textonly.txt -contrib_mode TextOnly
+
+gzcat ~thumper/research/wikitrust-res/batch/category-rep/src/converter/en-converted-3.txt.gz | /Users/vishwa/wiki/wikitrust-res/batch/user-contrib/src/analysis/generate_reputation -firstcut -end 2006.1001 -u /Volumes/LucaWikiMac/stats-vishwa/reph.editonly.txt -u_contrib /Volumes/LucaWikiMac/stats-vishwa/contrib-editonly.txt -contrib_mode EditOnly
+
+gzcat ~thumper/research/wikitrust-res/batch/category-rep/src/converter/en-converted-3.txt.gz | /Users/vishwa/wiki/wikitrust-res/batch/user-contrib/src/analysis/generate_reputation -firstcut -end 2006.1001 -u /Volumes/LucaWikiMac/stats-vishwa/reph.textwithpunish.txt -u_contrib /Volumes/LucaWikiMac/stats-vishwa/contrib-textwithpunish.txt -contrib_mode TextWithPunish
+

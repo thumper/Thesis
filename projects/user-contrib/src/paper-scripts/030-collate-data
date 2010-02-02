@@ -1,0 +1,17 @@
+#!/bin/sh
+
+set -e
+set -x
+
+../converter/convert-contrib2rankings.pl ../usercontrib-data/contrib-data-clean.txt > ../usercontrib-data/rankings.txt
+../converter/convert-contrib2rankings.pl --percentiles ../usercontrib-data/contrib-data-clean.txt > ../usercontrib-data/rankings-percentile.txt
+
+../histograms/make-percentiles2dat.pl ../usercontrib-data/rankings-percentile.txt ../usercontrib-data/
+
+
+# Histogramming by value has failed, so far
+../histograms/make-contribs2dat.pl ../usercontrib-data/contrib-data.txt ../usercontrib-data/
+
+# And count the number of users who prefer adding text over editing it
+./count-edit-text.pl ../usercontrib-data/contrib-data-clean.txt  > ../usercontrib-data/data-text-vs-editing.txt
+

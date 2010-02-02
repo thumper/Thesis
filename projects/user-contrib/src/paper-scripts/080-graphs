@@ -1,0 +1,18 @@
+#!/bin/sh
+
+set -e
+set -x
+
+#../graphs/make-perct3d.pl ../usercontrib-data/hist-pctl-*.dat
+##../graphs/make-vals3d.pl ../usercontrib-data/hist-vals-*.dat
+#
+#../graphs/make-all2png.pl ../usercontrib-data/ ../usercontrib-data/contrib-data-clean.txt
+
+../graphs/make-final2eps.pl ../usercontrib-data/
+gnuplot < ../graphs/plot-edit-text.gp
+
+../graphs/kill-redundantPS.pl ../usercontrib-data/score-zoom-*.eps
+../graphs/kill-redundantPS.pl ../usercontrib-data/plot-edit-text.eps
+
+gnuplot < ../graphs/plot-hist-numedits.gp
+

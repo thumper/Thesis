@@ -1,0 +1,11 @@
+#!/bin/sh
+
+set -e
+set -x
+
+../sore-thumbs/extract-zeros.pl textlong ../usercontrib-data/contrib-data.txt > ../usercontrib-data/uids-textlong-zeros.txt
+../missing-editrecs/find-text-nonzeros.pl ../usercontrib-data/uids-textlong-zeros.txt  /Volumes/LucaWikiMac/sortedstats/enwiki-20070206/enwiki-20070206-allsorted.stats.gz > ../usercontrib-data/uids-textlong-zeros2.txt
+
+# note use of "contrib-data-clean.txt" as input
+../sore-thumbs/extract-entries.pl --not ../usercontrib-data/contrib-data-clean.txt < ../usercontrib-data/uids-textlong-zeros2.txt > ../usercontrib-data/contrib-data-clean2.txt
+

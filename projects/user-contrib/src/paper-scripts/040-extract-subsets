@@ -1,0 +1,7 @@
+#!/bin/sh
+
+set -e
+set -x
+
+../sore-thumbs/extract-entries.pl ../usercontrib-data/contrib-data-clean.txt < ../usercontrib-data/uids-bots.txt > ../usercontrib-data/contrib-bots.txt
+

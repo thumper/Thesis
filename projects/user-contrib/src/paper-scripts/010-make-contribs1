@@ -1,0 +1,10 @@
+#!/bin/sh
+
+gzcat ~thumper/research/wikitrust-res/batch/category-rep/src/converter/en-converted-3.txt.gz | /Users/vishwa/wiki/wikitrust-res/batch/user-contrib/src/analysis/generate_reputation -firstcut -end 2006.1001 -u /Volumes/LucaWikiMac/stats-vishwa/reph.reputation.txt -u_contrib /Volumes/LucaWikiMac/stats-vishwa/contrib-reputation.txt -contrib_mode Reputation
+
+gzcat ~thumper/research/wikitrust-res/batch/category-rep/src/converter/en-converted-3.txt.gz | /Users/vishwa/wiki/wikitrust-res/batch/user-contrib/src/analysis/generate_reputation -firstcut -end 2006.1001 -u /Volumes/LucaWikiMac/stats-vishwa/reph.textlong.txt -u_contrib /Volumes/LucaWikiMac/stats-vishwa/contrib-textlong.txt -contrib_mode TextLong
+
+gzcat ~thumper/research/wikitrust-res/batch/category-rep/src/converter/en-converted-3.txt.gz | /Users/vishwa/wiki/wikitrust-res/batch/user-contrib/src/analysis/generate_reputation -firstcut -end 2006.1001 -u /Volumes/LucaWikiMac/stats-vishwa/reph.editlong.txt -u_contrib /Volumes/LucaWikiMac/stats-vishwa/contrib-editlong.txt -contrib_mode EditLong
+
+gzcat ~thumper/research/wikitrust-res/batch/category-rep/src/converter/en-converted-3.txt.gz | /Users/vishwa/wiki/wikitrust-res/batch/user-contrib/src/analysis/generate_reputation -firstcut -end 2006.1001 -u /Volumes/LucaWikiMac/stats-vishwa/reph.revisions.txt -u_contrib /Volumes/LucaWikiMac/stats-vishwa/contrib-revisions.txt -n_rev_contribs 10 -contrib_mode Revisions
+

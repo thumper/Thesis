@@ -1,0 +1,14 @@
+#!/bin/sh
+
+set -e
+set -x
+
+../sore-thumbs/extract-zeros.pl editlong2 ../usercontrib-data/contrib-data.txt > ../usercontrib-data/uids-editlong-zeros.txt
+
+../missing-editrecs/find-edit-nonzeros.pl ../usercontrib-data/uids-editlong-zeros.txt  /Volumes/LucaWikiMac/sortedstats/enwiki-20070206/enwiki-20070206-allsorted.stats.gz > ../usercontrib-data/uids-editlong-zeros2.txt
+
+## Created list of records to examine...
+###../missing-editrecs/find-edit-nonzeros.pl ../usercontrib-data/uids-editlong-zeros.txt  missing_recs.txt > ../usercontrib-data/uids-editlong-zeros2.txt
+
+../sore-thumbs/extract-entries.pl --not ../usercontrib-data/contrib-data.txt < ../usercontrib-data/uids-editlong-zeros2.txt > ../usercontrib-data/contrib-data-clean.txt
+

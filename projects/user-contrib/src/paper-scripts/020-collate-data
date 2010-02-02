@@ -1,0 +1,15 @@
+#!/bin/sh
+
+set -e
+set -x
+
+../sore-thumbs/compile-rawdata.pl ../usercontrib-data/raw-output/contrib-* > ../usercontrib-data/contrib-data.txt
+
+# There is still bad data present, so we can't do these later steps, yet.
+
+#../sore-thumbs/compile-rankings.pl ../usercontrib-data/raw-output/contrib-* > ../usercontrib-data/rankings.txt
+#../sore-thumbs/compile-percentiles.pl ../usercontrib-data/raw-output/contrib-* > ../usercontrib-data/rankings-percentile.txt
+
+#../histograms/make-percentiles2dat.pl ../usercontrib-data/rankings-percentile.txt ../usercontrib-data/
+#../histograms/make-contribs2dat.pl ../usercontrib-data/contrib-data.txt ../usercontrib-data/
+

@@ -1,0 +1,4 @@
+#!/bin/sh
+
+gzcat ~thumper/research/wikitrust-res/batch/category-rep/src/converter/en-converted-3.txt.gz | ../contrib-edits/count-edits.pl > ../usercontrib-data/raw-output/contrib-numedits.txt
+

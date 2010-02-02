@@ -1,0 +1,5 @@
+Use this script to read TextLife records and count up how many edits
+each user made.
+
+gzcat en-converted-3.txt.gz | ./count-edits.pl > contrib-edits.txt
+
