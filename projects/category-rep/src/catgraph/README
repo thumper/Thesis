@@ -1,0 +1,54 @@
+
+Need the categorylinks file:
+    http://download.wikimedia.org/enwiki/20080312/enwiki-20080312-categorylinks.sql.gz
+and the pageinfo file:
+    http://download.wikimedia.org/enwiki/20080312/enwiki-20080312-page.sql.gz   
+
+
+To build the category graph data:
+	./buildCategoryGraph.pl categorylinks.sql.gz page.sql.gz
+The resulting data must go into a directory specified in showcatstats.ml.
+
+=====================================================
+
+traceCategoryChildren.pl tells you how many subcategories there are for a category,
+and how many pages, and recursively follows the categories for 2 levels.
+       ./traceCategoryChildren.pl History
+
+=====================================================
+
+Similarly, traceCategoryChildren goes 10 levels up the category
+heirarchy to tell you what the parent categories are.
+Along the way, it identifies topics that appear to be
+major headings, by checking for their inclusion in
+the category "Main_topic_classifications".
+      ./traceCategoryChilren.pl Teen_dramas
+
+====================================================
+
+This program is used to find out the "Main_topic_classifications"
+categories for every page in the system.  It creates two output
+files:
+ * cat2rootcat.txt - gives the set of root categories for every category.
+   A category is a root if it is an immediate child of Main_topic_classifications.
+   When more than one category is a root, it is because there were equidistant
+   paths from the root to this category.
+ * page2rootcat.txt - gives the set of root categories for every page.
+   In this case, we assume that every category assigned to the page is
+   relevant, so we coalesce all the root categories of each category
+   (irrespective of how far the paths might be to the root).
+      ./buildPageCategories.pl
+
+=====================================================
+
+To double-check the output from buildPageCategories.pl,
+I wrote programs to translate the resulting text files back to text:
+      ./translateCat2Rootcat.pl
+      ./translatePage2Rootcat.pl
+
+=====================================================
+
+To measure the amount of mutual information between categories,
+I wrote another program
+      ./measureCovariance.pl page2rootcat.txt > covar.txt
+      sort -n -k 3 covar.txt | less

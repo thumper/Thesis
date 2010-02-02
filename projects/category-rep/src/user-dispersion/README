@@ -1,0 +1,21 @@
+How many categories do editors typically participate in?
+This program uses the output from 'buildPageCategories.pl'
+to identify what categories authors participate in.
+
+
+You should have "page2rootcat.txt" in this directory.
+
+Run it as:
+
+gunzip -c /Volumes/LucaWikiMac/sortedstats/enwiki-20070206/enwiki-20070206-allsorted.stats.gz | ./convert-old2new.pl | ./compile-user2rootcat.pl > user-categories.txt
+
+To build build histograms of how broadly users
+explore when editing pages, I ran the following:
+   70  ./histogram.pl 4 user-categories-text.txt > hist-totalcats.txt
+   73  ./histogram.pl 6 user-categories-text.txt > hist-part25.txt
+   74  ./histogram.pl 8 user-categories-text.txt > hist-part33.txt
+   75  ./histogram.pl 10 user-categories-text.txt > hist-part50.txt
+   76  ./histogram.pl 12 user-categories-text.txt > hist-part66.txt
+   77  ./histogram.pl 14 user-categories-text.txt > hist-part75.txt
+   78  ./histogram.pl 16 user-categories-text.txt > hist-part90.txt
+
