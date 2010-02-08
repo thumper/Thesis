@@ -1,0 +1,97 @@
+\chapter{Category Reputation}
+
+\section{Introduction}
+
+\subsection{7-Feb-2010}
+
+Very quickly after our initial research, we wondered whether
+tracking separate reputations for each branch of knowledge
+would yield better results.
+That is, we propose that there are some people who are deeply
+knowledgeable about one topic but don't recognize the limits
+of their knowledge and edit other topic articles in ways which
+the overall community does not agree with.
+Editors which are heavily invested in the Wikipedia community
+would probably also exhibit high participation in \textbf{Talk}
+pages to argue the correctness of the articles.
+
+It should be noted that this idea of ``category reputation''
+is frequently asked at conferences when we present our research.
+It's a very popular notion that editors should ``stick to what
+they know.''
+Possibly influencing the popularity of this notion are the reports
+of university professors having their edits reverted in their
+own areas of expertise.
+
+\section{Gillian's Research}
+
+\subsection{7-Feb-2010}
+
+Gillian Smith joined the WikiTrust project briefly in 2007, and
+began exploring this question.
+She wrote code which builds a ``category graph'' of all the
+categories listed in Wikipedia, and which pages belong to which
+categories.
+Her implementation of category reputation was simple: she chose
+two topics to inspect, and the reputation code would traverse the
+category graph to see if a page belonged to either of these
+categories (with a maximum search depth of ten).
+The topics she chose (``History'' and ``Mathematics'') were
+dissimilar enough that one could presume an expert at one would
+not be an expert at the other.
+My memory of her final conclusion was that there was no evidence
+to suggest that category reputations were useful;
+she did not find specific examples that demonstrated the
+behavior that we all presume must exist.
+
+My own thinking on Gillian's experiment is that it is inconclusive.
+There are several weaknesses that could explain why she didn't
+find any interesting data:
+\begin{enumerate}
+\item Although I agree that the topics ``History'' and ``Mathematics''
+	are disparate branches of knowledge, it is a big gamble to
+	suppose that non-experts posing as experts would cross these
+	two topics and not some other topic.
+	This gamble depends on the behavior being prevalent enough
+	that it is sure to occur within these topics.
+\item The behavior must also be prevalent enough within a single
+	individual that we can observe any change in reputation.
+\item In our reputation system, reputations can't drop below zero.
+	How does one identify editors which have inappropriately
+	crossed their limit of knowledge?  I haven't spoken to Gillian
+	about this, and it's possible that she explored the question
+	of how many editors have high reputation in multiple categories.
+\item A category depth of ten might not be enough to identify all the
+	subcategories of a topic, if it is highly developed within
+	Wikipedia.
+\end{enumerate}
+
+At my return to research in 2008, I decided to poke around this research.
+My initial thought was that a depth of ten could allow precious data
+to go uncounted, so that it was better to identify the ``roots of
+knowlege'' that form the biggest branches of knowledge.
+As it turns out, there is a category within Wikipedia to define
+these ``biggest branches'': Main\_topic\_classifications.
+I wrote code to take the categories of each page and work
+backwards through the category graph until one of these
+``biggest branches'' is discovered.
+
+That change helps to address my first and last concerns, but then I wondered
+about the second point: how common is it that people edit in
+multiple categories?
+The surprising answer is ``very rarely.''
+I was also working on the ``User Contributions'' paper with Vishwa,
+and came to learn that something like two thirds of users only
+ever make a single edit, and nearly all the rest only make two contributions.
+Depending on how Gillian analyzed the data, she might have not seen
+any interesting points because they were lost in the noise of
+``single edit contributors.''
+That suggests that any analysis should start by looking only
+at the group of people who have made more than two edits (but how
+many?), being wary of counting work by bots.
+
+The ``User Contributions'' paper also suggests an alternative
+to reputation in measuring the quality of work in multiple categories.
+Reputation can't fall below zero, but several of the metrics we
+defined are allowed to fall below zero.
+
