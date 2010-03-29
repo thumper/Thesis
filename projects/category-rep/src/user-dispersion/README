@@ -9,7 +9,7 @@ Run it as:
 
 gunzip -c /Volumes/LucaWikiMac/sortedstats/enwiki-20070206/enwiki-20070206-allsorted.stats.gz | ./convert-old2new.pl | ./compile-user2rootcat.pl > user-categories.txt
 
-To build build histograms of how broadly users
+To build histograms of how broadly users
 explore when editing pages, I ran the following:
    70  ./histogram.pl 4 user-categories-text.txt > hist-totalcats.txt
    73  ./histogram.pl 6 user-categories-text.txt > hist-part25.txt
