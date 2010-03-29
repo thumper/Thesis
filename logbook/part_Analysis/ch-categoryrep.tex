@@ -95,3 +95,28 @@ to reputation in measuring the quality of work in multiple categories.
 Reputation can't fall below zero, but several of the metrics we
 defined are allowed to fall below zero.
 
+\section{Picking Up The Pieces}
+
+\subsection{28-Mar-2010}
+
+Trying to navigate the work I had previously done.
+Searched through the files that I had placed into
+source control in the \file{category-rep} directory.
+The \file{catgraph} sub-directory contains the first
+step of the calculations I used: using the category
+links and list of all pages, build tables of what
+pages are within what categories.
+
+I downloaded the two files necessary from
+\url{http://download.wikimedia.org/enwiki/20100312/}:
+\begin{itemize}
+\item \file{enwiki-20100312-categorylinks.sql.gz}
+\item \file{enwiki-20100312-page.sql.gz}
+\end{itemize}
+
+One question I had tonight is whether backslashes
+in the names confuse the program to track the categories.
+I think the answer is ``no,'' because both the page titles
+and category names are described in SQL so they are escaped
+in exactly the same way.
+
