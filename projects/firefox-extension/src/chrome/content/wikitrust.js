@@ -88,6 +88,7 @@
     const debug = false;		// to test new renderings
     const default_WtURL = '.collaborativetrust.com/WikiTrust/'; // wikitrust
 
+    const FEATURE_SECUREWP = false;
     const FEATURE_TOOLTIP = false;
     const FEATURE_VOTING = false;
     const MAX_TRUST_VALUE = 9;
@@ -216,7 +217,7 @@
     function getWikiLang(loc) {
 	try {
 	    if ((loc.protocol != 'http:') && (loc.protocol != 'https:')) return null;
-	    if (loc.host == 'secure.wikimedia.org') {
+	    if (FEATURE_SECUREWP && (loc.host == 'secure.wikimedia.org')) {
 		var match = /^\/wikipedia\/([^\/]+)\//.exec(loc.pathname);
 		// unescape() doesn't decode utf8.  Use decodeURIComponent().
 		if (match && match[1] != '') return decodeURIComponent(match[1]);
@@ -236,7 +237,7 @@
 	try {
 	    var lang = getWikiLang(loc);
 	    if (!lang) return null;
-	    if (loc.host == 'secure.wikimedia.org')
+	    if (FEATURE_SECUREWP && (loc.host == 'secure.wikimedia.org'))
 		return 'https://secure.wikimedia.org/wikipedia/'+lang+'/w/api.php';
 	    return 'http://' + lang + '.wikipedia.org/w/api.php';
 	} catch (x) {
