@@ -782,17 +782,25 @@ if (FEATURE_VOTING) {
 		+ '&title=' + match[1]
 		+ '&pageid=' + match[2]
 		+ '&revid=' + match[3];
+	    if (/^(User|User talk|Talk|Category|Wikipedia|Template):/.test(match[1])) continue;
 	    function qualityResponseFunc(url, li, title, inner) {
 		return function (req) {
 		    if (req.responseText == null) return;
 		    var match = /^[0-9\.]+$/.exec(req.responseText);
-		    if (!match) return;
-		    var level = Math.floor(10*req.responseText);
+		    if (!match) {
+			log("Error on quality: " + req.responseText);
+			return;
+		    }
+		    var level = Math.floor((1-req.responseText)*10/0.5);
+		    if (level > 9) level = 9;
 		    var classname = COLORS[level];
 		    li.innerHTML = '<span class="'+classname+'">'+inner+'</span>';
 		};
 	    }
-	    http_get(url, qualityResponseFunc(url,li,match[1],txt), function (req) { });
+	    http_get(url, qualityResponseFunc(url,li,match[1],txt), function (req) {
+		if (req) log('Error on quality: status = ' + req.status);
+		else log("Error getting quality data");
+	    });
 	}
     }
 
