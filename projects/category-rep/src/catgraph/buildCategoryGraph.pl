@@ -4,6 +4,7 @@ use warnings;
 use Encode;
 use PerlIO::encoding;
 use PerlIO::gzip;
+use Time::HiRes qw( gettimeofday tv_interval );
 
 ##Open the files
 my ($category_filename, $pageinfo_filename) = @ARGV;
@@ -26,8 +27,11 @@ my %page_names;         #indexed by id
 open(my $catlookup, ">:encoding(iso-8859-1)", "catidname.txt");
 open(my $pagelookup, ">:encoding(iso-8859-1)", "pageidname.txt");
 
+my $lines = 0;
+my $t0 = [gettimeofday];
 open(PAGEINFO, "<:gzip :encoding(ISO-8859-1)", $pageinfo_filename) || die "open: $!";
 while (<PAGEINFO>) {
+    $lines++;
     while (m/\((\d+),(\d+),'(.+?)','.*?',\d+,\d+,/g) {
 	my $id = $1;
 	my $namespace = $2;
@@ -46,14 +50,19 @@ close PAGEINFO;
 close $catlookup;
 close $pagelookup;
 
+my $elapsed = tv_interval($t0);
+print "Read $lines lines in $elapsed seconds\n";
+
 print "Building category category tables...\n";
+
+local $/ = "'),";
 
 ##Now go through the category links table and build a graph
 my %category_graph_ids; #Indexed by ID, contains list of child category IDs
 my %category_pages; #Indexed by catid, contains page ids in this category
 open(CATEGORY, "<:gzip :encoding(ISO-8859-1)", $category_filename) || die "open: $!";
 while (<CATEGORY>) {
-    while (m/\((\d+),'(.+?)','.*?',\d+\)/g) {
+    while (m/\((\d+),'(.+?)','/g) {
 	my $id = $1;
 	my $name = $2;
 	next if !defined $category_ids{$name};		# we only want category containers
