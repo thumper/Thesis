@@ -5,8 +5,54 @@
 \subsection{11-Apr-2010}
 
 Both Ian and Luca have suggested that we enter the vandalism competition
-part of the PAN 2010 LAB\footnote{\url{http://pan.webis.de}}.
+part of the PAN~2010 LAB\footnote{\url{http://pan.webis.de}}.
 While considering Ian's observation of the recent spike in
 interest of our work, it occurred to me that the spike could
 be because of this competition.
+
+\section{Combining Signals}
+
+\subsection{28-Sep-2010}
+
+While in Poland for Wikimania, I spoke to several people about our
+performance as a vandalism detection tool in the PAN~2010 competition.
+Although there was some interest, most people referred me to (and were
+excited about) the work of Andrew West presented at WikiSym a few days before.
+Andrew's work uses a handful of signals (\eg some NLP, IP address, time of
+day) and gets good results (he would have taken second place in
+PAN~2010 if he had entered).
+The most exciting thing about his work, however, is that he has a tool
+(\program{STiki}) which is able to present his vandalism results to
+the user so that they can inspect the edit and trigger a revert if
+necessary --- and he collects the data about how his users ``voted''
+on each edit.
+This provides him with the opportunity to continue to build an
+annotated corpus of edits\footnote{The problem with the current system
+is that it only collects a single vote for each edit, so that the
+annotations might not be very reliable.}, so that he can re-run the
+machine learning algorithms.
+
+With Luca's permission, I approached Andrew about a possible
+collaboration where we try to combine the signals from our respective
+solutions and see if we can get better performance.
+Andrew hadn't entered PAN~2010 because his data didn't go back that
+far, so we experimented on a corpus that Andrew had collected from 
+his tool.
+First, we discovered that the \function{ADTree} algorithm under
+\package{Weka} out-performed Andrew's own \function{SVM}
+implementation.
+We also saw that \wikitrust seemed to perform a bit better than
+\package{STiki}.
+And finally, we saw a noticeable improvement when we combined our
+signals using \function{ADTree}.
+
+Andrew got really excited by these results, and generated the data
+necessary for the PAN~2010 corpus.
+On this corpus, our combined signals was able to score an AUC of 95-97\%!
+
+While working on this task, I was stymied by some \wikitrust bugs:
+our update process skips some revisions, and our page titles are not
+easy to search.
+I decided that the time had come to fix these bugs, so I have been
+working on a new branch to implement these changes.
 
