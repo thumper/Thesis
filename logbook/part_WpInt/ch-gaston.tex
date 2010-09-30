@@ -1,0 +1,93 @@
+\chapter{Loading onto Gaston}
+
+\section{Introduction}
+
+\subsection{29-Sep-2010}
+
+Our ``production system'' has been running for several months now,
+with the English wikipedia running on Redherring, and several
+different languages running on Gaston.
+We have recently run into a few bugs that led to a relatively large
+overhaul of how revisions are being stored, but we don't have a good
+way to test the system.
+Luca suggested that I set up a small English installation on Gaston
+and use that to test the new code for problems.
+
+\section{Setup}
+
+\subsection{29-Sep-2010}
+
+I have been tracing through Ian's installation files and trying
+to organize it to be a bit more portable.
+The core definitions are in \file{/etc/wikitrust/},
+There are executables and cron files scattered elsewhere, but I am
+slowly finding them and noting their installation in
+\file{WikiTrust/util/ucsc-install/Makefile}.
+
+Before running a test, the database needs to be setup:
+\begin{verbatim}
+$ mysql --user root --password mysql
+mysql> create database enwiki;
+mysql> GRANT ALL PRIVILEGES ON enwikidb.* TO 'wikiuser'@'localhost';
+mysql> quit
+\end{verbatim}
+
+A directory for the downloaded revisions is also necessary:
+\begin{verbatim}
+$ cd /raid
+$ sudo mkdir enwiki-test
+$ sudo chown wikitrust.wikitrust enwiki-test
+\end{verbatim}
+
+The database also needs to be initialized with tables.
+You can either setup a fullblown mediawiki installation,
+or just create the empty datables.
+To create the empty tables, use the following:
+\begin{verbatim}
+$ cd WikiTrust/sql
+$ mysql --user wikiuser --password enwikidb
+mysql> \. wikitrust.sql
+mysql> quit
+\end{verbatim}
+
+
+\section{Debugging}
+
+\subsection{29-Sep-2010}
+
+In order to test things out the way that they would get launched
+by the startup scripts, I hacked up a new script that mirrors
+the work done by \program{wikitrustd}.
+It's called \program{testlaunch} and you use it like so:
+\begin{verbatim}
+$ cd WikiTrust/remote/admin
+$ sudo ./testlaunch enwiki
+\end{verbatim}
+This is most effective if you edit
+\file{/etc/wikitrust/wikis_available.d/enwiki}
+so that the \texttt{DISPATCHER} variable is pointing to
+the version of the dispatcher compiled in your directory.
+
+While testing out my configuration, I found that the
+\program{dispatcher} was immediately terminating because
+of a DB exception.
+Due to the way that the dispatcher is started, it's a little
+difficult to get the stack trace.
+To do it, I had to clean my build tree and rebuild the debugging
+version of \wikitrust, then modify the \file{enwiki} configuration
+to say:
+\begin{verbatim}
+DISPATCHER="env OCAMLRUNPARAM=b /store/thumper/research/WikiTrust/remote/analysis/dispatcher"
+\end{verbatim}
+This will generate a stack trace with the exception.
+
+Since I was getting a DB exception, I hacked the config a little
+further to add the ``\texttt{-dump_db_calls}'' option.
+This led to the discovery that I also need to initialize all
+the tables after creating the database.
+
+
+To add a page to the dispatcher queue, I used:
+\begin{verbatim}
+env WT_DBNAME=DBI:mysql:database=enwikidb:host=localhost WT_DBUSER=wikiuser WT_DBPASS=wikiword perl -I. -MWikiTrust -e "WikiTrust::cmdline();" method=gettext pageid=3703446
+\end{verbatim}

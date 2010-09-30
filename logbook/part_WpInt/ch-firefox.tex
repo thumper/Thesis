@@ -1,0 +1,26 @@
+\chapter{Firefox Plugin}
+
+\section{Security}
+
+\subsection{29-Sep-2010}
+
+The problem with the current architecture (of users sending back the
+rendered HTML for us to cache) is that a malicious user can send back
+HTML that contains bad information or even triggers a ``drive by
+download'' that installs malicious software.
+I had always figured that the way around this was to get renderings
+from multiple users and verify that the renderings are equivalent.
+This has two problems that I can think of:
+\begin{enumerate}
+\item different versions of the plugin might render differently, and
+\item a malicious user can make multiple submissions.
+\end{enumerate}
+The first is somewhat solved by storing the plugin version with the
+rendering, but care must be taken in throwing out ``old'' versions
+because a malicious user might pretend to be a newer plugin.
+The second issue can be alleviated by using a distance metric on
+IP address space, and requiring that the renderings come from hosts
+which are relatively far apart from each other.
+This raises the bar for attackers, but there is still opportunity
+for large scale botnets to subvert the system.
+
