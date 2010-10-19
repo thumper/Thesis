@@ -1,0 +1,122 @@
+\documentclass[10pt,letterpaper,oneside,oldfontcommands,final]{memoir}
+
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{xspace}
+\usepackage{graphics}
+\usepackage[pdflatex]{graphicx}
+
+\usepackage{macro,luca}
+%\usepackage{fullpage}
+\usepackage{ifthen}
+\usepackage{times}
+\usepackage{amsfonts}
+\usepackage{latexsym}
+\usepackage{enumerate}
+\usepackage{texpoint}
+\usepackage{epic,eepic}
+\usepackage{newalg}
+\usepackage{subfigure}
+\usepackage{multirow}
+\usepackage{setspace}
+\usepackage{ucthesis}
+
+\doublespace
+
+\makeindex
+
+\newif \iflong \longfalse
+\newif \ifshort \shorttrue
+
+\allowdisplaybreaks
+
+
+%%% need more space for ToC page numbers
+\setpnumwidth{2.55em}
+\setrmarg{3.55em}
+
+%%% need more space for ToC section numbers
+\cftsetindents{section}{1.5em}{3.0em}
+\cftsetindents{subsection}{4.5em}{3.9em}
+\cftsetindents{subsubsection}{8.4em}{4.8em}
+\cftsetindents{paragraph}{10.7em}{5.7em}
+\cftsetindents{subparagraph}{12.7em}{6.7em}
+
+%%% need more space for LoF numbers
+\cftsetindents{figure}{0em}{3.0em}
+
+%%% and do the same for the LoT
+\cftsetindents{table}{0em}{3.0em}
+
+%%% set up the page layout
+\settrimmedsize{11in}{8.5in}{*}
+\settrims{0pt}{0pt}
+\setlrmarginsandblock{1.6in}{1.3in}{*}
+\setulmarginsandblock{1.25in}{1.25in}{*}
+%\setmarginnotes{17pt}{51pt}{\onelineskip}
+\setheadfoot{\onelineskip}{2\onelineskip}
+\setheaderspaces{*}{2\onelineskip}{*}
+\addtolength{\uppermargin}{2\onelineskip}
+\addtolength{\textheight}{-2\onelineskip}
+\checkandfixthelayout
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+
+\settocdepth{subsection}
+
+\input{paper-frontmatter/main}
+
+\mainmatter
+%\pagestyle{ruled}
+\pagestyle{plain}
+\pagenumbering{arabic}
+\chapterstyle{veelo}
+
+%\input{paper-intro/main}
+%\input{paper-defs/main}
+%\input{paper-value/main}
+%\input{paper-restricted/main}
+%\iflong
+%\input{paper-general/main}
+%\fi
+\input{paper-conclusion/main}
+
+\appendix
+\appendixpage*
+
+\chapterstyle{normal}
+
+%\input{paper-WFproofs/main}
+
+\singlespacing
+\bibliographystyle{plain-annote}
+\bibliography{paper,dvlab}
+
+\clearpage
+
+\iflong
+\makepagestyle{index}
+  \makeheadrule{index}{\textwidth}{\normalrulethickness}
+  \makeevenhead{index}{\rightmark}{}{\leftmark}
+  \makeoddhead{index}{\rightmark}{}{\leftmark}
+  \makeevenfoot{index}{\thepage}{}{}
+  \makeoddfoot{index}{}{}{\thepage}
+
+\pagestyle{index}
+%\renewcommand{\chaptermark}[1]{}
+\renewcommand{\preindexhook}{%
+%The first page number is usually, but not always, the primary reference to
+%the indexed topic.
+\vskip\onelineskip}
+\indexintoc
+\printindex
+
+\fi
+
+\end{document}
+
