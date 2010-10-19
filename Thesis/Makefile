@@ -7,10 +7,10 @@ all: paper.pdf
 
 
 clean:
-	./latexmk -c
+	latexmk -c
 	rm -f *.log *.aux *.dvi *.bbl *.blg *~  *.brf *.out *.pdf
 
-paper.dvi: paper*.tex paper-*/*.tex *.sty paper-*/*.eepic
+paper.dvi: paper*.tex paper-*/*.tex *.sty
 
 .SUFFIXES: .ps .dvi .aux .tex .pdf .log .bib .bbl .xml
 .PRECIOUS: %.dvi
@@ -19,10 +19,10 @@ paper.dvi: paper*.tex paper-*/*.tex *.sty paper-*/*.eepic
 # The default rule always just tries to run tex, which isn't
 # what I want to do, in this case.
 %.dvi: %.tex
-	./latexmk $<
+	latexmk $<
 
 #%.pdf: %.tex %.bib
-#	./latexmk -pdf $<
+#	latexmk -pdf $<
 
 %.pdf: %.dvi
 	dvipdf $<

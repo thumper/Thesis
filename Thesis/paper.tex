@@ -7,7 +7,7 @@
 \usepackage{graphics}
 \usepackage[pdflatex]{graphicx}
 
-\usepackage{macro,luca}
+\usepackage{macro}
 %\usepackage{fullpage}
 \usepackage{ifthen}
 \usepackage{times}
@@ -16,7 +16,6 @@
 \usepackage{enumerate}
 \usepackage{texpoint}
 \usepackage{epic,eepic}
-\usepackage{newalg}
 \usepackage{subfigure}
 \usepackage{multirow}
 \usepackage{setspace}
@@ -77,7 +76,8 @@
 \pagenumbering{arabic}
 \chapterstyle{veelo}
 
-%\input{paper-intro/main}
+\input{paper-intro/main}
+\input{paper-outline/main}
 %\input{paper-defs/main}
 %\input{paper-value/main}
 %\input{paper-restricted/main}
@@ -93,9 +93,11 @@
 
 %\input{paper-WFproofs/main}
 
+\cite{*}
+
 \singlespacing
 \bibliographystyle{plain-annote}
-\bibliography{paper,dvlab}
+\bibliography{paper}
 
 \clearpage
 
