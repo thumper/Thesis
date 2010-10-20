@@ -377,3 +377,43 @@ so that it tracks the last timestamp of the file,
 and verifies that each new revision downloaded is monotonically
 increasing.
 
+\section{Fixing Page Titles}
+
+\subsection{18-Oct-2010}
+
+Over the last month, we've come to discover that the ambiguity
+of whether page titles use spaces or underscores was causing us
+some performance problems.
+
+After a substantial reworking of the code, tonight we will try
+rolling out the new code onto the foreign language instances we run.
+Before we do that, it's important to fix the existing page titles.
+To do that, we use the following command:
+\begin{verbatim}
+mysql> update page set page_title = replace(page_title, '_', ' ');
+\end{verbatim}
+
+I forgot that I also needed to \texttt{chown} the revision cache
+to the ``wikitrust'' user.  Now trying to correct that.
+
+The Polish wikipedia was my first test case.
+It doesn't seem to be downloading any page updates at all.
+Some investigation turned up that it has 25~pages from the
+Fresh wikipedia, with revisions so high that they are beyond
+what is available in the Polish wikipedia.
+
+In order to fix the situation, I had to drop the old
+``wikitrust\_queue'' table and recreate it so that it used
+\textbf{page\_id} as the primary key.
+Then I had to load all the bad pages into the queue, which
+I did with this command:
+\begin{verbatim}
+mysql> insert into wikitrust_queue (page_id) select distinct rev_page from revision where rev_id > 25000000;
+\end{verbatim}
+
+\subsection{19-Oct-2010}
+
+An overnight run gave good results.
+Once I fixed the permission errors, the only error I saw was
+the ``Missing\_trust'' error.
+
