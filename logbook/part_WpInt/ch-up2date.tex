@@ -431,3 +431,15 @@ This turns out to be necessary because the script has recently started
 failing (either because the result is too long or maybe because the
 script is taking too long).
 
+Also, I found the same problem of having bad revisions in the
+Portugeuse wiki.
+I used the same trick for adding it to the dispatcher queue,
+but discovered that I had left out a step.
+It's important to change the page title to something bogus to force
+the dispatcher to delete the current revision data and download new data.
+\begin{verbatim}
+mysql> update page set page_title=concat('XXX', page_id) where page_id
+in (select distinct rev_page from revision where rev_id > 25000000);
+mysql> insert into wikitrust_queue (page_id) select distinct rev_page from revision where rev_id > 25000000;
+\end{verbatim}
+
