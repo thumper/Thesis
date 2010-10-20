@@ -417,3 +417,17 @@ An overnight run gave good results.
 Once I fixed the permission errors, the only error I saw was
 the ``Missing\_trust'' error.
 
+I also created a script to fetch pages from the \textbf{Recent
+Changes} list on Wikipedia.
+I placed it into \file{projects/up2date} for my reference, so that
+it is not confused with Ian's PHP script to do a similar task.
+The purpose of my script was to get around the dependence on the
+Wikipedia Toolserver, but it's inadequate because it will only fetch
+500~revisions at a time (not pages, so it's very wasteful).
+
+Ian has since patched his script to accept a \textit{max} parameter
+which limits how many pages are returned by the query.
+This turns out to be necessary because the script has recently started
+failing (either because the result is too long or maybe because the
+script is taking too long).
+
