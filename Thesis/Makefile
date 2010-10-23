@@ -10,7 +10,7 @@ clean:
 	latexmk -c
 	rm -f *.log *.aux *.dvi *.bbl *.blg *~  *.brf *.out *.pdf
 
-paper.dvi: paper*.tex paper-*/*.tex *.sty
+paper.dvi: paper*.tex paper-*/*.tex *.sty paper*.bib
 
 .SUFFIXES: .ps .dvi .aux .tex .pdf .log .bib .bbl .xml
 .PRECIOUS: %.dvi
