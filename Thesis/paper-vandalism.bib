@@ -93,15 +93,21 @@
             on System Security",
   pages = "22--28", year = 2010
 }
-@inproceedings{Itakura09,
-  author = "Kelly Y. Itakura and Charles L. A. Clarke",
+@inproceedings{Itakura2009,
+  author = "Kelly Y. Itakura and Charles L.A. Clarke",
   title = "Using Dynamic {Markov} Compression to Detect Vandalism in the
            {Wikipedia}",
   booktitle = "{SIGIR'09}: Proceedings of the 32nd International {ACM} {SIGIR}
                Conference on Research and Development in Information Retrieval",
   pages = "822--823",
   publisher = "{ACM} Press",
-  year = 2009
+  year = 2009,
+  annote = {
+      They use a compression-based classifier to classify edits
+      as vandalism or not.  They separated insertions edits from
+      change edits, which gives them a performance edge for
+      insertion edits.
+  }
 }
 
 @inproceedings{Chin2010,
@@ -124,7 +130,7 @@
   publisher = {ACM},
 }
 
-@inproceedings{Pott08,
+@inproceedings{Potthast2008,
   author = "Martin Potthast and Benno Stein and Robert Gerling",
   title = "Automatic Vandalism Detection in {Wikipedia}",
   booktitle = "{ECIR'08}: Proceedings of the 30th European Conference on
@@ -133,10 +139,13 @@
   series = "LNCS",
   volume = 4956,
   pages = "663--668",
-  year = 2008
+  year = 2008,
+  annote = {
+      This paper is cited by nearly everyone.
+  }
 }
 
-@inproceedings{Priedhorsky07,
+@inproceedings{Priedhorsky2007,
   author = {Reid Priedhorsky and Jilin Chen and Shyong K. Lam
 	    and Katherine Panciera and Loren Terveen and
 		John Riedl},
@@ -147,7 +156,7 @@
 }
 
 
-@inproceedings{Smets08,
+@inproceedings{Smets2008,
   author = "Koen Smets and Bart Goethals and Brigitte Verdonk",
   title = "Automatic Vandalism Detection in {Wikipedia}: 
           Towards a Machine Learning Approach",
@@ -156,7 +165,14 @@
   pages = "43--48",
   publisher = "{AAAI} Press", 
   year = 2008,
+  annote = {
+      First to use machine learning for vandalism detection?
+      One is a Bag-of-Words approach with NaiveBayes as the classifier.
+      The second approach is based on compression: does the new edit
+      compress well with previous edits, or not.
+  }
 }
+
 @inproceedings{Druck08,
   author = {G. Druck and G. Miklau and A. McCallum},
   title = {Learning to Predict the Quality of Contributions to Wikipedia},
@@ -184,4 +200,30 @@
   year = 2008
 }
 
+@inproceedings{Viegas2004,
+  author = {F. B. Vi\'egas and M. Wattenberg and K. Dave},
+  title = {Studying cooperation and conflict between authors
+      with History Flow visualizations},
+  booktitle = {Proceedings of the {SIGCHI} Conference on
+      Human Factors in Computing Systems},
+  pages = {575--582},
+  year = 2004,
+  publisher = {{ACM} Press},
+}
+
+@article{Belani2010,
+  author    = {Amit Belani},
+  title     = {Vandalism Detection in {Wikipedia}: a Bag-of-Words Classifier
+    Approach},
+  journal   = {Computing Research Repository (CoRR)},
+  volume    = {abs/1001.0700},
+  year      = {2010},
+  ee        = {http://arxiv.org/abs/1001.0700},
+  bibsource = {DBLP, http://dblp.uni-trier.de},
+  annote = {
+    A bag-of-worlds naive bayes classifier is built.
+    Has discussion of calibration, and some great graphs for
+    different ways to evaluate the performance.
+  }
+}
 

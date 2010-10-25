@@ -1,0 +1,55 @@
+\section{Related Work}
+
+What is vandalism: \cite{wiki:vandalism}, \cite{Viegas2004},
+\cite{Priedhorsky2007}
+The official definition for vandalism on the Wikipedia defines it as
+``a \textit{deliberate} attempt to compromise the integrity
+of Wikipedia''~\cite{wiki:vandalism}.
+This definition is open to interpretation, so it can't be cleanly
+formulated.
+Proxies for this definition abound:
+\begin{itemize}
+\item \textbf{revert} -- test earlier revisions for textual equality.
+\item \textbf{comment revert} -- the comment indicates that the edit
+    is a revert.
+\item \textbf{rollback} -- the comment indicates that it is a
+    rollback; rollbacks can only be performed by editors with
+    administrative capabilities.
+\item \textbf{edit quality} -- compare textually against future
+    revisions to discover how the edit fares.
+\item \textbf{manual annotation} -- we know vandalism when we see it;
+    bad because people reasonably disagree about what rises to the
+    level of vandalism.
+\end{itemize}
+
+Chin\etal focus on NLP techniques, but used supervised active
+learning (lookup that phrase) to obtain new annotations that
+provided valuable counter-examples to their machine learning
+algorithm~\cite{Chin2010}.
+
+Smets\etal experiment with Naive Bayes applied to a Bag-of-Words
+model, but also pursue a compression-based
+classifier~\cite{Smets2008}.
+Itakura and Clarke follow up with a different compression-based
+classifier, and focus separately on insertion spam and
+text replacement spam\~cite{Itakura2009}.
+
+Belani~\cite{Belani2010} also implements a Naive Bayes classifier,
+but evaluates the performance using several different techniques.
+
+
+\begin{tabular}{| r | c | c | c | c | c | c |}
+\hline
+Work & Metadata & Text & Language & Reputation & Precision & Recall \\
+\hline
+Potthast \etal, 2008~\cite{Potthast2008}
+    & 3 & 8 & 4 & 1
+    & 86\% & --- \\
+Smets\etal, 2008~\cite{Smets2008}
+Chin \etal, 2010~\cite{Chin2010}
+    & 0 & 3 & 9 & 0
+    & ~81\% & --- \\
+\hline
+\end{tabular}
+
+
