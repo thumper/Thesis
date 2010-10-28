@@ -22,6 +22,18 @@ Proxies for this definition abound:
     level of vandalism.
 \end{itemize}
 
+Most works conservatively choose reverted revisions as being labeled
+as \textit{vandalism}, but this is certainly has problems since there
+are other cases of vandalism that will be incorrectly labeled as
+\textit{regular}.
+A few groups have gone to the effort of manually annotating small
+corpora of edits, but this introduces the bias of the researcher in
+what constitutes vandalism (which is really more of an evolving
+community standard), as well as not being scalable to larger corpora.
+Potthast demonstrates that it is possible to overcome both of these
+obstacles by crowd-sourcing a larger annotated corpus via
+Amazon's Mechanical Turk system~\cite{Potthast2010a}.
+
 Chin\etal focus on NLP techniques, but used supervised active
 learning (lookup that phrase) to obtain new annotations that
 provided valuable counter-examples to their machine learning
@@ -34,22 +46,34 @@ Itakura and Clarke follow up with a different compression-based
 classifier, and focus separately on insertion spam and
 text replacement spam\~cite{Itakura2009}.
 
-Belani~\cite{Belani2010} also implements a Naive Bayes classifier,
-but evaluates the performance using several different techniques.
+User reputation systems~\cite{WikiTrust07,WikiMTWtrust07,www07}
+have been proposed as an underlying technology for vandalism
+prevention or detection.
+Druck\etal~\cite{Druck2008} argues that a user reputation system isn't
+sufficient for predicting article quality, and conducts an evaluation
+demonstrating that a classifier including features about the content
+of the edit performs much better at predicting reverts.
+The features used are simpler than the high dimensionality of
+the bag-of-words approach, but some of the features still require
+examination and processing of the revision content.
+
+Based on the idea that birds of a feather flock together,
+West\etal~\cite{West2010} builds a system to track reputations
+for users, articles, categories, and countries; these and other metadata
+are used as features in a classifier for vandalism detection with
+a performance that rivals the other lines of inquiry.
 
 
-\begin{tabular}{| r | c | c | c | c | c | c |}
-\hline
-Work & Metadata & Text & Language & Reputation & Precision & Recall \\
-\hline
-Potthast \etal, 2008~\cite{Potthast2008}
-    & 3 & 8 & 4 & 1
-    & 86\% & --- \\
-Smets\etal, 2008~\cite{Smets2008}
-Chin \etal, 2010~\cite{Chin2010}
-    & 0 & 3 & 9 & 0
-    & ~81\% & --- \\
-\hline
-\end{tabular}
+A question which hasn't been resolved in the literature is how best to
+evaluate vandalism detection tools.
+Belani~\cite{Belani2010} is rather exhaustive in using five different
+evaluations for his Naive Bayes classifier: reliability diagrams,
+RMSE, McNeman's Test, receiver operating characteristic,
+and a precision-recall graph.
+The PAN~2010 Workshop on Vandalism Detection presents some discussion
+on this matter in trying to judge nine competition
+entries~\cite{Potthast2010b}, as well as demonstrating that a
+meta-classifier based on the nine entries is able to significantly
+outperform all the invidual entries.
 
 

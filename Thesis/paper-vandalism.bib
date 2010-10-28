@@ -8,24 +8,34 @@
    number = 1,
 }
 
+@inproceedings{WikiTrust06,
+    author = "H. Zeng and M.A. Alhoussaini and L. Ding and R. Fikes
+	and D.L. McGuinness",
+    title = "Computing Trust from Revision History",
+    booktitle = "Intl.\ Conf.\ on Privacy, Security and Trust",
+    year = 2006
+}
+@inproceedings{WikiMTWtrust06,
+    author = "D.L. McGuinness and H. Zeng and P.P. da Silva and
+	L. Ding and D. Narayanan and M. Bhaowal",
+    title = "Investigation into Trust for Collaborative
+	Information Repositories: {A} {Wikipedia} Case Study",
+    booktitle = "Proceedings of the Workshop on Models of
+	Trust for the Web",
+    year = 2006
+}
+
+
 @inproceedings{www07,
-	author = "B.T. Adler and L. de~Alfaro",
-	title = "A Content-Driven Reputation System for the {{Wikipedia}}",
-	booktitle = "Proc. of the 16th Intl. World Wide Web Conf. (WWW 2007)",
-	publisher = "{ACM} Press",
-	year = 2007
+    author = {B.~Thomas Adler and Luca de~Alfaro},
+    title = {A Content-Driven Reputation System for the {Wikipedia}},
+    booktitle = {{WWW} 2007: Proceedings of the 16th
+	International World Wide Web Conference},
+    publisher = "{ACM} Press",
+    year = 2007
 }
 
-@techreport{Pye09,
-   author = {I. Pye and L. de~Alfaro},
-   title = {Measuring Contributions to Email-Based Discussion Groups},
-   journal = {UC Santa Cruz Technical Report},
-   number= {UCSC-SOE-09-35},
-   year = {2009},
-   institution = {UC Santa Cruz},
-}
-
-@inproceedings{Potthast2010,
+@inproceedings{Potthast2010a,
     author = {Martin Potthast},
     title = {Crowdsourcing a {Wikipedia} Vandalism Corpus},
     booktitle = {Proc. of the 33rd Intl. ACM SIGIR Conf. (SIGIR 2010)},
@@ -91,7 +101,33 @@
            of Revision Metadata",
   booktitle = "{EUROSEC'10:} Proceedings of the Third European Workshop 
             on System Security",
-  pages = "22--28", year = 2010
+  pages = "22--28", year = 2010,
+  annote = {
+    Authors automatically create a corpus by searching for rollbacks,
+    which are reverts performed by administrators.  This gives high
+    confidence that the quality judgement is correct.
+    They evaluate with a precision-recall curve.
+
+    Authors show that metadata is sufficient to predict edit quality.
+    But they are exploiting the spatio-temporal properties of the metadata,
+    which is another way of saying that they are building a reputation
+    system based on concepts (IP block, Country) which are not specific
+    to a single user.  That is, they are exploiting the fact that users
+    with a similar background tend to behave similarly (homophily w/ cite).
+
+    Points:
+      * West cites Hao's spatio-temporal ideas (which seem to just be a
+	specific instance of homophily that West next mentions).
+	This is interesting because it can be extended to looking at how
+	users interact with each other as well.
+    TODO: Do users who interact with each other tend to have user reputations
+        that are related or correlated?  (This seems related to Rut Jesus'
+	work presented at Wikimania 2009, on graphing users that interact
+	with each other.)  There is also a question of what does it mean
+	to interact.  Is editing the same article enough?  The ten authors
+	that came before you?  Or should you edit words near each other (e.g.,
+	the same paragraph)?
+  }
 }
 @inproceedings{Itakura2009,
   author = "Kelly Y. Itakura and Charles L.A. Clarke",
@@ -173,15 +209,49 @@
   }
 }
 
-@inproceedings{Druck08,
-  author = {G. Druck and G. Miklau and A. McCallum},
+@inproceedings{Druck2008,
+  author = {Gregory Druck and Gerome Miklau and Andrew McCallum},
   title = {Learning to Predict the Quality of Contributions to Wikipedia},
   booktitle = "{WikiAI'08}: Proceedings of the Workshop on {Wikipedia}
               and Artificial Intelligence: An Evolving Synergy", 
   pages = "7--12",
   publisher = "{AAAI} Press",
-  year = 2008
+  year = 2008,
+  annote = {
+    Rather than building a user reputation system, the authors build
+    a system to predict the quality of an edit --- which is essentially
+    something like a vandalism detection tool.
+    They use precision-recall curves to show the performance of their system,
+    and show that there system performs poorly unless they also consider
+    features about the content of the edit.  Even then the best performance
+    they get seems to be around 70\% PR-AUC.
+
+    Their evaluation tests two things:
+    1) can they predict which edits will be reverted right away
+    2) can they predict high versus low quality;which seems to defined
+	by a cutoff of their edit longevity value... the wording here
+	is very poor, because they say that they predict the expected
+	edit longevity.
+
+    Points:
+      * by using metadata about the edit, they essentially give anonymous
+	users a non-zero reputation.  This is an interesting idea.
+      * they define a notion of edit quality or edit longevity.
+      * their formula for edit longevity is a little tricky.
+        Also, it's a weird kind of sum; if all the text always survives,
+        then they end up summing the delta times.  (Presumably, t_i is
+	the time in epoch seconds, since i is already an index.)
+	Since they are summing arbitrary seconds (and in the worst case,
+	something like 1+2+3+4+\ldots), this doesn't seem like a prediction
+	of when the words will be deleted, only a relative kind of value.
+    TODO: they cite (Stvilia, 2008) as defining quality in terms of the community
+	  that is doing the interpretation.
+    TODO: In there related work, they say ``as the number of edits contributed
+    increases, quality decreases for unregistered users, whereas it increases
+    for registered users.''
+    TODO: Investigate idea of giving users a non-zero reputation.
  }
+
 
 @inproceedings{WikiTrust08,
   author = "B.T. Adler and K. Chatterjee and L. de Alfaro and
@@ -227,3 +297,14 @@
   }
 }
 
+@INPROCEEDINGS{Potthast2010b,
+  AUTHOR             = {Martin Potthast and Alberto Barr{\'o}n-Cede{\~n}o
+	  and Andreas Eiselt and Benno Stein and Paolo Rosso},
+  BOOKTITLE          = {Notebook Papers of CLEF 2010 LABs and Workshops, 22-23 September, Padua, Italy},
+  EDITOR             = {Martin Braschler and Donna Harman},
+  ISBN               = {978-88-904810-0-0},
+  MONTH              = sep,
+  TITLE              = {{Overview of the 2nd International Competition on
+			Plagiarism Detection}},
+  YEAR               = {2010},
+}
