@@ -50,7 +50,7 @@
    year = 2010,
    url = "http://en.wikipedia.org/wiki/Wikipedia:Vandalism",
    note = "[Online; accessed 23-Oct-2010]",
-   annote = {Definition of vandalism.  Sugg by PAN2010.},
+   annote = {Definition of vandalism.  Sugg by PAN2010.  Do not cite?},
  }
 
 @misc{wiki:vandalism-portal,
@@ -153,6 +153,18 @@
   booktitle = "{WICOW '10}: Proceedings of the Fourth Workshop on Information Credibility on the Web",
   year = 2010,
   month = {Apr},
+  annote = {They construct a taxonomy of vandalism.  They use a Statistical
+    Language Model (SLM) for building their features.  Test several ML
+    algorithms: Baseline (TODO: what is this?) P=86,R=84.5;
+    Boosting J48 P=94.5, R=85.4;
+    Logistic Regression P=87.6, R=77.4;
+    SVM P=86.9, R=77.4.
+    Finally, they explore the idea of using Supervised Active Learning
+    to get annotations for edits that are relevant for the ML algorithm.
+
+    There appears to be an error in Sec 4.2 about Lincoln's birthday:
+    it is 12-Feb, not 4-Mar nor 14-Mar.
+  }
 }
 
 @inproceedings{Geiger2010,
@@ -244,11 +256,13 @@
 	Since they are summing arbitrary seconds (and in the worst case,
 	something like 1+2+3+4+\ldots), this doesn't seem like a prediction
 	of when the words will be deleted, only a relative kind of value.
+      * In abstract, they make the point that detection based on user
+        alone isn't enough.
     TODO: they cite (Stvilia, 2008) as defining quality in terms of the community
 	  that is doing the interpretation.
-    TODO: In there related work, they say ``as the number of edits contributed
-    increases, quality decreases for unregistered users, whereas it increases
-    for registered users.''
+    TODO: In there related work (Anthony, 2007), they say ``as the number of
+    edits contributed increases, quality decreases for unregistered users,
+    whereas it increases for registered users.''
     TODO: Investigate idea of giving users a non-zero reputation.
  }
 }
@@ -308,3 +322,52 @@
 			Plagiarism Detection}},
   YEAR               = {2010},
 }
+
+@misc{Carter2007,
+    AUTHOR = {Jacobi Carter},
+    TITLE = {{ClueBot} and Vandalism on {Wikipedia}},
+    year = 2008,
+    url = "http://www.acm.uiuc.edu/~carter11/ClueBot.pdf",
+    note = "[Online; accessed 2-Nov-2010]",
+    annote = {
+	A very rough overview of the inception of ClueBot and
+	some rules that it uses as heuristics.
+	Includes some graphs on vandalism by date, by hour,
+	by day of week, and by rule.
+    }
+}
+
+@misc{wiki:AntiVandalBot,
+   author = {Wikipedia},
+   title = {User:AntiVandalBot --- {W}ikipedia{,} The Free Encyclopedia},
+   year = 2010,
+   url = "http://en.wikipedia.org/wiki/Wikipedia:Vandalism",
+   note = "[Online; accessed 2-Nov-2010]"
+}
+@misc{wiki:MartinBot,
+   author = {Wikipedia},
+   title = {User:MartinBot --- {W}ikipedia{,} The Free Encyclopedia},
+   year = 2010,
+   url = "http://en.wikipedia.org/wiki/Wikipedia:Vandalism",
+   note = "[Online; accessed 2-Nov-2010]"
+}
+@misc{wiki:ClueBot,
+   author = {Wikipedia},
+   title = {User:ClueBot --- {W}ikipedia{,} The Free Encyclopedia},
+   year = 2010,
+   url = "http://en.wikipedia.org/wiki/Wikipedia:Vandalism",
+   note = "[Online; accessed 2-Nov-2010]"
+}
+
+@INPROCEEDINGS{Adler2010,
+  AUTHOR             = {{B. Thomas} Adler and Luca de Alfaro
+      and Ian Pye},
+  BOOKTITLE          = {Notebook Papers of CLEF 2010 LABs and Workshops, 22-23 September, Padua, Italy},
+  EDITOR             = {Martin Braschler and Donna Harman},
+  ISBN               = {978-88-904810-0-0},
+  MONTH              = sep,
+  TITLE              = {Detecting {Wikipedia} Vandalism using
+      {WikiTrust}},
+  YEAR               = {2010},
+}
+

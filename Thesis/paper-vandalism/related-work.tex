@@ -1,68 +1,89 @@
 \section{Related Work}
 
-What is vandalism: \cite{wiki:vandalism}, \cite{Viegas2004},
-\cite{Priedhorsky2007}
-The official definition for vandalism on the Wikipedia defines it as
+Wikipedia's official statement of vandalism defines it as
 ``a \textit{deliberate} attempt to compromise the integrity
-of Wikipedia''~\cite{wiki:vandalism}.
-This definition is open to interpretation, so it can't be cleanly
-formulated.
-Proxies for this definition abound:
-\begin{itemize}
-\item \textbf{revert} -- test earlier revisions for textual equality.
-\item \textbf{comment revert} -- the comment indicates that the edit
-    is a revert.
-\item \textbf{rollback} -- the comment indicates that it is a
-    rollback; rollbacks can only be performed by editors with
-    administrative capabilities.
-\item \textbf{edit quality} -- compare textually against future
-    revisions to discover how the edit fares.
-\item \textbf{manual annotation} -- we know vandalism when we see it;
-    bad because people reasonably disagree about what rises to the
-    level of vandalism.
-\end{itemize}
+of Wikipedia\footnote{
+\url{http://en.wikipedia.org/wiki/Wikipedia:Vandalism}
+}.''
+It is, of course, impossible to know the motivations of individuals,
+so this definition relies on human intelligence to determine
+vandalism on a case-by-case basis --- that is, ``I know it
+when I see it\footnote{Justice Potter Stewart in
+\underline{Jacobellis v. Ohio}, 378 U.S. 184 (1964)}.''
+Some researchers have undertaken the task of more formally
+defining a taxonomy of
+vandalism~\cite{Viegas2004,Priedhorsky2007,Chin2010},
+but nearly all research on vandalism detection uses one of a small
+number of definitions for obtaining an annotated corpus:
+\textbf{reverts} indicate when the community feels that vandalism
+has taken place~\cite{Smets2008,Itakura2009,Belani2010},
+\textbf{rollbacks} indicate disapproval by a Wikipedia
+Administrator~\cite{West2010},
+\textbf{edit quality} generalizes
+the idea of measuring the sentiment of the
+community~\cite{www07,Druck2008},
+and \textbf{manual annotation} uses human intelligence to
+infer the intentions of the editor~\cite{Chin2010,West2010,Potthast2010a}.
 
-Most works conservatively choose reverted revisions as being labeled
-as \textit{vandalism}, but this is certainly has problems since there
-are other cases of vandalism that will be incorrectly labeled as
-\textit{regular}.
-A few groups have gone to the effort of manually annotating small
-corpora of edits, but this introduces the bias of the researcher in
-what constitutes vandalism (which is really more of an evolving
-community standard), as well as not being scalable to larger corpora.
-Potthast demonstrates that it is possible to overcome both of these
-obstacles by crowd-sourcing a larger annotated corpus via
-Amazon's Mechanical Turk system~\cite{Potthast2010a}.
+The earliest attempts at vandalism detection within the Wikipedia come
+directly from the user community and try to encode a human intuition
+of vandalism detection into an exper system (some examples
+include~\cite{wiki:AntiVandalBot,wiki:MartinBot,wiki:ClueBot,Carter2007}.
+Developing this seed further, Potthast~\etal~\cite{Potthast2008}
+manually identify 301~incidents of vandalism and construct a set of
+rules which characterize the vandalism they encounter; an evaluation
+compares favorably against ClueBot.
+Primarily, the rules developed are based on features of the actual
+content of the edit rather than on metadata (\eg an edit containing
+only capital letters is indicative of vandalism).
 
-Chin~\etal focus on NLP techniques, but used supervised active
-learning (lookup that phrase) to obtain new annotations that
-provided valuable counter-examples to their machine learning
-algorithm~\cite{Chin2010}.
+The idea that the content is the primary feature that reveals
+the intent of the author is a natural one, and is investigated
+by several different research groups
+(\eg~\cite{Potthast2008,Smets2008,Druck2008,Itakura2009,Chin2010}).
+Smets~\etal~\cite{Smets2008} applies the ``naive bayes'' machine
+learning technique to a bag-of-words model of the edit text.
+Chin~\etal~\cite{Chin2010} move the focus towards the field of natural
+language processing by constructing statistical language models of an
+article from its revision history.
+(On the topic of manual annotation, they also describe how supervised
+active learning can help the training process by requesting
+annotations for examples which will make a significant difference to
+the algorithm.)
+A different way of looking at the content approach (and perhaps ought
+be considered ``statistical models in the extreme'') is the
+realization that appropriate content somehow ``belongs together,'' and
+one way to measure that is through compression of the successive
+revisions of an article~\cite{Smets2008,Itakura2009}.
+If inappropriate content is added to the article, then the compression
+level is lower than it would be for text which is similar to text
+already in the article.
+A significant drawback of these statistical techniques is that they
+require manipulation of the content of a large number of revisions
+from the article being edited.
 
-Smets~\etal experiment with Naive Bayes applied to a Bag-of-Words
-model, but also pursue a compression-based
-classifier~\cite{Smets2008}.
-Itakura and Clarke follow up with a different compression-based
-classifier, and focus separately on insertion spam and
-text replacement spam\~cite{Itakura2009}.
+Content-based analysis has the burden of having to
+inspect potentially large edits, but the alternative is to depend
+on the paucity of information available in the metadata ---
+many previous works have some small dependence on metadata
+features~\cite{Potthast2008,Druck2008,Belani2009}, but only
+as far as it encoded some aspect of human intuition about vandalism.
+Drawing inspiration from other areas of research,
+West~\etal~\cite{West2010} demonstrate astonishing results because
+they are based entirely on metadata (some of which is processed into
+\textit{reputations}) that indicate there is more relatedness between
+vandals than is readily apparent to the human eye.
 
 User reputation systems~\cite{WikiTrust06,WikiMTWtrust06,www07}
-have been proposed as an underlying technology for vandalism
-prevention or detection.
-Druck~\etal~\cite{Druck2008} argues that a user reputation system isn't
-sufficient for predicting article quality, and conducts an evaluation
-demonstrating that a classifier including features about the content
-of the edit performs much better at predicting reverts.
-The features used are simpler than the high dimensionality of
-the bag-of-words approach, but some of the features still require
-examination and processing of the revision content.
-
-Based on the idea that birds of a feather flock together,
-West~\etal~\cite{West2010} builds a system to track reputations
-for users, articles, categories, and countries; these and other metadata
-are used as features in a classifier for vandalism detection with
-a performance that rivals the other lines of inquiry.
-
+have been previously proposed as an underlying technology for
+vandalism prevention or detection.
+Druck~\etal~\cite{Druck2008} argues that a system built only on user
+features isn't sufficient for predicting article quality, and conducts
+an evaluation demonstrating that a classifier including features about
+the content of the edit performs much better at predicting reverts.
+As part of the PAN 2010 competition on vandalism detection,
+Adler~\etal~\cite{Adler2010} show that a mixture of user reputation
+and simple metadata signals performas quite well.
 
 A question which hasn't been resolved in the literature is how best to
 evaluate vandalism detection tools.
