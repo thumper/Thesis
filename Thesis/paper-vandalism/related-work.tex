@@ -2,54 +2,74 @@
 
 Wikipedia's official statement of vandalism defines it as
 ``a \textit{deliberate} attempt to compromise the integrity
-of Wikipedia\footnote{
-\url{http://en.wikipedia.org/wiki/Wikipedia:Vandalism}
-}.''
+of Wikipedia.''\footnote{
+\url{http://en.wikipedia.org/wiki/Wikipedia:Vandalism}}
 It is, of course, impossible to know the motivations of individuals,
 so this definition relies on human intelligence to determine
 vandalism on a case-by-case basis --- that is, ``I know it
-when I see it\footnote{Justice Potter Stewart in
-\underline{Jacobellis v. Ohio}, 378 U.S. 184 (1964)}.''
-Some researchers have undertaken the task of more formally
-defining a taxonomy of
-vandalism~\cite{Viegas2004,Priedhorsky2007,Chin2010},
+when I see it,''\footnote{Justice Potter Stewart in
+\underline{Jacobellis v. Ohio}, 378 U.S. 184 (1964)}
+but there is no precise definition.
+Some researchers have undertaken the task of more formally defining a
+taxonomy of vandalism~\cite{Viegas2004,Priedhorsky2007,Chin2010},
 but nearly all research on vandalism detection uses one of a small
-number of definitions for obtaining an annotated corpus:
-\textbf{reverts} indicate when the community feels that vandalism
-has taken place~\cite{Smets2008,Itakura2009,Belani2010},
-\textbf{rollbacks} indicate disapproval by a Wikipedia
-Administrator~\cite{West2010},
-\textbf{edit quality} generalizes
-the idea of measuring the sentiment of the
-community~\cite{www07,Druck2008},
-and \textbf{manual annotation} uses human intelligence to
-infer the intentions of the editor~\cite{Chin2010,West2010,Potthast2010a}.
+number of (convenient) definitions for purposes of obtaining an
+annotated corpus: \textbf{manual annotation} uses human intelligence
+to infer the intentions of the
+editor~\cite{Potthast2008,Chin2010,West2010,Potthast2010a},
+\textbf{reverts} are notations by the community when it feels that
+vandalism has taken place~\cite{Smets2008,Itakura2009,Belani2010},
+\textbf{rollbacks} are disapprovals by Wikipedia
+Administrators~\cite{West2010},
+and \textbf{edit quality} generalizes the idea of measuring the
+sentiment of the community~\cite{www07,Druck2008}.
+There is an obvious trend going from \textit{manual} to
+\textit{automatic} annotation, but equally important is to observe
+that there is a trend from external judgement, to internal explicit
+judgement, to internal implicit judgement.
+Ultimately, it is the community itself which decides what is
+vandalism (\eg the stark contrast between the communities of
+Slashdot\footnote{\url{http://slashdot.org}} and
+Hacker News\footnote{\url{http://news.ycombinator.com}}),
+and this community standard is likely to change over time
+(often described as the ``signal-to-noise'' ratio of the community;
+examples of changing communities include USENET and Slashdot).
+This argues strongly in favor of automated methods for measuring
+the reaction of the community, and highlights the idea that vandalism
+detection is a specialized form of trying to measure the ``noise'' in
+a community.
 
 The earliest attempts at vandalism detection within the Wikipedia come
 directly from the user community and try to encode a human intuition
-of vandalism detection into an exper system (some examples
-include~\cite{wiki:AntiVandalBot,wiki:MartinBot,wiki:ClueBot,Carter2007}.
-Developing this seed further, Potthast~\etal~\cite{Potthast2008}
-manually identify 301~incidents of vandalism and construct a set of
-rules which characterize the vandalism they encounter; an evaluation
-compares favorably against ClueBot.
+of vandalism detection into an expert system (some examples
+include~\cite{wiki:AntiVandalBot,wiki:MartinBot,wiki:ClueBot,Carter2007}).
+The largest disadvantage to this class of solution is that building
+an expert system requires extensive human labor to produce the manual
+annotation and analysis required to derive custom rules from the
+annotation.
 Primarily, the rules developed are based on features of the actual
 content of the edit rather than on metadata (\eg an edit containing
 only capital letters is indicative of vandalism).
 
-The idea that the content is the primary feature that reveals
-the intent of the author is a natural one, and is investigated
+The idea that the content is the primary source of features that
+reveal the intent of the author is a natural one, and is investigated
 by several different research groups
 (\eg~\cite{Potthast2008,Smets2008,Druck2008,Itakura2009,Chin2010}).
+Casting the problem as a machine learning binary classification
+problem, Potthast~\etal~\cite{Potthast2008} manually identify and
+inspect 301~incidents of vandalism to generate a feature set based on
+metadata and content-level features and build a classifier using
+logistic regression.
 Smets~\etal~\cite{Smets2008} applies the ``naive bayes'' machine
 learning technique to a bag-of-words model of the edit text.
-Chin~\etal~\cite{Chin2010} move the focus towards the field of natural
-language processing by constructing statistical language models of an
-article from its revision history.
+Chin~\etal~\cite{Chin2010} delve deeper into the field of
+natural language processing by constructing statistical language
+models of an article from its revision history.
 (On the topic of manual annotation, they also describe how supervised
 active learning can help the training process by requesting
 annotations for examples which will make a significant difference to
 the algorithm.)
+
 A different way of looking at the content approach (and perhaps ought
 be considered ``statistical models in the extreme'') is the
 realization that appropriate content somehow ``belongs together,'' and
@@ -58,7 +78,7 @@ revisions of an article~\cite{Smets2008,Itakura2009}.
 If inappropriate content is added to the article, then the compression
 level is lower than it would be for text which is similar to text
 already in the article.
-A significant drawback of these statistical techniques is that they
+A significant drawback of these compression techniques is that they
 require manipulation of the content of a large number of revisions
 from the article being edited.
 
@@ -66,7 +86,7 @@ Content-based analysis has the burden of having to
 inspect potentially large edits, but the alternative is to depend
 on the paucity of information available in the metadata ---
 many previous works have some small dependence on metadata
-features~\cite{Potthast2008,Druck2008,Belani2009}, but only
+features~\cite{Potthast2008,Druck2008,Belani2010}, but only
 as far as it encoded some aspect of human intuition about vandalism.
 Drawing inspiration from other areas of research,
 West~\etal~\cite{West2010} demonstrate astonishing results because
@@ -74,6 +94,21 @@ they are based entirely on metadata (some of which is processed into
 \textit{reputations}) that indicate there is more relatedness between
 vandals than is readily apparent to the human eye.
 
+The first systematic review and organization of features appears
+by Potthast~\etal~\cite{Potthast2010b} as part of the competition
+associated with the PAN~2010 Workshop on vandalism
+detection.\footnote{\url{http://pan.webis.de}, Task 2}
+Belani~\cite{Belani2010} includes several metrics for evaluating
+predictors, and Potthast~\etal take up the discussion with a thorough
+comparison of nine competitors using both the area under the
+precision-recall curve and the area under the receiver operating
+characteristic curve.
+Potthast~\etal conclude their analysis by building a meta-classifier
+based on the nine entries and discover that the result performs
+significantly better than any single entry.
+
+The top two entries in the PAN~2010 competition are worth mentioning
+because they form the basis of the work presented here.
 User reputation systems~\cite{WikiTrust06,WikiMTWtrust06,www07}
 have been previously proposed as an underlying technology for
 vandalism prevention or detection.
@@ -81,20 +116,33 @@ Druck~\etal~\cite{Druck2008} argues that a system built only on user
 features isn't sufficient for predicting article quality, and conducts
 an evaluation demonstrating that a classifier including features about
 the content of the edit performs much better at predicting reverts.
-As part of the PAN 2010 competition on vandalism detection,
+As part of the PAN~2010 competition on vandalism detection,
 Adler~\etal~\cite{Adler2010} show that a mixture of user reputation
 and simple metadata signals performas quite well.
+This work~\cite{Adler2010}, and the work of
+West~\etal~\cite{West2010}, demonstrate that features sometimes
+require additional processing to gain the maximum benefit to a classifier.
 
-A question which hasn't been resolved in the literature is how best to
-evaluate vandalism detection tools.
-Belani~\cite{Belani2010} is rather exhaustive in using five different
-evaluations for his Naive Bayes classifier: reliability diagrams,
-RMSE, McNeman's Test, receiver operating characteristic,
-and a precision-recall graph.
-The PAN~2010 Workshop on Vandalism Detection presents some discussion
-on this matter in trying to judge nine competition
-entries~\cite{Potthast2010b}, as well as demonstrating that a
-meta-classifier based on the nine entries is able to significantly
-outperform all the invidual entries.
+The winner of the PAN~2010 competition, by a notable margin, was
+an entry by Mola Velasco~\cite{Mola2010} that extended the features
+originally proposed by Potthast~\etal~\cite{Potthast2008}.
+This entry was composed of 21~features (the largest in the
+competition) that comprehensively model the content of the edit,
+including features that rated use of language, formatting of text,
+compressibility with earlier text, spelling,
+and the size of the edit.
 
+\begin{quote}
+[[My take on this history is that the field of vandalism detection
+amounts to a random walk over the possible feature space.
+Many papers, for a given set of features, review multiple machine
+learning algorithms to discover the best.
+Short of the review by Potthast~\etal~\cite{Potthast2010b}, no one
+has systematically explored the set of features and the amount of
+information contained in each.
+Some PAN papers (I think) order the features they examine by the
+information gain.
+It would be useful to more carefully organize the set of features,
+make source code available, and compare features within groups.]]
+\end{quote}
 
