@@ -68,23 +68,22 @@ my $dbh = getDatabaseHandle($dbname, $dbuser, $dbpass);
 
 my $curRev = getCurRev($lang);
 my $lastRev = getLastRev($lang);
-print "Continuing from $lastRev\n";
+print "Continuing from $lastRev --> $curRev\n";
 
-my $url = "http://".TS_URL."db=${lang}wiki&n=$lastRev";
+my $url = TS_URL."db=${lang}wiki&n=$lastRev";
 my $req = GET $url;
 my $ua = LWP::UserAgent->new;
 $ua->agent('Mozilla/4.0 (compatible; MSIE 5.0; Windows 95)');
 my $res = $ua->request($req);
 die $res->status_line if !$res->is_success;
 my $data = decode_json($res->decoded_content);
-print Dumper($data) if $nextDate eq $lastDate;
-exit(0);
 my $count = 0;
-foreach my $record (@{$data->{query}->{recentchanges}}) {
-    my $pageid = $record->{pageid} || 0;
-    my $timestamp = $record->{timestamp} || '';
+foreach my $record (@{$data}) {
+    my $pageid = $record->{page_id} || 0;
+    my $title = $record->{page_title} || 'XX-GetWikiFeed';;
     next if $pageid == 0;
-    WikiTrust::mark_for_coloring($pageid, "XX-GetWikiFeed.pl", $dbh, 1);
+print "$pageid -> $title\n";
+#    WikiTrust::mark_for_coloring($pageid, $title, $dbh, 1);
     $count++;
 }
 print "Writing $curRev after $count records.\n";
@@ -94,7 +93,7 @@ exit(0);
 
 sub getLastRev {
     my $lang = shift @_;
-    return getCurRev() if !-e LAST_REV_FILE.$lang;
+    return getCurRev($lang) if !-e LAST_REV_FILE.$lang;
     open(INPUT, "<", LAST_REV_FILE.$lang) || die "open(LAST_REV): $!";
     my $data = <INPUT>;
     chomp($data);
@@ -124,7 +123,7 @@ sub getDatabaseHandle {
 
 sub getCurRev {
     my $lang = shift @_;
-    my $url = "http://".$lang.BASE_URL;
+    my $url = "http://".$lang.API_URL;
     my $req = GET $url;
     my $ua = LWP::UserAgent->new;
     $ua->agent('Mozilla/4.0 (compatible; MSIE 5.0; Windows 95)');
