@@ -39,10 +39,12 @@
 # ./GetWikiFeed.pl en enwikidb <dbuser> <dbpass>
 #
 
-use constant BASE_URL => ".wikipedia.org/w/api.php?action=query&format=json"
-	."&list=recentchanges&rcprop=ids|timestamp&rclimit=500&rcdir=newer&rctype=edit|new"
-	."&rcnamespace=0&rcstart=";
-use constant LAST_DATE_FILE => "/tmp/GetWikiFeed.txt-";
+use constant API_URL => ".wikipedia.org/w/api.php?action=query&format=json"
+	."&list=recentchanges&rcprop=ids|timestamp"
+	."&rclimit=1&rcdir=newer&rctype=edit|new"
+	."&rcnamespace=0";
+use constant TS_URL => "http://toolserver.org/~ipye/GetNewTitles.php?";
+use constant LAST_REV_FILE => "/tmp/GetFeedFToolserver.txt-";
 use constant DB_ENGINE => "mysql";
 
 use strict;
@@ -64,53 +66,47 @@ my $dbpass = shift @ARGV || '';
 
 my $dbh = getDatabaseHandle($dbname, $dbuser, $dbpass);
 
-my $lastDate = getLastDate($lang);
-print "Continuing from $lastDate\n";
-my $url = "http://".$lang.BASE_URL.$lastDate;
+my $curRev = getCurRev($lang);
+my $lastRev = getLastRev($lang);
+print "Continuing from $lastRev\n";
+
+my $url = "http://".TS_URL."db=${lang}wiki&n=$lastRev";
 my $req = GET $url;
 my $ua = LWP::UserAgent->new;
 $ua->agent('Mozilla/4.0 (compatible; MSIE 5.0; Windows 95)');
 my $res = $ua->request($req);
 die $res->status_line if !$res->is_success;
 my $data = decode_json($res->decoded_content);
-my $nextDate = $data->{"query-continue"}->{recentchanges}->{rcstart} || $lastDate;
-#print Dumper($data) if $nextDate eq $lastDate;
-
+print Dumper($data) if $nextDate eq $lastDate;
+exit(0);
 my $count = 0;
 foreach my $record (@{$data->{query}->{recentchanges}}) {
     my $pageid = $record->{pageid} || 0;
     my $timestamp = $record->{timestamp} || '';
     next if $pageid == 0;
     WikiTrust::mark_for_coloring($pageid, "XX-GetWikiFeed.pl", $dbh, 1);
-    $nextDate = $timestamp if $timestamp gt $nextDate;
     $count++;
 }
-print "Writing $nextDate after $count records.\n";
-writeLastDate($lang, $nextDate);
+print "Writing $curRev after $count records.\n";
+writeLastRev($lang, $curRev);
 
 exit(0);
 
-sub getCurDate {
-    my @fields = gmtime(time);
-    return sprintf("%04d-%02d-%02dT%02d:%02d:%02dZ",
-	$fields[5]+1900, $fields[4]+1, $fields[3], $fields[2], $fields[1], $fields[0]);
-}
-
-sub getLastDate {
+sub getLastRev {
     my $lang = shift @_;
-    return getCurDate() if !-e LAST_DATE_FILE.$lang;
-    open(INPUT, "<", LAST_DATE_FILE.$lang) || die "open(LAST_DATE): $!";
-    my $date = <INPUT>;
-    chomp($date);
+    return getCurRev() if !-e LAST_REV_FILE.$lang;
+    open(INPUT, "<", LAST_REV_FILE.$lang) || die "open(LAST_REV): $!";
+    my $data = <INPUT>;
+    chomp($data);
     close(INPUT);
-    return $date;
+    return $data;
 }
 
-sub writeLastDate {
+sub writeLastRev {
     my $lang = shift @_;
-    my $date = shift @_;
-    open(OUTPUT, ">", LAST_DATE_FILE.$lang) || die "open(LAST_DATE): $!";
-    print OUTPUT "$date\n";
+    my $data = shift @_;
+    open(OUTPUT, ">", LAST_REV_FILE.$lang) || die "open(LAST_REV): $!";
+    print OUTPUT "$data\n";
     close(OUTPUT);
 }
 
@@ -124,5 +120,21 @@ sub getDatabaseHandle {
 	{ RaiseError => 1, AutoCommit => 1 });
 			     
     return $dbh;
+}
+
+sub getCurRev {
+    my $lang = shift @_;
+    my $url = "http://".$lang.BASE_URL;
+    my $req = GET $url;
+    my $ua = LWP::UserAgent->new;
+    $ua->agent('Mozilla/4.0 (compatible; MSIE 5.0; Windows 95)');
+    my $res = $ua->request($req);
+    die $res->status_line if !$res->is_success;
+    my $data = decode_json($res->decoded_content);
+    my $revs = $data->{query}->{recentchanges};
+    die "Bad revs from server: $url" if @$revs == 0;
+    my $rev = pop @$revs;
+    die "No revid: ".Dumper($rev) if !exists $rev->{revid};
+    return $rev->{revid};
 }
 
