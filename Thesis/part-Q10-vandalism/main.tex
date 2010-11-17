@@ -14,6 +14,20 @@ quickly~\cite{wiki:RCPatrol}.
 
 
 
+The minor question I had was, what is the performance of just Mola+WT?
+That is, Potthast got PR-AUC=0.78 by using a random-forest(1000 trees,
+4 features) -- can we beat 78% by using the raw features rather than
+the output of the classifier?  (I expect not, but I suspect we are
+close.)  Is the solution (M+WT) a "sufficient cover set" of the
+features explored in PAN2010, and STiki brings a new dimension of
+features?
+
+Another minor question: is there a way for us to rank the importance
+of features?  Santiago almost does this in his PAN submission, and the
+answer is tantalizing only to social scientists: does it matter more
+what you say, or who you are?
+
+
     \section{Features}
         Is it possible to visualize the amount of information
         contained in each feature?
