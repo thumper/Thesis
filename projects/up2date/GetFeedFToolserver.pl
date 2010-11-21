@@ -41,7 +41,7 @@
 
 use constant API_URL => ".wikipedia.org/w/api.php?action=query&format=json"
 	."&list=recentchanges&rcprop=ids|timestamp"
-	."&rclimit=1&rcdir=newer&rctype=edit|new"
+	."&rclimit=1&rcdir=older&rctype=edit|new"
 	."&rcnamespace=0";
 use constant TS_URL => "http://toolserver.org/~ipye/GetNewTitles.php?";
 use constant LAST_REV_FILE => "/tmp/GetFeedFToolserver.txt-";
@@ -82,8 +82,8 @@ foreach my $record (@{$data}) {
     my $pageid = $record->{page_id} || 0;
     my $title = $record->{page_title} || 'XX-GetWikiFeed';;
     next if $pageid == 0;
-print "$pageid -> $title\n";
-#    WikiTrust::mark_for_coloring($pageid, $title, $dbh, 1);
+#print "$pageid -> $title\n";
+    WikiTrust::mark_for_coloring($pageid, $title, $dbh, 1);
     $count++;
 }
 print "Writing $curRev after $count records.\n";
