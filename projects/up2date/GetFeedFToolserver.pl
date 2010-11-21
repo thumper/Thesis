@@ -53,7 +53,7 @@ use warnings;
 use JSON;
 use HTTP::Request::Common qw(GET);
 use LWP::UserAgent;
-use lib '.';
+use lib '/home/wikitrust/perl';
 use WikiTrust;
 use Data::Dumper;
 
