@@ -1,0 +1,104 @@
+\subsection{Contributions of this Work}
+
+We propose research into two ideas that can be leveraged
+into tools to assist well-intentioned users.
+The first is a \intro{reputation system} for users, which measures
+their contributions to the Wikipedia with respect to some
+notion of the group consensus.
+The second idea is a \intro{trust system} for text,
+which models the amount of review each word receives from editors
+to quantify the likelihood that the text will persist
+into the future.
+One of our goals is to preserve the current user experience,
+as much as possible.
+
+
+Our basic idea is to take advantage of the Wikipedia's version history
+for articles to develop content-driven \intro{reputation systems}
+and \intro{trust systems}~\cite{WikiMTWtrust06,McGuinness06,www07,WikiTrust2008}.
+A content-driven reputation system is one which uses
+the version history to measure the work performed by users;
+users gain reputation when they make
+contributions to the Wikipedia which are deemed valuable, and lose reputation
+when they make contributions which are reverted.
+A content-driven trust system uses the version history
+to predict the quality of the text submitted, incorporating
+information from the reputation system.
+The trust system acts as a guide to users,
+indicating recent edits that need more scrutiny.
+The advantage of content-driven systems,
+as opposed to manual rating systems, is that they do
+not significantly alter the user experience.
+
+We have implemented an initial prototype of our reputation and
+trust algorithms~\cite{www07,WikiTrust2008}.
+This system takes as input an XML dump of a Wikipedia project,
+analyzes the evolution of articles to determine lasting
+contributions by authors, and computes a reputation for
+each author based on the size and age of their contributions.
+At the same time, a trust value is computed for each word
+based on the reputations of authors who edit
+regions of text nearby.
+Our evalutions for both algorithms are very encouraging:
+low reputation authors predominantly have their contributions
+reverted, and low trust text is much more likely to be
+deleted on the next revision than high trust text.
+Further details of the algorithms and evaluations
+are discussed in Sections~\ref{sec-reputation}
+and~\ref{sec-trust}.
+
+The course of our continued investigation is to examine
+other applications of reputation and trust systems in
+the context of the Wikipedia:
+\begin{itemize}
+\item \textbf{Category reputations.}
+    Just as some users prefer to edit the grammar of
+    articles instead of the content, we believe that
+    users will tend to focus their efforts on subject
+    areas where they have some expertise.
+    If true, it enables a refinement to the author
+    reputation system which tracks reputations in
+    each subject area.
+
+\item \textbf{Stable revisions.}
+    In response to the fluid nature of Wikipedia content,
+    some users would like to identify versions which
+    are ``trustworthy;'' currently, the leading proposal
+    for finding these \textit{stable revisions}
+    involves manual voting by trusted editors.
+    Our own text trust system can highlight text in
+    an article which requires greater scrutiny, but
+    still requires a diligent user to review previous
+    revisions to understand how the article is evolving.
+    We propose an automatic analysis of the article evolution
+    to identify revisions which we believe
+    have the highest overall trust.
+
+\begin{comment}
+
+\item \textbf{Improve resistance to attacks.}
+    Integrating our reputation and trust systems into the
+    Wikipedia requires that they be able to withstand
+    attacks, particularly \intro{Sybil attacks} where a user
+    coordinates multiple identities to gain
+    reputation~\cite{Douceur02,Sybil05,TrustSybil05}.
+    Attacks can be made on the author attribution,
+    user reputation and text trust systems,
+    making this an important aspect to address
+    if our results are to be useful on a live site.
+
+
+\item \textbf{Applications of reputation and trust.}
+    Currently, the Wikipedia shows every user the latest version
+    of an article by default; our systems can be used instead to show
+    the most trustworthy recent version.
+    We can also look at various user dynamics and how reputation
+    changes; for example, whether users appear to restrict
+    themselves to categories of expertise, can we identify
+    domain experts, and whether participating
+    in an edit war affects the likelihood of leaving the community.
+
+\end{comment}
+
+\end{itemize}
+
