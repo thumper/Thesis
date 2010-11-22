@@ -1,0 +1,36 @@
+
+In trying to address the quality issues of the Wikipedia,
+our primary guideline was to preserve the current user experience.
+By relying on article version history, we can assign reputation
+through examination of the content evolution:
+authors who perform long-lived contributions gain reputation; authors
+whose contributions are reverted, or are soon removed, lose reputation.
+There are several possible applications of computing a reputation
+value for authors (for example, to grant or deny editing rights to
+crucial pages \cite{Blaze96}), and we use it to drive a trust system for
+Wikipedia content.
+The fact that authors can only comment on other authors by
+making contributions themselves discourages users from attacking
+each other in an unproductive way, because they risk their own reputation in the process.
+
+
+The simplest idea for a content-driven reputation system would measure
+how much text an author contributed.
+During the course of our research, however, we realized that there are
+two distinct ways that authors contribute to the Wikipedia: by adding
+new content, and by revising existing content.
+Both are important to consider, since several users will
+adopt one contribution style and not the other.
+We introduced the notions of
+\intro{text survival}, which measures how much text survives
+into later revisions, and \intro{edit survival}, which measures
+how consistent an edit is with later revisions,
+to account for these different methods of contribution~\cite{www07}.
+We use the principle that every future author is
+implicitly making an evaluation on the work of past authors:
+edits and new text that are consistent with later revisions
+are judged ``good'' by the community.
+Constants in the model we develop are assigned so as to optimize
+for the heuristic that author reputation
+be correlated to edit longevity as much as possible.
+

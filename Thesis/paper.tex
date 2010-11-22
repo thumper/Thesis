@@ -69,7 +69,7 @@
 
 \settocdepth{subsection}
 
-\input{paper-frontmatter/main}
+\input{part-A10-frontmatter/main}
 
 \mainmatter
 %\pagestyle{ruled}
@@ -77,16 +77,20 @@
 \pagenumbering{arabic}
 \chapterstyle{veelo}
 
-\input{paper-intro/main}
+\input{part-C10-intro/main}
 \input{paper-outline/main}
+\input{part-F00-defs/main}
+\input{part-F10-diff/main}
+\input{part-F20-rep/main}
+\input{part-F30-trust/main}
 %\input{paper-defs/main}
 %\input{paper-value/main}
 %\input{paper-restricted/main}
 %\iflong
 %\input{paper-general/main}
 %\fi
-\input{paper-vandalism/main}
-\input{paper-conclusion/main}
+\input{part-Q10-vandalism/main}
+\input{part-X10-conclusion/main}
 
 \appendix
 \appendixpage*
@@ -99,7 +103,7 @@
 
 \singlespacing
 \bibliographystyle{plain-annote}
-\bibliography{paper,paper-diff,paper-vandalism}
+\bibliography{bib/paper-diff,bib/paper-vandalism,bib/paper-advancement}
 
 \clearpage
 
