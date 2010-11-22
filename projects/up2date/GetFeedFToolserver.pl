@@ -57,6 +57,8 @@ use lib '/home/wikitrust/perl';
 use WikiTrust;
 use Data::Dumper;
 
+use DEBUG => 0;
+
 die "Usage: $0 <lang> <dbname> <dbuser> <dbpass>\n" if @ARGV != 4;
 
 my $lang = shift @ARGV || 'en';
@@ -68,7 +70,7 @@ my $dbh = getDatabaseHandle($dbname, $dbuser, $dbpass);
 
 my $curRev = getCurRev($lang);
 my $lastRev = getLastRev($lang);
-print "Continuing from $lastRev --> $curRev\n";
+print "Continuing from $lastRev --> $curRev\n" if DEBUG;
 
 my $url = TS_URL."db=${lang}wiki&n=$lastRev";
 my $req = GET $url;
@@ -82,11 +84,11 @@ foreach my $record (@{$data}) {
     my $pageid = $record->{page_id} || 0;
     my $title = $record->{page_title} || 'XX-GetWikiFeed';;
     next if $pageid == 0;
-#print "$pageid -> $title\n";
+print "$pageid -> $title\n" if DEBUG;
     WikiTrust::mark_for_coloring($pageid, $title, $dbh, 1);
     $count++;
 }
-print "Writing $curRev after $count records.\n";
+print "Writing $curRev after $count records.\n" if DEBUG;
 writeLastRev($lang, $curRev);
 
 exit(0);
@@ -104,9 +106,10 @@ sub getLastRev {
 sub writeLastRev {
     my $lang = shift @_;
     my $data = shift @_;
-    open(OUTPUT, ">", LAST_REV_FILE.$lang) || die "open(LAST_REV): $!";
-    print OUTPUT "$data\n";
-    close(OUTPUT);
+    my $file = LAST_REV_FILE.$lang;
+    open(my $out, ">", $file) || die "open($file): $!";
+    print $out "$data\n";
+    close($out);
 }
 
 
