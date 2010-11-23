@@ -57,7 +57,7 @@ use lib '/home/wikitrust/perl';
 use WikiTrust;
 use Data::Dumper;
 
-use DEBUG => 0;
+use constant DEBUG => 0;
 
 die "Usage: $0 <lang> <dbname> <dbuser> <dbpass>\n" if @ARGV != 4;
 
