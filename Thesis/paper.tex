@@ -1,4 +1,5 @@
-\documentclass[10pt,letterpaper,oneside,oldfontcommands,final]{memoir}
+\documentclass[12pt,letterpaper,oneside]{memoir}
+\usepackage{ucthesis}
 
 \usepackage{amsmath}
 \usepackage{amsthm}
@@ -20,7 +21,6 @@
 \usepackage{subfigure}
 \usepackage{multirow}
 \usepackage{setspace}
-\usepackage{ucthesis}
 
 \doublespace
 
@@ -66,9 +66,9 @@
 
 \begin{document}
 
+\maxtocdepth{subsection}
 
-\settocdepth{subsection}
-
+\frontmatter
 \input{part-A10-frontmatter/main}
 
 \mainmatter
@@ -94,13 +94,16 @@
 \input{part-Q10-vandalism/main}
 \input{part-X10-conclusion/main}
 
+\begin{comment}
 \appendix
 \appendixpage*
 
 \chapterstyle{normal}
 
 \input{paper-appendix/main}
+\end{comment}
 
+\chapterstyle{normal}
 \singlespacing
 \bibliographystyle{plain-annote}
 \bibliography{bib/paper-intro,bib/paper-diff,bib/paper-vandalism,bib/paper-advancement,bib/dvlab}
