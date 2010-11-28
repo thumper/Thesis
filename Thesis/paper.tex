@@ -40,10 +40,9 @@
 \input{part-A10-frontmatter/main}
 
 \mainmatter
-\pagestyle{ruled}
-%\pagestyle{plain}
+\pagestyle{plain}
 \pagenumbering{arabic}
-\chapterstyle{veelo}
+\chapterstyle{default}
 
 \input{part-C10-intro/main}
 \part{Foundations}
@@ -53,12 +52,6 @@
 \part{Applications}
 \input{part-J10-rep/main}
 \input{part-K10-trust/main}
-%\input{paper-defs/main}
-%\input{paper-value/main}
-%\input{paper-restricted/main}
-%\iflong
-%\input{paper-general/main}
-%\fi
 \input{part-Q10-vandalism/main}
 \input{part-X10-conclusion/main}
 
@@ -75,27 +68,6 @@
 \singlespacing
 \bibliographystyle{plain-annote}
 \bibliography{bib/paper-intro,bib/paper-diff,bib/paper-vandalism,bib/paper-advancement,bib/dvlab}
-
-\clearpage
-
-\iflong
-\makepagestyle{index}
-  \makeheadrule{index}{\textwidth}{\normalrulethickness}
-  \makeevenhead{index}{\rightmark}{}{\leftmark}
-  \makeoddhead{index}{\rightmark}{}{\leftmark}
-  \makeevenfoot{index}{\thepage}{}{}
-  \makeoddfoot{index}{}{}{\thepage}
-
-\pagestyle{index}
-%\renewcommand{\chaptermark}[1]{}
-\renewcommand{\preindexhook}{%
-%The first page number is usually, but not always, the primary reference to
-%the indexed topic.
-\vskip\onelineskip}
-\indexintoc
-\printindex
-
-\fi
 
 \end{document}
 
