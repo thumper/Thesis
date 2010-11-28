@@ -109,18 +109,51 @@
 %%% ====================================================================
 
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{ucthesis}[2006/05/04 v3.2-ucsc-2 University of California Thesis Package]
+\ProvidesPackage{ucthesis}[2010/11/28 v4.0-ucsc University of California Thesis Package]
 
-\def\abstractname{Abstract}
-%                 ~~~~~~~~
-%
-% acknowledge environment:
-\def\acknowledgename{Acknowledgments}
-%                    ~~~~~~~~~~~~~~~~
-%
-% dedication environment
-\def\dedicationname{Dedication}
-%                  ~~~~~~~~~~~~
+
+% Only works with the memoir class!!!!!!!!!!!!!!!
+\@ifclassloaded{memoir}{\let\endpwasu\relax}{\let\endpwasu\endinput
+  \PackageError{ucthesis}{The ucthesis package only works with the memoir class}%
+               {\@ehd}}
+\endpwasu
+
+
+% left, right margins and textwidth
+\setlrmarginsandblock{1.5in}{1in}{*}
+
+
+%% for main body, bottom of text at 1in, footer below
+%% top of header at 1in, first text line double spaced
+%% below base of header
+\newlength{\linespace}
+\setlength{\linespace}{\baselineskip} % current equivalent of \onelineskip
+\setlength{\headheight}{\onelineskip}
+\setlength{\headsep}{\linespace}
+\addtolength{\headsep}{-\topskip}
+\setlength{\uppermargin}{1in}
+\addtolength{\uppermargin}{\headheight}
+\addtolength{\uppermargin}{\headsep}
+%% and for the bottom
+\setlength{\lowermargin}{1in}
+\setlength{\textheight}{\paperheight}
+\addtolength{\textheight}{-\uppermargin}
+\addtolength{\textheight}{-\lowermargin}
+%% footnote settings
+\setlength{\footskip}{\onelineskip}
+\setlength{\footnotesep}{\onelineskip}
+
+
+%% the fiddle lengths (..ta.. for title/approval page, others for prelims)
+\newlength{\toptafiddle} \setlength{\toptafiddle}{2\linespace}
+\newlength{\bottafiddle} \setlength{\bottafiddle}{0pt}
+\newlength{\topfiddle}   \setlength{\topfiddle}{\toptafiddle}
+\newlength{\botfiddle}   \setlength{\botfiddle}{\onelineskip}
+
+
+\setlength{\parindent}{2em}
+
+\checkandfixthelayout
 
 %    ****************************************
 %    *             FRONT MATTER             *
