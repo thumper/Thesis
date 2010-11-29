@@ -43,7 +43,7 @@ use constant API_URL => ".wikipedia.org/w/api.php?action=query&format=json"
 	."&list=recentchanges&rcprop=ids|timestamp"
 	."&rclimit=1&rcdir=older&rctype=edit|new"
 	."&rcnamespace=0";
-use constant TS_URL => "http://toolserver.org/~ipye/GetNewTitles.php?";
+use constant TS_URL => "http://toolserver.org/~ipye/GetNewTitles.php?max=8000&";
 use constant LAST_REV_FILE => "/tmp/GetFeedFToolserver.txt-";
 use constant DB_ENGINE => "mysql";
 
