@@ -1,5 +1,42 @@
 
-\chapter{Notation}
+\chapter{Definitions}
+\label{ch:defs}
 
-\input{part-F00-defs/notation.tex}
+The following terminology and notation
+will be used throughout this dissertation.
+
+The Wikipedia is made up of a collection of \intro{articles};
+we use this term interchangably with the term \intro{pages},
+as each article appears as a single web page on the Wikipedia site.
+Each page, \page{}, has a history of versions describing how that
+page has evolved over time.
+We assume that we have $n > 0$ versions
+$\version{0}, \version{1}, \version{2}, \ldots, \version{n}$
+of a page;
+version \version{0} is empty, version \version{n} is the most recent,
+and version \version{i}, for $1 \leq i \leq n$,
+is obtained by author \editor{i} performing an
+edit $\edit{i}: \version{i-1} \goesto \version{i}$.
+We refer to the change set corresponding to
+$\edit{i}: \version{i-1} \goesto \version{i}$
+as the \intro{edit} performed at $\edit{i}$; the edit consists of the text
+insertions, deletions, displacements, and replacements that led from
+$\version{i-1}$ to $\version{i}$.
+
+When editing versioned documents, authors commonly save several
+versions in a short time frame, in order to avoid losing their work
+due to computer or network problems.
+To ensure that such behavior does not affect reputations, we
+\textit{filter} the versions, keeping only the \textit{last} of consecutive
+versions by the same author; we assume therefore that
+$\editor{i} \neq \editor{i+1}$,
+where $1 \leq i < n$.
+
+Every version $\version{i}$, for $0 \leq i \leq n$, consists of a sequence
+$[w^i_1, \ldots, w^i_{m_i}]$ of words, where $m_i$ is the number of
+words of $v_i$; we have $m_0 = 0$.
+For us, a \intro{word} is a whitespace-delimited sequence of
+characters in the Wiki markup language that produces a Wikipedia article:
+we work at the level of such markup language, rather than at the level
+of the HTML produced by the wiki engine.
 

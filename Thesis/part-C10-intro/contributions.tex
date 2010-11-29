@@ -1,53 +1,28 @@
-\subsection{Contributions of this Work}
+\section{Contributions of this Work}
 
-We propose research into two ideas that can be leveraged
-into tools to assist well-intentioned users.
-The first is a \intro{reputation system} for users, which measures
-their contributions to the Wikipedia with respect to some
-notion of the group consensus.
-The second idea is a \intro{trust system} for text,
-which models the amount of review each word receives from editors
-to quantify the likelihood that the text will persist
-into the future.
-One of our goals is to preserve the current user experience,
-as much as possible.
+Our thesis is that the task of Wikipedia vandalism detection
+can be assisted by the creation of a reputation system
+for editors.
 
+We develop a quality measure to reflect the reaction of
+the community to an edit.
+This quality measure is consistent with less general
+``reverts are bad'' notion used in other
+works~\cite{Smets2008,Itakura2009,Belani2010,West2010},
+but is more nuanced in allowing a contribution to be massaged
+and be considered to have had some value to the project.
+As part of realizing this quality measure, we introduce the
+author attribution problem for collaborative works,
+and a refined definition for edit distance to better capture
+the notion of the size of a contribution.
 
-Our basic idea is to take advantage of the Wikipedia's version history
-for articles to develop content-driven \intro{reputation systems}
-and \intro{trust systems}~\cite{WikiMTWtrust06,McGuinness06,www07,WikiTrust2008}.
-A content-driven reputation system is one which uses
-the version history to measure the work performed by users;
-users gain reputation when they make
-contributions to the Wikipedia which are deemed valuable, and lose reputation
-when they make contributions which are reverted.
-A content-driven trust system uses the version history
-to predict the quality of the text submitted, incorporating
-information from the reputation system.
-The trust system acts as a guide to users,
-indicating recent edits that need more scrutiny.
-The advantage of content-driven systems,
-as opposed to manual rating systems, is that they do
-not significantly alter the user experience.
+Using the edit quality measure as a basis, we are able
+to construct a \intro{reputation system} for authors.
+We show that this reputation system has the useful property
+of predicting the edit quality of future edits by the same
+author.
 
-We have implemented an initial prototype of our reputation and
-trust algorithms~\cite{www07,WikiTrust2008}.
-This system takes as input an XML dump of a Wikipedia project,
-analyzes the evolution of articles to determine lasting
-contributions by authors, and computes a reputation for
-each author based on the size and age of their contributions.
-At the same time, a trust value is computed for each word
-based on the reputations of authors who edit
-regions of text nearby.
-Our evalutions for both algorithms are very encouraging:
-low reputation authors predominantly have their contributions
-reverted, and low trust text is much more likely to be
-deleted on the next revision than high trust text.
-Further details of the algorithms and evaluations
-are discussed in Sections~\ref{sec-reputation}
-and~\ref{sec-trust}.
-
-The course of our continued investigation is to examine
-other applications of reputation and trust systems in
-the context of the Wikipedia:
+The programs resulting from this research are open source,
+available under the BSD license from our project website:
+\url{http://www.wikitrust.net/}.
 

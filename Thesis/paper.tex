@@ -15,12 +15,12 @@
 \usepackage{latexsym}
 \usepackage{enumerate}
 \usepackage{texpoint}
-\usepackage{hyperref}
+%\usepackage{hyperref}
+\usepackage{url}
 \usepackage{epic,eepic}
 \usepackage{subfigure}
 \usepackage{multirow}
 \usepackage{setspace}
-
 \doublespace
 
 \makeindex
@@ -28,7 +28,7 @@
 \newif \iflong \longfalse
 \newif \ifshort \shorttrue
 
-\allowdisplaybreaks
+%\allowdisplaybreaks
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -46,10 +46,14 @@
 
 \input{part-C10-intro/main}
 \part{Foundations}
+\label{part:foundations}
 \input{paper-outline/main}
 \input{part-F00-defs/main}
 \input{part-F10-diff/main}
+\input{part-F40-editdistance/main}
+\input{part-F70-editquality/main}
 \part{Applications}
+\label{part:applications}
 \input{part-J10-rep/main}
 \input{part-K10-trust/main}
 \input{part-Q10-vandalism/main}
