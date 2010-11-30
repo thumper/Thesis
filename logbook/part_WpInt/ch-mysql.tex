@@ -222,3 +222,29 @@ ones that are the most correlated with the resulting running time.
 However, given the seemingly random result with respect to any
 single parameter, I fear that this won't lead to anything useful.
 
+
+\section{Slow Query Log}
+
+\subsection{29-Nov-2010}
+
+After turning on the slow query log, we did a minor overhaul of
+the code to change (or solidify) some of the assumptions being made.
+Running our new code on Gaston, one issue I've seen is that my new
+checks for a pre-existing page run very slowly because there is no good index
+on the \textit{page\_title} field.
+
+On Redherring, I've decided to be proactive about creating an index to
+avoid full table scans:
+\begin{verbatim}
+mysql> create index page_title_prefix5 on page(page_title(5));
+\end{verbatim}
+I created an index on only the first five characters since this is enough
+to make most tests have only a single row to check.
+
+The code is now rolled out to redherring, and I am trying to recreate our
+monitoring:
+\begin{verbatim}
+mysql> set global slow_query_log_file='/var/log/mysql/slow-query.log';
+mysql> set global slow_query_log=1;
+\end{verbatim}
+
