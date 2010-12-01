@@ -116,7 +116,7 @@ amounts to the row number.
 
 After discussing this with Julius, he suggested that I also investigate varying
 the number of threads used to load the data.
-I wrote a new \program{load\_db.pl} which forks multiple mysql processes to
+I wrote a new \program{load\_db.pl} which forks multiple \mysql processes to
 load the data, and then launched some new runs.
 I first ran this on the Portuguese wikipedia, and after 29 hours found a best time of
 112.8 seconds:
@@ -198,7 +198,7 @@ We had our LANL mentor meeting today.
 Beforehand, I downloaded \program{ggobi} and played around with
 its visualization capabilities.
 It is a really interesting program, but my initial reactions to the
-mysql timing data that I have collected is that there isn't a clearcut
+\mysql timing data that I have collected is that there isn't a clearcut
 relation between any of the parameters and the resulting run time.
 What I need is a way to cluster datapoints which are nearly identical
 (for example, differing only in one parameter) and then try to establish
@@ -247,4 +247,40 @@ monitoring:
 mysql> set global slow_query_log_file='/var/log/mysql/slow-query.log';
 mysql> set global slow_query_log=1;
 \end{verbatim}
+
+\section{Crash Recovery}
+
+\subsection{29-Nov-2010}
+
+There was a power outage at UC Santa Cruz on Saturday morning.
+It turns out that Gaston got nailed, and when it was power cycled,
+\mysql wouldn't start up any longer.
+Looking into \file{daemon.log}, the messages indicated that some
+of the pages were corrupted (possibly only indices).
+After reading up some information on it, I was able to get
+\mysql booted by including
+\begin{verbatim}
+innodb_force_recovery=4
+\end{verbatim}
+in the configuration file.
+Once booted, I took a full dump of the database:
+\begin{verbatim}
+mysqldump --defaults-file=/etc/mysql/debian.cnf --all-databases --opt > /store/thumper/all_dbs.sql
+\end{verbatim}
+
+I then erased all the \mysql files in \file{/store/lib/mysql} and
+\file{/raid/mysql/logdir}; these directories were mentioned in
+the config files.
+Then I had to reinitialize the database:
+\begin{verbatim}
+root# rm -rf /store/lib/mysql/*wikidb*
+root# mysql_install_db --basedir=/usr --datadir=/store/lib/mysql
+\end{verbatim}
+
+Finally, I set the root password and reloaded the dump that I just made.
+User accounts won't work until you log in as root and run
+the \texttt{FLUSH PRIVILEGES} command.
+
+After \mysql was working again, I restarted it, and then
+restarted the wikitrust dispatchers.
 
