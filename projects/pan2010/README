@@ -1,0 +1,25 @@
+Set of scripts to help populate our database with the
+edits needed for the PAN 2010 corpus.
+
+These scripts were developed/extended after the actual PAN competition
+to generate data for Andrew West.
+
+
+* find_orphan_revs.pl - scan the entire 'revision' table looking for
+  revisions that have a different page ID than what is in 'wikitrust_revision'
+  (or aren't there at all).  In order to run this script, the dispatcher
+  needs to be off so that all the DELETE operations get queued up.
+  Then, a special version of the dispatcher needs to be run: it needs
+  to not delete 'wikitrust_queue' on startup.
+
+* preload_dispatcher_queue.pl - reads through the PAN2010 edit files
+  and checks that revisions are in the database.  If they are not,
+  it requests a delete for that pageID so that it can be redownloaded.
+	./preload_dispatcher_queue.pl training_edits.csv
+	./preload_dispatcher_queue.pl final_edits.csv
+
+* scoreEdits.pl - reads through the PAN2010 edit files and generates
+  a vandalismZD score for each edit.
+	awk 'BEGIN { FS="," } ; {print $4,"\t\t",$7}' training_edits.csv  > /tmp/pan-edits2.txt
+	awk 'BEGIN { FS="," } ; {print $3,"\t",$7,"\t",$6}' final_edits.csv  > /tmp/pan-edits2.txt
+	./scoreEdits pan-edits2.txt > pan-vzdscore.txt
