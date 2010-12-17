@@ -68,6 +68,9 @@ my $dbname = join(':', "DBI", DB_ENGINE,
 my $dbh = DBI->connect($dbname, $db{user}, $db{pass},
 	{ RaiseError => 1, AutoCommit => 1 });
 
+my $lang = $db{db};
+$lang =~ s/wiki.*$//;
+
 my %erased;
 
 my $sth_revs = $dbh->prepare('SELECT rev_id,rev_page FROM revision WHERE rev_id >= ? and rev_id < ?');
@@ -110,7 +113,7 @@ sub delete_page {
     $ua->agent('Mozilla/4.0 (compatible; MSIE 5.0; Windows 95)');
     $ua->timeout(300);
 
-    my $url = "http://en.collaborativetrust.com/WikiTrust/RemoteAPI?method=delete&pageid=$pageid&&title=".uri_escape($title)."&secret=Zup3rZ3kret";
+    my $url = "http://$lang.collaborativetrust.com/WikiTrust/RemoteAPI?method=delete&pageid=$pageid&&title=".uri_escape($title)."&secret=Zup3rZ3kret";
 
     my $req = GET $url;
     my $res = $ua->request($req);
