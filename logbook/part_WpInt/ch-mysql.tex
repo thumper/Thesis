@@ -39,6 +39,17 @@ max_allowed_packet=64M
 This takes into account Julius's advice about using different disks
 for the logdir and datadir.
 
+\subsection{16-Dec-2010}
+
+Something that I have not mentioned in previous entries is that
+when you change the directories, \mysql will not run correctly.
+I received the dreaded ``Unknown table engine \'InnoDB\''' error.
+I eventually realized that this is because \mysql is running under
+\package{apparmor}.
+
+To fix this, edit the file in \file{/etc/apparmor.d} for \program{mysqld}.
+Then be sure to restart \package{apparmor} via its init script.
+
 \section{Optimizing Mysqldump}
 
 \subsection{2-Nov-2009}
