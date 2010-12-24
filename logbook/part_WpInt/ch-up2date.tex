@@ -443,3 +443,66 @@ in (select distinct rev_page from revision where rev_id > 25000000);
 mysql> insert into wikitrust_queue (page_id) select distinct rev_page from revision where rev_id > 25000000;
 \end{verbatim}
 
+\subsection{12-Dec-2010}
+
+The code has now been rolled out onto Redherring for a few weeks.
+
+Our changes seem to be working well, so I contacted Andrew West about
+his using our vandalism API in his tool.
+He asked me to get him our annotations for the PAN2010 corpus
+so that he can build a good combined model,
+While doing this task, I found out that we are missing many of the
+PAN edits now, although I'm sure we had nearly everything back
+during the competition.
+Upon looking deeper into the problem, I found out that our code didn't
+update the page ID when re-inserting a revision into the database that
+was already there.
+Now that we always delete old revisions, this isn't really a problem
+going forward, but that meant there were a bunch of revisions with
+incorrect entries that was messing up our trust calculations.
+
+I discussed with Luca and Ian what the ramifications would be
+to just updating the page ID, and the only problem was the only
+text data would remain in the text cache without any pointer to it.
+
+I decided that the cleanest solution (but not easiest!) was to
+write a script\footnote{See \file{projects/pan2010/find\_orphan\_revs.pl}.}
+to check every revision in the database and compare
+it to those in the \texttt{wikitrust\_revision} table; if it didn't
+exist in that table, or if there were mismatched page IDs, then I
+deleted the page so that it could be downloaded using the latest code.
+Even this turned out to be tricky; our perl code duplicated the
+``delete page'' functionality, but got stuck on a deletion that
+took longer than the lock timeouts allowed.
+
+After trying to extend the lock timeout, I finally decided that
+it wasn't safe to have the duplicate code in the first place.
+I modified the dispatcher to detect the special title
+``\texttt{XXX DELETE ME}'' and use that to delete the page ID
+before processing the page.
+And then another problem: finding the bad revisions would trip up
+on revisions that were being processed already as part of this
+whole process.
+
+About 12,000 bad page IDs were found, including (I think) revisions
+from some other database.
+Processing these pages is very slow, however; I think that they must
+be pages with extensive histories.
+Today, I am adding the ability to set a different priority when requesting
+a page deletion, so that I can prioritize the PAN2010 edits
+that I care about.
+
+\subsection{23-Dec-2010}
+
+Got everything working, and even improved the speed of {\mysql},
+but to no avail: we are still not able to keep up with Andrew West's
+requests.
+Today, he suggested that we build an IRC bot to track recent
+changes in real time.
+I took a stab at this, and it works much better.
+
+I'm still having a problem because I'm running our Toolserver
+script as well, but the duplicated pageids are enough to slow the
+system down that it can't answer Andrew's requests any longer.
+I am only able to run the IRC feed to keep up with Andrew's requests.
+
