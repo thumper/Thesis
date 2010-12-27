@@ -11,6 +11,17 @@ to generate data for Andrew West.
   needs to be off so that all the DELETE operations get queued up.
   Then, a special version of the dispatcher needs to be run: it needs
   to not delete 'wikitrust_queue' on startup.
+  Use "--wikitrust" to reverse the check, but only if you're keeping
+  the text cache.
+
+* find_orphan_pages.pl - scan the entire 'page' table looking for
+  pages that don't have a corresponding entry in 'wikitrust_page',
+  or if the title has a different pageid.
+  In order to run this script, the dispatcher
+  needs to be off so that all the DELETE operations get queued up.
+  Use "--wikitrust" to reverse the check.
+  Note that the 'page' records seem to be missing for many articles,
+  so using --wikitrust isn't advised.
 
 * preload_dispatcher_queue.pl - reads through the PAN2010 edit files
   and checks that revisions are in the database.  If they are not,

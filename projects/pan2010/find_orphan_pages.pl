@@ -48,7 +48,7 @@ use constant BASE_DIR => "./";
 use constant INI_FILE => BASE_DIR . "db_access_data.ini";
 
 use constant INCREMENT => 100000;
-use constant START => 0; # 114180000;
+use constant START => 0;
 
 use Text::ParseWords;
 use DBI;
@@ -81,47 +81,55 @@ $lang =~ s/wiki.*$//;
 
 my %erased;
 
-my $src_table = 'revision';
-my $src_pageid = 'rev_page';
-my $src_revid = 'rev_id';
-my $dst_table = 'wikitrust_revision';
+my $src_table = 'page';
+my $src_pageid = 'page_id';
+my $src_title = 'page_title';
+my $dst_table = 'wikitrust_page';
 my $dst_pageid = 'page_id';
-my $dst_revid = 'revision_id';
+my $dst_title = 'page_title';
 if ($opt->{wikitrust}) {
-    $src_table = 'wikitrust_revision';
-    $src_pageid = 'page_id';
-    $src_revid = 'revision_id';
-    $dst_table = 'revision';
-    $dst_pageid = 'rev_page';
-    $dst_revid = 'rev_id';
+    $src_table = 'wikitrust_page';
+    $dst_table = 'page';
 }
 
-my $sth_revs = $dbh->prepare("SELECT $src_revid, $src_pageid FROM $src_table WHERE $src_revid >= ? and $src_revid < ?");
-my $sth_match = $dbh->prepare("SELECT $dst_pageid FROM $dst_table WHERE $dst_revid = ?");
+my $sth_list = $dbh->prepare("SELECT $src_pageid, $src_title FROM $src_table WHERE $src_pageid >= ? and $src_pageid < ?");
+my $sth_match1 = $dbh->prepare("SELECT $dst_pageid,$dst_title FROM $dst_table WHERE $dst_title = ?");
+my $sth_match2 = $dbh->prepare("SELECT $dst_pageid,$dst_title FROM $dst_table WHERE $dst_pageid = ?");
 
 
-my $maxrid = findMax($src_table, $src_revid);
+my $maxpid = findMax($src_table, $src_pageid);
 
-my $rev_lower = 0;
-while ($rev_lower <= $maxrid) {
-    print "Working on $rev_lower out of $maxrid\n";
-    $sth_revs->execute($rev_lower, $rev_lower+ INCREMENT)
-	|| die "Couldn't execute: ".$sth_revs->errstr;
-    while (my $data = $sth_revs->fetchrow_arrayref) {
-	$sth_match->execute($data->[0]) || die "execute: ". $sth_match->errstr;
-	my $match = $sth_match->fetchrow_arrayref;
-	if (!defined $match) {
-	    # Not in wikitrust, so probably orig page_id changed
-	    delete_page($data->[1], 'XXX');
-	} elsif ($data->[1] != $match->[0]) {
-	    # Somehow, we got confused... delete both
-	    delete_page($data->[1], 'XXX');
-	    delete_page($match->[0], 'XXX');
-	}
+my $lower = 0;
+while ($lower <= $maxpid) {
+    print "Working on $lower out of $maxpid\n";
+    $sth_list->execute($lower, $lower+ INCREMENT)
+	|| die "Couldn't execute: ".$sth_list->errstr;
+    while (my $data = $sth_list->fetchrow_arrayref) {
+	check_match($sth_match1, $data->[1], $data->[0], 0, $dst_table);
+	check_match($sth_match2, $data->[0], $data->[0], 1, $dst_table);
     }
-    $rev_lower += INCREMENT;
+    $lower += INCREMENT;
 }   
 exit(0);
+
+sub check_match {
+    my ($sth, $val, $pageid, $nomatch, $msg) = @_;
+    $sth->execute($val) || die "execute: ". $sth->errstr;
+    my $match = $sth->fetchrow_arrayref;
+    if (!defined $match) {
+	# Not in destination
+	if ($nomatch) {
+	    print $msg, ": not in destination\n";
+	    delete_page($pageid, 'XXX');
+	}
+    } elsif ($pageid != $match->[0]) {
+	# Somehow, we got confused... delete both
+	print $msg, ": tables don't agree: $pageid != ".$match->[0]."\n";
+	delete_page($pageid, 'XXX');
+	delete_page($match->[0], 'XXX');
+    }
+}
+
 
 sub delete_page {
     my $pageid = shift @_;
@@ -142,7 +150,6 @@ sub delete_page {
     my $res = $ua->request($req);
     die $res->status_line if !$res->is_success;
     my $pagedata = $res->decoded_content;
-
     print "Deleted page $pageid: response=$pagedata\n";
     die "bad response" if $pagedata =~ m/error/;
 }

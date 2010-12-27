@@ -20,7 +20,7 @@ this test database.
 
 To setup a database, I installed \package{python-mysqldb}
 and \mediawiki onto my Ubuntu instance.
-Had to edit \file{/etc/mediawiki/mediawiki.conf} to 
+Had to edit \file{/etc/mediawiki/mediawiki.conf} to
 enable the \texttt{Alias} for the installation.
 Then navigated to \url{http://localhost/mediawiki/},
 which prompted me to configure the installation.
@@ -143,7 +143,7 @@ By adding the option ``\texttt{-dump\_db\_calls},''
 I see that there are SQL states which are faiing.
 The message displayed is:
 \begin{verbatim}
-INSERT INTO wikitrust_colored_markup (revision_id, revision_text) VALUES (2212643, ) ON DUPLICATE KEY UPDATE revision_text = 
+INSERT INTO wikitrust_colored_markup (revision_id, revision_text) VALUES (2212643, ) ON DUPLICATE KEY UPDATE revision_text =
 Mysql.exec: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ') ON DUPLICATE KEY UPDATE revision_text =' at line 1
 \end{verbatim}
 There is no revision text being added to the database, which
@@ -505,4 +505,32 @@ I'm still having a problem because I'm running our Toolserver
 script as well, but the duplicated pageids are enough to slow the
 system down that it can't answer Andrew's requests any longer.
 I am only able to run the IRC feed to keep up with Andrew's requests.
+
+\subsection{26-Dec-2010}
+
+The nlwiki has repeatedly had errors where the sexp format is
+different because the type has changed in our code.
+In particular, one page repeatedly fails and is never erased from
+the queue: pageid 1896327.
+
+While looking into this page more, I found several things wrong:
+\begin{enumerate}
+\item The quality info for revision 1700678 was in an outdated format.
+\item The \texttt{wikitrust\_revision.page\_id} for revision 1700678 was set
+    to 225112.
+\item The \texttt{wikitrust\_page.page\_title} for pageid 225112 had the same
+    title as the new pageid 1896327.
+\item The Sexp error from the old format was causing an exception
+    during a transaction.  The exception was not caught, so that the
+    transaction captured attempts to delete the page and start fresh.
+\item There are many entries in \texttt{wikitrust\_page} that don't have a
+    corresponding entry in \texttt{page}.
+\end{enumerate}
+
+Patching the exception handling doesn't fix this particular problem,
+because the entry in \texttt{wikitrust\_revision} has the wrong pageid.
+I wrote a new script, \program{find_orphan_pages}, which searches for
+articles that are in one table but not the other (or have a title
+which doesn't match).
+
 
