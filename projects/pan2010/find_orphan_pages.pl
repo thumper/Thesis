@@ -47,8 +47,11 @@ use constant DB_ENGINE => "mysql";
 use constant BASE_DIR => "./";
 use constant INI_FILE => BASE_DIR . "db_access_data.ini";
 
+use constant DB_DELETE => 1;
+
 use constant INCREMENT => 100000;
 use constant START => 0;
+use constant PRIORITY => 5;
 
 use Text::ParseWords;
 use DBI;
@@ -99,7 +102,7 @@ my $sth_match2 = $dbh->prepare("SELECT $dst_pageid,$dst_title FROM $dst_table WH
 
 my $maxpid = findMax($src_table, $src_pageid);
 
-my $lower = 0;
+my $lower = START;
 while ($lower <= $maxpid) {
     print "Working on $lower out of $maxpid\n";
     $sth_list->execute($lower, $lower+ INCREMENT)
@@ -140,11 +143,14 @@ sub delete_page {
 
     warn "Deleting $pageid: $title\n";
 
+if (DB_DELETE) {
+    WikiTrust::mark_for_coloring($pageid, 'XXX DELETE ME', $dbh, PRIORITY);
+} else {
     my $ua = LWP::UserAgent->new;
     $ua->agent('Mozilla/4.0 (compatible; MSIE 5.0; Windows 95)');
     $ua->timeout(300);
 
-    my $url = "http://$lang.collaborativetrust.com/WikiTrust/RemoteAPI?method=delete&pageid=$pageid&&title=".uri_escape($title)."&secret=Zup3rZ3kret";
+    my $url = "http://$lang.collaborativetrust.com/WikiTrust/RemoteAPI?method=delete&pageid=$pageid&&title=".uri_escape($title)."&secret=Zup3rZ3kret&priority=".PRIORITY;
 
     my $req = GET $url;
     my $res = $ua->request($req);
@@ -152,6 +158,7 @@ sub delete_page {
     my $pagedata = $res->decoded_content;
     print "Deleted page $pageid: response=$pagedata\n";
     die "bad response" if $pagedata =~ m/error/;
+}
 }
 
 

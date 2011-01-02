@@ -114,7 +114,7 @@ sub on_public {
 	my @data = $sth_pid->fetchrow_array();
 	if (@data > 0) {
 	    my $pageid = $data[0];
-	    WikiTrust::mark_for_coloring($pageid, "XX-GetIRCFeed.pl", $dbh, 1);
+	    WikiTrust::mark_for_coloring($pageid, "XX-GetIRCFeed.pl", $dbh, 7);
 	} else {
 	    print "Got title [[$title]] status=<$status>: $msg\n";
 	    my @chars = split(//, $title);
