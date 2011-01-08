@@ -1,0 +1,39 @@
+\section{Related Work}
+
+Finding the difference between two strings is a long-studied problem,
+known as the \intro{string-to-string correction} problem~\cite{Wagner1974}.
+Initial work on this problem revolved around finding the
+Longest Common Subsequence (LCS)~\cite{Gusfield1999}, which identifies the
+sequence of symbols\footnote{Note that the symbols need not be sequential.}
+in common between the two strings.
+From there, it is an easy matter to identify the optimal
+set of insertions, deletions, and replacements to transform
+one string to the other.
+The well-known UNIX \texttt{diff} utility~\cite{Hunt1976} is based
+on this algorithm.
+
+Tichy advances the idea that finding the shortest edit script is a
+useful solution to the string-to-string correction problem, and
+introduces \intro{block moves} as a useful operation in edit
+scripts~\cite{Tichy1984}.
+This takes advantage of the fact that strings may include internal
+replication of symbols.
+
+Myers shows that LCS and shortest edit script are equivalent to finding
+different paths in an edit graph~\cite{Myers1986}, and develops a
+``greedy'' solution to the problem.
+Burns and Long~\cite{Burns1997} extend~\cite{Reichenberger1991},
+which combines the greedy technique with Tichy's solution,
+resulting in much better performance characteristics.
+
+Specific to the Wikipedia, Fong and Biuk-Aghai present a different
+dimension of the string-to-string correction problem~\cite{Fong2010}.
+In previous formulations, solutions are optimizing for abstract
+performance characteristics (\eg running time or
+edit distance\~cite{Levenshtein1966}); but Wikipedia computes text differences
+for human understanding.
+They extend Neuwirth~\etal's heirarchical differencing~\cite{Neuwirth1992}
+ideas to the differencing algorithm used by the
+WikiTrust project~\cite{www07}, and additionally classify components
+of the edit script according to common behaviors of Wikipedia editors.
+

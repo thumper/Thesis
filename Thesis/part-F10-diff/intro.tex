@@ -1,20 +1,78 @@
 
-A first iteration for a content-driven reputation system
-might start with the simplest of rules: the more content
-an author contributes, the more reputation they gain.
-To measure the content added by an author during some edit,
-we compare the resulting version to the version immediately before,
-using a basic difference algorithm~\cite{Myers86,TichyEditDist,BurnsLong97}.
-The \intro{diff algorithm} will return a list of insertions
-and deletions that transform the previous version into
-the new version, and we can attribute the insertions
-as contributions by the new author.
+\section{Introduction}
 
-The underlying basis for our reputation system
-is an algorithm which attributes each word to some user.
-Insertions of new words, and deletions of old words,
-are easy to trace, but words that are copied are a problem.
-For example, consider this section of text:
+The Wikipedia is not unique, either as a collaborative work or as
+a versioned document, although it is uniquely the largest such work
+in colloquial language.
+Programming projects (especially open source projects)
+are also collaborative and versioned --- which makes for
+an interesting analogy because many of the same questions can be asked:
+\begin{enumerate}
+\item How fast did the project grow?
+\item Who contributed how much to the project?
+\item How much do the different components interact?
+\item How do the components evolve over time?
+\item How many components are there in the project?
+\end{enumerate}
+Of these questions, we thought to focus on determining who contributed
+how much to the project; as a user contributes more, they gain experience
+in the community mores and our belief is that their future
+contributions will be more valuable.
+That is, our notion was to give credit to users for the words that
+they write.
+
+In the field of software engineering, the question of ``who contributed
+how much'' is generally answered by the metric
+\textit{Source Lines of Code} (SLOC).\footnote{\url{http://en.wikipedia.org/wiki/Source_lines_of_code}}
+Computing who added which words of text is achieved
+by applying a basic text difference
+algorithm~\cite{Myers86,TichyEditDist,BurnsLong97} to two consecutive
+revisions.
+The output of the algorithm allows us to determine what text was added and
+deleted at each edit, and attribute the insertions as contributions by the
+author of the second revision\ldots\quad
+They say fools rush in, and we did.
+
+The problem with our initial model is that text isn't only inserted
+or deleted; it can also be copied or moved around.
+There are variations of the text difference algorithms that can
+detect moved and copied text, but to whom should we attribute this text,
+the author who created the original text, or the editor who rearranges it
+into its final form?
+
+To answer this question, let us consider a fairly extreme example.
+Suppose user Alice creates a new article and writes a page of text for it.
+Vanessa is a vandal and decides to \intro{blank} the article,
+\ie, she deletes all the text for the article, but not the article itself.
+Robert is part of the RCPatrol, and he notices that the article has
+been tampered with, so he restores all the text back to Alice's version.
+Now who should receive credit for writing the text, Robert or Alice?
+
+We call this the \intro{author attribution} problem,
+and in the context of the Wikipedia it seems obvious that Robert's
+work is valuable maintenance, but Alice is the true ``author'' of the text.
+Thus, a better model of attribution would give credit
+to the author who originally created the text,
+regardless of edit wars.
+For example, the WikiTravel site creates a tree representing
+the version history of an article: two consecutive versions
+have a parent-child relationship in the tree, except when
+the second version is identical to an earlier version;
+versions that are identical are merged into a single node
+in the tree, which is attributed to the author of the earliest
+such version~\cite{WikiTravelAuthorship}
+(see~\cite{Ekstrand2009,Sabel2007} for similar variations
+on organizing revisions).
+Using this revision tree, the WikiTravel site computes the
+authors of the article as being the set of authors starting
+from the most recent version and following parent links
+to the root of the tree.
+(Note that WikiTravel computes a set of authors as a requirement
+of the license agreement that applies to contributed content,
+so the problem is more than an academic one.)
+
+
+A second example is now easier to analyze for attribution:
 %
 \begin{quote}
 Since 27 November 2001, the economist Anders Fogh Rasmussen
@@ -23,50 +81,36 @@ has been Prime Minister to Denmark~\cite{wiki:Denmark-Fogh}.
 leads the government with the consent of Queen Margrethe II.}
 \end{quote}
 %
-The italicized text has been added, but it primarily repeats
+The italicized text has been added, but half the content repeats
 what appears in the previous sentence.
 Clearly, a model of attribution which simply tracks insertions
 and deletions is too simple, as the author of the italicized
 text would receive credit for words that are not his own.
-In a similar vein,
-regular maintainers may accidentally or purposefully receive
-false credit.
-A common phenonemon in the Wikipedia is the emergence
-of a \intro{caretaker} for an article, a user who takes
-special interest in the article and devotes much time
-to revising and adding text to it.
-On occasion, however, the caretaker will take exception to
-anyone else editing the article, and completely revert all other edits.
-At this point, the caretaker could then reintroduce
-the same text, thereby receiving credit for the addition.
 
-Instead, a better model of attribution would give credit
-to the author who originally created the text,
-regardless of edit wars.
-For example, the WikiTravel site creates a tree representing
-the version history of an article: two consecutive versions
-have a parent-child relationship in the tree, except when
-the second version is identical to an earlier version;
-versions that are identical are merged into a single node
-in the tree (which is attributed to the author of the earliest
-such version)~\cite{WikiTravelAuthorship}
-(see~\cite{Sabel2007} for a similar variation on organizing revisions).
-Using this revision tree, the WikiTravel site computes the
-authors of the article as being the set of authors starting
-from the most recent version and following parent links
-to the root of the tree.
-Unscrupulous authors can subvert this system as
-well, but must put some effort into changing
-the wording around a little.
+
+\mynote{Fill in, what is our proposal?}
+
 
 Historians of computer science will note a relation
 to \textit{transclusions}~\cite{Nelson81}.
 Nelson's vision for hypertext included the notion
 of micropayments to authors, which required detailed,
 and manual, attributions of text.
-Our solution automatically detects attribution
+We propose automatically detecting attribution
 (equivalently, transclusions of portions from earlier revisions)
 in the context of a revisioned document edited
 by multiple authors.
+
+
+\mynote{Move to later section}
+These examples highlight some guiding principles of author attribution that
+we choose to adopt:
+\begin{enumerate}
+\item Common words (\eg, ``to,'' ``on,'' ``of the'') shouldn't be
+    ascribed to a single author.
+\item The user who initially inserted the text is the original author.
+\item Added text should be compared against old revisions, in case it is
+being reinstated from the past revision.
+\end{enumerate}
 
 
