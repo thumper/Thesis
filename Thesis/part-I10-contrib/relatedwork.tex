@@ -1,0 +1,137 @@
+\subsection{Related Work}
+
+Measuring contributions of individuals in group collaborative
+efforts have been studied for several decades, in the context of
+software project management.
+Most programmers are familiar with the KLOC (thousand lines of 
+code) measurement~\cite{MITRE1988, SLOC1992},
+sometimes abused to measure productivity.
+Although intended to measure the progress of an
+entire project, it also implicitly 
+measures each programmers contribution to the project.
+What we propose in this paper can be thought of as combining
+KLOC with defects/KLOC, so that merit is a function of both
+amount of contribution and quality.
+
+Shirky and Martin Wattenberg at IBM did a back of the
+envelope calculation, and estimated that the complete Wikipedia
+works amount to about 100 million hours of human
+thought~\cite{CognitiveSurplus2008}.
+This is interesting, because they are measuring work
+in terms of the amount of human thought that goes into it.
+(We interpret ``Human thought'' as being similar 
+to ``man hours.'').
+
+The debate that started it all!
+Jimbo Wales said that most of Wikipedia is created by
+a handful of people~\cite{Wales2005}.
+We are not sure if he still believes this!
+Aaron Swartz decided to count by characters,
+and discovered that content is mostly added
+by infrequent authors~\cite{Swartz2006}.
+Kittur et al., \cite{Bourgeoisie2007} discovered that the
+percentage of edits made by the masses is larger and growing 
+when compared to the authors who are either sysops or have a 
+very large number of edits to their credit.
+Burke and Kraut use a wide variety of edit counts to predict
+which authors be promoted to Wikipedia 
+administrators~\cite{AdministratorMop2008}.
+There are many works that measure user contributions by the
+number of edits which authors make to an 
+article~\cite{Wales2005,EditsEqQuality2007,Bourgeoisie2007,
+WikiDashboard2008,OrtegaBarahona2007,SteinHess2007}.
+In \cite{Bourgeoisie2007}, they consider the number of edits
+as well as the change in edits and state that their conclusion
+remains unaffected with either of those measures.
+
+Wilkinson and Huberman show that the quality of an article improves
+with the number of edits and the number of authors that revise
+that article~\cite{EditsEqQuality2007}.
+
+An interesting direction is the one where a group defines the 
+\textit{impact} of an article as the number of times it is 
+viewed~\cite{WikiImpact2007}. 
+They stitch together several different data sources to build a model 
+which estimates this number for any point in time.
+This has implications on reputation systems and in systems such as
+ours where we try to measure contribution.
+
+Contributions (or maybe reputation) can sometimes be measured 
+indirectly, by noting 
+citations~\cite{PageRank98,AckCounting2004,WikiMTWtrust06}.
+Our technique is content-driven, and uses text tracking
+to determine the author of each individual 
+word~\cite{RankingControversies2008,www07}.
+The basic unit of measure for the amount of text added or the
+amount of edit performed is a word in our system.
+Our objective is defining a set of contribution measures
+that could be used to measure contributions quantitatively
+and to compare them.
+
+\begin{comment}
+\begin{itemize}
+
+\item Measuring contributions to group collaborations has been
+	studied for several decades, in the context of
+	software project management.
+	Most programmers are familiar with the KLOC
+	(thousand lines of code) measurement~\cite{MITRE1988, SLOC1992},
+	sometimes abused to measure productivity.
+	Although used to measure performance, it also
+	implicitly measures each programmers contribution
+	to the project. 
+    Our inclusion of quality is akin
+	to combining KLOC with defects/KLOC.
+
+\item Shirky and Martin Wattenberg at IBM do a back of the
+        envelope calculation, and estimate that the complete Wikipedia
+	works amount to about 100 million hours of human
+	thought~\cite{CognitiveSurplus2008}.
+	This is interesting, because they are measuring work
+	in terms of the amount of human thought that goes into it.
+%	(``Human thought'' is probably the same as ``man hours.'')
+
+\item The debate that started it all!
+	Jimbo Wales says that most of Wikipedia is created by
+	a handful of people~\cite{Wales2005}.
+	Aaron Swartz decides to count by characters,
+	and discovers that content is mostly added
+	by infrequent authors~\cite{Swartz2006}.
+
+\item Contributions (or maybe reputation) can sometimes be measured indirectly,
+	by noting citations~\cite{PageRank98,AckCounting2004,WikiMTWtrust06}.
+
+\item Burke and Kraut use a wide variety of edit counts to predict
+	which authors be promoted to Wikipedia administrators~\cite{AdministratorMop2008}.
+
+\item Some previous works measure user contributions by the number
+	of edits which authors make to an
+	article~\cite{Wales2005,EditsEqQuality2007,Bourgeoisie2007,
+	WikiDashboard2008,OrtegaBarahona2007,SteinHess2007}.
+
+\item Wilkinson and Huberman show that there is a relation between
+	the number of edits and the quality of an article~\cite{EditsEqQuality2007}.
+
+\item One group defines the \textit{impact} of an article as the number
+	of times it is viewed~\cite{WikiImpact2007}.  They stitch together
+	several different data sources to build a model which estimates this number
+	for any point in time.  
+	%Our reputation system should probably include
+	%something like this.
+
+%\item Our technique is content-driven, and uses text tracking
+%	to determine the author of each individual word~\cite{RankingControversies2008,www07}.
+
+\item Cosley et al. concern themselves with how to increase contributions
+	and maintain high quality through \textit{intelligent task routing},
+	which attempts to improve user satisfaction with their
+	participation~\cite{TaskRouting2006}.
+	This is totally different than measuring contributions,
+	but it could be argued that we are measuring to
+	increase competition, and thereby increase the quantity and
+	quality of contributions.  \mynote{Weak?}
+
+\item We used R~\cite{R2007}.
+
+\end{itemize}
+\end{comment}

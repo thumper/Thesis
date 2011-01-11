@@ -1,0 +1,21 @@
+\section{Tracking Text Evolution}
+
+We'd like to track the authorship of text in the face of revisions
+by multiple authors.
+
+Desirable properties:
+\begin{enumerate}
+\item When text is deleted and then restored, we prefer the original author.
+    This prevents edit wars or vandalism from disrupting the
+    authorship of text.
+\item When text is duplicated within an article, we prefer to assign
+    authorship to the author of the original copy.
+    This prevents a vandal from duplicating text and then deleting the
+    original copy.
+\item We don't want to over-reward the first author to use common
+    words (\eg ``the,'' ``of'').
+\item We prefer matches that are in the same relative order.
+\item We prefer matches that were live more recently.
+\item We prefer longer matches.
+\end{enumerate}
+

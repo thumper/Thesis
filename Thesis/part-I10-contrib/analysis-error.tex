@@ -1,0 +1,25 @@
+\subsection{Sources of Error}
+
+Since we use filtered revisions, namely we collapse all consecutive
+revisions by the same author, and since we treat all anonymous authors
+identically, consecutive edits made by anonymous authors cannot be
+distinguished.
+We therefore discard all anonymous authors from our analysis: in any
+case, we are not measuring their contributions, as they cannot be
+individually attributed. 
+We have noticed that there are anonymous authors who do good work
+on the Wikipedia, but at this point we have not implemented a
+mechanism to attribute them a contribution measure.
+
+We ignore the time difference between edits.
+When pages receive many views with little editing, it suggests 
+that the article is substantially correct;
+perhaps later edits are due to changing facts, and not because 
+of poor quality.
+Articles which are the subject of current events are 
+particularly likely to have their edit quality misjudged.
+Relatedly, grouping revisions by author ignores the fact that 
+edits separated by days or months are less related and have most 
+likely been reviewed by others.
+
+

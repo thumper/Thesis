@@ -1,0 +1,59 @@
+\section{Implementation}
+
+As part of our previous research into author reputation
+and text trust~\cite{www07,trust-techrep-07}, we have
+created a modular tool for processing XML dumps from
+the Wikipedia.
+It analyzes all the revisions of a page,
+filtering down the revisions to remove consecutive edits
+by the same author, and computing differences between
+revisions to track the author of each word and measure
+how the author might have rearranged the page.
+These results can be passed to any of several
+modules to do additional processing; we use the tool
+to reduce the enormous collection of data down to
+a much smaller \textit{statistics file}.
+We process the statistics file with a second tool,
+which we instrumented to calculate the various
+contribution measures we have defined.
+The original tools are open-source, and can be downloaded
+from our project page, at \url{http://trust.cse.ucsc.edu/}.
+More precise details about text tracking and edit distance
+are available in~\cite{www07}.
+
+Our analysis is based on main namespace article revisions from
+the Wikipedia dump of February~6, 2007,
+which we process to create a reduced statistics file.
+The statistics file contains information about every version,
+including the amount of text added, the edit distance from
+the previous version, and information about how the edit
+persists for ten revisions into the future.
+To ensure that each version we considered had revisions
+after it, we consider only versions before October~1, 2006.
+After further processing on the file,
+we used R\cite{R2007} to analyze the resulting data.
+
+\textbf{Bots.}
+During the course of our analysis, we found that
+some authors were extraordinary outliers for multiple measures.
+Some investigation into the most extreme cases revealed
+that bots were making automated edits to the Wikipedia,
+and that a few bots dwarfed manual labor in the edit based
+measures $\editlong$ and $\editonly$.
+We also found that there are bots that improve content,
+and bots that vandalize it.
+We chose to identify bots as those with a username which
+ends in the string ``bot;''
+While this does not include every bot (especially
+the ones that vandalize), it is a useful first approximation.
+We found $614$ bots in total as of October~1, 2006.
+
+\textbf{Vandals.}
+There is a similar problem in trying to define vandals,
+since such authors don't register themselves as such.
+For our purposes, we decided to define a vandal
+as someone who, on average, makes an edit which is
+completely reverted.
+Precisely, we define a vandal who meets one of two criteria:
+$\textquality < 0.05$, or $\avgeditquality < -0.9$.
+We justify this choice in the next section.

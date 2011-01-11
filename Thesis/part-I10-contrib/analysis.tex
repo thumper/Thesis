@@ -1,0 +1,221 @@
+\section{Analysis}
+
+We begin our analysis with some information about the data
+we are analyzing.
+Our reduced statistics file includes over 25 million revision
+records.
+Figures~\ref{fig-revs-quality} and~\ref{fig-revs-contrib} were
+created by drawing a random sample of 5 million records,
+due to memory limitations of the software package.
+%% CUT: Luca & Bo discussed this, and decided that it
+%% would be distracting to the audience.  Since we're
+%% already sampling 20%, most people won't take issue.
+% ; three different samples of 5 million
+% records produced nearly identical results.
+
+In Figure~\ref{fig-revs-quality}, we show the frequency distribution
+of the two quality measures
+$\textquality$ and $\avgeditquality$ over the revisions we sampled.
+We see both measures are heavily biased towards $+1$, indicating that
+most revisions to the Wikipedia are generally considered useful
+by succeeding authors.
+This confirms the intuition that more ``good people'' than
+``bad people'' must contribute, otherwise the Wikipedia would
+have a difficult time maintaining the community which
+continues to extend the online encyclopedia in a useful way.
+%
+\begin{figure}[t]
+    \begin{center}
+    \fbox{
+    \includegraphics[width=0.33\textwidth]{part-I10-contrib/graphs/all_quality}
+    }
+    \end{center}
+    \caption[Measuring edit and text quality over revisions]{
+    	This graph shows the text quality $\textquality$
+        and edit quality measure $\avgeditquality$
+	for 5 million randomly selected records of each type.
+    }
+    \label{fig-revs-quality}
+\end{figure}
+
+Delving directly into the data for text quality, we observe
+that $10\%$ of the revisions made had 
+$\textquality \le 0.05$ while $66.67\%$ of the revisions had
+$\textquality > 0.95$.
+When $\textquality = 0$, the text is immediately deleted
+in the next revision, so we can infer that these revisions
+are the work of vandals.
+When we look at the size of contributions made, we noticed that
+$6\%$ of the amount of new text added had $\textquality = 0$,
+whereas $76.21\%$ of the new text added had $\textquality > 0.95$.
+From this we conclude that authors mostly add good new text.
+
+The data is less stark for edit quality.
+When we looked at revisions, we saw that $1.9\%$ of the revisions
+had $\avgeditquality \le -0.9$, whereas $51.12\%$ had
+$\avgeditquality > 0.9$.
+In fact, $84.71\%$ had positive edit quality.
+In terms of edit contributions, we noticed that $7.5\%$ of the
+edit contributions had $\avgeditquality \le -0.9$, whereas
+$61.39\%$ had $\avgeditquality > 0.9$.
+Moreover, $1.6\%$ of the edit contributions were immediately
+reverted.
+From these statistics, we conclude that authors mostly do good
+edits.
+
+Figure~\ref{fig-revs-contrib} shows the absolute text and edit 
+contributions, $txt(r_i)$ and $d(r_i)$, for the sets of sampled revisions.
+It is important to note that these two graphs are using
+the logarithm of the size of contribution, along the $x$-axis;
+edit sizes can fall below $+1$, due to the way we compute
+edit distance for moved words as a fraction of how much of
+the document they move across.
+Thus, the frequency count for edit sizes between $0$ and $1$
+suggests that a good fraction of revisions involve rearranging
+of text.
+Beyond that, we can conclude that contributions, as measured
+by text added or by edit distance, are predominantly under
+100 words.
+%
+\begin{figure}[t]
+    \begin{center}
+    \fbox{
+    \includegraphics[width=0.33\textwidth]{part-I10-contrib/graphs/all_contrib}
+    }
+    \end{center}
+    \caption[Measuring total edit and text contribution over revisions]{
+        This graph shows the absolute text and edit contributions 
+        on a log scale, for 5 million randomly selected records
+	of each type.
+    }
+    \label{fig-revs-contrib}
+\end{figure}
+%
+
+In Figure~\ref{fig-user-quality} we show the average edit quality
+and average text quality for all non-anonymous authors.
+In order to compute this, we took all revisions created by each 
+author and took an average of the text and edit qualities of 
+those revisions.
+We notice that $15.9\%$ of authors had $\textquality \le 0.05$
+and $6.3\%$ of authors had $\avgeditquality \le -0.9$.
+These are shown by the bars on the left extreme of the
+histograms in Figure~\ref{fig-user-quality}.
+This sharp increase in the number of authors at the lowest end
+of our quality measures, combined with our previous analysis
+of revisions and contributions with respect to quality, gives
+us some justification to define vandals as those
+authors who have either $\textquality \le 0.05$ or 
+$\avgeditquality \le -0.9$ on average.
+We state that the identification of vandals can be made more
+precise using more sophisticated analyses of our data, but we
+don't deal with that in this paper.
+%
+\begin{figure}[t]
+    \begin{center}
+    \fbox{
+    \includegraphics[width=0.33\textwidth]{part-I10-contrib/graphs/user_quality}
+    }
+    \end{center}
+    \caption[Measuring edit and text quality for all authors]{
+    	This graph shows the average text quality $\textquality$
+	and the average edit quality measure $\avgeditquality$
+	over all non-anonymous authors.
+    }
+    \label{fig-user-quality}
+\end{figure}
+%
+
+During our investigations comparing the proposed measures,
+we found an unusually large fraction of non-anonymous authors
+having scores relatively close to zero.
+This suggested that many users had made a relatively
+small number of revisions, and that the absolute
+text and edit contributions of the revisions tended to
+be small, or that the quality tended towards zero.
+This is consistent with the power law distribution
+for edits per author (Lotka's law) detected by~\cite{Voss2005};
+we confirmed the distribution for our data and observed
+that 362,461 authors made only one edit:
+over 46\% of the total 777,223 authors we tracked.
+In Figure~\ref{fig-singles-quality} we show the edit quality
+measure for these authors.
+In contrast to the edit quality distribution over
+all authors from Figure~\ref{fig-revs-quality},
+we notice that the edit quality for these authors
+are almost evenly distributed across the
+entire quality range (except for the two extreme values).
+%
+\begin{comment}
+\begin{figure}[tbph]
+    \begin{center}
+    \includegraphics[width=0.45\textwidth]{part-I10-contrib/graphs/plot-hist-numedits}
+    \end{center}
+    \caption[Distribution of authors over number of edits]{
+    	The distribution of the number of edits that each author made.
+	Over 46\% of the non-anonymous authors
+	make a single edit in the main English Wikipedia.
+    }
+    \label{fig-hist-numedits}
+\end{figure}
+\end{comment}
+%
+\begin{figure}[tbph]
+    \begin{center}
+    \fbox {
+    \includegraphics[width=0.33\textwidth]{part-I10-contrib/graphs/singles-quality}
+    }
+    \end{center}
+    \caption[Edit quality of authors with one edit]{
+        This plot shows the $\avgeditquality$ of the
+	non-anonymous authors who made a single edit contribution.
+    }
+    \label{fig-singles-quality}
+\end{figure}
+
+\input{part-I10-contrib/analysis-quality}
+\input{part-I10-contrib/analysis-ranking}
+\input{part-I10-contrib/analysis-bots}
+\input{part-I10-contrib/analysis-error}
+
+\subsection{Comparing Contributions}
+
+Defining multiple contribution measures affords us
+the opportunity to examine and quantify the
+user behaviors over the large scale of edits performed.
+We looked at the list of all blocked authors.~\footnote{Retrieved
+on May 8, 2008, directly from the Wikipedia database.
+It corresponds to the data available at
+\url{http://en.wikipedia.org/wiki/Wikipedia:List_of_banned_users}.}
+We separated them from the others with the objective of determining 
+how many of these authors met our definition of vandals.
+We were surprised to note that over $51\%$ of authors had 
+$\textquality > 0.95$ and $39\%$ of authors had 
+$\avgeditquality > 0.9$.
+In fact, over $47\%$ of the blocked authors make text contributions 
+that have an average text quality over $0.95$.
+Similarly, over $32\%$ of the these authors make edit contributions
+that have an average edit quality over $0.9$.
+We note that $11.2\%$ of these authors qualify as vandals by our measure,
+based on their average edit quality and $24.9\%$ qualify as vandals
+based on their average text quality.
+But a large percentage of the authors in the blocked authors 
+list are not vandals, as determined by our definition.
+
+A couple of cases in point are those of authors $3362$ and 
+$10784$.
+They are both blocked, but are over the $99th$ percentile on 
+$\editlong$, $\textlong$ and $\punish$.
+One was blocked by Jimbo Wales and the other was blocked as he
+was suspected of using multiple accounts.
+
+We end this subsection, by mentioning the top rankers against all
+measures.
+The highest ranks across all contributions were secured by
+authors $3903$ and $AntiVandalBot$.
+Author $3903$ had the top rank with respect to measures
+$\textonly$, $\textlong$, $\punish$ and $\tenrevs$.
+$AntiVandalBot$ had the top rank with respect to the measures
+$\editlong$ and $\editonly$.
+Interestingly, $SmackBot$ was the second highest scorer after
+author $3903$ on measures $\textlong$ and $\punish$.

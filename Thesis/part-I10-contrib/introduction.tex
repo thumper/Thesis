@@ -1,0 +1,216 @@
+
+\section{Introduction}
+
+On-line collaboration is fast becoming one of the primary ways in
+which content, and information, is created and shared. 
+From open-source software projects, to on-line encyclopedias such as
+the Wikipedia, open on-line collaboration taps into the knowledge,
+time, and resources of millions of people, and it enables content
+creation on a speed and scale never seen before.
+
+In such collaborative systems for content creation, a relevant 
+problem is how to measure the contributions of individual authors. 
+This problem arises in several contexts.
+In the Wikipedia, it may be desirable to have a measure of how much
+work various users have performed, as an aid in deciding how to
+distribute promotions and honors (such as Barnstars). 
+In a corporate setting, a measure of user contribution can be used to
+promote the use of collaboration tools such as wikis, while ensuring
+that the contributions of the individual employees can be duly
+recognized. 
+In wikis that generate revenue, measures of author contribution can be
+used as a basis for deciding revenue sharing among authors. 
+In this paper, we propose and analyze several quantitative measures of
+author contribution for versioned bodies of textual information that
+evolve via successive modifications, or {\em edits,} performed by
+individual authors. 
+We focus on wikis, and in particular on the Wikipedia, an on-line
+encyclopedia built on wiki technology \cite{Wikis01}. 
+
+On the Wikipedia, the problem of measuring author contributions has
+so far been considered mainly in the context of gaining a better
+understanding of the dynamics of how authors contribute to the
+Wikipedia. 
+In particular, measures of author contribution have been used to
+discuss the issue of whether it is a large group of novice users, or a
+small group of experienced editors, who contribute most of the
+content of the Wikipedia \cite{Wales2005,Swartz2006,Bourgeoisie2007}. 
+In these discussions, author contribution was measured via the number
+of edits performed by authors (edit count) \cite{Wales2005,EditsEqQuality2007,
+Bourgeoisie2007,WikiDashboard2008,OrtegaBarahona2007,SteinHess2007},
+or by the total amount of text the authors introduced (text count)
+\cite{Swartz2006}. 
+We argue that neither of these two measures is robust, or fully
+informative. 
+Both edit count and text count can easily be gamed. 
+In the case of edit count, an author can increase her edit count
+simply by doing a small modification, then undoing it (perhaps with an
+accompanying message of apology).  
+These small changes can be spread across the millions of pages of the
+English Wikipedia, to make detection harder. 
+Fighting this kind of abuse requires time-consuming human
+intervention, as it requires the examination of the edit log performed
+by individual users. 
+In addition, adopting edit count as a measure of contribution,
+and basing important decisions on such a measure, would create a strong
+incentive towards this kind of tampering, with negative consequences
+for the stability and quality of Wikipedia content. 
+Text count can be gamed in a similar, if not easier, fashion, as it is
+possible to introduce in a single edit a very large amount of text,
+which is then promptly removed in a subsequent edit. 
+These measures also under-estimate the contributions that particular
+groups of authors make to the Wikipedia. 
+Edit count fails to recognize adequately, authors who sporadically provide
+large amounts of bulk text, thus contributing to the basic information
+build-up.
+Text count fails to properly recognize the contributions of those
+users who mostly re-arrange existing content, remove vandalism, and
+perform other fundamental maintenance duties that involve little new
+text creation. 
+
+To provide a more precise, and more robust, measure of author
+contribution, we introduce several measures that capture not only the 
+{\em quantity\/} of contributions (how many edits, how much text),
+but also the {\em quality\/}, analyzing how long the contributions last
+as content evolves. 
+We analyze the trade-offs involved in the different measures, and the
+differences in the author rankings they produce. 
+We emphasize that we make a distinction between
+contribution and reputation; the first is meant to measure productivity,
+and the second, reliability.
+A reputation system generally incorporates some measure of productivity,
+as we do in~\cite{www07}.
+This work explores different notions of productivity,
+particularly as a tool for analyzing user behavior,
+but does not evaluate the effectiveness of any measure
+as a reputation system.
+
+Of the measures we explore, our favorite measure is {\em edit longevity.\/}
+The measure combines the amount of change performed by an author, with
+how long the change lasts. 
+To compute the edit longevity of an author, we consider all the edits
+performed by the author. 
+For each edit, we compute both the {\em edit size\/} and the 
+{\em edit quality.}
+The edit size is measured as the edit distance between the article
+revision produced by the author, and the previous revision; the
+problem of computing edit distances has been studied in 
+\cite{EditDist74,TichyEditDist,EditDistanceMoves}. 
+The edit quality is in the interval $[-1, 1]$, and measures how long
+the change lasts in the system: it is close to $1$ for edits that are
+preserved fully in subsequent revisions, and it is close to $-1$ for
+edits that are reverted \cite{www07}. 
+The edit longevity of an author combines these quantities, and is
+computed as the sum, over all the edits performed by the author, of
+the edit size multiplied by the edit quality. 
+We show that edit longevity has several desirable properties. 
+It cannot be easily gamed, since the quality of an edit by author $A$
+depends on how long authors {\em different from $A$\/} preserve the
+edit done by $A$. 
+Edit longevity is sensitive to the size of contributions, giving
+appropriate reward to authors who sporadically contribute large
+amounts of text. 
+Edit longevity also rewards the authors who mostly engage in
+improvement and maintenance work, as edit distance, measures not only
+new text, but also text deletions and displacements \cite{www07}. 
+Furthermore, edit longevity successfully prevents vandals and spammers
+from accruing contributions. 
+
+In addition to edit longevity, some other measures we introduce may
+serve a purpose in specific contexts. 
+
+{\em Text longevity\/} is a measure of how much text has been
+introduced by an author, in which each text contribution is weighed
+according to how long the text lasts in subsequent revisions. 
+This measure has the advantage of a very obvious definition: while the
+estimation of edit quality requires agreement on a particular formula
+based on edit distances, the estimation of text longevity requires 
+simply, the ability of tracking text through revisions. 
+In contexts where revenue must be divided, a simpler definition has
+the appeal of being easier to define; for instance, in a legally
+binding contract. 
+Text longevity, however, has two drawbacks. 
+The first is that text longevity fails to adequately reward authors
+who mainly engage in maintenance edits, inserting little new text. 
+The second is that text longevity fails to penalize spammers and
+vandals, assigning to them the same low amount of positive
+contribution reserved for novices. 
+
+{\em Text longevity with penalty\/} rewards authors in proportion to
+the text they insert, but in addition to this reward, authors of
+reverted contributions (that is, edits with negative quality) also
+accrue large negative ``fines''. 
+Text longevity with penalty is particularly effective in
+distinguishing productive members of the author community from vandals
+and spammers. 
+The drawback of text longevity with penalty, compared with edit
+longevity, is that it fails to adequately reward authors who perform
+large amounts of maintenance work. 
+
+\subsection*{Related Work}
+
+Measuring contributions of individuals in group collaborative
+efforts have been studied for several decades, in the context of
+software project management.
+Most programmers are familiar with the KLOC (thousand lines of 
+code) measurement~\cite{MITRE1988, SLOC1992} ---
+it counts how many lines of software a programmer
+writes per week, and is analogous to text count.
+Although intended to measure the progress of a project, it also implicitly 
+measures each programmers contribution to the project.
+% Luca: cut
+% To incorporate quality into the KLOC measure,
+% it has been suggested to count the number of
+% defects that occur per section of code.
+
+The problem of measuring author contributions to the Wikipedia first
+arose during a debate on which group of authors was chiefly
+responsible for Wikipedia content. 
+A count of edits indicated that a small group of dedicated authors
+gave the largest contribution~\cite{Wales2005}; this result was later
+disputed in \cite{Swartz2006}, where it was argued that the majority
+of the content was due to the large number of authors who perform only
+occasional contributions to the Wikipedia. 
+Kittur et al., \cite{Bourgeoisie2007} discovered that the
+percentage of edits made by the masses is larger and growing 
+when compared to the authors who are either sysops or have a 
+very large number of edits to their credit.
+Burke and Kraut use a wide variety of edit counts to predict
+the authors to be promoted to the status of Wikipedia 
+administrators~\cite{AdministratorMop2008}.
+There are many works that measure user contributions by the
+number of edits which authors make to an 
+article~\cite{Wales2005,EditsEqQuality2007,Bourgeoisie2007,
+WikiDashboard2008,OrtegaBarahona2007,SteinHess2007}.
+In \cite{Bourgeoisie2007}, they consider the number of edits
+as well as the change in edits and state that their conclusion
+remains unaffected with either of those measures.
+Wilkinson and Huberman show that the quality of an article improves
+with the number of edits and the number of distinct authors that 
+revise that article~\cite{EditsEqQuality2007}.
+
+Another approach consists in measuring contributions indirectly, by
+noting citations~\cite{PageRank98,AckCounting2004,WikiMTWtrust06}.
+While this approach enables one to judge the relevance of a complete
+article, it cannot easily be used to ascribe the merit of the
+article to its individual contributors. 
+In~\cite{KPB2006}, the authors examine the sequence of edits
+to an article and build a social network of authors based
+on the amount of citation (how much text is removed or preserved)
+by later authors; this social network is then analyzed to derive
+authority values for authors. 
+%Luca: cut
+% This technique is similar to our proposed \textit{longevity}
+% measure, but is used to ascribe authority values to authors
+% and not to individual edits.
+
+In~\cite{CognitiveSurplus2008}, the total amount of work that went
+into the making of the complete Wikipedia is estimated to be about 
+100 million hours of human thought. 
+This measure is very different from the measures we
+propose in this paper, as it is based on the effect on
+the author (the amount of time required of the author to contribute),
+rather than on the effect on the wiki (how large the
+contributions are, and how long they last). 
+
+

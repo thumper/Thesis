@@ -1,0 +1,175 @@
+\section{Definitions}
+
+The following notation will be used throughout the paper.
+We consider the set $\pages$ of all articles in the main English 
+Wikipedia.
+We denote the set of authors of pages on the Wikipedia by
+$\authors$.
+We assume that we have $n > 0$ versions $v_0, v_1, v_2,
+\ldots, v_n$ of a page $p$; version $v_0$ is empty, and version 
+$v_i$, for $1 \le i \le n$, is obtained by an author performing 
+a revision $r_i : v_{i-1} \leadsto v_i$.
+Since each revision $r_i$ is performed by one author, we refer
+to the author who edited revision $r_i$ as $a_i$.
+We denote the set of all revisions of a page by $\revisions$.
+We refer to the change set corresponding to 
+$r_i : v_{i-1} \leadsto v_i$ as the edit performed at $r_i$ : the 
+edit consists of the text insertions, deletions, displacements, 
+and replacements that led from $v_{i-1}$ to $v_i$. 
+We define the map $E : \authors \times \pages \to 2^\revisions$, 
+which given an author $a \in \authors$ and a page $p \in \pages$, returns a
+set of revisions that were created by author $a$ for page $p$.
+When editing a versioned document, authors commonly save several 
+versions in a short time frame.
+We filter the versions, keeping only the last of consecutive 
+versions by the same author; we assume thus that for $1 \le i \le n$
+we have $a_{i-1} \ne a_i$.
+Every version $v_i$ for $0 \le i \le n$, consists of a sequence
+$[w_1^i,\ldots,w_{m_i}^i]$ of words, where $m_i$ is the number
+of words in $v_i$; version $v_0$ consists of the empty sequence.
+
+\smallskip
+
+\noindent\textbf{Quantity Measures.}
+
+Given a series of versions $v_0,\ldots,v_n$ of a page $p$, we assume
+that we can compute the following quantity measures:
+%
+\begin{itemize}
+
+\item $txt(v_i, v_j)$, for $0 < i \le j \le n$, is the amount of
+	text (measured in number of words) that is introduced by
+	$r_i$ in $v_i$, and that is still present (and due to the same
+	author $a_i$) in $v_j$.
+	$txt(v_i,v_i)$ is the amount of new text added by $a_i$ through
+	$r_i$.
+	We define $txt(r_i) = txt(v_i,v_i)$, and refer to this
+	as the \intro{text contribution} of $r_i$.
+
+\item $d(v_i, v_j)$, for $0 \le i < j \le n$, is the
+	\textit{edit distance} between $v_i$ and $v_j$,
+	and measures how much change
+	(word additions, deletions, replacements, displacements, etc.)
+	there has been in going from $v_i$ to $v_j$.
+	We define $d(r_i) = d(v_{i-1}, v_i)$, for the \intro{edit contribution}
+	made in a revision $r_i$.
+\end{itemize}
+%
+There are several ways to compute edit distance~\cite{Levenshtein66,TichyEditDist},
+usually based on insertions and deletions of characters.
+Our formulation is instead based on words as the fundamental unit,
+to more closely approximate how people perceive edits.
+We define the edit distance in terms of the following quantities:
+$I(v_i, v_j)$ is the number of words that are inserted;
+$D(v_i, v_j)$ is the number of words that are deleted;
+$M(v_i, v_j)$ is the number of words that are moved, times the fraction
+of the document that they move across \cite{www07}.
+The edit distance between two versions, $v_i$ and $v_j$, is
+then given by:
+%
+\[
+d(v_i, v_j) = \max(I, D) - \frac{1}{2}\min(I, D) + M
+\]
+%
+A more precise treatment of this definition is available
+in~\cite{www07}, along with reasoning for this particular
+choice of edit distance and a discussion of text tracking
+for authorship.
+
+
+\smallskip
+
+\noindent\textbf{Quality Measures.}
+
+In addition to the quantity measures defined above, we define the
+following quality measures.
+We first consider the edits in a revision $r_i$ made by author
+$a_i$.
+Given $d(v_{i-1}, v_i)$, the edit distance between versions
+$v_{i-1}$ and $v_i$, we would like to associate a higher edit
+quality to revision $r_i$ if the edits made take the page
+closer to subsequent versions of the page.
+For example, if none of the edits made in $r_i$ are reverted
+in subsequent revisions, then the edits made in $r_i$
+have taken the page in the same {\em direction\/} as subsequent 
+versions of the page and hence merit the highest quality measure.
+We define $\editquality(v_i, v_j)$, the quality of the edits
+performed in revision $r_i$ of a page (with respect to $v_j$) as follows:
+%
+\[
+\editquality(v_i, v_j) = 
+\frac{d(v_{i-1}, v_j) - d(v_i, v_j)}{d(v_{i-1}, v_i)}
+\]
+%
+The triangle inequality generally holds, so that
+$\editquality(v_i, v_j)$ typically varies from
+$-1$ for revisions which are completely reverted,
+to $+1$ for revisions which are completely preserved;
+when the value falls outside this range, we
+cap it to one of these two values.
+
+Due to the occasional vandalism that happens, we prefer to
+judge quality using several succeeding versions.
+We define a map $J : \revisions \to 2^\revisions$,
+such that if $r_i$ is a revision of a page $p$, 
+$J(r_i)$ consists of the first ten revisions after $r_i$ that have
+author different from that of $r_i$.
+If there are fewer than ten revisions after $r_i$ that have author
+different from that of $r_i$, then $J(r_i)$ returns all such
+revisions. 
+We use the versions in $J(r_i)$ as judges of the quality of $r_i$.
+We define the {\em average edit quality} $\avgeditquality(r_i)$
+of a revision $r_i$ with $|J(r_i)| \neq \emptyset$ as follows:
+%
+\[
+\avgeditquality(r_i) = 
+\frac{1}{|J(r_i)|} \cdot \left( \sum_{r_j \in J(r_i)} 
+  \editquality(v_i, v_j) \right)
+\]
+%
+Thus, $\avgeditquality(r_i)$ is the average of the \editquality values
+determined by each of the judges of $r_i$.
+
+The quality of a text contribution to a page is a function of
+how much of the original text was edited out in subsequent
+revisions of the page.
+If none of the text was removed, then the text quality of revision
+$r_i$ should be $1$.
+One model for how text behaves over time is that it decays in
+an approximately geometric fashion:
+the largest chunk that is deleted is right after text is added,
+and subsequent revisions remove smaller and smaller chunks
+until what is left is the stable core which is generally
+accepted by other authors.
+We define the text quality measure 
+$\textquality(r_i)$ as the solution to the following equation that
+expresses text decay in this manner:
+%
+\[
+\sum_{r_j \in J(r_i)} txt(i,j) = 
+txt(i,i) \cdot \left( 1 +\sum_{r_j \in J(r_i)} (\textquality(r_i))^{j-i} \right)
+\]
+%
+The resulting value for $\textquality(r_i)$ ranges from $0$
+for text which is completely removed, to $+1$ for text which
+is completely preserved.
+
+A different way to measure the quality of a text contribution
+is to simply sum the amount of text that remains, over the
+succeeding revisions.
+For a revision $r_i$, by considering the amount of original text 
+introduced in $r_i$ that survives in the next ten revisions, we 
+define the following additional quality measure for text 
+contributions,
+%
+\[
+\textlongevity(r_i) = \frac{1}{txt(i,i)} \cdot
+\left( \sum_{r_j \in J(r_i)} txt(i,j) \right)
+\]
+%
+This value generally ranges from $0$ for text which is immediately removed,
+to $+10$ for text which completely survives all ten revisions.
+(Due to how text tracking works, if a piece of text is copied within
+an article, the original author might receive credit for more
+words than she originally wrote.)
+

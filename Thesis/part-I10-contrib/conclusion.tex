@@ -1,0 +1,81 @@
+\section{Conclusions}
+
+As group collaboration becomes more prevalent,
+the problem of how to compute author contributions
+becomes increasingly relevant.
+Our motivation was to explore simple models of user behavior
+that can be incorporated into reputation
+systems (e.g.,~\cite{www07}),
+but we feel that factoring in a notion
+of \textit{quality} alongside \textit{quantity}
+can also be revealing in studies about
+user behavior and the amount of useful information
+added to the Wikipedia because it cancels out
+the work of vandals and the work of those who
+fix the vandalism.
+We have presented and compared several possible ways to
+measure author contribution, including
+two measures popularized by previous works.
+What we discovered is that there is substantial
+agreement between the measures for clear
+cases of valuable contributions, and
+varying results for authors making
+questionable contributions.
+
+There are several measures we have defined that
+have a desirable property, namely, giving credit
+where it is due and making sure that authors who make short-lived 
+contributions get a low score.
+We believe that $\textlong$ or $\editlong$ are
+equally viable as contribution measures.
+
+The $\editlong$ measure is a very interesting measure
+in our opinion.
+This measure uses edit distance (as counted in words)
+to measure the size of the contribution while taking into
+account the longevity of that contribution, quantified
+using the edit quality measure $\avgeditquality$.
+Since the edit quality measures how much an edit takes a 
+page towards a future version of that page, we find this
+a good way of measuring contribution.
+The $\punish$ measure is good at identifying vandals,
+but fails as a good contribution measure as it does not
+reward good edits.
+
+As a side effect of our analysis and comparison, we were
+able to identify some unusual author behaviors.
+We discovered that the highest contributor by our edit 
+measures was a bot, the second highest contributor by 
+$\textlong$ and $\punish$ was again a bot, and that there 
+are evil bots which create a significant amount of vandalism.
+We also discovered that making large and good text and edit
+contributions are not always sufficient to be in good 
+standing on the Wikipedia.
+
+
+There are several directions for future work on measuring
+author contributions.
+Our approach has been to consider \textit{content-driven}
+quality measures, where no human judgements are necessary,
+focusing on various measures of \textit{longevity}.
+Other quality measures are equally viable, such as
+a ``thumbs-up or thumbs-down'' rating system for
+contributions, and the challenge is in both defining
+them and interpreting the results within context.
+For example, we have described long-lived content as
+``good,'' but might have also described the content
+as having reached a group consensus.
+Factoring quality measures into contribution measures
+can be useful in other collaborative endeavors
+such as source code archives, or even forum postings.
+Again, interpretation should be approached with care;
+for example, a wiki on current events might value
+short-lived content.
+Finally, although we have observed that there is general
+agreement between the measures we have examined,
+the differences between them highlight groups of
+users who behave unusually.
+We have tried to explain a few of the prominent groups,
+but there is still much to understand about
+various behaviors that users exhibit.
+

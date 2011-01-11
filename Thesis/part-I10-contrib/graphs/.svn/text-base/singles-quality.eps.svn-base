@@ -1,0 +1,191 @@
+%!PS-Adobe-3.0 EPSF-3.0
+%%DocumentNeededResources: font Helvetica
+%%+ font Helvetica-Bold
+%%+ font Helvetica-Oblique
+%%+ font Helvetica-BoldOblique
+%%+ font Symbol
+%%Title: R Graphics Output
+%%Creator: R Software
+%%Pages: (atend)
+%%BoundingBox: 0 0 257 206
+%%EndComments
+%%BeginProlog
+/bp  { gs gs } def
+% begin .ps.prolog
+/gs  { gsave } def
+/gr  { grestore } def
+/ep  { showpage gr gr } def
+/m   { moveto } def
+/l  { rlineto } def
+/np  { newpath } def
+/cp  { closepath } def
+/f   { fill } def
+/o   { stroke } def
+/c   { newpath 0 360 arc } def
+/r   { 4 2 roll moveto 1 copy 3 -1 roll exch 0 exch rlineto 0 rlineto -1 mul 0 exch rlineto closepath } def
+/p1  { stroke } def
+/p2  { gsave bg fill grestore newpath } def
+/p3  { gsave bg fill grestore stroke } def
+/t   { 6 -2 roll moveto gsave rotate
+       ps mul neg 0 2 1 roll rmoveto
+       1 index stringwidth pop
+       mul neg 0 rmoveto show grestore } def
+/cl  { grestore gsave newpath 3 index 3 index moveto 1 index
+       4 -1 roll lineto  exch 1 index lineto lineto
+       closepath clip newpath } def
+/rgb { setrgbcolor } def
+/s   { scalefont setfont } def
+% end   .ps.prolog
+%%IncludeResource: font Helvetica
+/Helvetica findfont
+dup length dict begin
+  {1 index /FID ne {def} {pop pop} ifelse} forall
+  /Encoding ISOLatin1Encoding def
+  currentdict
+  end
+/Font1 exch definefont pop
+%%IncludeResource: font Helvetica-Bold
+/Helvetica-Bold findfont
+dup length dict begin
+  {1 index /FID ne {def} {pop pop} ifelse} forall
+  /Encoding ISOLatin1Encoding def
+  currentdict
+  end
+/Font2 exch definefont pop
+%%IncludeResource: font Helvetica-Oblique
+/Helvetica-Oblique findfont
+dup length dict begin
+  {1 index /FID ne {def} {pop pop} ifelse} forall
+  /Encoding ISOLatin1Encoding def
+  currentdict
+  end
+/Font3 exch definefont pop
+%%IncludeResource: font Helvetica-BoldOblique
+/Helvetica-BoldOblique findfont
+dup length dict begin
+  {1 index /FID ne {def} {pop pop} ifelse} forall
+  /Encoding ISOLatin1Encoding def
+  currentdict
+  end
+/Font4 exch definefont pop
+%%IncludeResource: font Symbol
+/Symbol findfont
+dup length dict begin
+  {1 index /FID ne {def} {pop pop} ifelse} forall
+  currentdict
+  end
+/Font5 exch definefont pop
+%%EndProlog
+%%Page: 1 1
+bp
+59.04 73.44 226.80 147.40 cl
+0.00 0.00 257.04 206.44 cl
+/ps 12 def /Font1 findfont 12 s
+0 setgray
+142.92 18.72 (Edit Quality [singles]) .5 0 0 t
+12.96 110.42 (log\(Frequency\)) .5 0 90 t
+0.00 0.00 257.04 206.44 cl
+0 setgray
+0.75 setlinewidth
+[] 0 setdash
+1 setlinecap
+1 setlinejoin
+10.00 setmiterlimit
+np
+65.25 73.44 m
+155.33 0 l
+o
+np
+65.25 73.44 m
+0 -7.20 l
+o
+np
+104.09 73.44 m
+0 -7.20 l
+o
+np
+142.92 73.44 m
+0 -7.20 l
+o
+np
+181.75 73.44 m
+0 -7.20 l
+o
+np
+220.58 73.44 m
+0 -7.20 l
+o
+/ps 12 def /Font1 findfont 12 s
+65.25 47.52 (-1.0) .5 0 0 t
+104.09 47.52 (-0.5) .5 0 0 t
+142.92 47.52 (0.0) .5 0 0 t
+181.75 47.52 (0.5) .5 0 0 t
+220.58 47.52 (1.0) .5 0 0 t
+np
+59.04 76.18 m
+0 69.86 l
+o
+np
+59.04 76.18 m
+-7.20 0 l
+o
+np
+59.04 87.82 m
+-7.20 0 l
+o
+np
+59.04 99.47 m
+-7.20 0 l
+o
+np
+59.04 111.11 m
+-7.20 0 l
+o
+np
+59.04 122.76 m
+-7.20 0 l
+o
+np
+59.04 134.40 m
+-7.20 0 l
+o
+np
+59.04 146.04 m
+-7.20 0 l
+o
+41.76 76.18 (0) .5 0 90 t
+41.76 99.47 (4) .5 0 90 t
+41.76 122.76 (8) .5 0 90 t
+41.76 146.04 (12) .5 0 90 t
+59.04 73.44 226.80 147.40 cl
+/bg { 0.9333 0.4157 0.3137 rgb } def
+0 setgray
+0.75 setlinewidth
+[] 0 setdash
+1 setlinecap
+1 setlinejoin
+10.00 setmiterlimit
+65.25 76.18 7.77 60.74 r p3
+73.02 76.18 7.77 50.48 r p3
+80.79 76.18 7.77 49.59 r p3
+88.55 76.18 7.77 52.05 r p3
+96.32 76.18 7.77 54.91 r p3
+104.09 76.18 7.77 51.41 r p3
+111.85 76.18 7.77 49.73 r p3
+119.62 76.18 7.77 52.73 r p3
+127.39 76.18 7.77 51.85 r p3
+135.15 76.18 7.77 54.76 r p3
+142.92 76.18 7.77 49.90 r p3
+150.68 76.18 7.77 52.87 r p3
+158.45 76.18 7.77 52.90 r p3
+166.22 76.18 7.77 50.59 r p3
+173.98 76.18 7.77 54.98 r p3
+181.75 76.18 7.77 51.79 r p3
+189.52 76.18 7.77 55.12 r p3
+197.28 76.18 7.77 54.40 r p3
+205.05 76.18 7.77 55.54 r p3
+212.82 76.18 7.77 68.48 r p3
+ep
+%%Trailer
+%%Pages: 1
+%%EOF

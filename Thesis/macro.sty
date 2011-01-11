@@ -2,7 +2,9 @@
 \newcommand{\intro}[1]{\index{#1}{\emph{#1}}}
 
 
-\newcommand{\page}[1]{\ensuremath{p_{#1}}}
+\newcommand{\article}[1]{\ensuremath{a_{#1}}}
+\newcommand{\page}[1]{TODO: change to article}
+
 \newcommand{\editor}[1]{\ensuremath{A_{#1}}}
 \newcommand{\version}[1]{\ensuremath{v_{#1}}}
 \newcommand{\revision}[1]{\ensuremath{e_{#1}}}
@@ -14,20 +16,12 @@
 \newcommand{\txt}{{\text{\textit{txt}}}}
 \newcommand{\dist}{d}
 \newcommand{\tot}{{\text{\textit{tot}}}}
-\newcommand{\tlong}{\ensuremath{\alpha_\text{\textit{text}}}\xspace}
-\newcommand{\elong}{\ensuremath{\alpha_\text{\textit{edit}}}\xspace}
-\newcommand{\tenrevsq}{\ensuremath{\beta_\text{\textit{text}}}\xspace}
+%\newcommand{\tenrevsq}{\ensuremath{\beta_\text{\textit{text}}}\xspace}
 \newcommand{\editq}{{\text{\textit{EQual}}}}
 
 
 % contribution measures
 \newcommand{\editset}{\ensuremath{E}\xspace}
-\newcommand{\numedits}{\text{NumEdits}\xspace}
-\newcommand{\textonly}{\text{TextOnly}\xspace}
-\newcommand{\editonly}{\text{EditOnly}\xspace}
-\newcommand{\textlong}{\text{TextLongevity}\xspace}
-\newcommand{\editlong}{\text{EditLongevity}\xspace}
-\newcommand{\tenrevs}{\text{TenRevisions}\xspace}
 
 % The famous parameters
 \newcommand{\slack}{{c_{{\text{\textit{slack}}}}}}
@@ -44,12 +38,38 @@
 
 
 
-
 \newcommand{\goesto}{\rightsquigarrow}
 
 
 \newcommand{\bydef}{\triangleq}
-\newcommand{\eventually}{\mathop{\Diamond}}
-\newcommand{\always}{\mathop{\Box}}
 
+\newcommand{\articles}{\ensuremath{\mathbb{A}}}
+\newcommand{\users}{\ensuremath{\mathbb{U}}}
+
+\newcommand{\authors}{TODO: change to users}
+\newcommand{\pages}{TODO: change to articles}
+\newcommand{\revisions}{\ensuremath{\mathbb{R}}}
+%\newcommand{\userrep}{\mathit{UserRep}}
+
+%\newcommand{\repexact}{\mathsf{ExactReputation}}
+%\newcommand{\contribrep}{\ensuremath{\mathsf{Reputation}}\xspace}
+\newcommand{\numedits}{\ensuremath{\mathsf{NumEdits}}\xspace}
+\newcommand{\textonly}{\ensuremath{\mathsf{TextOnly}}\xspace}
+\newcommand{\editonly}{\ensuremath{\mathsf{EditOnly}}\xspace}
+\newcommand{\textlong}{\ensuremath{\mathsf{TextLongevity}}\xspace}
+\newcommand{\editlong}{\ensuremath{\mathsf{EditLongevity}}\xspace}
+\newcommand{\punish}{\ensuremath{\mathsf{TextLongevityWithPenalty}}\xspace}
+\newcommand{\tenrevs}{\ensuremath{\mathsf{TenRevisions}}\xspace}
+%% needs fixing?
+%% \newcommand{\elong}{\ensuremath{\mathit{ELong}}}
+\newcommand{\avgspecQ}{\ensuremath{\mathit{AvgSpecQ}}}
+\newcommand{\editlonga}{\ensuremath{\mathsf{EditLongevity_A}}}
+\newcommand{\punisha}{\ensuremath{\mathsf{TextLongevityWithPenalty_A}}}
+
+\newcommand{\editquality}{\ensuremath{\alpha_\text{edit}}}
+\newcommand{\avgeditquality}{\ensuremath{{\overline{\alpha}}_{edit}}}
+\newcommand{\textquality}{\ensuremath{\alpha_\text{text}}}
+\newcommand{\textlongevity}{\ensuremath{\beta_{text}}}
+\newcommand{\tlong}{\ensuremath{\alpha_\text{\textit{text}}}\xspace}
+\newcommand{\elong}{\ensuremath{\alpha_\text{\textit{edit}}}\xspace}
 
