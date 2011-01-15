@@ -18,26 +18,38 @@ will be used throughout this work.
     MediaWiki stores IP address information for anonymous users,
     but due to the ambiguity of tracking users this way,
     we map all anonymous use to the single anonymous user.
+\item \revisions{\article{}} \ -- each article $\article{} \in \articles$,
+    has a history of versions
+    describing how that article has evolved over time.
+    We denote the chronologically ordered list
+    of all $n > 0$ revisions of article \article{} by
+    \begin{equation}
+	\revisions{\article{}} =
+		\version{1}, \version{2}, \ldots, \version{n}
+    \end{equation}
+    Version \version{1} is the first instantiation of the article,
+    and version \version{n} is the most recent.
+    \mynote{Take this out?}
+    Sometimes for convenience, we take version \version{0} to be
+    an empty revision which precedes all other revisions.
+\item \revisions{} \ -- the chronologically ordered list of all
+    revisions, across all articles in \articles.
+    That is,
+    \begin{equation}
+    \revisions{} = \mathrm{sort}_\mathrm{time}\left[
+	\bigcup_{\article{} \in \articles} \revisions{\article{}}
+	\right]
+    \end{equation}
+
 \item \version{i} -- each article, $\article{} \in \articles$,
     has a history of versions
     describing how that article has evolved over time.
-    We assume that we have $n > 0$ versions
-    $\version{0}, \version{1}, \version{2}, \ldots, \version{n}$
-    of an article;
-    version \version{0} is empty,
-    and version \version{n} is the most recent.
     The article to which the versions belong will generally be
     obvious from the context, but where it is not we will
     write $\version{i}^{\article{}}$ to indicate that we
     are referring to version \version{i} of article \article{}.
 \end{itemize}
 \renewcommand{\labelitemi}{$\bullet$}
-
-The Wikipedia is made up of a collection of \intro{articles};
-we use this term interchangably with the term \intro{pages},
-as each article appears as a single web page on the Wikipedia site.
-Each page, \page{}, has a history of versions describing how that
-page has evolved over time.
 
 
 is obtained by author \editor{i} performing an
