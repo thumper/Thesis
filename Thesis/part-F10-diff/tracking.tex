@@ -1,4 +1,5 @@
 \section{Tracking Text Authorship}
+\label{sec:diff-tracking}
 
 To answer the question of which author contributed what text to a
 collaborative document, we present first the general procedure to
@@ -72,81 +73,4 @@ Recalling $\words{\version{n}} = \left[ w_1, w_2, \ldots, w_{l_n} \right]$, let 
 	\revauthor{\version{n}}, & \text{ if there is no best match text. } \\
     \end{cases}
 \end{equation*}
-
-
-\begin{algorithm}
-%\DontPrintSemicolon
-\KwData{A version \version{n}.}
-\KwResult{$\txtauthor{\version{n}, w_j}$,
-	for all $w_j \in \words{\version{n}}$.
-}
-\Begin{
-    \For{$i \leftarrow 1$ \KwTo $ \left| \words{\version{n}} \right| $ }{
-	$ m \leftarrow \match{\version{n}, i, \prevrevs{\version{n}}} $ \;
-	\eIf{$m = \emptyset$}{
-	    $ \txtauthor{\version{n}, i} = \revauthor{\version{n}} $ \;
-	}{
-	    $ \txtauthor{\version{n}, i} = \txtauthor{m} $ \;
-	}
-    }
-}
-\caption{Algorithm for tracking text authorship.}
-\end{algorithm}
-
-
-\section{Matching Text}
-
-By ``text evolution,'' we mean noting how text shifts
-around and is added to or deleted from --- that is,
-understanding how it is changed from version to version
-by examining the differences.
-This is exactly the output from algorithms solving the
-string-to-string correction problem.
-
-The simplest string-to-string correction algorithms
-note only insertions and deletions, but we are also interested
-in noting that text has been copied (or even just moved)
-to another part of the article so that we can assign authorship
-correctly.
-In fact, there are several properties that we think are desirable
-when determining how text is reorganized.
-\begin{itemize}
-\item When text is duplicated within an article, we prefer to assign
-    authorship to the author of the original copy.
-    This prevents a vandal from duplicating text and then deleting the
-    original copy.
-    To achieve this goal, we must use an algorithm that allows
-    block moves of text, and allows the same source text to be
-    matched multiple times in the target revision.
-\item If the same text is found multiple times in both the previous
-    and new revision, there are multiple ways to describe how the
-    text has evolved.
-    We would like to give preference to the most plausible explanation:
-    that the text was not rearranged.
-    To do so, we give prefer to match chunks of text that are in the
-    same relative order in their respective document
-    versions.\footnote{This might seem irrelevant, given that duplicated
-    text is given the same author.  This property becomes important
-    when computing the edit distance from one version to another,
-    where text in the same relative position does not increase the
-    edit distance.}
-\item We don't want to over-reward the first author to use common
-    words (\eg ``the,'' ``of'').
-    To simplify our algorithm, we ignore matches that are less than
-    four words in length.\footnote{A better solution would use
-    $n$-gram frequencies to decide when a match was suitable.}
-\item When text is deleted in one version and then restored in a later
-    version, we prefer the original author.
-    This prevents edit wars or vandalism from disrupting the
-    authorship of text.
-\item When looking for matches, we prefer to match against chunks
-    of text which have been \textit{live} most recently.
-    That is, when matching against text from multiple revisions,
-    we prefer to match against the most recent revision that is
-    a good fit.
-    This property accounts for editors who review the recent history
-    of an article and restore text that was deleted, as often happens
-    when vandalism occurs.
-\item We prefer longer matches.
-\end{itemize}
 

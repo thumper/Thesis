@@ -1,0 +1,181 @@
+\section{Matching Text}
+
+By ``text evolution,'' we mean noting how text shifts
+around and is added to or deleted from --- that is,
+understanding how it is changed from version to version
+by examining the differences.
+This is exactly the output from algorithms solving the
+string-to-string correction problem.
+
+The simplest string-to-string correction algorithms
+note only insertions and deletions, but we are also interested
+in noting that text has been copied (or even just moved)
+to another part of the article so that we can assign authorship
+correctly.
+In fact, there are several properties that we think are desirable
+when determining how text is reorganized.
+\begin{itemize}
+\item When text is duplicated within an article, we prefer to assign
+    authorship to the author of the original copy.
+    This prevents a vandal from duplicating text and then deleting the
+    original copy.
+    To achieve this goal, we must use an algorithm that allows
+    block moves of text, and allows the same source text to be
+    matched multiple times in the target revision.
+\item If the same text is found multiple times in both the previous
+    and new revision, there are multiple ways to describe how the
+    text has evolved.
+    We would like to give preference to the most plausible explanation:
+    that the text was not rearranged.
+    To do so, we give prefer to match chunks of text that are in the
+    same relative order in their respective document
+    versions.\footnote{This might seem irrelevant, given that duplicated
+    text is given the same author.  This property becomes important
+    when computing the edit distance from one version to another,
+    where text in the same relative position does not increase the
+    edit distance.}
+\item We don't want to over-reward the first author to use common
+    words (\eg ``the,'' ``of'').
+    To simplify our algorithm, we ignore matches that are less than
+    four words in length.\footnote{A better solution would use
+    $n$-gram frequencies to decide when a match was suitable.}
+\item When text is deleted in one version and then restored in a later
+    version, we prefer the original author.
+    This prevents edit wars or vandalism from disrupting the
+    authorship of text.
+\item When looking for matches, we prefer to match against chunks
+    of text which have been \textit{live} most recently.
+    That is, when matching against text from multiple revisions,
+    we prefer to match against the most recent revision that is
+    a good fit.
+    This property accounts for editors who review the recent history
+    of an article and restore text that was deleted, as often happens
+    when vandalism occurs.
+\item We prefer longer matches.
+\end{itemize}
+
+
+As described in Section~\ref{sec:diff-related}, there is an extensive
+literature on matching text between two strings (see, \eg,
+\cite{Hunt1976,Hirschberg1977,Tichy1984,Myers1986,Burns1997}).
+Existing algorithms use somewhat different specifications than what
+we have outlined above, generally optimizing for the size of the edit
+script or for the longest matches.
+To achieve our goals, we develop a variation of
+standard greedy algorithms (\eg, \cite{Hirschberg1977,Myers1986,Burns1997})
+by generalizing the greedy step; instead of selecting a match
+based on length, we use a notion of \intro{match quality}.
+
+
+\begin{algorithm}
+%\DontPrintSemicolon
+\KwData{Two lists of words, $a$ and $b$.}
+\KwResult{$\txtauthor{\version{n}, w_j}$,
+	for all $w_j \in \words{\version{n}}$.
+}
+\Begin{
+    $idx \leftarrow $ new Hashtable \;
+    \For{$i \leftarrow 1$ \KwTo length$(b)$ }{
+	$ idx[ b[i] ] \leftarrow i $\;
+    }
+    $h \leftarrow $ new PriorityHeap \;
+    \For{$i \leftarrow 1$ \KwTo $ \left| \words{\version{n}} \right| $ }{
+	$ m \leftarrow \match{\version{n}, i, \prevrevs{\version{n}}} $ \;
+	\eIf{$m = \emptyset$}{
+	    $ \txtauthor{\version{n}, i} = \revauthor{\version{n}} $ \;
+	}{
+	    $ \txtauthor{\version{n}, i} = \txtauthor{m} $ \;
+	}
+    }
+}
+\caption{Algorithm for tracking text authorship.}
+\end{algorithm}
+
+
+To define match quality, we let $m_{i+1}$ be the length of $v_{i+1}$,
+and we let $m'$ be the length of the chunk of $C_i$ where the match is
+found (all length and indices are measured in number of words).
+Let $l$ be the length of the match, and assume that the match begins
+at word $k' \leq m'$ in the chunk, and at word $k_{i+1} \leq m_{i+1}$
+in $v_{i+1}$.
+We define match quality as follows:
+%
+\begin{itemize}
+\item If the match occurs between $v_{i+1}$ and the live chunk, then
+the quality is:
+\mynote{fix}
+%\[
+%  \frac{l}{\min(m_{i+1},m')} - 0.3 \cdot \left|
+%  \frac{k'}{m'} - \frac{k_{i+1}}{m_{i+1}} \right| \eqpun .
+%\]
+\item If the match occurs between $v_{i+1}$ and a dead chunk, then the
+quality is~0 if $l < 4$, and is
+$
+  {l}/{\min(m_{i+1},m')} - 0.4
+$ otherwise.
+\end{itemize}
+%
+Thus, the higher the quality of a match, the longer the match is.
+If the match is within the live chunk, a match has higher quality if the
+text appears in the same relative position in $v_{i+1}$ and in $v_i$.
+Matches with dead chunks have somewhat lower quality than matches with
+the live chunk: this corresponds to the fact that, if some text can be
+traced both to the previous version (the live chunk), and to some
+text that was previously deleted, the most likely match is with the
+text of the previous version.
+Moreover, matches with dead chunks have to be at least of length four;
+this avoids misclassifying common words in new text as re-introductions
+of previously-deleted text.
+The coefficients in the above definition of quality have been
+determined experimentally, comparing human judgements of authorship to
+the algorithmically computed ones for many pages of the Italian
+Wikipedia.
+% The text survival algorithm we developed is efficient: the main
+% bottleneck, when computing text authorship, is not the running time of
+% the algorithm, but rather, the time required to retrieve all versions
+% of a page from the MySQL database in which Wikipedia pages are
+% stored.\footnote{The measurement was done on a PC with AMD Athlon~64
+% 3000+ CPU, two hard drives configured in RAID~1 (mirroring), and 1~GB
+% of memory.}
+
+
+\subsection{Optimizations}
+
+The Wikipedia is a huge corpus of documents, and processing speed
+is a crucial factor in doing timely analysis.
+There are a few steps we can take to reduce the size of the computation.
+
+A very simple step to take is to reduce the size of the list of
+previous revisions given by \prevrevs{\version{i}}.
+As defined in Section~\ref{sec:diff-tracking}, \prevrevs{\version{i}} 
+is the ordered list of all previous revisions,
+$\left[ \version{1}, \version{2}, \ldots, \version{i-1} \right]$.
+We use the full list of previous revisions to ensure that text which
+is restored is assigned to the right author.
+In practice, the history of an article can extend to several thousand
+revisions, but an editor is likely to only look back a small number
+of revisions when searching for text to restore.
+We arbitrarily limit the list of previous revisions to ten:
+\begin{equation*}
+    \prevrevs{\version{i}} = \left[ \version{j} \colon
+	max(1,i-10) \le j < i \right],
+\end{equation*}
+but observe that better selections can be made, as described
+in~\cite{Chatterjee2008}.
+
+Another optimization is again with respect to the handling of the
+previous revisions.
+In defining the matching algorithm, we give preference to more recent
+versions before falling back to matches against older revisions.
+Let us consider the case where a piece of text does not match in the
+most recent revision \version{k},
+but does match in some earlier revision \version{i}, so that we have $i < k$.
+Since the text does not match in any \version{j} for $j > i$,
+it must be the case that the text was deleted in \version{i+1} and
+never restored.
+The size of deleted text in any revision is typically much smaller
+than the size of the live text, so our second optimization is
+to check for matches against the deleted text rather than the full
+live text of previous revisions.
+
+
