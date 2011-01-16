@@ -13,7 +13,7 @@
 
 \newcommand{\voom}{\rightsquigarrow}
 
-\newcommand{\txt}{{\text{\textit{txt}}}}
+\newcommand{\txt}[3]{\ensuremath{\mathit{txt}_{#1}(#2,#3)}}
 \newcommand{\dist}{d}
 \newcommand{\tot}{{\text{\textit{tot}}}}
 %\newcommand{\tenrevsq}{\ensuremath{\beta_\text{\textit{text}}}\xspace}
@@ -46,6 +46,12 @@
 \newcommand{\articles}{\ensuremath{\mathbb{A}}}
 \newcommand{\users}{\ensuremath{\mathbb{U}}}
 \newcommand{\revisions}[1]{\ensuremath{\mathbb{R}\ifthenelse{\equal{#1}{}}{}{[#1]}}}
+
+\newcommand{\revauthor}[1]{\ensuremath{\mathrm{RevAuthor}(#1)}}
+\newcommand{\txtauthor}[1]{\ensuremath{\mathrm{TxtAuthor}(#1)}}
+\newcommand{\words}[1]{\ensuremath{\mathrm{Words}(#1)}}
+\newcommand{\match}[1]{\ensuremath{\mathrm{BestMatch}(#1)}}
+\newcommand{\prevrevs}[1]{\ensuremath{\mathrm{PrevRevs}(#1)}}
 
 \newcommand{\authors}{TODO: change to users}
 \newcommand{\pages}{TODO: change to articles}

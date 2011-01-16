@@ -1,4 +1,100 @@
-\section{Tracking Text Evolution}
+\section{Tracking Text Authorship}
+
+To answer the question of which author contributed what text to a
+collaborative document, we present first the general procedure to
+perform the calculation.
+We assume, for this discussion, a single article $\article{} \in \articles$,
+with $n > 0$ revisions given by
+\begin{equation*}
+\revisions{\article{}} = [ \version{1}, \version{2}, \ldots, \version{n} ].
+\end{equation*}
+We define the content of version \version{i}
+as being a sequence of $l_i \ge 0$ words for all $0 < i \le n$:
+\begin{equation*}
+\words{\version{i}} = [ w_1, w_2, \ldots, w_{l_i} ].
+\end{equation*}
+
+
+At an abstract level, we can discover the inductive step by examining
+the first several versions.
+Clearly, for \version{1}, we have the author of the edit,
+\revauthor{\version{1}}, as the author of each individual word.
+To track the authorship of words in \version{2}, there are two cases:
+\begin{enumerate}
+\item A sequence of words in \version{2} also exists in \version{1}.
+	In this case, we retain the original authorship of the words,
+	\revauthor{\version{1}}.
+\item A sequence of words in \version{2} does not also exist in \version{1}.
+	In this case, the sequence must have been inserted by
+	\revauthor{\version{2}} and we assign authorship accordingly.
+\end{enumerate}
+Word authorship in \version{3} is similar to the situation in
+\version{2}, with an additional case:
+\begin{enumerate}
+\item A sequence of words in \version{3} also exists in \version{2}.
+	In this case, we retain the original authorship of the words
+	that was determined for \version{2}.
+\item A sequence of words in \version{3} does not also exist in \version{2},
+	but does exist in \version{1}.
+	Again, we retain the original authorship of the words, as it was
+	determined for \version{1}.
+\item A sequence of words in \version{3} does not exist in any previous
+	revision.
+	This sequence must have been inserted by \revauthor{\version{3}}.
+\end{enumerate}
+
+The general flavor of the computation is now clear, but to describe it
+more precisely we need some additional definitions.
+For a given revision, we need to know the ordered list of earlier
+revisions:
+\begin{equation*}
+    \prevrevs{\version{i}} = \left[ \version{j} \colon  0 < j < i \right]
+\end{equation*}
+And given some word $w_r$ from \version{i}, we need to compute the
+location of the best match from a list of earlier revisions:
+\begin{equation*}
+    \match{\version{i}, r, \prevrevs{\version{i}}} =
+    \begin{cases}
+	(\version{k}, s) & \text{if there exists a best match $w_s$ from \version{k}.} \\
+	\emptyset & \text{if there is no match.} \\
+    \end{cases}
+\end{equation*}
+where $k < i$ since we are only interested in matches with earlier revisions;
+we will better describe this calculation in the next section.
+
+Now it is possible to define the author of each word as a recursive relation.
+Recalling $\words{\version{n}} = \left[ w_1, w_2, \ldots, w_{l_n} \right]$, let $0 < j \le l_n$ in the following definition:
+\begin{equation*}
+\txtauthor{\version{n}, j} =
+    \begin{cases}
+	\txtauthor{\version{k}, s}, & \text{ if }
+	\match{\version{n}, j, \prevrevs{\version{n}}} = (\version{k}, s) \\
+	\revauthor{\version{n}}, & \text{ if there is no best match text. } \\
+    \end{cases}
+\end{equation*}
+
+
+\begin{algorithm}
+%\DontPrintSemicolon
+\KwData{A version \version{n}.}
+\KwResult{$\txtauthor{\version{n}, w_j}$,
+	for all $w_j \in \words{\version{n}}$.
+}
+\Begin{
+    \For{$i \leftarrow 1$ \KwTo $ \left| \words{\version{n}} \right| $ }{
+	$ m \leftarrow \match{\version{n}, i, \prevrevs{\version{n}}} $ \;
+	\eIf{$m = \emptyset$}{
+	    $ \txtauthor{\version{n}, i} = \revauthor{\version{n}} $ \;
+	}{
+	    $ \txtauthor{\version{n}, i} = \txtauthor{m} $ \;
+	}
+    }
+}
+\caption{Algorithm for tracking text authorship.}
+\end{algorithm}
+
+
+\section{Matching Text}
 
 By ``text evolution,'' we mean noting how text shifts
 around and is added to or deleted from --- that is,

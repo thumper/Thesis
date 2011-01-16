@@ -48,6 +48,14 @@ will be used throughout this work.
     obvious from the context, but where it is not we will
     write $\version{i}^{\article{}}$ to indicate that we
     are referring to version \version{i} of article \article{}.
+
+\item \revauthor{\version{i}} -- every revision of an article has
+    a user associated with it with the edit.
+    This function gives the user associated with \version{i} of
+    an article.
+    For anonymous users (who are distinguished by IP address in
+    MediaWiki), we map each to the single anonymous user in \users.
+
 \end{itemize}
 \renewcommand{\labelitemi}{$\bullet$}
 
