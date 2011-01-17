@@ -20,7 +20,8 @@
 \usepackage{epic,eepic}
 \usepackage{subfigure}
 \usepackage{multirow}
-\usepackage[ruled,vlined]{algorithm2e}
+%\usepackage[ruled,vlined]{algorithm2e}
+\usepackage{listings}
 \usepackage{setspace}
 % was: \doublespace
 \singlespace
@@ -48,6 +49,8 @@
 \pagenumbering{arabic}
 \chapterstyle{default}
 
+\lstset{language=Perl}
+
 \input{part-C10-intro/main}
 \part{Foundations}
 \label{part:foundations}
@@ -63,14 +66,13 @@
 \input{part-Q10-vandalism/main}
 \input{part-X10-conclusion/main}
 
-\begin{comment}
 \appendix
 \appendixpage*
 
 \chapterstyle{normal}
 
 \input{paper-appendix/main}
-\end{comment}
+\input{part-Z10-diff/main}
 
 \chapterstyle{normal}
 \singlespacing

@@ -66,6 +66,7 @@ standard greedy algorithms (\eg, \cite{Hirschberg1977,Myers1986,Burns1997})
 by generalizing the greedy step; instead of selecting a match
 based on length, we use a notion of \intro{match quality}.
 
+\begin{comment}
 
 \begin{algorithm}
 %\DontPrintSemicolon
@@ -91,6 +92,7 @@ based on length, we use a notion of \intro{match quality}.
 \caption{Algorithm for tracking text authorship.}
 \end{algorithm}
 
+\end{comment}
 
 To define match quality, we let $m_{i+1}$ be the length of $v_{i+1}$,
 and we let $m'$ be the length of the chunk of $C_i$ where the match is
@@ -138,6 +140,8 @@ Wikipedia.
 % 3000+ CPU, two hard drives configured in RAID~1 (mirroring), and 1~GB
 % of memory.}
 
+See the sample \textbf{perl} language implementation
+in Appendix~\ref{app:diffsrc}.
 
 \subsection{Optimizations}
 
