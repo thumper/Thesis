@@ -5,19 +5,12 @@ use warnings;
 use constant ALLOW_MULTI_MATCH => 0;
 
 use Heap::Priority;
-use Data::Dumper;
+use List::Util qw(min);
 
 sub match_quality {
     my ($k, $i1, $l1, $i2, $l2) = @_;
-    my $m1 = ($i1+$k) / 2.0;
-    my $m2 = ($i2+$k) / 2.0;
-    my $q = abs(($m1 / $l1) - ($m2 / $l2));
-    if ($q == 0.0) {
-	$q = 1000;
-    } else {
-	$q = 1/$q;
-    }
-    return $k * 10000 + $q;
+    my $q = $k / min($l2, $l1) - 0.3 * abs(($i1/$l1) - ($i2/$l2));
+    return $q;
 }
 
 # Create a hash table indexed by word, which gives the
