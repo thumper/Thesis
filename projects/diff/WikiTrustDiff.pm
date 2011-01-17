@@ -2,6 +2,8 @@ package WikiTrustDiff;
 use strict;
 use warnings;
 
+use constant ALLOW_MULTI_MATCH => 0;
+
 use Heap::Priority;
 use Data::Dumper;
 
@@ -23,8 +25,7 @@ sub make_index {
 }
 
 sub build_heap {
-    my $w1 = shift @_;
-    my $w2 = shift @_;
+    my ($w1, $w2) = @_;
     my $l1 = scalar(@$w1);
     my $l2 = scalar(@$w2);
     my $idx = make_index($w2);
@@ -45,16 +46,13 @@ sub build_heap {
     return $h;
 }
 
-sub find_unmatchedSeq {
-    my ($i1, $i2, $len, $matched1, $matched2) = @_;
+sub scan_and_test {
+    my ($len, $test) = @_;
+    return undef if $len <= 0;
     my $start = 0;
-    while ($start < $len &&
-		($matched1->[$i1+$start] || $matched2->[$i2+$start]))
-    { $start++; }
+    while ($start < $len && $test->($start)) { $start++; }
     my $end = $start+1;
-    while ($end < $len &&
-		!$matched1->[$i1+$start] && !$matched2->[$i2+$start])
-    { $end++; }
+    while ($end < $len && !$test->($end)) { $end++; }
     return undef if $start >= $len;
     return ($start, $end);
 }
@@ -69,75 +67,56 @@ sub process_best_matches {
 	$matchId++;
 	my ($k, $i1, $i2) = @$m;
 	# have any of these words already been matched?
-	my $unmatched_start = 0;
-	my $i = 0;
-	while ($i < $k) {
-	    while ($i < $k && !$matched1->[$i1+$i] && !$matched2->[$i2+$i]) {
-		$i++;
-	    }
-	    my $match_len = $i - $unmatched_start;
-	    if ($match_len > 0 && $match_len < $k) {
-		# there was a previous match that already used
+	while (1) {
+	    my ($start, $end) = scan_and_test($k,
+		sub { $matched1->[$i1+$_[0]] ||  $matched2->[$i2+$_[0]] });
+	    last if !defined $start;
+	    if ($end - $start == $k) {
+		# the whole sequence is still unmatched
+		push @editScript, ['Mov', $i1, $i2, $k ];
+		for (my $i = $start; $i < $end; $i++) {
+		    $matched1->[$i1+$i] = $matchId if !ALLOW_MULTI_MATCH;
+		    $matched2->[$i2+$i] = $matchId;
+		}
+	    } else {
+		# there must have been a previous match that already used
 		# part of the current match.
 		# Split this one into smaller matches.
-		my $q = match_quality($match_len,
-				$i1+$unmatched_start, length(@$w1),
-				$i2+$unmatched_start, length(@$w2));
-		$h->add([$match_len,
-			$i1+$unmatched_start, $i2+$unmatched_start], $q);
+		my $q = match_quality($end - $start,
+				$i1+$start, scalar(@$w1),
+				$i2+$start, scalar(@$w2));
+		$h->add([$end - $start, $i1+$start, $i2+$start], $q);
 	    }
-	    while ($i < $k && ($matched1->[$i1+$i] || $matched2->[$i2+$i])) {
-		$i++;
-		$unmatched_start = $i;
-	    }
-	}
-	if ($unmatched_start == 0) {
-	    # there was no previous match that overlapped with this one.
-	    for (my $i = 0; $i < $k; $i++) {
-		$matched1->[$i1+$i] = $matchId;
-		$matched2->[$i2+$i] = $matchId;
-	    }
-	    push @editScript, ['Mov', $i1, $i2, $k ];
+	    $i1 += $end;
+	    $i2 += $end;
+	    $k -= $end;
 	}
     }
     return \@editScript;
 }
 
-sub find_unmatched {
-    my $matched = shift @_;
-    my $l = shift @_;
-    my $editScript = shift @_;
-    my $mode = shift @_;
+sub cover_unmatched {
+    my ($matched, $l, $editScript, $mode) = @_;
 
-    my $unmatched_start = 0;
     my $i = 0;
-    while ($i < $l) {
-	while ($i < $l && !$matched->[$i]) { $i++; }
-	my $match_len = $i - $unmatched_start;
-warn "Possible unmatched: $match_len @ $unmatched_start -- ( $match_len < $l ?)\n";
-	if ($match_len > 0 && $match_len < $l) {
-	    push @$editScript, [$mode, $unmatched_start, $match_len ];
-	}
-	while ($i < $l && $matched->[$i]) {
-	    $i++;
-	    $unmatched_start = $i;
-	}
-warn "Now $i < $l?\n";
-    }
-    if ($unmatched_start == 0) {
-	push @$editScript, [$mode, 0, $l];
+    while (1) {
+	my ($start, $end) = scan_and_test($l,
+		sub { $matched->[$i+$_[0]] });
+	last if !defined $start;
+	push @$editScript, [$mode, $i+$start, $end-$start];
+	$i += $end;
+	$l -= $end;
     }
 }
 
 sub edit_diff {
-    my $w1 = shift @_;
-    my $w2 = shift @_;
+    my ($w1, $w2) = shift @_;
     my $h = build_heap($w1, $w2);
     my (@matched1, @matched2);
     my $editScript = process_best_matches($h, $w1, $w2,
 		\@matched1, \@matched2);
-    find_unmatched(\@matched1, scalar(@$w1), $editScript, 'Del');
-    find_unmatched(\@matched2, scalar(@$w2), $editScript, 'Ins');
+    cover_unmatched(\@matched1, scalar(@$w1), $editScript, 'Del');
+    cover_unmatched(\@matched2, scalar(@$w2), $editScript, 'Ins');
     return $editScript;
 }
 
