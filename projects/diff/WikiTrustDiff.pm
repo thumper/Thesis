@@ -8,8 +8,16 @@ use Heap::Priority;
 use Data::Dumper;
 
 sub match_quality {
-    my ($l, $i1, $l1, $i2, $l2) = @_;
-    return $l;
+    my ($k, $i1, $l1, $i2, $l2) = @_;
+    my $m1 = ($i1+$k) / 2.0;
+    my $m2 = ($i2+$k) / 2.0;
+    my $q = abs(($m1 / $l1) - ($m2 / $l2));
+    if ($q == 0.0) {
+	$q = 1000;
+    } else {
+	$q = 1/$q;
+    }
+    return $k * 10000 + $q;
 }
 
 # Create a hash table indexed by word, which gives the
@@ -110,7 +118,7 @@ sub cover_unmatched {
 }
 
 sub edit_diff {
-    my ($w1, $w2) = shift @_;
+    my ($w1, $w2) = @_;
     my $h = build_heap($w1, $w2);
     my (@matched1, @matched2);
     my $editScript = process_best_matches($h, $w1, $w2,
