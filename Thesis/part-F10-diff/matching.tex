@@ -181,5 +181,7 @@ The size of deleted text in any revision is typically much smaller
 than the size of the live text, so our second optimization is
 to check for matches against the deleted text rather than the full
 live text of previous revisions.
-
-
+Note that if we're searching for longest match, checking deleted
+text isn't the best thing --- the match might be longer if we
+had the full text of a previous revision.
+\mynote{Need to say more?}

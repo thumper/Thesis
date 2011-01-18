@@ -11,12 +11,12 @@ use List::Util qw(min);
 sub match_quality {
   my ($k, $i1, $l1, $i2, $l2) = @_;
   my $q = $k / min($l2, $l1) - 0.3
-	* abs(($i1/$l1) - ($i2/$l2));
+    * abs(($i1/$l1) - ($i2/$l2));
   return $q;
 }
 
 # Create a hash table indexed by word,
-# which gives the # list of locations where
+# which gives the list of locations where
 # the word appears in the input list.
 sub make_index {
   my $words = shift @_;
@@ -57,11 +57,9 @@ sub scan_and_test {
   my ($len, $test) = @_;
   return undef if $len <= 0;
   my $start = 0;
-  while ($start < $len && $test->($start))
-  { $start++; }
+  while ($start < $len && $test->($start)) { $start++; }
   my $end = $start+1;
-  while ($end < $len && !$test->($end))
-  { $end++; }
+  while ($end < $len && !$test->($end)) { $end++; }
   return undef if $start >= $len;
   return ($start, $end);
 }
@@ -79,7 +77,7 @@ sub process_best_matches {
     while (1) {
       my ($start, $end) = scan_and_test($k,
 	  sub { $matched1->[$i1+$_[0]]
-	      ||  $matched2->[$i2+$_[0]] });
+	  ||  $matched2->[$i2+$_[0]] });
       last if !defined $start;
       if ($end - $start == $k) {
 	# the whole sequence is still unmatched
@@ -91,13 +89,13 @@ sub process_best_matches {
 	}
       } else {
 	# there must have been a previous match that
-	# already used part of the current match.
+	# already used # part of the current match.
 	# Split this one into smaller matches.
 	my $q = match_quality($end - $start,
 	    $i1+$start, scalar(@$w1),
 	    $i2+$start, scalar(@$w2));
-	$h->add([$end - $start, $i1+$start,
-	    $i2+$start], $q);
+	$h->add([$end - $start, $i1+$start, $i2+$start],
+	    $q);
       }
       $i1 += $end;
       $i2 += $end;

@@ -295,3 +295,15 @@ the \texttt{FLUSH PRIVILEGES} command.
 After \mysql was working again, I restarted it, and then
 restarted the wikitrust dispatchers.
 
+\section{Configuration}
+
+\subsection{17-Jan-2011}
+
+Everything is basically working lately, but the configuration
+on Redherring doesn't seem quite right to me.
+\begin{verbatim}
+datadir = /var/lib/mysql -> /giant/mysql
+tmpdir=/big/mysql/tmp
+innodb_log_group_home=/big/mysql/logdir
+\end{verbatim}
+
