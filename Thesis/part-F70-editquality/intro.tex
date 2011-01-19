@@ -67,3 +67,33 @@ This is remarkable because the film is well-known in film studies,
 and South Pasadena is in the Los Angeles area,
 where film studies is very popular.
 
+Since the only data we had was the history of revisions itself,
+we began to examine edits and attempt to manually track how each
+edit fared in its future.
+Although there is a great deal of variation in edits, this examination
+led us to the hypothesis that text contributions might follow a pattern
+of exponential decay.
+That is, if an edit is not very good, the bulk of it will be removed
+right away, with small amounts more being removed in subsequent edits
+until some kernel of the original edit stabilizes and becomes a fixture
+within the article.
+This became our \intro{text quality} metric, explored further in
+Section \mynote{Add section ref}.
+
+Of course, not all useful work consists of adding text to the Wikipedia.
+The RC Patrol and other maintainers all do work that involves
+deleting text or editing and rearranging text contributed by others,
+and this is not captured by any metric that only looks at how text is added.
+How does one go about measuring how much of a delete is preserved
+in future revisions?
+We could answer this by treating it as the complement of insertion
+(that is, counting words which are restored from the delete as a
+penalty to the original delete), but measuring word rearrangement
+was a completely different beast.
+The answer came in thinking of the evolution of an article as something
+like a random walk across a bridge: there is a definite start and a
+definite end, but the steps along the way don't always form a neat path.
+Defining a measure of forward progress led to our second
+quality metric, \intro{edit quality}, which we explain in
+Section \mynote{Add section ref}.
+
