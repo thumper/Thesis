@@ -1,0 +1,69 @@
+\section{Introduction}
+
+One of the key problems in trying to build a reputation system
+for the Wikipedia is that, while there is a massive amount of
+data available, there is little information about how well different
+users or articles are performing.
+Having such data is important, because we'd like to base the
+descriptive aspect of reputation on the community behavior seen
+in practice.
+To describe an edit as page or good, we have to know what the
+community thinks of it.
+
+One obvious way to do this is to examine reverts
+in the article history.
+A revert undoes the action of one or more edits, leaving
+the article in a state exactly matching an older version.
+For example, if user Alice vandalizes an article by blanking it,
+user Bob can revert her changes by restoring the article to the
+state before Alice's edit.
+If there are constructive edits after a bad edit, it is also possible
+to selectively undo just the bad edits.
+When a revert happens, it is a clear indication that some member
+of the community believes that an earlier edit is completely
+inappropriate, so many researchers use is as an indicator of
+community feedback~\cite{Adler2007,Smets2008,Itakura2009,Belani2010}.
+
+There are two issues with using reverts and undos
+as measures of community feedback.
+The first is that there are no definitive
+annotations\footnote{When using the MediaWiki software,
+there is a standard notation that appears in edit comments,
+but this isn't 100\% reliable as reverts can be effected manually.}
+indicating that reverts or undos have occurred,
+but they can be detected by
+computation.\footnote{Detecting undos can be fairly expensive, so
+it's typical to restrict checking to a limited number of older revisions.}
+The second more significant issue is that reverts and undos
+are a very blunt feedback mechanism; they indicate only complete disapproval.
+There are no gradations in this evaluation, which does not make
+it a good metric for edit quality, except for judging the very worst
+edits.
+
+When we started the WikiTrust project in 2006, our initial thought was to
+use page views to get a measure of how well reviewed an article is.
+Since Wikipedia works due to the collective action of everybody
+reading the articles, we expected that pages which receive a lot of
+views would be more accurate because of the higher collective amount
+of scrutiny received.
+At the time, we abandoned this line of thinking because page view
+information was not available.
+(Since then, Priedhorsky~\etal show how page views can be estimated
+from some data sets which are available~\cite{Priedhorsky2007}.
+Log files are also now
+available\footnote{\url{http://dammit.lt/wikistats/}} and
+have a user-friendly front-end\footnote{\url{http://stats.grok.se/}}
+for simple queries.)
+Our experiences during the course of research is even more
+bleak than that: more shallow review isn't equivalent to
+deeper review, and more eyes doesn't mean that anyone will take
+the effort to correct a mistake.
+For example, the ``South Pasadena, California'' page was vandalized
+in May 2008\footnote{\url{http://en.wikipedia.org/w/index.php?title=South_Pasadena,_California&oldid=211466067}}
+to add the film ``Triumph of the Will'' as being filmed in that city;
+it wasn't corrected until
+April 2009.\footnote{\url{http://en.wikipedia.org/w/index.php?title=South_Pasadena,_California&oldid=282177714}}
+This is remarkable because the film is well-known in film studies,
+and South Pasadena is in the Los Angeles area,
+where film studies is very popular.
+
