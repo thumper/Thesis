@@ -53,24 +53,26 @@ revisions:
 \end{equation*}
 And given some word $w_r$ from \version{i}, we need to compute the
 location of the best match from a list of earlier revisions:
-\begin{equation*}
+\begin{equation}
     \match{\version{i}, r, \prevrevs{\version{i}}} =
     \begin{cases}
 	(\version{k}, s) & \text{if there exists a best match $w_s$ from \version{k}.} \\
 	\emptyset & \text{if there is no match.} \\
     \end{cases}
-\end{equation*}
+\label{eq:bestmatch}
+\end{equation}
 where $k < i$ since we are only interested in matches with earlier revisions;
 we will better describe this calculation in the next section.
 
 Now it is possible to define the author of each word as a recursive relation.
 Recalling $\words{\version{n}} = \left[ w_1, w_2, \ldots, w_{l_n} \right]$, let $0 < j \le l_n$ in the following definition:
-\begin{equation*}
+\begin{equation}
 \txtauthor{\version{n}, j} =
     \begin{cases}
 	\txtauthor{\version{k}, s}, & \text{ if }
 	\match{\version{n}, j, \prevrevs{\version{n}}} = (\version{k}, s) \\
 	\revauthor{\version{n}}, & \text{ if there is no best match text. } \\
     \end{cases}
-\end{equation*}
+\label{eq:txtauthor}
+\end{equation}
 
