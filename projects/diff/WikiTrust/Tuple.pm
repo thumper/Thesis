@@ -1,4 +1,4 @@
-package Tuple;
+package WikiTrust::Tuple;
 use strict;
 use warnings;
 

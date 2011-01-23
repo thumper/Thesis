@@ -1,11 +1,10 @@
-package WikiTrustDiff;
+package WikiTrust::Diff;
 use strict;
 use warnings;
 
 use constant ALLOW_MULTI_MATCH => 0;
 
-use lib '.';
-use Tuple;
+use WikiTrust::Tuple;
 use Heap::Priority;
 use List::Util qw(min);
 
@@ -13,7 +12,7 @@ sub match_quality {
   my ($k, $i1, $l1, $i2, $l2) = @_;
   my $q = $k / min($l2, $l1) - 0.3
     * abs(($i1/$l1) - ($i2/$l2));
-  return Tuple->new($k, $q);
+  return WikiTrust::Tuple->new($k, $q);
 }
 
 # Create a hash table indexed by word,
@@ -88,15 +87,6 @@ sub process_best_matches {
 	    if !ALLOW_MULTI_MATCH;
 	  $matched2->[$i2+$i] = $matchId;
 	}
-      } else {
-	# there must have been a previous match that
-	# already used # part of the current match.
-	# Split this one into smaller matches.
-	my $q = match_quality($end - $start,
-	    $i1+$start, scalar(@$w1),
-	    $i2+$start, scalar(@$w2));
-	$h->add([$end - $start, $i1+$start, $i2+$start],
-	    $q);
       }
       $i1 += $end;
       $i2 += $end;
@@ -121,6 +111,7 @@ sub cover_unmatched {
   }
 }
 
+# Compute the edit script to transform $w1 into $w2
 sub edit_diff {
   my ($w1, $w2) = @_;
   my $h = build_heap($w1, $w2);

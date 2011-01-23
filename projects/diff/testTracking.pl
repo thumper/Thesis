@@ -3,14 +3,14 @@ use strict;
 use warnings;
 use lib '.';
 
-use WikiTrust::Diff;
+use WikiTrust::TextTracking;
 use Data::Dumper;
 
 
 sub runDiff {
     my @w1 = split(/\s+/, shift @_);
     my @w2 = split(/\s+/, shift @_);
-    my $script = WikiTrust::Diff::edit_diff(\@w1, \@w2);
+    my $script = WikiTrust::TextTracking::edit_diff(\@w2, [\@w1]);
     print Dumper($script);
 }
 
