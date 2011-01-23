@@ -4,6 +4,8 @@ use warnings;
 
 use constant ALLOW_MULTI_MATCH => 0;
 
+use lib '.';
+use Tuple;
 use Heap::Priority;
 use List::Util qw(min);
 
@@ -11,7 +13,7 @@ sub match_quality {
   my ($k, $i1, $l1, $i2, $l2) = @_;
   my $q = $k / min($l2, $l1) - 0.3
     * abs(($i1/$l1) - ($i2/$l2));
-  return $q;
+  return Tuple->new($k, $q);
 }
 
 # Create a hash table indexed by word,
