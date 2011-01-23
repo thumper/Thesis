@@ -4,15 +4,22 @@ use warnings;
 
 use constant ALLOW_MULTI_MATCH => 0;
 
+use Exporter;
 use WikiTrust::Tuple;
 use Heap::Priority;
 use List::Util qw(min);
+use Data::Dumper qw(Dumper);
+use vars qw(@ISA @EXPORT);
+@ISA = qw(Exporter);
+@EXPORT = qw(edit_diff);
 
 sub match_quality {
   my ($chunk, $k, $i1, $l1, $i2, $l2) = @_;
-  my $q = $k / min($l2, $l1) - 0.3
-    * abs(($i1/$l1) - ($i2/$l2));
-  return WikiTrust::Tuple->new(-$chunk, $k, $q);
+  my $m1 = (2*$i1+$k)/2.0;
+  my $m2 = (2*$i2+$k)/2.0;
+  my $q = abs($m1/$l1 - $m2/$l2);
+#printf "Match $i2, $i1, $k ==> $q, %f, %f\n", ($m1/$l1), ($m2/$l2);
+  return WikiTrust::Tuple->new(-$chunk, $k, -$q);
 }
 
 # Create a hash table indexed by word,
@@ -37,6 +44,8 @@ sub build_heap {
   my $l1 = scalar(@$w1);
   my $idx = make_index($prevrevs);
   my $h = Heap::Priority->new();
+  $h->fifo();
+  Heap::Priority::raise_error(2, $h);
   for (my $i1 = 0; $i1 < @$w1; $i1++) {
     # For every word in w1,
     # find the list of matches in w2
@@ -79,20 +88,14 @@ sub process_best_matches {
     $matchId++;
     my ($chunk, $k, $i1, $i2) = @$m;
     # have any of these words already been matched?
-    while (1) {
-      my ($start, $end) = scan_and_test($k,
-	  sub { $matched1->[$i1+$_[0]] });
-      last if !defined $start;
-      if ($end - $start == $k) {
-	# the whole sequence is still unmatched
-	push @editScript, ['Mov', $chunk, $i2, $i1, $k ];
-	for (my $i = $start; $i < $end; $i++) {
-	  $matched1->[$i1+$i] = $matchId;
-	}
-      }
-      $i1 += $end;
-      $i2 += $end;
-      $k -= $end;
+    my ($start, $end) = scan_and_test($k,
+		    sub { $matched1->[$i1+$_[0]] });
+    next if !defined $start;
+    next if ($end - $start != $k);
+    # the whole sequence is still unmatched
+    push @editScript, ['Mov', $chunk, $i2, $i1, $k ];
+    for (my $i = $start; $i < $end; $i++) {
+      $matched1->[$i1+$i] = $matchId;
     }
   }
   return \@editScript;

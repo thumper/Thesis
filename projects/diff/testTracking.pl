@@ -10,7 +10,7 @@ use Data::Dumper;
 sub runDiff {
     my @w1 = split(/\s+/, shift @_);
     my @w2 = split(/\s+/, shift @_);
-    my $script = WikiTrust::TextTracking::edit_diff(\@w2, [\@w1]);
+    my $script = edit_diff(\@w2, [\@w1]);
     print Dumper($script);
 }
 

@@ -8,8 +8,9 @@ use overload '<=>' => \&mycompare;
 use overload '>' => \&mybad;
 use overload '<' => \&mybad;
 use overload '==' => \&mybad;
-use overload 'bool' => sub { return 1; };
+#use overload 'bool' => \&mybool;
 use overload 'ne' => \&myne;
+use overload '""' => \&mystring;
 
 sub new {
     my $class = shift @_;
@@ -19,6 +20,11 @@ sub new {
 
 sub mybad {
     confess "Illegal operator";
+}
+
+sub mybool {
+    my ($a, $b, $order) = @_;
+    return defined $a;
 }
 
 sub mycompare {
@@ -37,6 +43,11 @@ sub mycompare {
 sub myne {
     my $cmp = mycompare(@_);
     return $cmp != 0;
+}
+
+sub mystring {
+    my ($a, $b, $order) = @_;
+    return "(". join(", ", @$a). ")";
 }
 
 1;
