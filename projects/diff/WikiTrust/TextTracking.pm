@@ -18,13 +18,12 @@ sub match_quality {
   my $m1 = (2*$i1+$k)/2.0;
   my $m2 = (2*$i2+$k)/2.0;
   my $q = abs($m1/$l1 - $m2/$l2);
-#printf "Match $i2, $i1, $k ==> $q, %f, %f\n", ($m1/$l1), ($m2/$l2);
   return WikiTrust::Tuple->new(-$chunk, $k, -$q);
 }
 
 # Create a hash table indexed by word,
 # which gives the list of locations where
-# the word appears in the input list.
+# the word appears in the previous revisions.
 sub make_index {
   my $prevrevs = shift @_;
   my $idx = {};
