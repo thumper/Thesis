@@ -59,8 +59,22 @@ quality of the edit.
 Having defined the notion of text survival, a very simple quality measure
 could be ``what fraction of the text added in a revision survives
 ten revisions later?''
+Or one could ask ``what is the average fraction of text added in a
+revision which survives over the next ten revisions?''
+While exploring the data, we noticed that when text is ultimately
+going to be removed, a large fraction is removed initially and then
+a few more words are removed in successive revisions.
+This led us to develop the hypothesis that the number of words
+which survives into the future \intro{decays} in an exponential fashion.
+
+\mynote{Experiment: collect data for several different revisions.
+Compute the decay for each one, and then compute the error from
+the decay.  What are the statistics for this decay?}
+
 \mynote{Can we run this experiment?}
 
+\mynote{Need to add description of truncated Newton's method for solving
+the exponential equation.}
 
 
 \begin{figure}[t]
