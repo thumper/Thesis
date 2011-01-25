@@ -15,8 +15,18 @@ my $ref = $xs->XMLin(shift @ARGV);
 my $prevrevs = [];
 my $prevrevids = [];
 foreach my $page (@{ $ref->{page} }) {
-  foreach my $rev (@{ $page->{revision} }) {
+  for (my $i = 0; $i < @{ $page->{revision} }; $i++) {
+    my $rev = $page->{revision}->[$i];
+    my $author = getAuthor($rev);
     my $revid = $rev->{id}->[0];
+    warn "Working on author $author @ $revid\n";
+    if ($i+1 < @{ $page->{revision} }) {
+      # Don't work on version if the next one is
+      # by the same author
+      my $nextrev = $page->{revision}->[$i+1];
+      my $nextauthor = getAuthor($nextrev);
+      next if $author eq $nextauthor;
+    }
     my $text = $rev->{text}->[0]->{content};
     my @words = map { WikiTrust::Word->new($_, $revid) }
 	(split(/\s+/, $text));
@@ -48,10 +58,10 @@ foreach my $w (@words) {
 foreach my $r (sort keys %count) {
     print "$r\t$count{$r}\n";
 }
-print "*******\n";
-foreach my $w (@words) {
-  print $w->[1], "  ", $w->[0], "\n";
-}
+#print "*******\n";
+#foreach my $w (@words) {
+#  print $w->[1], "  ", $w->[0], "\n";
+#}
 #########
     unshift @$prevrevs, \@words;
     unshift @$prevrevids, $revid;
@@ -62,3 +72,9 @@ foreach my $w (@words) {
   }
 }
 
+sub getAuthor {
+  my $rev = shift @_;
+  my $author = $rev->{contributor}->[0]->{username}->[0];
+  $author = $rev->{contributor}->[0]->{ip}->[0] if !defined $author;
+  return $author;
+}
