@@ -17,7 +17,7 @@ sub match_quality {
   my $m2 = (2*$i2+$k)/2.0;
   my $q = abs($m1/$l1 - $m2/$l2);
   #return WikiTrust::Tuple->new(-$chunk, $k, -$q);
-  return 10000-$chunk+$k-$q;
+  return (-$chunk*100000)+$k-$q;
 }
 
 # Create a hash table indexed by word,
@@ -117,9 +117,9 @@ sub edit_diff {
     my (@matched2);
     my $w2 = $prevrevs->[$chunk];
     my $h = build_heap($chunk, $w1, \@matched1, $w2);
-    splice(@$editScript, @$editScript, 0,
-	process_best_matches($chunk, $h, $w1, $w2,
-	    \@matched1, \@matched2));
+    my $newES = process_best_matches($chunk, $h, $w1, $w2,
+	    \@matched1, \@matched2);
+    push @$editScript, @$newES;
   }
   cover_unmatched(\@matched1, scalar(@$w1),
       $editScript, 'Ins');

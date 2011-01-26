@@ -17,7 +17,7 @@ sub match_quality {
   my $m2 = (2*$i2+$k)/2.0;
   my $q = abs($m1/$l1 - $m2/$l2);
   #return WikiTrust::Tuple->new(-$chunk, $k, -$q);
-  return 10000-$chunk+$k-$q;
+  return (-$chunk*100000)+$k-$q;
 }
 
 # Create a hash table indexed by word,
