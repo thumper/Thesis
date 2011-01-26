@@ -1,4 +1,4 @@
-package WikiTrust::TextTracking;
+package WikiTrust::FasterTextTracking;
 use strict;
 use warnings;
 
@@ -22,38 +22,33 @@ sub match_quality {
 
 # Create a hash table indexed by word,
 # which gives the list of locations where
-# the word appears in the previous revisions.
+# the word appears in the previous revision.
 sub make_index {
-  my $prevrevs = shift @_;
+  my $words = shift @_;
   my $idx = {};
-  for (my $chunk = 0; $chunk < @$prevrevs; $chunk++) {
-    my $words = $prevrevs->[$chunk];
-    for (my $i = 0; $i < @$words; $i++) {
-      my $w = $words->[$i];
-      $idx->{ $w } = [] if !exists $idx->{$w};
-      push @{ $idx->{ $w } }, [$chunk, $i];
-    }
+  for (my $i = 0; $i < @$words; $i++) {
+    my $w = $words->[$i];
+    $idx->{ $w } = [] if !exists $idx->{$w};
+    push @{ $idx->{ $w } }, $i;
   }
   return $idx;
 }
 
 sub build_heap {
-  my ($w1, $prevrevs) = @_;
+  my ($chunk, $w1, $matched1, $w2) = @_;
   my $l1 = scalar(@$w1);
-  my $idx = make_index($prevrevs);
+  my $l2 = scalar(@$w2);
+  my $idx = make_index($w2);
   my $h = Heap::Priority->new();
   $h->fifo();
   Heap::Priority::raise_error(2, $h);
   for (my $i1 = 0; $i1 < @$w1; $i1++) {
+    next if $matched1->[$i1];
     # For every word in w1,
     # find the list of matches in w2
     my $matches = $idx->{ $w1->[$i1] } || [];
-    foreach my $m (@$matches) {
+    foreach my $i2 (@$matches) {
       # for each match, compute how long the match is
-      my $chunk = $m->[0];
-      my $i2 = $m->[1];
-      my $w2 = $prevrevs->[$chunk];
-      my $l2 = scalar(@$w2);
       my $k = 1;
       while ($i1 + $k < $l1 && $i2 + $k < $l2
 	  && ($w1->[$i1+$k] eq $w2->[$i2+$k]))
@@ -77,7 +72,7 @@ sub scan_and_test {
 }
 
 sub process_best_matches {
-  my ($h, $w1, $prevrevs, $matched1, $matched2) = @_;
+  my ($chunk, $h, $w1, $w2, $matched1, $matched2) = @_;
 
   my @editScript;
 
@@ -116,10 +111,16 @@ sub cover_unmatched {
 
 sub edit_diff {
   my ($w1, $prevrevs) = @_;
-  my $h = build_heap($w1, $prevrevs);
-  my (@matched1, @matched2);
-  my $editScript = process_best_matches($h, $w1, $prevrevs,
-      \@matched1, \@matched2);
+  my (@matched1);
+  my $editScript = [];
+  for (my $chunk = 0; $chunk < @$prevrevs; $chunk++) {
+    my (@matched2);
+    my $w2 = $prevrevs->[$chunk];
+    my $h = build_heap($chunk, $w1, \@matched1, $w2);
+    splice(@$editScript, @$editScript, 0,
+	process_best_matches($chunk, $h, $w1, $w2,
+	    \@matched1, \@matched2));
+  }
   cover_unmatched(\@matched1, scalar(@$w1),
       $editScript, 'Ins');
   return $editScript;

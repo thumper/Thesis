@@ -5,7 +5,7 @@ use warnings;
 
 use lib '.';
 use XML::Simple;
-use WikiTrust::TextTracking;
+use WikiTrust::FasterTextTracking;
 use WikiTrust::Word;
 use Data::Dumper qw(Dumper);
 
