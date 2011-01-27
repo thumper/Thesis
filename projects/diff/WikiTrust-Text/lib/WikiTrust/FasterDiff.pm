@@ -1,38 +1,19 @@
-package WikiTrust::BasicDiff;
+package WikiTrust::FasterDiff;
 use strict;
 use warnings;
 
-use constant ALLOW_MULTI_MATCH => 0;
+use WikiTrust::BasicDiff;
+
+our @ISA = qw(WikiTrust::BasicDiff);
+
 
 use WikiTrust::Tuple;
-use Heap::Priority;
 use List::Util qw(min);
 
-sub new {
-  my $class = shift @_;
-  my $this = bless {
-    quality => \&match_quality,
-    dst => [],
-  }, $class;
-  $this->init();
-  return $this;
-}
-
 sub init {
-  my $this = shift @_;
-  $this->{heap} = Heap::Priority->new();
-  $this->{matched_dst} = [];
-  $this->{matchId} = 0;
-}
-
-sub parse {
-  my ($this, $str) = @_;
-  my @words = split(/\s+/, $str);
-  return \@words;
-}
-sub target {
-  my ($this, $str) = @_;
-  $this->{dst} = $this->parse($str);
+    my $this = shift @_;
+    $this->SUPER::init();
+    $this->{quality} = \&match_quality;
 }
 
 sub match_quality {
@@ -40,21 +21,7 @@ sub match_quality {
   my $q = $k / min($l2, $l1) - 0.3
     * abs(($i1/$l1) - ($i2/$l2));
 warn "Mov $i1, $i2, $k ($l1, $l2) ==> $q\n";
-  return WikiTrust::Tuple->new(-$chunk, $k, $q);
-}
-
-# Create a hash table indexed by word,
-# which gives the list of locations where
-# the word appears in the input list.
-sub make_index {
-  my ($this, $words) = @_;
-  my $idx = {};
-  for (my $i = 0; $i < @$words; $i++) {
-    my $w = $words->[$i];
-    $idx->{$w} = [] if !exists $idx->{$w};
-    push @{ $idx->{$w} }, $i;
-  }
-  return $idx;
+  return (-$chunk*10000) + $k + $q;
 }
 
 sub compute_heap {
@@ -63,85 +30,82 @@ sub compute_heap {
   my $l1 = scalar(@$w1);
   my $l2 = scalar(@$w2);
   my $idx = $this->make_index($w1);
+  my %matched;
   for (my $i2 = 0; $i2 < @$w2; $i2++) {
     # For every unmatched word in w2,
     # find the list of matches in w1
     next if $this->{matched_dst}->[$i2];
     my $matches = $idx->{ $w2->[$i2] } || [];
     foreach my $i1 (@$matches) {
-      # for each match, compute all the longer strings
-      # that match starting at this point.
+      # Was this position already part of an earlier match?
+      # If so, then there's already a longer match in the system.
+      next if $matched{$i1,$i2};
+      # for each match, compute the longest string
+      # starting at this point.
       # Note that we already know $k == 0 is a match
       my $k = 0;
       do {
-	my $q = $this->{quality}->($chunk, $k+1, $i1, $l1, $i2, $l2);
-	$this->{heap}->add(
-	    WikiTrust::Tuple->new($chunk, $k+1, $i1, $i2),
-	    $q);
+        $matched{$i1+$k,$i2+$k} = 1;
 	$k++;
       } while ($i1 + $k < $l1 && $i2 + $k < $l2
 	  && ($w1->[$i1+$k] eq $w2->[$i2+$k]));
+      # $k is now the length of the match
+      my $q = $this->{quality}->($chunk, $k, $i1, $l1, $i2, $l2);
+warn "Adding $i1, $i2, $k ==> $q\n";
+      $this->{heap}->add(
+	  WikiTrust::Tuple->new($chunk, $k, $i1, $i2),
+	  $q);
     }
   }
-}
-
-# return a region of [start,end) which
-# has $test->() false for the whole interval
-sub scan_and_test {
-  my ($this, $len, $test) = @_;
-  return undef if $len <= 0;
-  my $start = 0;
-  while ($start < $len && $test->($start)) { $start++; }
-  return undef if $start >= $len;
-  my $end = $start+1;
-  while ($end < $len && !$test->($end)) { $end++; }
-  return ($start, $end);
 }
 
 sub process_best_matches {
   my ($this, $w1, $matched1) = @_;
 
+  my $l1 = @$w1;
+  my $l2 = @{ $this->{dst} };
+
   my @editScript;
 
   while (my $m = $this->{heap}->pop()) {
-    $this->{matchId}++;
     my ($chunk, $k, $i1, $i2) = @$m;
     # have any of these words already been matched?
-    while (1) {
-      my ($start, $end) = $this->scan_and_test($k,
+    my ($start, $end) = $this->scan_and_test($k,
 	  sub { $matched1->[$i1+$_[0]]
 	  ||  $this->{matched_dst}->[$i2+$_[0]] });
-      last if !defined $start;
-      if ($end - $start == $k) {
-	# the whole sequence is still unmatched
-	push @editScript, WikiTrust::Tuple->new('Mov', $i1, $i2, $k);
-	for (my $i = $start; $i < $end; $i++) {
-	  $matched1->[$i1+$i] = $this->{matchId}
-	    if !ALLOW_MULTI_MATCH;
-	  $this->{matched_dst}->[$i2+$i] = $this->{matchId};
-	}
+    next if !defined $start;	# whole thing is matched
+    if ($end - $start == $k) {
+      # the whole sequence is still unmatched
+      push @editScript, WikiTrust::Tuple->new('Mov', $i1, $i2, $k);
+      # and mark it matched
+      $this->{matchId}++;
+      for (my $i = $start; $i < $end; $i++) {
+	$matched1->[$i1+$i] = $this->{matchId};	# TODO: multimatch?
+	$this->{matched_dst}->[$i2+$i] = $this->{matchId};
       }
-      $i1 += $end;
-      $i2 += $end;
-      $k -= $end;
+    } else {
+	# found an unmatched subregion, but it's
+	# less than the size we were hoping for.
+	# So we must add the smaller matches back
+	# into the heap...  starting with the match
+	# we just found.
+	do {
+	  my $newK = $end - $start;
+	  my $q = $this->{quality}->($chunk, $newK, $i1, $l1, $i2, $l2);
+warn "Split into $i1, $i2, $newK ==> $q\n";
+	  $this->{heap}->add(
+	      WikiTrust::Tuple->new($chunk, $newK, $i1, $i2),
+	      $q);
+	  $i1 += $end;
+	  $i2 += $end;
+	  $k -= $end;
+	  ($start, $end) = $this->scan_and_test($k,
+	      sub { $matched1->[$i1+$_[0]]
+	      ||  $this->{matched_dst}->[$i2+$_[0]] });
+	} while (defined $start);
     }
   }
   return \@editScript;
-}
-
-sub cover_unmatched {
-  my ($this, $matched, $l, $editScript, $mode) = @_;
-
-  my $i = 0;
-  while (1) {
-    my ($start, $end) = $this->scan_and_test($l,
-	sub { $matched->[$i+$_[0]] });
-    last if !defined $start;
-    push @$editScript,
-	 WikiTrust::Tuple->new($mode, $i+$start, $end-$start);
-    $i += $end;
-    $l -= $end;
-  }
 }
 
 # Compute the edit script to transform src into dst.
