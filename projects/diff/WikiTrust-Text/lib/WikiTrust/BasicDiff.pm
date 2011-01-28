@@ -3,6 +3,7 @@ use strict;
 use warnings;
 
 use constant ALLOW_MULTI_MATCH => 0;
+use constant DEBUG => 0;
 
 use WikiTrust::Tuple;
 use Heap::Priority;
@@ -32,14 +33,19 @@ sub parse {
 }
 sub target {
   my ($this, $str) = @_;
-  $this->{dst} = $this->parse($str);
+  if (ref $str) {
+    $this->{dst} = $str;
+  } else {
+    $this->{dst} = $this->parse($str);
+  }
+  return $this->{dst};
 }
 
 sub match_quality {
   my ($chunk, $k, $i1, $l1, $i2, $l2) = @_;
   my $q = $k / min($l2, $l1) - 0.3
     * abs(($i1/$l1) - ($i2/$l2));
-warn "Mov $i1, $i2, $k ($l1, $l2) ==> $q\n";
+warn "Mov $i1, $i2, $k ($l1, $l2) ==> $q\n" if DEBUG;
   return WikiTrust::Tuple->new(-$chunk, $k, $q);
 }
 

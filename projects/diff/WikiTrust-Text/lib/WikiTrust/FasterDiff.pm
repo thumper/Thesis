@@ -2,6 +2,8 @@ package WikiTrust::FasterDiff;
 use strict;
 use warnings;
 
+use constant DEBUG => 0;
+
 use WikiTrust::BasicDiff;
 
 our @ISA = qw(WikiTrust::BasicDiff);
@@ -20,7 +22,7 @@ sub match_quality {
   my ($chunk, $k, $i1, $l1, $i2, $l2) = @_;
   my $q = $k / min($l2, $l1) - 0.3
     * abs(($i1/$l1) - ($i2/$l2));
-warn "Mov $i1, $i2, $k ($l1, $l2) ==> $q\n";
+warn "Mov $i1, $i2, $k ($l1, $l2) ==> $q\n" if DEBUG;
   return (-$chunk*10000) + $k + $q;
 }
 
@@ -51,7 +53,7 @@ sub compute_heap {
 	  && ($w1->[$i1+$k] eq $w2->[$i2+$k]));
       # $k is now the length of the match
       my $q = $this->{quality}->($chunk, $k, $i1, $l1, $i2, $l2);
-warn "Adding $i1, $i2, $k ==> $q\n";
+warn "Adding $i1, $i2, $k ==> $q\n" if DEBUG;
       $this->{heap}->add(
 	  WikiTrust::Tuple->new($chunk, $k, $i1, $i2),
 	  $q);
@@ -92,7 +94,7 @@ sub process_best_matches {
 	do {
 	  my $newK = $end - $start;
 	  my $q = $this->{quality}->($chunk, $newK, $i1, $l1, $i2, $l2);
-warn "Split into $i1, $i2, $newK ==> $q\n";
+warn "Split into $i1, $i2, $newK ==> $q\n" if DEBUG;
 	  $this->{heap}->add(
 	      WikiTrust::Tuple->new($chunk, $newK, $i1, $i2),
 	      $q);
