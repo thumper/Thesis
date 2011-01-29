@@ -62,7 +62,7 @@ warn "Adding $i1, $i2, $k ==> $q\n" if DEBUG;
 }
 
 sub process_best_matches {
-  my ($this, $w1, $matched1) = @_;
+  my ($this, $multimatch, $w1, $matched1) = @_;
 
   my $l1 = @$w1;
   my $l2 = @{ $this->{dst} };
@@ -73,16 +73,17 @@ sub process_best_matches {
     my ($chunk, $k, $i1, $i2) = @$m;
     # have any of these words already been matched?
     my ($start, $end) = $this->scan_and_test($k,
-	  sub { $matched1->[$i1+$_[0]]
-	  ||  $this->{matched_dst}->[$i2+$_[0]] });
+	sub { $matched1->[$i1+$_[0]]
+	    ||  $this->{matched_dst}->[$i2+$_[0]] });
     next if !defined $start;	# whole thing is matched
     if ($end - $start == $k) {
       # the whole sequence is still unmatched
-      push @editScript, WikiTrust::Tuple->new('Mov', $i1, $i2, $k);
+      push @editScript, WikiTrust::Tuple->new('Mov', $chunk, $i1, $i2, $k);
       # and mark it matched
       $this->{matchId}++;
       for (my $i = $start; $i < $end; $i++) {
-	$matched1->[$i1+$i] = $this->{matchId};	# TODO: multimatch?
+	$matched1->[$i1+$i] = $this->{matchId}
+	    if !$multimatch;
 	$this->{matched_dst}->[$i2+$i] = $this->{matchId};
       }
     } else {
@@ -116,7 +117,7 @@ sub edit_diff {
   $this->init();
   $this->compute_heap(0, $src);
   my (@matched1);
-  my $editScript = $this->process_best_matches($src, \@matched1);
+  my $editScript = $this->process_best_matches(0, $src, \@matched1);
   $this->cover_unmatched(\@matched1, scalar(@$src),
       $editScript, 'Del');
   $this->cover_unmatched($this->{matched_dst}, scalar(@{ $this->{dst} }),

@@ -2,12 +2,14 @@ package WikiTrust::BasicDiff;
 use strict;
 use warnings;
 
-use constant ALLOW_MULTI_MATCH => 0;
 use constant DEBUG => 0;
 
 use WikiTrust::Tuple;
 use Heap::Priority;
 use List::Util qw(min);
+use Carp;
+
+our $VERSION = '0.01';
 
 sub new {
   my $class = shift @_;
@@ -28,9 +30,11 @@ sub init {
 
 sub parse {
   my ($this, $str) = @_;
+  confess "No string defined" if !defined $str;
   my @words = split(/\s+/, $str);
   return \@words;
 }
+
 sub target {
   my ($this, $str) = @_;
   if (ref $str) {
@@ -105,7 +109,7 @@ sub scan_and_test {
 }
 
 sub process_best_matches {
-  my ($this, $w1, $matched1) = @_;
+  my ($this, $multimatch, $w1, $matched1) = @_;
 
   my @editScript;
 
@@ -116,14 +120,14 @@ sub process_best_matches {
     while (1) {
       my ($start, $end) = $this->scan_and_test($k,
 	  sub { $matched1->[$i1+$_[0]]
-	  ||  $this->{matched_dst}->[$i2+$_[0]] });
+	    ||  $this->{matched_dst}->[$i2+$_[0]] });
       last if !defined $start;
       if ($end - $start == $k) {
 	# the whole sequence is still unmatched
-	push @editScript, WikiTrust::Tuple->new('Mov', $i1, $i2, $k);
+	push @editScript, WikiTrust::Tuple->new('Mov', $chunk, $i1, $i2, $k);
 	for (my $i = $start; $i < $end; $i++) {
 	  $matched1->[$i1+$i] = $this->{matchId}
-	    if !ALLOW_MULTI_MATCH;
+	    if !$multimatch;
 	  $this->{matched_dst}->[$i2+$i] = $this->{matchId};
 	}
       }
@@ -156,7 +160,7 @@ sub edit_diff {
   $this->init();
   $this->compute_heap(0, $src);
   my (@matched1);
-  my $editScript = $this->process_best_matches($src, \@matched1);
+  my $editScript = $this->process_best_matches(0, $src, \@matched1);
   $this->cover_unmatched(\@matched1, scalar(@$src),
       $editScript, 'Del');
   $this->cover_unmatched($this->{matched_dst}, scalar(@{ $this->{dst} }),

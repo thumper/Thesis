@@ -4,9 +4,9 @@ use ExtUtils::MakeMaker;
 # the contents of the Makefile that is written.
 WriteMakefile(
     NAME              => 'WikiTrust-Text',
-    VERSION_FROM      => 'lib/WikiTrust/Diff.pm', # finds $VERSION
+    VERSION_FROM      => 'lib/WikiTrust/BasicDiff.pm', # finds $VERSION
     PREREQ_PM         => {}, # e.g., Module::Name => 1.1
     ($] >= 5.005 ?     ## Add these new keywords supported since 5.005
-      (ABSTRACT_FROM  => 'lib/WikiTrust/Diff.pm', # retrieve abstract from module
+      (ABSTRACT_FROM  => 'lib/WikiTrust/BasicDiff.pm', # retrieve abstract from module
        AUTHOR         => 'Bo Adler <thumper@alumni.caltech.edu>') : ()),
 );
