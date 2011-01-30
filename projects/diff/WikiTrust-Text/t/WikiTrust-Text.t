@@ -5,9 +5,10 @@
 
 # change 'tests => 1' to 'tests => last_test_to_print';
 
-use Test::More tests => 4;
+use Test::More tests => 5;
 BEGIN { use_ok('WikiTrust::Tuple') };
 BEGIN { use_ok('WikiTrust::BasicDiff') };
 BEGIN { use_ok('WikiTrust::FasterDiff') };
-BEGIN { use_ok('WikiTrust::TextTracking') };
+BEGIN { use_ok('WikiTrust::BasicTextTracking') };
+BEGIN { use_ok('WikiTrust::FasterTextTracking') };
 

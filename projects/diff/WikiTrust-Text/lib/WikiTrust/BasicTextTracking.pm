@@ -1,4 +1,4 @@
-package WikiTrust::TextTracking;
+package WikiTrust::BasicTextTracking;
 use strict;
 use warnings;
 
@@ -20,25 +20,15 @@ sub parse {
   return \@words;
 }
 
-# Compute the edit script to transform src into dst.
-# But we only care about mov operations
-sub edit_diff {
-  my ($this, $chunk, $src) = @_;
-  $this->build_heap($chunk, $src);
-  my (@matched1);
-  my $editScript = $this->process_best_matches(1, $src, \@matched1);
-  return $editScript;
-}
-
 sub fix_author {
-  my ($this, $script, $src) = @_;
+  my ($this, $script, $prevrevs) = @_;
   foreach my $match (@$script) {
     my $mode = shift @$match;
     confess "Bad mode: $mode" if $mode ne 'Mov';
     my ($chunk, $i1, $i2, $len) = @$match;
     for (my $i = 0; $i < $len; $i++) {
       $this->{dst}->[$i2+$i]->[1] =
-	$src->[$i1+$i]->[1];
+	$prevrevs->[$chunk]->[$i1+$i]->[1];
     }
   }
 }
@@ -47,13 +37,22 @@ sub track_text {
   my ($this, $prevrevs) = @_;
 
   $this->init();
-  # Since we prefer chunks with more liveness, we do
-  # matches in a serial fashion
+  my $chunk_matches = [];
+  # Instead of matching against a single previous rev,
+  # we need to build a heap of matching chunks for
+  # all the previous revs.
   for (my $chunk = 0; $chunk < @$prevrevs; $chunk++) {
+    $chunk_matches->[$chunk] = [];
     my $src = $prevrevs->[$chunk];
-    my $script = $this->edit_diff($chunk, $src);
-    $this->fix_author($script, $src);
+    $this->build_heap($chunk, $src);
   }
+  # And then find the best matches
+
+  my $editScript = $this->process_best_matches(1, $prevrevs,
+    $chunk_matches);
+  # And copy the proper authors from the prev revs
+  $this->fix_author($editScript, $prevrevs);
+
   return $this->{dst};
 }
 

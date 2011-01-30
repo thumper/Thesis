@@ -140,15 +140,17 @@ sub scan_and_test {
 }
 
 sub process_best_matches {
-  my ($this, $multimatch, $w1, $matched1) = @_;
+  my ($this, $multimatch, $chunks, $chunkmatch) = @_;
 
-  my $l1 = @$w1;
   my $l2 = @{ $this->{dst} };
 
   my @editScript;
 
   while (my $m = $this->{heap}->pop()) {
     my ($chunk, $k, $i1, $i2) = @$m;
+    my $w1 = $chunks->[$chunk];
+    my $matched1 = $chunkmatch->[$chunk];
+    my $l1 = @$w1;
     # have any of these words already been matched?
     my ($start, $end) = $this->scan_and_test($k,
 	sub { $matched1->[$i1+$_[0]]
@@ -156,8 +158,7 @@ sub process_best_matches {
     next if !defined $start;	# whole thing is matched
     if ($end - $start == $k) {
       # the whole sequence is still unmatched
-      push @editScript,
-	WikiTrust::Tuple->new('Mov', $chunk, $i1, $i2, $k);
+      push @editScript, WikiTrust::Tuple->new('Mov', $chunk, $i1, $i2, $k);
       # and mark it matched
       $this->{matchId}++;
       for (my $i = $start; $i < $end; $i++) {
@@ -194,11 +195,11 @@ sub edit_diff {
 
   $this->init();
   $this->build_heap(0, $src);
-  my (@matched1);
-  my $editScript = $this->process_best_matches(0, $src,
-      \@matched1);
-  $this->cover_unmatched(\@matched1, scalar(@$src),
-      $editScript, 'Del');
+  my $matched_chunks = [ [] ];
+  my $editScript = $this->process_best_matches(0, [$src],
+      $matched_chunks);
+  $this->cover_unmatched($matched_chunks->[0],
+      scalar(@$src), $editScript, 'Del');
   $this->cover_unmatched($this->{matched_dst},
       scalar(@{ $this->{dst} }),
       $editScript, 'Ins');

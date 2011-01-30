@@ -19,7 +19,7 @@ sub build_heap {
   my $src = shift @_;
   $src = $this->parse($src, @_) if !ref $src;
   my %matched;
-  $this->compute_heap(0, $src,
+  $this->compute_heap($chunk, $src,
     sub {
       my ($chunk, $i1, $i2) = @_;
       return $matched{$i1, $i2};
@@ -35,6 +35,7 @@ sub build_heap {
       $this->{heap}->add(
 	WikiTrust::Tuple->new($chunk, $k, $i1, $i2),
 	$q);
+      warn "Adding Mov $chunk, $i1, $i2, $k\n" if DEBUG;
     }
   );
 }
@@ -45,15 +46,17 @@ sub build_heap {
 # to the heap.  For this to work properly, we must have that
 # the quality measure puts longer matches before shorter matches.
 sub process_best_matches {
-  my ($this, $multimatch, $w1, $matched1) = @_;
+  my ($this, $multimatch, $chunks, $chunkmatch) = @_;
 
-  my $l1 = @$w1;
   my $l2 = @{ $this->{dst} };
 
   my @editScript;
 
   while (my $m = $this->{heap}->pop()) {
     my ($chunk, $k, $i1, $i2) = @$m;
+    my $w1 = $chunks->[$chunk];
+    my $matched1 = $chunkmatch->[$chunk];
+    my $l1 = @$w1;
     # have any of these words already been matched?
     my ($start, $end) = $this->scan_and_test($k,
 	sub { $matched1->[$i1+$_[0]]
