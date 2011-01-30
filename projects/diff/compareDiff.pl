@@ -31,7 +31,7 @@ foreach my $page (@{ $ref->{page} }) {
       my ($s1, $s2);
       timethis(1, sub { $s2 = $d2->edit_diff($prevwords); }, "FasterDiff");
       timethis(1, sub { $s1 = $d1->edit_diff($prevwords); }, "BasicDiff");
-      if (compareScripts($s1, $s2)) {
+      if (compareResults($s1, $s2)) {
 	print "revid $revid  :: SAME\n";
       } else {
 	print "revid $revid  :: DIFFERENT\n";
@@ -49,8 +49,8 @@ foreach my $page (@{ $ref->{page} }) {
   }
 }
 
-sub compareScripts {
-  my ($revid, $s1, $s2) = @_;
+sub compareResults {
+  my ($s1, $s2) = @_;
 
   return 0 if (@$s1 != @$s2);
   for (my $i = 0; $i < @$s1; $i++) {
