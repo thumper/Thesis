@@ -1,0 +1,2 @@
+verifyDiff.pl - used to compare BasicDiff and FasterDiff to make
+	sure that the edit scripts returned match up.
