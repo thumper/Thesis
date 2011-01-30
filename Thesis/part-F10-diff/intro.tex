@@ -98,7 +98,12 @@ and deletions is too simple, as the author of the italicized
 text would receive credit for words that are not his own.
 
 
-\mynote{Fill in, what is our proposal?}
+We present a method for computing text authorship based on
+first computing a difference between previous revisions and
+the target revision.
+Using a greedy algorithm for computing the difference, we are
+able to efficiently find matches of old text and propagate authorship
+information to the target revision.
 
 
 Historians of computer science will note a relation
@@ -110,17 +115,5 @@ We propose automatically detecting attribution
 (equivalently, transclusions of portions from earlier revisions)
 in the context of a revisioned document edited
 by multiple authors.
-
-
-\mynote{Move to later section}
-These examples highlight some guiding principles of author attribution that
-we choose to adopt:
-\begin{enumerate}
-\item Common words (\eg, ``to,'' ``on,'' ``of the'') shouldn't be
-    ascribed to a single author.
-\item The user who initially inserted the text is the original author.
-\item Added text should be compared against old revisions, in case it is
-being reinstated from the past revision.
-\end{enumerate}
 
 

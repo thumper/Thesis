@@ -77,10 +77,8 @@ sub make_index {
 }
 
 sub compute_heap {
-  my ($this, $chunk, $w1, $skipmatch, $eachk, $maxk) = @_;
-  confess "Need skipmatch" if !defined $skipmatch;
-  confess "Need eachk" if !defined $eachk;
-  confess "Need maxk" if !defined $maxk;
+  my ($this, $chunk, $w1,
+    $skipmatch, $eachk, $maxk) = @_;
   my $w2 = $this->{dst};
   my $l1 = scalar(@$w1);
   my $l2 = scalar(@$w2);
@@ -120,7 +118,8 @@ sub build_heap {
     sub { return 0; },    # never skip match
     sub {
       my ($chunk, $i1, $l1, $i2, $l2, $k) = @_;
-      my $q = $this->{quality}->($chunk, $k, $i1, $l1, $i2, $l2);
+      my $q = $this->{quality}->($chunk, $k,
+	$i1, $l1, $i2, $l2);
       $this->{heap}->add(
 	WikiTrust::Tuple->new($chunk, $k, $i1, $i2),
 	$q);
@@ -142,15 +141,17 @@ sub scan_and_test {
 }
 
 sub process_best_matches {
-  my ($this, $multimatch, $w1, $matched1) = @_;
+  my ($this, $multimatch, $chunks, $chunkmatch) = @_;
 
-  my $l1 = @$w1;
   my $l2 = @{ $this->{dst} };
 
   my @editScript;
 
   while (my $m = $this->{heap}->pop()) {
     my ($chunk, $k, $i1, $i2) = @$m;
+    my $w1 = $chunks->[$chunk];
+    my $matched1 = $chunkmatch->[$chunk];
+    my $l1 = @$w1;
     # have any of these words already been matched?
     my ($start, $end) = $this->scan_and_test($k,
 	sub { $matched1->[$i1+$_[0]]
@@ -180,7 +181,7 @@ sub cover_unmatched {
 	sub { $matched->[$i+$_[0]] });
     last if !defined $start;
     push @$editScript,
-	 WikiTrust::Tuple->new($mode, $i+$start, $end-$start);
+      WikiTrust::Tuple->new($mode, $i+$start, $end-$start);
     $i += $end;
     $l -= $end;
   }
@@ -195,52 +196,16 @@ sub edit_diff {
 
   $this->init();
   $this->build_heap(0, $src);
-  my (@matched1);
-  my $editScript = $this->process_best_matches(0, $src, \@matched1);
-  $this->cover_unmatched(\@matched1, scalar(@$src),
-      $editScript, 'Del');
-  $this->cover_unmatched($this->{matched_dst}, scalar(@{ $this->{dst} }),
+  my $matched_chunks = [ [] ];
+  my $editScript = $this->process_best_matches(0, [$src],
+      $matched_chunks);
+  $this->cover_unmatched($matched_chunks->[0],
+      scalar(@$src), $editScript, 'Del');
+  $this->cover_unmatched($this->{matched_dst},
+      scalar(@{ $this->{dst} }),
       $editScript, 'Ins');
   return $editScript;
 }
 
 1;
-__END__
-# Below is stub documentation for your module. You'd better edit it!
-
-=head1 NAME
-
-WikiTrust::Diff - Perl extension for text differencing
-
-=head1 SYNOPSIS
-
-  use WikiTrust::BasicDiff;
-  my $diff = WikiTrust::BasicDiff->new();
-  $diff->target("The final string.");
-  my $src = "The initial string.";
-  my $script = $diff->edit_diff($src);
-
-=head1 DESCRIPTION
-
-A module to demonstrate the basic differencing algorithm
-used in the WikiTrust project.
-
-=head1 SEE ALSO
-
-B<WikiTrust::FasterDiff>, B<WikiTrust::TextTracking>
-
-=head1 AUTHOR
-
-Bo Adler, E<lt>thumper@alumni.caltech.eduE<gt>
-
-=head1 COPYRIGHT AND LICENSE
-
-Copyright (C) 2011 by Bo Adler
-
-This library is free software; you can redistribute it and/or modify
-it under the same terms as Perl itself, either Perl version 5.10.0 or,
-at your option, any later version of Perl 5 you may have available.
-
-
-=cut
 \end{lstlisting}

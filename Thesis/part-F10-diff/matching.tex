@@ -33,12 +33,11 @@ when determining how text is reorganized.
     text is given the same author.  This property becomes important
     when computing the edit distance from one version to another,
     where text in the same relative position does not increase the
-    edit distance.}
+    edit distance.  If the difference reflected block moves that
+    crossed over each other, then there would be a positive edit
+    distance contributed by the swapping of equivalent text.}
 \item We don't want to over-reward the first author to use common
     words (\eg ``the,'' ``of'').
-    To simplify our algorithm, we ignore matches that are less than
-    four words in length.\footnote{A better solution would use
-    $n$-gram frequencies to decide when a match was suitable.}
 \item When text is deleted in one version and then restored in a later
     version, we prefer the original author.
     This prevents edit wars or vandalism from disrupting the
@@ -63,85 +62,85 @@ we have outlined above, generally optimizing for the size of the edit
 script or for the longest matches.
 To achieve our goals, we develop a variation of
 standard greedy algorithms (\eg, \cite{Hirschberg1977,Myers1986,Burns1997})
-by generalizing the greedy step; instead of selecting a match
+by modifying the greedy step; instead of selecting a match
 based on length, we use a notion of \intro{match quality}.
 
-\begin{comment}
+The basic procedure for the differencing step is:
+\begin{enumerate}
+\item Compute all possible matches (of every length).
+\item For each match, compute a quality score and insert into
+    a priority queue, so that the highest quality matches will
+    be drawn first.
+\item Draw a match out of the priority queue.
+    If any part of the match has already been previously matched,
+    discard this match.
+    Repeat this step until the priority queue is empty.
+\end{enumerate}
+Appendix~\ref{app:basicdiffsrc} lists a
+\textbf{perl} language implementation of this basic algorithm.
 
-\begin{algorithm}
-%\DontPrintSemicolon
-\KwData{Two lists of words, $a$ and $b$.}
-\KwResult{$\txtauthor{\version{n}, w_j}$,
-	for all $w_j \in \words{\version{n}}$.
-}
-\Begin{
-    $idx \leftarrow $ new Hashtable \;
-    \For{$i \leftarrow 1$ \KwTo length$(b)$ }{
-	$ idx[ b[i] ] \leftarrow i $\;
-    }
-    $h \leftarrow $ new PriorityHeap \;
-    \For{$i \leftarrow 1$ \KwTo $ \left| \words{\version{n}} \right| $ }{
-	$ m \leftarrow \match{\version{n}, i, \prevrevs{\version{n}}} $ \;
-	\eIf{$m = \emptyset$}{
-	    $ \txtauthor{\version{n}, i} = \revauthor{\version{n}} $ \;
-	}{
-	    $ \txtauthor{\version{n}, i} = \txtauthor{m} $ \;
-	}
-    }
-}
-\caption{Algorithm for tracking text authorship.}
-\end{algorithm}
+The key to matches meeting the list of criteria we have
+defined above is in the quality function.\footnote{Multiple
+matching of source blocks cannot be handled by the quality
+function.  The source in Appendix~\ref{app:basicdiffsrc}
+enables this feature by a flag.}
+To prefer matches where the blocks are in similar positions,
+we can select a quality function which compares the relative
+positions of a match.
+Suppose that a match of length $k$ occurs at $i_1$ in the source
+string having length $l_1$, matching the same sequence of length $k$ at
+position $i_2$ in the target string having length $l_2$,
+then we can define a quality to preserve the
+ordering of blocks like so:
+\begin{equation}
+q_{block} = -\left| \frac{i_1 + k/2}{l_1} - \frac{i_2 + k/2}{l_2} \right|
+\end{equation}
+This formula computes the midpoint of each match and compares
+the relative positions within the full strings; $q_{block}$ will be
+zero when the matches are in the same relative position,
+and increasing as the blocks move away from each other.
 
-\end{comment}
+More important than matching blocks not crossing each other,
+we prefer longer matches of text.
+To achieve this, we use a tuple to represent the quality.
+Given that a match has a length of $k$, we can represent preferring
+longer matches over non-crossing blocks as $(k, q_{block})$.
 
-To define match quality, we let $m_{i+1}$ be the length of $v_{i+1}$,
-and we let $m'$ be the length of the chunk of $C_i$ where the match is
-found (all length and indices are measured in number of words).
-Let $l$ be the length of the match, and assume that the match begins
-at word $k' \leq m'$ in the chunk, and at word $k_{i+1} \leq m_{i+1}$
-in $v_{i+1}$.
-We define match quality as follows:
-%
-\begin{itemize}
-\item If the match occurs between $v_{i+1}$ and the live chunk, then
-the quality is:
-\mynote{fix}
-%\[
-%  \frac{l}{\min(m_{i+1},m')} - 0.3 \cdot \left|
-%  \frac{k'}{m'} - \frac{k_{i+1}}{m_{i+1}} \right| \eqpun .
-%\]
-\item If the match occurs between $v_{i+1}$ and a dead chunk, then the
-quality is~0 if $l < 4$, and is
-$
-  {l}/{\min(m_{i+1},m')} - 0.4
-$ otherwise.
-\end{itemize}
-%
-Thus, the higher the quality of a match, the longer the match is.
-If the match is within the live chunk, a match has higher quality if the
-text appears in the same relative position in $v_{i+1}$ and in $v_i$.
-Matches with dead chunks have somewhat lower quality than matches with
-the live chunk: this corresponds to the fact that, if some text can be
-traced both to the previous version (the live chunk), and to some
-text that was previously deleted, the most likely match is with the
-text of the previous version.
-Moreover, matches with dead chunks have to be at least of length four;
-this avoids misclassifying common words in new text as re-introductions
-of previously-deleted text.
-The coefficients in the above definition of quality have been
-determined experimentally, comparing human judgements of authorship to
-the algorithmically computed ones for many pages of the Italian
-Wikipedia.
-% The text survival algorithm we developed is efficient: the main
-% bottleneck, when computing text authorship, is not the running time of
-% the algorithm, but rather, the time required to retrieve all versions
-% of a page from the MySQL database in which Wikipedia pages are
-% stored.\footnote{The measurement was done on a PC with AMD Athlon~64
-% 3000+ CPU, two hard drives configured in RAID~1 (mirroring), and 1~GB
-% of memory.}
+So far, this discussion has applied equally to the task of
+computing a difference between two strings.
+In the problem of computing text authorship, we actually
+need to compute matches with multiple previous revisions,
+to account for text which was deleted and then later restored.
+We describe these previous revisions as \intro{chunks} of text,
+and number them so that chunk~0 is the most recent revision.
+We prefer matches with more recent revisions than with older
+revisions; if we let $c$ be the chunk that a match comes from,
+one possible quality tuple is $(-c, k, q_{block})$.
+There are other possible quality tuples (\eg $(k, -c, q_{block})$,
+if the absolute longest match is preferred), and this is
+an area of potential further research to understand the ramifications
+of choosing different quality functions.
 
-See the sample \textbf{perl} language implementation
-in Appendix~\ref{app:diffsrc}.
+We also prefer not to reward authors that first use very common words
+or expressions.
+The ideal solution would use language analysis to determine
+$n$-gram frequencies and compute
+a score (\eg tf-idf \mynote{Need citation}) for words and phrases.
+To reduce our computation requirements, we chose the simpler idea
+of checking the length of the match: if a match is less than three
+words, then we reject the match.
+
+Once we have an edit script which defines how text evolves from
+previous revisions to the target (current) revision, we can then propagate
+authorship from the previous revisions to the target.
+A simple procedure for this would be:
+\begin{enumerate}
+\item Assign authorship of all words in the target to the current author.
+\item Compute the edit script describing the text evolution from
+    previous revisions.
+\item For each block move in the edit script, extract the authorship
+    from the source chunk, and propagate it to the target.
+\end{enumerate}
 
 \subsection{Optimizations}
 
@@ -149,7 +148,45 @@ The Wikipedia is a huge corpus of documents, and processing speed
 is a crucial factor in doing timely analysis.
 There are a few steps we can take to reduce the size of the computation.
 
-A very simple step to take is to reduce the size of the list of
+The first optimization is in computing the possible
+matches in the differencing algorithm.
+Instead of computing every possible match, we can compute
+only the longest matches initially.
+As matches are drawn from the priority queue, if we find
+that a match has been previously partially matched, we can
+compute the residual match at that time and insert the residual
+into the priority queue.
+This makes the assumption that the quality function always
+prefers longer matches over shorter matches.
+Appendix~\ref{app:fasterdiffsrc} demonstrates this
+modification, with some representative runtimes shown
+in Table~\ref{tab:comparediff}.
+
+
+\begin{table}
+\begin{center}
+\begin{tabular}{| c | c || c || c | c |}
+\hline
+Source & Target & Num & WikiTrust & WikiTrust \\
+Rev & Rev & Words & BasicDiff & FasterDiff \\
+\hline
+8741260 & 12175065 & 641 & 12912.27s & 7.47s \\
+12175065 & 14057051 & 641 & 47.29s & 1.15s \\
+14057051 & 17039312 & 641 & 107.47s & 1.06s \\
+17039312 & 20060015 & 641 & 114.30s & 1.04s \\
+20060015 & 20551181 & 660 & 77580.38s & 15.51s \\
+\hline
+\end{tabular}
+\end{center}
+\caption{Comparing the performance of \textbf{WikiTrust::BasicDiff}
+    with \textbf{WikiTrust::FasterDiff}.}
+\label{tab:comparediff}
+\end{table}
+
+
+
+In computing the text authorship,
+a very simple step to take is to reduce the size of the list of
 previous revisions given by \prevrevs{\version{i}}.
 As defined in Section~\ref{sec:diff-tracking}, \prevrevs{\version{i}} 
 is the ordered list of all previous revisions,
@@ -167,6 +204,46 @@ We arbitrarily limit the list of previous revisions to ten:
 but observe that better selections can be made, as described
 in~\cite{Chatterjee2008}.
 
+We can further speed up tracking authorship by reducing the number
+of potential matches, similar to the optimization for the differencing
+algorithm.
+If we assume that the quality function always prefers matches from
+more recent revisions to matches from older revisions
+(as is the case with $(-c, k, q_{block})$ as a quality function),
+then we can construct the edit script piecewise by differencing
+only a single revision at a time.
+When looking at older chunks, the fact that the target has already
+been partially matched will reject many potential matches.
+Appendix~\ref{app:basictextsrc} shows an implementation of the
+basic text tracking algorithm, and Appendix~\ref{app:fastertextsrc}
+shows the optimization; Table~\ref{tab:comparetext} shows representative
+running times.
+
+\begin{table}
+\begin{center}
+\begin{tabular}{| c | c || c || c | c |}
+\hline
+Target & Previous & WikiTrust & WikiTrust \\
+Rev & Revs & BasicTextTracking & FasterTextTracking \\
+\hline
+12175065 & 1 & 12.50s & 13.93s \\
+14057051 & 2 & 36.52s & 2.49s \\
+17039312 & 3 & 68.79s & 3.61s \\
+20060015 & 4 & 144.42s & 3.14s \\
+20551181 & 5 & 933.44s & 21.50s \\
+\ldots & \ldots & \ldots & \ldots \\
+24358877 & 10 & 5064.09s & 26.94s \\
+25306944 & 10 & 6717.15s & 33.74s \\
+34009105 & 10 & 6480.42s & 3.14s \\
+\hline
+\end{tabular}
+\end{center}
+\caption{Comparing the performance of \textbf{WikiTrust::BasicTextTracking}
+    with \textbf{WikiTrust::FasterTextTracking}.}
+\label{tab:comparetext}
+\end{table}
+
+
 Another optimization is again with respect to the handling of the
 previous revisions.
 In defining the matching algorithm, we give preference to more recent
@@ -181,7 +258,6 @@ The size of deleted text in any revision is typically much smaller
 than the size of the live text, so our second optimization is
 to check for matches against the deleted text rather than the full
 live text of previous revisions.
-Note that if we're searching for longest match, checking deleted
-text isn't the best thing --- the match might be longer if we
-had the full text of a previous revision.
-\mynote{Need to say more?}
+Note that this can change the size of matches that are found,
+so that the quality function might not select matches in a preferred way.
+
