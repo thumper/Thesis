@@ -10,6 +10,9 @@ use Carp;
 
 our @ISA = qw(WikiTrust::FasterDiff);
 
+# When we parse a string into words, we actually want
+# to tag each word with a revid.  Later, we will assign
+# proper revids to each word.
 sub parse {
   my ($this, $str, $revid) = @_;
   my $words = $this->SUPER::parse($str);
@@ -17,21 +20,11 @@ sub parse {
   return \@words;
 }
 
-sub target {
-  my ($this, $str, $revid) = @_;
-  if (ref $str) {
-    $this->{dst} = $str;
-  } else {
-    $this->{dst} = $this->parse($str, $revid);
-  }
-  return $this->{dst};
-}
-
 # Compute the edit script to transform src into dst.
 # But we only care about mov operations
 sub edit_diff {
   my ($this, $chunk, $src) = @_;
-  $this->compute_heap($chunk, $src);
+  $this->build_heap($chunk, $src);
   my (@matched1);
   my $editScript = $this->process_best_matches(1, $src, \@matched1);
   return $editScript;
@@ -66,54 +59,3 @@ sub track_text {
 
 
 1;
-__END__
-# Below is stub documentation for your module. You'd better edit it!
-
-=head1 NAME
-
-WikiTrust::Diff - Perl extension for text differencing
-
-=head1 SYNOPSIS
-
-  use WikiTrust::Diff;
-  blah blah blah
-
-=head1 DESCRIPTION
-
-Stub documentation for WikiTrust-Text, created by h2xs. It looks like the
-author of the extension was negligent enough to leave the stub
-unedited.
-
-Blah blah blah.
-
-=head2 EXPORT
-
-None by default.
-
-
-
-=head1 SEE ALSO
-
-Mention other useful documentation such as the documentation of
-related modules or operating system documentation (such as man pages
-in UNIX), or any relevant external documentation such as RFCs or
-standards.
-
-If you have a mailing list set up for your module, mention it here.
-
-If you have a web site set up for your module, mention it here.
-
-=head1 AUTHOR
-
-Bo Adler, E<lt>thumper@alumni.caltech.eduE<gt>
-
-=head1 COPYRIGHT AND LICENSE
-
-Copyright (C) 2011 by Bo Adler
-
-This library is free software; you can redistribute it and/or modify
-it under the same terms as Perl itself, either Perl version 5.10.0 or,
-at your option, any later version of Perl 5 you may have available.
-
-
-=cut

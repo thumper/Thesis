@@ -20,7 +20,7 @@ BEGIN { use_ok('WikiTrust::FasterDiff') };
 sub runDiff {
     my $diff = shift @_;
     my $d = "WikiTrust::$diff"->new();
-    my $w1 = $d->parse(shift @_);
+    my $w1 = shift @_;
     $d->target(shift @_);
     my $script = $d->edit_diff($w1);
 #    warn Dumper($script);

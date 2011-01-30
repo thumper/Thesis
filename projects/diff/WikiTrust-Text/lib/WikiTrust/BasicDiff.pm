@@ -2,7 +2,7 @@ package WikiTrust::BasicDiff;
 use strict;
 use warnings;
 
-use constant DEBUG => 0;
+use constant FASTER => 1;
 
 use WikiTrust::Tuple;
 use Heap::Priority;
@@ -28,6 +28,10 @@ sub init {
   $this->{matchId} = 0;
 }
 
+# Parse a string into a list of words.
+# For this demo, we only split on whitespace,
+# but the full Ocaml version interprets wiki
+# markup to better distinguish "words".
 sub parse {
   my ($this, $str) = @_;
   confess "No string defined" if !defined $str;
@@ -35,21 +39,25 @@ sub parse {
   return \@words;
 }
 
+# Set the destination string that we are
+# trying to transform into.
 sub target {
-  my ($this, $str) = @_;
-  if (ref $str) {
-    $this->{dst} = $str;
-  } else {
-    $this->{dst} = $this->parse($str);
-  }
+  my $this = shift @_;
+  my $str = shift @_;
+  $str = $this->parse($str, @_) if !ref $str;
+  $this->{dst} = $str;
   return $this->{dst};
 }
+
 
 sub match_quality {
   my ($chunk, $k, $i1, $l1, $i2, $l2) = @_;
   my $q = $k / min($l2, $l1) - 0.3
     * abs(($i1/$l1) - ($i2/$l2));
-warn "Mov $i1, $i2, $k ($l1, $l2) ==> $q\n" if DEBUG;
+  # The Heap::Priority module works much faster
+  # if we use floats instead of tuples to sort
+  # the entries...
+  return (-$chunk*10000) + $k + $q if FASTER;
   return WikiTrust::Tuple->new(-$chunk, $k, $q);
 }
 
@@ -68,7 +76,8 @@ sub make_index {
 }
 
 sub compute_heap {
-  my ($this, $chunk, $w1) = @_;
+  my ($this, $chunk, $w1,
+    $skipmatch, $eachk, $maxk) = @_;
   my $w2 = $this->{dst};
   my $l1 = scalar(@$w1);
   my $l2 = scalar(@$w2);
@@ -79,22 +88,44 @@ sub compute_heap {
     next if $this->{matched_dst}->[$i2];
     my $matches = $idx->{ $w2->[$i2] } || [];
     foreach my $i1 (@$matches) {
+      # Do we want to skip this match for some reason?
+      next if $skipmatch->($chunk, $i1, $i2);
       # for each match, compute all the longer strings
       # that match starting at this point.
       # Note that we already know $k == 0 is a match
       my $k = 0;
       do {
-	my $q = $this->{quality}->($chunk, $k+1, $i1, $l1, $i2, $l2);
-	$this->{heap}->add(
-	    WikiTrust::Tuple->new($chunk, $k+1, $i1, $i2),
-	    $q);
+	# for each partial match, call $eachk
+	$eachk->($chunk, $i1, $l1, $i2, $l2, $k+1);
 	$k++;
       } while ($i1 + $k < $l1 && $i2 + $k < $l2
 	  && ($w1->[$i1+$k] eq $w2->[$i2+$k]));
+      # And finally, call $maxk for the maximal match.
+      # Note that $eachk will also have been called for
+      # this same length of match.
+      $maxk->($chunk, $i1, $l1, $i2, $l2, $k);
     }
   }
 }
 
+# Given the source string we are trying to transform from,
+# build the heap of matches to the destination string.
+sub build_heap {
+  my ($this, $chunk, $src) = @_;
+  $src = $this->parse($src, @_) if !ref $src;
+  $this->compute_heap($chunk, $src,
+    sub { return 0; },    # never skip match
+    sub {
+      my ($chunk, $i1, $l1, $i2, $l2, $k) = @_;
+      my $q = $this->{quality}->($chunk, $k,
+	$i1, $l1, $i2, $l2);
+      $this->{heap}->add(
+	WikiTrust::Tuple->new($chunk, $k, $i1, $i2),
+	$q);
+    },
+    sub { }
+  );
+}
 # return a region of [start,end) which
 # has $test->() false for the whole interval
 sub scan_and_test {
@@ -111,29 +142,29 @@ sub scan_and_test {
 sub process_best_matches {
   my ($this, $multimatch, $w1, $matched1) = @_;
 
+  my $l1 = @$w1;
+  my $l2 = @{ $this->{dst} };
+
   my @editScript;
 
   while (my $m = $this->{heap}->pop()) {
-    $this->{matchId}++;
     my ($chunk, $k, $i1, $i2) = @$m;
     # have any of these words already been matched?
-    while (1) {
-      my ($start, $end) = $this->scan_and_test($k,
-	  sub { $matched1->[$i1+$_[0]]
+    my ($start, $end) = $this->scan_and_test($k,
+	sub { $matched1->[$i1+$_[0]]
 	    ||  $this->{matched_dst}->[$i2+$_[0]] });
-      last if !defined $start;
-      if ($end - $start == $k) {
-	# the whole sequence is still unmatched
-	push @editScript, WikiTrust::Tuple->new('Mov', $chunk, $i1, $i2, $k);
-	for (my $i = $start; $i < $end; $i++) {
-	  $matched1->[$i1+$i] = $this->{matchId}
+    next if !defined $start;	# whole thing is matched
+    if ($end - $start == $k) {
+      # the whole sequence is still unmatched
+      push @editScript,
+	WikiTrust::Tuple->new('Mov', $chunk, $i1, $i2, $k);
+      # and mark it matched
+      $this->{matchId}++;
+      for (my $i = $start; $i < $end; $i++) {
+	$matched1->[$i1+$i] = $this->{matchId}
 	    if !$multimatch;
-	  $this->{matched_dst}->[$i2+$i] = $this->{matchId};
-	}
+	$this->{matched_dst}->[$i2+$i] = $this->{matchId};
       }
-      $i1 += $end;
-      $i2 += $end;
-      $k -= $end;
     }
   }
   return \@editScript;
@@ -148,22 +179,28 @@ sub cover_unmatched {
 	sub { $matched->[$i+$_[0]] });
     last if !defined $start;
     push @$editScript,
-	 WikiTrust::Tuple->new($mode, $i+$start, $end-$start);
+      WikiTrust::Tuple->new($mode, $i+$start, $end-$start);
     $i += $end;
     $l -= $end;
   }
 }
 
+
 # Compute the edit script to transform src into dst.
 sub edit_diff {
-  my ($this, $src) = @_;
+  my $this = shift @_;
+  my $src = shift @_;
+  $src = $this->parse($src, @_) if !ref $src;
+
   $this->init();
-  $this->compute_heap(0, $src);
+  $this->build_heap(0, $src);
   my (@matched1);
-  my $editScript = $this->process_best_matches(0, $src, \@matched1);
+  my $editScript = $this->process_best_matches(0, $src,
+      \@matched1);
   $this->cover_unmatched(\@matched1, scalar(@$src),
       $editScript, 'Del');
-  $this->cover_unmatched($this->{matched_dst}, scalar(@{ $this->{dst} }),
+  $this->cover_unmatched($this->{matched_dst},
+      scalar(@{ $this->{dst} }),
       $editScript, 'Ins');
   return $editScript;
 }
@@ -178,33 +215,20 @@ WikiTrust::Diff - Perl extension for text differencing
 
 =head1 SYNOPSIS
 
-  use WikiTrust::Diff;
-  blah blah blah
+  use WikiTrust::BasicDiff;
+  my $diff = WikiTrust::BasicDiff->new();
+  $diff->target("The final string.");
+  my $src = "The initial string.";
+  my $script = $diff->edit_diff($src);
 
 =head1 DESCRIPTION
 
-Stub documentation for WikiTrust-Text, created by h2xs. It looks like the
-author of the extension was negligent enough to leave the stub
-unedited.
-
-Blah blah blah.
-
-=head2 EXPORT
-
-None by default.
-
-
+A module to demonstrate the basic differencing algorithm
+used in the WikiTrust project.
 
 =head1 SEE ALSO
 
-Mention other useful documentation such as the documentation of
-related modules or operating system documentation (such as man pages
-in UNIX), or any relevant external documentation such as RFCs or
-standards.
-
-If you have a mailing list set up for your module, mention it here.
-
-If you have a web site set up for your module, mention it here.
+B<WikiTrust::FasterDiff>, B<WikiTrust::TextTracking>
 
 =head1 AUTHOR
 

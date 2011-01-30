@@ -3,10 +3,39 @@
 
 We present a \textbf{perl} language implementation of our basic text
 matching algorithm.
-Function \texttt{edit\_diff} takes two lists of words, and returns
+Function \texttt{edit\_diff} computes the difference between two
+lists of words, and returns
 a list of edit-script operations consisting of
 \textbf{Ins}, \textbf{Del}, and \textbf{Mov} operations.
 
+There are two implementations presented here.
+The \textbf{WikiTrust::BasicDiff} module presents the bare essence of how our
+differencing algorithm works.
+Module \textbf{WikiTrust::FasterDiff} simplifies the amount of work
+computed by assuming that longer matches are preferred over shorter
+matches, and only calculates the shorter matches when a longer match
+doesn't fit due to earlier choices.
+
+\begin{table}
+\begin{center}
+\begin{tabular}{| c c || c || c | c |}
+\hline
+Source & Dest & Num & WikiTrust & WikiTrust \\
+Rev & Rev & Words & BasicDiff & FasterDiff \\
+\hline
+1 & 12175065 & 641 & 12912.27s & 7.47s \\
+1 & 14057051 & 641 & 47.29s & 1.15s \\
+1 & 17039312 & 641 & 107.47s & 1.06s \\
+1 & 20060015 & 641 & 114.30s & 1.04s \\
+1 & XXX & 660 & 114.30s & 15.51s \\
+\hline
+\end{tabular}
+\end{center}
+\caption{Comparing the performance of \textbf{WikiTrust::BasicDiff}
+    with \textbf{WikiTrust::FasterDiff}.}
+\end{table}
+
+\clearpage
 \vskip1em
 \hrule
 \vskip1em

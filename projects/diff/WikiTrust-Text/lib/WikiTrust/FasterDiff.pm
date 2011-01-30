@@ -1,66 +1,49 @@
 package WikiTrust::FasterDiff;
+# A faster diff, which assumes that longer
+# matches are always prioritized before
+# shorter matches.
 use strict;
 use warnings;
 
 use constant DEBUG => 0;
 
+use WikiTrust::Tuple;
 use WikiTrust::BasicDiff;
-
 our @ISA = qw(WikiTrust::BasicDiff);
 
-
-use WikiTrust::Tuple;
-use List::Util qw(min);
-
-sub init {
-    my $this = shift @_;
-    $this->SUPER::init();
-    $this->{quality} = \&match_quality;
-}
-
-sub match_quality {
-  my ($chunk, $k, $i1, $l1, $i2, $l2) = @_;
-  my $q = $k / min($l2, $l1) - 0.3
-    * abs(($i1/$l1) - ($i2/$l2));
-warn "Mov $i1, $i2, $k ($l1, $l2) ==> $q\n" if DEBUG;
-  return (-$chunk*10000) + $k + $q;
-}
-
-sub compute_heap {
-  my ($this, $chunk, $w1) = @_;
-  my $w2 = $this->{dst};
-  my $l1 = scalar(@$w1);
-  my $l2 = scalar(@$w2);
-  my $idx = $this->make_index($w1);
+# Given the source string we are trying to transform from,
+# build the heap of matches to the destination string.
+sub build_heap {
+  my $this = shift @_;
+  my $chunk = shift @_;
+  my $src = shift @_;
+  $src = $this->parse($src, @_) if !ref $src;
   my %matched;
-  for (my $i2 = 0; $i2 < @$w2; $i2++) {
-    # For every unmatched word in w2,
-    # find the list of matches in w1
-    next if $this->{matched_dst}->[$i2];
-    my $matches = $idx->{ $w2->[$i2] } || [];
-    foreach my $i1 (@$matches) {
-      # Was this position already part of an earlier match?
-      # If so, then there's already a longer match in the system.
-      next if $matched{$i1,$i2};
-      # for each match, compute the longest string
-      # starting at this point.
-      # Note that we already know $k == 0 is a match
-      my $k = 0;
-      do {
-        $matched{$i1+$k,$i2+$k} = 1;
-	$k++;
-      } while ($i1 + $k < $l1 && $i2 + $k < $l2
-	  && ($w1->[$i1+$k] eq $w2->[$i2+$k]));
-      # $k is now the length of the match
+  $this->compute_heap(0, $src,
+    sub {
+      my ($chunk, $i1, $i2) = @_;
+      return $matched{$i1, $i2};
+    },
+    sub {
+      my ($chunk, $i1, $l1, $i2, $l2, $k) = @_;
+      # remember that $k is the length of the match
+      $matched{$chunk,$i1+$k-1,$i2+$k-1} = 1;
+    },
+    sub {
+      my ($chunk, $i1, $l1, $i2, $l2, $k) = @_;
       my $q = $this->{quality}->($chunk, $k, $i1, $l1, $i2, $l2);
-warn "Adding $i1, $i2, $k ==> $q\n" if DEBUG;
       $this->{heap}->add(
-	  WikiTrust::Tuple->new($chunk, $k, $i1, $i2),
-	  $q);
+	WikiTrust::Tuple->new($chunk, $k, $i1, $i2),
+	$q);
     }
-  }
+  );
 }
 
+# This is exactly the same as in the parent class,
+# except for when a region has already been previously matched.
+# In that case, we construct the residual matches and add them
+# to the heap.  For this to work properly, we must have that
+# the quality measure puts longer matches before shorter matches.
 sub process_best_matches {
   my ($this, $multimatch, $w1, $matched1) = @_;
 
@@ -95,7 +78,7 @@ sub process_best_matches {
 	do {
 	  my $newK = $end - $start;
 	  my $q = $this->{quality}->($chunk, $newK, $i1, $l1, $i2, $l2);
-warn "Split into $i1, $i2, $newK ==> $q\n" if DEBUG;
+	  warn "Split into $i1, $i2, $newK ==> $q\n" if DEBUG;
 	  $this->{heap}->add(
 	      WikiTrust::Tuple->new($chunk, $newK, $i1, $i2),
 	      $q);
@@ -111,69 +94,4 @@ warn "Split into $i1, $i2, $newK ==> $q\n" if DEBUG;
   return \@editScript;
 }
 
-# Compute the edit script to transform src into dst.
-sub edit_diff {
-  my ($this, $src) = @_;
-  $this->init();
-  $this->compute_heap(0, $src);
-  my (@matched1);
-  my $editScript = $this->process_best_matches(0, $src, \@matched1);
-  $this->cover_unmatched(\@matched1, scalar(@$src),
-      $editScript, 'Del');
-  $this->cover_unmatched($this->{matched_dst}, scalar(@{ $this->{dst} }),
-      $editScript, 'Ins');
-  return $editScript;
-}
-
 1;
-__END__
-# Below is stub documentation for your module. You'd better edit it!
-
-=head1 NAME
-
-WikiTrust::Diff - Perl extension for text differencing
-
-=head1 SYNOPSIS
-
-  use WikiTrust::Diff;
-  blah blah blah
-
-=head1 DESCRIPTION
-
-Stub documentation for WikiTrust-Text, created by h2xs. It looks like the
-author of the extension was negligent enough to leave the stub
-unedited.
-
-Blah blah blah.
-
-=head2 EXPORT
-
-None by default.
-
-
-
-=head1 SEE ALSO
-
-Mention other useful documentation such as the documentation of
-related modules or operating system documentation (such as man pages
-in UNIX), or any relevant external documentation such as RFCs or
-standards.
-
-If you have a mailing list set up for your module, mention it here.
-
-If you have a web site set up for your module, mention it here.
-
-=head1 AUTHOR
-
-Bo Adler, E<lt>thumper@alumni.caltech.eduE<gt>
-
-=head1 COPYRIGHT AND LICENSE
-
-Copyright (C) 2011 by Bo Adler
-
-This library is free software; you can redistribute it and/or modify
-it under the same terms as Perl itself, either Perl version 5.10.0 or,
-at your option, any later version of Perl 5 you may have available.
-
-
-=cut
