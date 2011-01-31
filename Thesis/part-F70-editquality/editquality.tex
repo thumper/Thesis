@@ -95,30 +95,3 @@
       		\editq(\version{k},\version{i})
   \end{equation*}
 
-  Updating the reputation of author \editor{k} for their editing
-  work is based on this notion of edit longevity.
-  When edit \revision{j} occurs, if
-  $k < j \le k+3$ and $\editor{k} \ne \editor{j}$,
-  we first compute the value:
-  \begin{equation*}
-  	q := \frac{ \slack \cdot \dist(\version{k-1},\version{j})
-		- \dist(\version{k},\version{j}) }
-		{ \dist(\version{k-1},\version{k}) }
-  \end{equation*}
-  If $q < 0$, we update this value to include a punishment factor,
-  $q := q \cdot \coeffpunish$.
-  The reputation for \editor{k} is then updated according to:
-  \begin{equation*}
-  	q \cdot \coeffrep \cdot (1 - \coefftext) \cdot
-	        (\dist(\version{k-1},\version{k}))^\lengthexp
-		\cdot \log(1 + \rep(\editor{j},\revision{j}))
-  \end{equation*}
-  where $\coeffpunish \geq 1$, $\slack \geq 1$, $\coeffrep > 0$,
-  $\coefftext \in [0,1]$, and $\lengthexp \in [0,1]$ are parameters,
-  and $\rep(\editor{j},\revision{j})$ is the reputation
-  of~$\editor{j}$ at the time~$\revision{j}$ is performed.
-  As with the text survival parameters, we used a search function
-  to discover optimal parameter values, so that there was a high
-  correlation between author reputation and the edit longevity
-  of edit \revision{k}.
-

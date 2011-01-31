@@ -74,6 +74,13 @@ Figure~\ref{fig-textcontr-a} gives a pictorial representation
 of how some text introduced at revision \version{k} might
 evolve over the next seven revisions; in this example, the
 figure shows that some text was restored in revision \version{j}.
+We say that author $A_j$ \intro{judges} the work of author
+$A_k$ by deciding how much text to preserve, delete, and restore.
+If author $A_j$ works on a different part of the article, they
+are still implicitly deciding that the current revision of
+$A_k$'s work is okay; some model of user attention would be
+useful for tempering the amount of judgement we infer from
+$A_k$ when they are focused elsewhere in the article.
 
 Measuring the fraction of text that survives to revision \version{j}
 (\eg computing $T_j / T_k$ according to the figure)
@@ -117,26 +124,6 @@ the exponential equation.}
 \end{figure}
 
 
-  The basic idea of text survival is to track the text introduced in
-  \version{k}, and measure how many of those words are
-  still present in \version{j}.
-  Referring to Figure~\ref{fig-textcontr-a}, the judgement
-  that author \editor{j} makes is the
-  decision to preserve $T_j / T_k$ of the words introducted
-  by \editor{k} in \version{k}, where
-  $T_j = \txt(j,j)$ and $T_k = \txt(k,k)$.
-  When the edit \revision{j} occurs, if
-  $k < j \leq k+10$ and $\editor{k} \neq \editor{j}$,
-  we add to the reputation
-  of \editor{k} the amount:
-  \[
-    \coeffrep \cdot \coefftext \cdot \frac{T_j}{T_k}
-    \cdot (T_k)^\lengthexp \cdot \log(1 + \rep(\editor{j},\revision{j}))
-  \]
-  where $\coeffrep > 0$, $\coefftext \in [0,1]$, and $\lengthexp \in
-  [0,1]$ are parameters, and where $\rep(\editor{j},\revision{j})$
-  is the reputation of \editor{j} at the time \revision{j} is performed.
-
   To measure the overall quality of a single text contribution
   (see Figure~\ref{fig-textcontr-b}), we model the sequence of
   words preserved over time as a geometric curve; we call the
@@ -154,11 +141,4 @@ the exponential equation.}
   As time passes, the size of the edits gets smaller and
   the text tends to stabilize into a form
   that people can agree on, until it eventually no longer changes.
-
-  In order to set the parameters for our reputation function,
-  we wrote a search function to optimize for the highest
-  correlation between the reputation of an author (which is
-  based on past contributions at the time of edit \revision{k})
-  and the text longevity of the contribution of \revision{k}
-  (which is based on information from future edits).
 
