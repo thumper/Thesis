@@ -5,7 +5,7 @@ use warnings;
 use constant FASTER => 1;
 
 use WikiTrust::Tuple;
-use Heap::Priority;
+use WikiTrust::PriorityQ;
 use List::Util qw(min);
 use Carp;
 
@@ -23,7 +23,7 @@ sub new {
 
 sub init {
   my $this = shift @_;
-  $this->{heap} = Heap::Priority->new();
+  $this->{heap} = WikiTrust::PriorityQ->new();
   $this->{matched_dst} = [];
   $this->{matchId} = 0;
 }
@@ -119,9 +119,8 @@ sub build_heap {
       my ($chunk, $i1, $l1, $i2, $l2, $k) = @_;
       my $q = $this->{quality}->($chunk, $k,
 	$i1, $l1, $i2, $l2);
-      $this->{heap}->add(
-	WikiTrust::Tuple->new($chunk, $k, $i1, $i2),
-	$q);
+      $this->{heap}->insert($q,
+	WikiTrust::Tuple->new($chunk, $k, $i1, $i2));
     },
     sub { }
   );

@@ -27,15 +27,16 @@ sub build_heap {
     sub {
       my ($chunk, $i1, $l1, $i2, $l2, $k) = @_;
       # remember that $k is the length of the match
+# TODO: can't fill in anything here
       $matched{$chunk,$i1+$k-1,$i2+$k-1} = 1;
     },
     sub {
       my ($chunk, $i1, $l1, $i2, $l2, $k) = @_;
+# TODO: skip if match too short
       my $q = $this->{quality}->($chunk, $k, $i1, $l1, $i2, $l2);
-      $this->{heap}->add(
-	WikiTrust::Tuple->new($chunk, $k, $i1, $i2),
-	$q);
-      warn "Adding Mov $chunk, $i1, $i2, $k\n" if DEBUG;
+      $this->{heap}->insert($q,
+	WikiTrust::Tuple->new($chunk, $k, $i1, $i2));
+      warn "Adding Mov $chunk, $i1, $i2, $k => $q\n" if DEBUG;
     }
   );
 }
@@ -82,9 +83,8 @@ sub process_best_matches {
 	  my $newK = $end - $start;
 	  my $q = $this->{quality}->($chunk, $newK, $i1, $l1, $i2, $l2);
 	  warn "Split into $i1, $i2, $newK ==> $q\n" if DEBUG;
-	  $this->{heap}->add(
-	      WikiTrust::Tuple->new($chunk, $newK, $i1, $i2),
-	      $q);
+	  $this->{heap}->insert($q,
+	      WikiTrust::Tuple->new($chunk, $newK, $i1, $i2));
 	  $i1 += $end;
 	  $i2 += $end;
 	  $k -= $end;

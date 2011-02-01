@@ -34,6 +34,8 @@ foreach my $page (@{ $ref->{page} }) {
 	print "$a\t$author{$a}\n";
     }
 
+    last if $revid == 143906835;
+
     unshift @$prevrevs, $words;
     unshift @$prevrevids, $revid;
     if (@$prevrevids > 10) {
@@ -42,6 +44,7 @@ foreach my $page (@{ $ref->{page} }) {
     }
   }
 }
+exit(0);
 
 sub compareResults {
   my ($s1, $s2) = @_;
