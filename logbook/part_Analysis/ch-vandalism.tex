@@ -56,3 +56,41 @@ easy to search.
 I decided that the time had come to fix these bugs, so I have been
 working on a new branch to implement these changes.
 
+\section{Including Reputation+}
+
+\subsection{2-Feb-2011}
+
+For my thesis, I have this idea to redo the vandalism detection task
+using our quality measures and user reputation score, to see how
+our scoring changes.
+
+I am trying to test out the batch process on the
+``Santa Cruz Beach Boardwalk'' article that I downloaded.
+To do this, I had to compress the file with \program{7z}:
+\begin{verbatim}
+$ 7z a dump.7z dump-SantaCruzBeachBoardwalk-fixed.xml
+\end{verbatim}
+and then run it through the batch process (modified on
+my branch \texttt{thumper-vandalrep}):
+\begin{verbatim}
+$ cd WikiTrust/util
+$ mkdir tmp
+$ cd tmp
+$ ../batch_process --cmd_dir ../../analysis --dir output dump.7z
+\end{verbatim}
+The modifications I've made are to add a line to the
+user reputation history file to give the revision id
+and user reputation before and after judging.
+
+My modification leads to multiple lines being printed
+for a single revision, as each judge modifies the authors reputation.
+While looking at the output, I noticed that the author reputation
+doesn't actually seem to change.
+I tracked this down to the \texttt{Computerep.store\_rep}
+function, which rounds reputations to the lower hundreth.
+On my small test file, this results in no reputations being
+adjusted --- but that's probably part of the ``robust reputation''
+work that has been added in.
+
+Need to check on larger dump that reputations actually increase.
+
