@@ -52,13 +52,15 @@ sub target {
 
 sub match_quality {
   my ($chunk, $k, $i1, $l1, $i2, $l2) = @_;
-  my $q = $k / min($l2, $l1) - 0.3
-    * abs(($i1/$l1) - ($i2/$l2));
+  my $pos1 = (2*$i1 + $k) / $l1;
+  my $pos2 = (2*$i2 + $k) / $l2;
+  # the closer to zero, the better
+  my $q = abs($pos1 - $pos2);
   # The Heap::Priority module works much faster
   # if we use floats instead of tuples to sort
   # the entries...
-  return (-$chunk*10000) + $k + $q if FASTER;
-  return WikiTrust::Tuple->new(-$chunk, $k, $q);
+  return (-$chunk*10000) + $k - $q if FASTER;
+  return WikiTrust::Tuple->new(-$chunk, $k, -$q);
 }
 
 # Create a hash table indexed by word,
