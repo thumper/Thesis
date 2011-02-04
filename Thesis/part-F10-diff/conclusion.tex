@@ -1,0 +1,52 @@
+\section{Conclusion}
+
+    \mynote{Can we show how different quality formulas behave?
+	Find good diffs to show?  Include in appendix?
+        Is there any kind of evaluation we can do?}
+
+The problem of tracking text authorship across multiple revisions
+is not well-studied.
+We have proposed several criteria to define matches which
+are preferable, but there are several possible formulations
+that might be equally valid.
+
+A significant problem in defining the criteria for a
+good solution to tracking authorship is the handling of short matches.
+For example, consider the two-word match ``of the''; describing
+it as a two-word match immediately rules out three- and four-word
+matches that include the adjacent words.
+Most people would describe the two words to be completely
+unoriginal (to be discarded via a stop-word list~\cite{Kinzler2011},
+or possibly to always be part of some larger phrase),
+so that a match so small should always be discarded.
+Incorporating the $n$-gram frequency into the match quality
+score would be one way to give preference to phrases that
+are commonly used as a unit.
+
+Now consider the case of a larger $n$-gram: suppose there is a match
+of the phrase ``the President of the United States'' between a new
+revision and some older revision.
+We've just suggested that statistically improbably phrases are
+good candidates for ascribing authorship to the first person to
+introduce the phrase into an article.
+For example, in an article about Caltech, the first person to
+add text describing a commencement speach by ``former President of
+the United States, Bill Clinton'' should certainly get credit for
+any appearance of the phrase ``President of the United States''
+in later revisions.
+What about when this phrase appears in an article titled
+``President of the United States?''
+If we apply the same rule, the first person to introduce the phrase
+might get lots of credit if the phrase is used many times throughout
+the article.
+Clearly, then, there is some threshold frequency within a single
+article where a phrase is no longer \textit{original}.
+
+The challenge illustrated by these two issues is that the notion
+of authorship really revolves around both ideas and specific
+words reflecting those ideas.
+How does one compare two different text tracking algorithms?
+How would we discover other cases that demonstrate where our
+specifications of the solution are incomplete?
+These are open problems, outside the scope of this work.
+
