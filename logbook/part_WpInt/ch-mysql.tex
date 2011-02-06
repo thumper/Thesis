@@ -263,6 +263,8 @@ mysql> set global slow_query_log=1;
 
 \subsection{29-Nov-2010}
 
+\label{ch:mysql-crash}
+
 There was a power outage at UC Santa Cruz on Saturday morning.
 It turns out that Gaston got nailed, and when it was power cycled,
 \mysql wouldn't start up any longer.
@@ -306,4 +308,7 @@ datadir = /var/lib/mysql -> /giant/mysql
 tmpdir=/big/mysql/tmp
 innodb_log_group_home=/big/mysql/logdir
 \end{verbatim}
+Well, actually that does seem right.
+For some reason, I thought that the whole database was on a
+single drive.
 

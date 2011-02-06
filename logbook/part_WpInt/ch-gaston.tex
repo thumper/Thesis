@@ -91,3 +91,53 @@ To add a page to the dispatcher queue, I used:
 \begin{verbatim}
 env WT_DBNAME=DBI:mysql:database=enwikidb:host=localhost WT_DBUSER=wikiuser WT_DBPASS=wikiword perl -I. -MWikiTrust -e "WikiTrust::cmdline();" method=gettext pageid=3703446
 \end{verbatim}
+
+\section{Disk Failure}
+
+\subsection{5-Feb-2011}
+
+We had a power outage at Santa Cruz last November, and Gaston
+went down unexpectedly.
+When it came back, the database was corruped
+(See Section~\ref{ch:mysql-crash}) and I had to dump and restore
+to get it working again.
+
+Then the database crashed again, I think in early January,
+and I had to repeat the process.
+
+This time, something slightly different happened, and I ended up
+trying to run \program{xfs\_repair} on \texttt{/store}.
+Well, that seemed to work, until I tried running it again and
+discovered that some of the same errors were being discovered again.
+This led me to believe that maybe writes aren't making it to the
+disk.
+
+Luca called in the SOE TechStaff, but they had similar bad luck
+(and they reported no error lights on the hardware).
+We've tried to copy the data off the disk, and now the only option
+left is to try to reformat.
+Luca suggested that we run \program{badblocks} first to actually
+test the disk, which seems like a good idea to me:
+XFS has a blocksize of 4096~bytes, so I ran \program{badblocks} as:
+\begin{verbatim}
+# badblocks -b 4096 -o /raid/badblocks.sdb1 -p 1 -w -s -v /dev/sdb1
+\end{verbatim}
+
+Heidi also gave us some tips on how to check the health status
+of the RAID devices on this machine.
+For the external RAID device, the correct check is:
+\begin{verbatim}
+# smartctl -d scsi --all /dev/sdc
+\end{verbatim}
+which reports no errors.
+On Redherring, the equivalent commands seem to be:
+\begin{verbatim}
+# smartctl -d 3ware,0 --all /dev/twa0
+# smartctl -d 3ware,1 --all /dev/twa1
+\end{verbatim}
+
+The RAID which is broken is an internal RAID, and doesn't support
+the SMART extensions, so Heidi downloaded a different tool to
+access the health status.  This tool is called \program{MegaCli},
+but I couldn't figure out the right options to run it with.
+
