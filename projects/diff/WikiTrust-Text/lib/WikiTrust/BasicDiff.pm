@@ -16,6 +16,7 @@ sub new {
   my $this = bless {
     quality => \&match_quality,
     dst => [],
+    minMatch => 3,
   }, $class;
   $this->init();
   return $this;
@@ -26,6 +27,11 @@ sub init {
   $this->{heap} = WikiTrust::PriorityQ->new();
   $this->{matched_dst} = [];
   $this->{matchId} = 0;
+}
+
+sub set_minMatch {
+    my $this = shift @_;
+    $this->{minMatch} = shift @_;
 }
 
 # Parse a string into a list of words.
@@ -119,6 +125,7 @@ sub build_heap {
     sub { return 0; },    # never skip match
     sub {
       my ($chunk, $i1, $l1, $i2, $l2, $k) = @_;
+      return if $k < $this->{minMatch};
       my $q = $this->{quality}->($chunk, $k,
 	$i1, $l1, $i2, $l2);
       $this->{heap}->insert($q,

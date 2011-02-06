@@ -17,6 +17,7 @@ sub initVersion {
     my $revid = shift @_;
     my $str = shift @_;
     my $d = WikiTrust::BasicTextTracking->new();
+    $d->set_minMatch(1);
     return $d->target($str, $revid);
 }
 
@@ -25,6 +26,7 @@ sub runTracking {
     my $prevs = shift @_;
     my $dst = shift @_;
     my $d = WikiTrust::BasicTextTracking->new();
+    $d->set_minMatch(1);
     $d->target($dst, $revid);
     my $words = $d->track_text($prevs);
     my %author;

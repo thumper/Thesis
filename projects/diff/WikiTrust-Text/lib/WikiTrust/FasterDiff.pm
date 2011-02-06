@@ -25,14 +25,23 @@ sub build_heap {
       return $matched{$i1, $i2};
     },
     sub {
-      my ($chunk, $i1, $l1, $i2, $l2, $k) = @_;
-      # remember that $k is the length of the match
-# TODO: can't fill in anything here
-      $matched{$chunk,$i1+$k-1,$i2+$k-1} = 1;
+      # If we want to keep small matches, then we
+      # can mark the match right away.  For WikiTrust,
+      # we don't want small matches, so this function
+      # does nothing.
+      # OLD CODE:
+      # my ($chunk, $i1, $l1, $i2, $l2, $k) = @_;
+      ## remember that $k is the length of the match
+      # $matched{$chunk,$i1+$k-1,$i2+$k-1} = 1;
     },
     sub {
       my ($chunk, $i1, $l1, $i2, $l2, $k) = @_;
-# TODO: skip if match too short
+      return if $k < $this->{minMatch};		# skip short matches
+      # mark the positions as matched
+      foreach my $i (0..$k-1) {
+        $matched{$chunk,$i1+$i,$i2+$i} = 1;
+      }
+
       my $q = $this->{quality}->($chunk, $k, $i1, $l1, $i2, $l2);
       $this->{heap}->insert($q,
 	WikiTrust::Tuple->new($chunk, $k, $i1, $i2));

@@ -20,6 +20,7 @@ BEGIN { use_ok('WikiTrust::FasterDiff') };
 sub runDiff {
     my $diff = shift @_;
     my $d = "WikiTrust::$diff"->new();
+    $d->set_minMatch(1);
     my $w1 = shift @_;
     $d->target(shift @_);
     my $script = $d->edit_diff($w1);
