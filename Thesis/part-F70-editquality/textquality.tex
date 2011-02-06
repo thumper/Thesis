@@ -26,7 +26,7 @@ Let us define another recursive relation, like the definition
 for $\txtauthor{}$ in Equation~\ref{eq:txtauthor},
 which defines the revision that a word was first introduced.
 As before, we recall
-$\words{\version{n}} = \left[ w_1, w_2, \ldots, w_{l_n} \right]$, and let $0 < j \le l_n$ in the following definitions:
+$\words{\version{n}} = \left[ w_1, w_2, \ldots, w_{l_n} \right]$, and let $0 < j \le l_n$ in the following:
 \begin{equation*}
 \txtsrcrev{\version{n}, j} =
     \begin{cases}
@@ -38,10 +38,10 @@ $\words{\version{n}} = \left[ w_1, w_2, \ldots, w_{l_n} \right]$, and let $0 < j
 Now we can define the text survival of words to be the number of
 words introduced in \version{m} that are still present in \version{n}:
 \begin{equation}
-\txt{\article{}}{m}{n} = \left| j \colon \txtsrcrev{\version{m},j} = m \right| \\
+\txt{\article{}}{m}{n} = \left| j \colon \txtsrcrev{\version{n},j} = m \right| \\
 \end{equation}
 
-\subsection{Text Quality}
+\subsection{Text Decay Quality}
 
 Our goal, in the abstract, is to define some metric that we can compute for
 revisions which quantifies some estimate of the \intro{quality} of the
@@ -62,6 +62,24 @@ ten revisions later?''
 We discuss some variations of these quality measures in
 Chapter~\ref{ch:contrib}, but present here one novel quality measure.
 
+\begin{figure}[htbp]
+\centering
+\framebox{\includegraphics[width=0.9\textwidth]{part-F70-editquality/textcontr-2}}
+\caption{A graphical depiction of how a text contribution survives
+	through future revisions.
+        An author, \editor{k}, adds
+    $T_k = \txt{}{k}{k}$ words in revision \version{k}.  In subsequent
+    revisions, some of those words are deleted and partially restored.
+    We say that a later author, \editor{j}, implicitly \intro{judges}
+    author \editor{k} by choosing how many of \editor{k}'s words
+    to keep or delete or restore; $T_j = \txt{}{k}{j}$ is the number of words
+    that were introduced in \version{k} that are still present, or
+    \intro{live}, in \version{j}.
+}
+\label{fig:textsurvival} 
+\end{figure}
+
+
 In trying to understand how text contributions evolve, we decided
 to limit our exploration to what happens to the text over the
 following ten revisions.
@@ -70,63 +88,53 @@ removed completely right away (a revert), or they are perfectly
 preserved for the following ten revisions.
 Some contributions, however, are only partially preserved, and
 might even be partially restored as part of their evolution.
-Figure~\ref{fig-textcontr-a} gives a pictorial representation
+Figure~\ref{fig:textsurvival} gives a pictorial representation
 of how some text introduced at revision \version{k} might
 evolve over the next seven revisions; in this example, the
 figure shows that some text was restored in revision \version{j}.
 We say that author $A_j$ \intro{judges} the work of author
 $A_k$ by deciding how much text to preserve, delete, and restore.
-If author $A_j$ works on a different part of the article, they
-are still implicitly deciding that the current revision of
-$A_k$'s work is okay; some model of user attention would be
-useful for tempering the amount of judgement we infer from
-$A_k$ when they are focused elsewhere in the article.
+If author $A_j$ works on a different part of the article, she
+is still implicitly deciding that the current revision of
+$A_k$'s work is okay.\footnote{Some better model of
+user attention would be useful for tempering the amount
+of judgement we infer from
+$A_k$ when they are focused elsewhere in the article.}
 
-Measuring the fraction of text that survives to revision \version{j}
-(\eg computing $T_j / T_k$ according to the figure)
+Measuring the fraction of text introduced in
+revision \version{k} that survives to revision \version{j}
+(\ie computing $\txt{}{k}{j} / \txt{}{k}{k}$)
 gives useful information, but what if \version{j} happens to be
 a vandal that blanks the page?
-Noting that text which will be deleted is often deleted right away,
-we decided to adopt a model where a contribution \intro{decays}
-to its final value in an exponential fashion.
+One idea would be to average the text survival over the next
+several revisions (an idea explored in Chapter~\ref{ch:contrib}),
+but we were struck by the observation that after some initial
+churning, text seems to stabilize and then only slowly change
+as time progresses.
+We propose that a way to model this evolution of text over time
+is as a geometric sequence with a common ratio between zero and one;
+see Figure~\ref{fig:textlongevity} for how such a sequence could
+approximate the text survival over several revisions.
+The intuition behind a geometric model is that if an edit is
+``bad,'' then most of the text will be removed right away.
+As time passes, the size of the edits gets smaller and
+the text tends to stabilize into a form
+that people can agree on, until it eventually no longer changes.
 
 
-\mynote{TODO: Experiment: collect data for several different revisions.
-Compute the decay for each one, and then compute the error from
-the decay.  What are the statistics for this decay?  Tried running
-on Santa Cruz Beach Boardwalk, but results were either revert or
-keep all.  Rarely was there much change...}
-
-\mynote{TODO: Still running author tracking on GWB page, redherring screen 2,
-Sat, 5-Feb.}
-
-\mynote{Need to add description of truncated Newton's method for solving
-the exponential equation.}
-
-
-\begin{figure}[t]
+\begin{figure}[tbph]
 \centering
-\subfigure[Graphical representation of the \textit{text survival} over
-    several subsequent revisions.]{
-\label{fig-textcontr-a} 
-\framebox{\includegraphics[width=0.9\textwidth]{part-F70-editquality/textcontr-2}}
-}
-\hspace{1ex}
-\subfigure[Calculating the \textit{text longevity} of a contribution.]{
-\label{fig-textcontr-b}
 \framebox{\includegraphics[width=0.9\textwidth]{part-F70-editquality/text-longevity}}
-}
-\caption{A graphical depiction of how a text contribution survives
-	through future revisions.
-	An author, \editor{k}, adds $T_k$ words in version \version{k}.
-	In subsequent versions, only a portion of the words survive.
-	We model the survival over time as a geometric curve,
-	to arrive at a single number describing the longevity
-	of the initial contribution.}
-\label{fig-textsurvival}
+\caption{
+    \mynote{Redo picture to change alpha to proper symbol.}
+    To calculate the \intro{text longevity} of the contribution
+    of $T_k$ words, we model the text survival as a geometric curve
+    and compute a single number that describes how the text evolves
+    over several revisions.}
+\label{fig:textlongevity}
 \end{figure}
 
-\begin{figure}
+\begin{figure}[tbph]
 \centering
 \framebox{\includegraphics[width=0.95\textwidth]{part-F70-editquality/graph-TS-SantaCruzBeachBoardwalk}}
 \caption{The text survival graph for the text initially contributed
@@ -136,24 +144,53 @@ the exponential equation.}
 	Also shown in the graph is the text survival quality
 	computed based on 20~revisions.
 	}
-\label{fig-ts-SantaCruzBeachBoardwalk}
+\label{fig:ts-SantaCruzBeachBoardwalk}
 \end{figure}
 
-  To measure the overall quality of a single text contribution
-  (see Figure~\ref{fig-textcontr-b}), we model the sequence of
-  words preserved over time as a geometric curve; we call the
-  value which describes the curve
-  the text longevity, \tlong, of a text contribution at \revision{k}.
-  Specifically, we solve the following equation for $\tlong(\revision{k})$:
-  \begin{equation*}
-  	\sum_{i=k+1}^n T_i = T_k \cdot
-		\sum_{i=k}^n \{ \tlong(\revision{k}) \}^{i-k}
-  \end{equation*}
-  This value ranges from zero for a contribution which is immediately
-  reverted, to one for a text contribution which is never modified.
-  The intuition behind a geometric model is that if an edit is
-  ``bad,'' then most of the text will be removed right away.
-  As time passes, the size of the edits gets smaller and
-  the text tends to stabilize into a form
-  that people can agree on, until it eventually no longer changes.
+To measure the overall quality of a single text contribution
+made in revision \version{k}, we need to compute the common ratio
+that best describes the sequence of $n$ text survival values,
+\txt{}{k}{j}, after \version{k}, where $k < j \le k+n$.
+Let us call this common ration the \intro{decay quality}, \quality{decay}{k}.
+To compute \quality{decay}{k}, we want to solve the following equation:
+\begin{align*}
+    \sum_{i=0}^n \txt{}{k}{k+i} = {} & \txt{}{k}{k} + \quality{decay}{k} \cdot \txt{}{k}{k+1} \\
+    & + \quality{decay}{k}^2 \cdot \txt{}{k}{k+2} + \ldots \\
+    & + \quality{decay}{k}^n \cdot \txt{}{k}{k+n} \\
+    = {} & \txt{}{k}{k} \sum_{i=0}^n \quality{decay}{k}^i \\
+    = {} & \txt{}{k}{k} \cdot \frac{1 - \quality{decay}{k}^{n+1}}{1 - \quality{decay}{k}} \\
+\end{align*}
+
+To solve this for \quality{decay}{k}, we can use Newton's method
+to solve for the zero of the related function:
+\begin{equation*}
+  f(\alpha) = (1 - \alpha) \cdot \sum_{i=0}^n \txt{}{k}{k+i}
+        - (1 - \alpha^{n+1}) \cdot \txt{}{k}{k}
+\end{equation*}
+where $\alpha = \quality{decay}{k}$.
+Newton's method involves making repeated estimations of the form
+\begin{equation*}
+  \alpha_{j+1} = \alpha_j - \frac{f(\alpha_j)}{f'(\alpha_j)}
+\end{equation*}
+which we initiate with $\alpha_0 = 0$.
+For efficiency reasons, we limit the number of iterations taken
+to a small number (five in our live system)
+since we are only estimating the quality and high precision
+is not very useful.
+
+The beauty of this quality measure is that it varies between
+zero, for text which is immediately deleted, and one, for text
+which is completely preserved.
+Values in between the two extremes reflect the fact that there
+was some debate among the community about what text to preserve
+in the article.
+Figure~\ref{fig:ts-SantaCruzBeachBoardwalk} shows the text survival
+graph of the initial contribution to that article, and how it varies
+over the next twenty filtered revisions.
+The figure also shows the curve representing the decay quality,
+calculated with a twenty-iteration Newton's method over the entire
+twenty-one revision sequence.
+
+\mynote{TODO: Still running author tracking on GWB page, redherring screen 2,
+Sat, 5-Feb.}
 
