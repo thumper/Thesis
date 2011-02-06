@@ -18,7 +18,7 @@ foreach my $page (@{ $ref->{page} }) {
   for (my $i = 0; $i < @{ $page->{revision} }; $i++) {
     my ($next, $rev, $author, $revid) = getRevInfo($page, $i);
     next if $next;
-    my $text = $rev->{text}->[0]->{content};
+    my $text = $rev->{text}->[0]->{content} || '';
 
     my $tt = WikiTrust::FasterTextTracking->new();
     my $words = $tt->target($text, $revid);
