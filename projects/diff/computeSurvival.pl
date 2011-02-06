@@ -68,6 +68,11 @@ sub getRevInfo {
   my $rev = $page->{revision}->[$i];
   my $author = getAuthor($rev);
   my $revid = $rev->{id}->[0];
+  if (!defined $revid) {
+    warn "No revid for this revision?";
+    delete $rev->{text};
+    die Dumper($rev);
+  }
   warn "Working on author $author @ $revid\n";
   my $next = 0;
   if ($i+1 < @{ $page->{revision} }) {
