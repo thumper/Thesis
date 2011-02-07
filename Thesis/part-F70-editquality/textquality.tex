@@ -38,7 +38,8 @@ $\words{\version{n}} = \left[ w_1, w_2, \ldots, w_{l_n} \right]$, and let $0 < j
 Now we can define the text survival of words to be the number of
 words introduced in \version{m} that are still present in \version{n}:
 \begin{equation}
-\txt{\article{}}{m}{n} = \left| j \colon \txtsrcrev{\version{n},j} = m \right| \\
+\txt{\article{}}{m}{n} = \left| \left\{ j \colon
+    \exists j . \txtsrcrev{\version{n},j} = m \right\} \right| \\
 \end{equation}
 
 \subsection{Text Decay Quality}

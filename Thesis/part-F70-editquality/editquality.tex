@@ -28,15 +28,68 @@ matching algorithm.
 The elements making up an edit script are:
 \begin{itemize}
 \item $\mathbf{Move}(i_1, i_2, k)$ -- a matching block of text of
-    length $k$, starting at position $i_1$ in the source string,
+    length $k$ words, starting at position $i_1$ in the source string,
     and position $i_2$ in the target string.
 \item $\mathbf{Delete}(i, k)$ -- the text starting at position $i$
-    and extending for length $k$ was deleted from the source string.
+    and extending for length $k$ words was deleted from the source string.
 \item $\mathbf{Insert}(i, k)$ -- the text starting at position $i$
-    and extending for length $k$ was inserted into the target string.
+    and extending for length $k$  wordswas inserted into the target string.
 \end{itemize}
+If we let $E(m,n)$ be the edit script set of elements describing the
+transformation from the source string \version{m}
+to the target string \version{n},
+then we can define two terms for the total amount of insertions
+and deletions by summing over all the matching elements:
+\begin{align*}
+  I_{tot}(m,n) =& \sum_{\exists i, k. \mathbf{Insert}(i, k) \in E(m,n)} k \\
+  D_{tot}(m,n) =& \sum_{\exists i, k. \mathbf{Delete}(i, k) \in E(m,n)} k \\
+\end{align*}
+We then define the edit distance between revisions
+\version{m} and \version{n} used within WikiTrust as
+\begin{equation*}
+    \dist{}{m,n} = I_{tot}(m,n) + D_{tot}(m,n)
+        - \frac{1}{2}\min(I_{tot}(m,n), D_{tot}(m,n))
+\end{equation*}
+The motivation for this formulation of edit distance is
+to try to account for replacements, which appear within
+the edit script as insertion and deletions --- but the
+position information required to match them is not preserved
+by the difference algorithm.
+By subtracting off a correction term, we make the assumption
+that edits with both insertions and deletions make some
+replacements which are being counted in both types of edit.
 
-\mynote{Define edit distance in terms of edit script}
+\subsection{Edit Longevity}
+
+Given a method to measure the size of an edit contribution,
+the problem still remains of how to compute whether that
+contribution is preserved in future revisions.
+An idea we considered is summing the edit distances of
+sequential revisions, and comparing that against the edit
+distance between the first and last revisions.
+This has the problem that it roughly assumes that all
+contributions are completely preserved or completely
+reverted, but idea of mapping out the edit distances of
+multiple revisions led to another idea that we favor.
+
+Instead of trying to measure whether an edit is preserved,
+let us ask the question, ``does this edit move us in the
+direction of the future of the article, or does it move us away
+from the future?''
+This suggests consideration of three version: the one being
+evaluated, one in the past, and one in the future.
+Figure~\ref{fig-editcontr} visually represents the two possible
+cases in evaluating revision \version{k}, using \version{k-1}
+and \version{j} (where $j > k$) as guide posts for the general
+path that the evolution of the article is taking.
+If a contribution moves us in the general direction of
+the future but has some extraneous text which is delete,
+we get the case shown in Figure~\ref{fig-editcontr-a}:
+the distance \dist{}{k,j} is smaller than the distance \dist{}{k-1,j}.
+If the edit in \version{k} does not contribute at all to the
+future of the article, then we have the case shown in
+Figure~\ref{fig-editcontr-b}:
+the distance \dist{}{k,j} is larger than the distance \dist{}{k-1,j}.
 
 \begin{figure}[t]
 \centering
@@ -56,7 +109,7 @@ The elements making up an edit script are:
 	edit distance~\cite{Levenshtein66} to define the separation
 	between each other.
 	Intuitively, we know that when \version{k} is good,
-	the distance to the future, $\dist(\version{k},\version{j})$,
+	the distance to the future, $\dist{}{k, j}$,
 	will be shorter than if \version{k} is bad.
 	(When \version{k} is bad, more editing is required to
 	bring it back to a better version, plus the editing
@@ -65,18 +118,9 @@ The elements making up an edit script are:
 \label{fig-editcontr}
 \end{figure}
 
-\hyphenation{re-arrang-ed}
-  We would like to have a similar notion of survival for edits,
-  particularly for the case where text is rearranged by an author
-  different from the author who introduced the text.
-  To accomplish this, we utilize the
-  \intro{edit distance}~\cite{Levenshtein66,TichyEditDist,EditDistanceMoves,Adler2007}
-  --- a measure of how many word insertions, deletions,
-  and transpositions are needed to change one revision into the other ---
-  to measure how different one version is from another.
   To turn this into a quality metric for the
-  version \version{k}, we look at edits done as part of \revision{k}
-  and ask ``does the work done bring us closer to how the page
+  version \version{k}, 
+  we ask ``does the work done bring us closer to how the page
   will look in the future?''
   If future versions incorporate and build on the changes of edit \revision{k},
   then the edits are of good quality.
