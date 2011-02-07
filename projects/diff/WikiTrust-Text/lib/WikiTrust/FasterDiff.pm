@@ -9,6 +9,8 @@ use constant DEBUG => 0;
 
 use WikiTrust::Tuple;
 use WikiTrust::BasicDiff;
+
+# Setup our baseclass; this file only has overrides
 our @ISA = qw(WikiTrust::BasicDiff);
 
 # Given the source string we are trying to transform from,

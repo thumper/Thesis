@@ -74,7 +74,15 @@ The basic procedure for the differencing step is:
 \item Draw a match out of the priority queue.
     If any part of the match has already been previously matched,
     discard this match.
+    Otherwise, record the match as a block \textbf{Move}
+    from the first string to the second string.
     Repeat this step until the priority queue is empty.
+\item Check for all unmatched blocks of text in the first
+    string, and record them as \textbf{Delete} operations
+    in the final edit script.
+\item Check for all unmatched blocks of text in the second
+    string, and record them as \textbf{Insert} operations
+    in the final edit script.
 \end{enumerate}
 Appendix~\ref{app:basicdiffsrc} lists a
 \textbf{perl} language implementation of this basic algorithm.
@@ -260,4 +268,88 @@ to check for matches against the deleted text rather than the full
 live text of previous revisions.
 Note that this can change the size of matches that are found,
 so that the quality function might not select matches in a preferred way.
+
+\begin{comment}
+\begin{algorithm}[H]
+\KwIn{Two word lists, $w_1$, and $w_2$.}
+\KwOut{Priority queue of longest possible matches.}
+\SetKwRepeat{Repeat}{repeat}{until}
+$l_1 \leftarrow$ length($w_1$) \;
+$l_2 \leftarrow$ length($w_2$) \;
+$idx \leftarrow $ IndexWordsByPositions($w_1$) \;
+\For{$i_2 \leftarrow 0$ \KwTo length($w_2$)}{
+    \If{$matched[i_1,i_2] \neq 1$}{
+	$matches \leftarrow idx[ w_2[i_2] ]$ \;
+	\For{$m \leftarrow 0$ \KwTo  length($matches$)}{
+	    $i_1 \leftarrow matches[m]$ \;
+	    $k \leftarrow 0$ \;
+	    \Repeat{$i_1 + k < l_1 \wedge i_2 + k < l_2 \wedge
+		w_1[i_1+k] = w_2[i_2+k]$}
+	    {$k \leftarrow k+1$ \; }
+	    \If{$k > 2$}{
+		\For{$i \leftarrow 0$ \KwTo $k-1$}{
+		    $matched[i_1+i,i_2+i] = 1$ \;
+		}
+		$q \leftarrow$ MatchQuality($k, i_1, l_1, i_2, l_2$) \;
+		$prioQ.add( q, (i_1,i_2,k) )$ \;
+	    }
+	}
+    }
+}
+\caption{Fill priority queue with large matches.}
+\end{algorithm}
+
+\begin{algorithm}[H]
+\KwIn{A priority queue, $prioQ$, of longest possible matches.}
+\KwOut{Edit script of block matches between $w_1$ and $w_2$.}
+\While{$m \leftarrow prioQ.pop()$}{
+    $(i_1, i_2, k) \leftarrow m$ \;
+    \tcp{Scan for unmatched subregions}
+    $start \leftarrow 0$ \;
+    \While{$start < k \wedge (matched_1[i_1+start] = 1 \vee
+	matched_2[i_2+start] = 1)$}{$start \leftarrow start+1$ \;}
+    $end \leftarrow start + 1$ \;
+    \While{$end < k \wedge matched_1[i_1+start] \neq 1 \wedge
+	matched_2[i_2+start] \neq 1$}{$end \leftarrow end+1$ \;}
+    \BlankLine
+    \eIf{$end - start = k$}{
+	\tcp{Found a match for our edit script}
+	$editScript.add( \mathbf{MOV}(i_1, i_2, k) )$ \;
+	\For{$i \leftarrow start$ \KwTo $end - 1$}{
+	    $matched_1[i_1+i] = 1$ \;
+	    $matched_2[i_2+i] = 1$ \;
+	}
+    }{
+	\tcp{Found unmatched subregion, so calculate residual match}
+	\While{$start < k$}{
+	    $k' \leftarrow end - start$ \;
+	    $q \leftarrow$ MatchQuality($k', i_1, l_1, i_2, l_2$) \;
+	    $prioQ.add( q, (i_1,i_2,k') )$ \;
+	    $i_1 \leftarrow i_1 + end$ \;
+	    $i_2 \leftarrow i_2 + end$ \;
+	    $k \leftarrow k - end$ \;
+	    \tcp{Scan for unmatched subregions}
+	    $start \leftarrow 0$ \;
+	    \While{$start < k \wedge (matched_1[i_1+start] = 1 \vee
+		    matched_2[i_2+start] = 1)$}{$start \leftarrow start+1$ \;}
+	    $end \leftarrow start + 1$ \;
+	    \While{$end < k \wedge matched_1[i_1+start] \neq 1 \wedge
+		matched_2[i_2+start] \neq 1$}{$end \leftarrow end+1$ \;}
+	}
+    }
+}
+\caption{Greedy matching between two strings.}
+\end{algorithm}
+
+
+\begin{algorithm}[H]
+\KwIn{Two word lists, $w_1$, and $w_2$.}
+\KwOut{Edit script to transform $w_1$ into $w_2$.}
+compute priority queue of longest matches \;
+run through priority queue selecting best matches \;
+
+\caption{Fast differencing algorithm}
+\end{algorithm}
+
+\end{comment}
 
