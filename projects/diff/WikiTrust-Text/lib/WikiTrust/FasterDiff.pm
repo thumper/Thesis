@@ -85,24 +85,27 @@ sub process_best_matches {
 	$this->{matched_dst}->[$i2+$i] = $match;
       }
     } else {
-	# found an unmatched subregion, but it's
-	# less than the size we were hoping for.
-	# So we must add the smaller matches back
-	# into the heap...  starting with the match
-	# we just found.
-	do {
-	  my $newK = $end - $start;
+      # found an unmatched subregion, but it's
+      # less than the size we were hoping for.
+      # So we must add the smaller matches back
+      # into the heap...  starting with the match
+      # we just found.
+      do {
+	my $newK = $end - $start;
+	if ($newK >= $this->{minMatch}) {
+	  # skip too-short matches
 	  my $q = $this->{quality}->($chunk, $newK, $i1, $l1, $i2, $l2);
 	  warn "Split into $i1, $i2, $newK ==> $q\n" if DEBUG;
 	  $this->{heap}->insert($q,
 	      WikiTrust::Tuple->new($chunk, $newK, $i1, $i2));
-	  $i1 += $end;
-	  $i2 += $end;
-	  $k -= $end;
-	  ($start, $end) = $this->scan_and_test($k,
-	      sub { $matched1->[$i1+$_[0]]
-	      ||  $this->{matched_dst}->[$i2+$_[0]] });
-	} while (defined $start);
+	}
+	$i1 += $end;
+	$i2 += $end;
+	$k -= $end;
+	($start, $end) = $this->scan_and_test($k,
+	    sub { $matched1->[$i1+$_[0]]
+	    ||  $this->{matched_dst}->[$i2+$_[0]] });
+      } while (defined $start);
     }
   }
   return \@editScript;
