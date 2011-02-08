@@ -45,14 +45,14 @@ and deletions by summing over all the matching elements:
   D_{tot}(m,n) =& \sum_{\exists i, k. \mathbf{Delete}(i, k) \in E(m,n)} k \\
 \end{align*}
 We then define the edit distance between revisions
-\version{m} and \version{n} used within WikiTrust as
+\version{m} and \version{n} as
 \begin{equation*}
     \dist{}{m,n} = I_{tot}(m,n) + D_{tot}(m,n)
         - \frac{1}{2}\min(I_{tot}(m,n), D_{tot}(m,n))
 \end{equation*}
 The motivation for this formulation of edit distance is
 to try to account for replacements, which appear within
-the edit script as insertion and deletions --- but the
+the edit script as both insertion and deletions --- but the
 position information required to match them is not preserved
 by the difference algorithm.
 By subtracting off a correction term, we make the assumption
@@ -69,7 +69,7 @@ sequential revisions, and comparing that against the edit
 distance between the first and last revisions.
 This has the problem that it roughly assumes that all
 contributions are completely preserved or completely
-reverted, but idea of mapping out the edit distances of
+reverted, but the idea of mapping out the edit distances of
 multiple revisions led to another idea that we favor.
 
 Instead of trying to measure whether an edit is preserved,
