@@ -26,7 +26,6 @@ sub init {
   my $this = shift @_;
   $this->{heap} = WikiTrust::PriorityQ->new();
   $this->{matched_dst} = [];
-  $this->{matchId} = 0;
 }
 
 sub set_minMatch {
@@ -166,13 +165,13 @@ sub process_best_matches {
     next if !defined $start;	# whole thing is matched
     if ($end - $start == $k) {
       # the whole sequence is still unmatched
-      push @editScript, WikiTrust::Tuple->new('Mov', $chunk, $i1, $i2, $k);
+      my $match = WikiTrust::Tuple->new('Mov', $chunk, $i1, $i2, $k);
+      push @editScript, $match;
       # and mark it matched
-      $this->{matchId}++;
       for (my $i = $start; $i < $end; $i++) {
-	$matched1->[$i1+$i] = $this->{matchId}
+	$matched1->[$i1+$i] = $match
 	    if !$multimatch;
-	$this->{matched_dst}->[$i2+$i] = $this->{matchId};
+	$this->{matched_dst}->[$i2+$i] = $match;
       }
     }
   }
