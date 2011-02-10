@@ -5,7 +5,7 @@
 
 # change 'tests => 1' to 'tests => last_test_to_print';
 
-use Test::More tests => 12;
+use Test::More tests => 17;
 BEGIN { use_ok('WikiTrust::ReplacementDiff') };
 
 #########################
@@ -46,3 +46,11 @@ ok($s->[3] eq WikiTrust::Tuple->new('Rep',0,3,1,3,1));
 ok($s->[4] eq WikiTrust::Tuple->new('Rep',0,10,1,7,1));
 ok($s->[5] eq WikiTrust::Tuple->new('Del',5,3));
 
+$w1 = "Four score and seven years ago";
+$w2 = "Five score and seven days ago";
+$s = runDiff('ReplacementDiff', $w1, $w2);
+ok(@$s == 4);
+ok($s->[0] eq WikiTrust::Tuple->new('Mov',0,1,1,3));
+ok($s->[1] eq WikiTrust::Tuple->new('Mov',0,5,5,1));
+ok($s->[2] eq WikiTrust::Tuple->new('Rep',0,0,1,0,1));
+ok($s->[3] eq WikiTrust::Tuple->new('Rep',0,4,1,4,1));

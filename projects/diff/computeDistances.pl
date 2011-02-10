@@ -8,9 +8,13 @@ use XML::Simple;
 use WikiTrust::FasterTextTracking;
 use Benchmark qw(:all);
 use Data::Dumper;
+use Switch;
 
 my $xs = XML::Simple->new(ForceArray => 1);
 my $ref = $xs->XMLin(shift @ARGV);
+
+print "graph G {\n";
+my $count = 0;
 
 my $prevrevs = [];
 my $prevrevids = [];
@@ -24,23 +28,23 @@ foreach my $page (@{ $ref->{page} }) {
     my $diff = WikiTrust::FasterDiff->new();
     my $words = $diff->target($text);
 
-    if (@$prevrevs > 0) {
-	my $editScript;
-	timethis(1, sub { $editScript = $diff->edit_diff($prevrevs->[-1]); },
-	    "FasterTextTracking");
-
-	print Dumper($editScript)."\n";;
-	exit(0);
-    }
+    doDiff($revid, $diff, $prevrevs, $prevrevids, 1, 1.0);
+    doDiff($revid, $diff, $prevrevs, $prevrevids, 2, 0.9);
+    doDiff($revid, $diff, $prevrevs, $prevrevids, 3, 0.8);
+    doDiff($revid, $diff, $prevrevs, $prevrevids, 5, 0.3);
+    doDiff($revid, $diff, $prevrevs, $prevrevids, 10, 0.2);
+    doDiff($revid, $diff, $prevrevs, $prevrevids, 15, 0.1);
 
     unshift @$prevrevs, $words;
     unshift @$prevrevids, $revid;
-    if (@$prevrevids > 10) {
+    if (@$prevrevids > 15) {
 	pop @$prevrevs;
 	pop @$prevrevids;
     }
+    last if $count++ > 20;
   }
 }
+print "}\n";
 exit(0);
 
 sub compareResults {
@@ -80,4 +84,33 @@ sub getRevInfo {
     $next = 1 if $author eq $nextauthor;
   }
   return ($next, $rev, $author, $revid);
+}
+
+sub doDiff {
+    my ($revid, $diff, $prevrevs, $prevrevids, $numback, $weight) = @_;
+
+    return if @$prevrevs < $numback;
+    my $editScript;
+    timethis(1, sub { $editScript = $diff->edit_diff($prevrevs->[-$numback]); },
+		    "FasterTextTracking");
+
+    my $d = editDistance($editScript);
+    my $prev_revid = $prevrevids->[-$numback];
+    print "r$revid -- r$prev_revid [len=$d,weight=$weight];\n";
+}
+
+
+sub editDistance {
+  my $s = shift @_;
+  my $dist = 0;
+  foreach my $m (@$s) {
+    switch ($m->[0]) {
+      case "Ins" { $dist += $m->[2]; }
+      case "Del" { $dist += $m->[2]; }
+      case "Mov" { $dist += $m->[4]; }
+      case "Rep" { $dist += $m->[5]; }
+      else { die "Bad script: ".$m->[0]; }
+    };
+  }
+  return $dist;
 }
