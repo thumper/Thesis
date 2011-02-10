@@ -193,6 +193,10 @@ sub cover_unmatched {
   }
 }
 
+sub replacement_scan {
+    my ($this, $editScript, $matched, $len, $chunks) = @_;
+}
+
 
 # Compute the edit script to transform src into dst.
 sub edit_diff {
@@ -203,8 +207,10 @@ sub edit_diff {
   $this->init();
   $this->build_heap(0, $src);
   my $matched_chunks = [ [] ];
+  $matched_chunks->[0]->[scalar(@$src)-1] = undef;
   my $editScript = $this->process_best_matches(0, [$src],
       $matched_chunks);
+  $this->replacement_scan($editScript, $this->{matched_dst}, scalar(@{ $this->{dst} }), $matched_chunks);
   $this->cover_unmatched($matched_chunks->[0],
       scalar(@$src), $editScript, 'Del');
   $this->cover_unmatched($this->{matched_dst},
