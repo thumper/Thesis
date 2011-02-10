@@ -1,7 +1,20 @@
 compareDiff.pl - used to compare BasicDiff and FasterDiff to make
 	sure that the edit scripts returned match up.
 
-compareTracking.pl
+compareTracking.pl - compares the results of BasicTextTracking
+     and FasterTextTracking to make sure the results match up
 
-computeSurvival.pl
+computeSurvival.pl - reads in a dump, and computes the authorship
+    of each word for every filtered revision.  For every revision,
+    outputs the number of words "owned" by it or earlier revs.
 
+	computeSurvival.pl dump-Something.xml > track-Something.txt
+	graphSurvival.pl track-Something.txt
+
+graphSurvival.pl - reads in the output from computeSurvival.pl
+    and picks out interesting graphs to display in gnuplot
+
+
+computeDistances.pl - does diffs between nearby revisions, and
+    computes the edit distance between them.  Generates output
+    suitable for 'neato' (part of the DOTVIZ package)
