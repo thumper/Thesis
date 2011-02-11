@@ -10,10 +10,12 @@ use Benchmark qw(:all);
 use Data::Dumper;
 use Switch;
 
+use constant SCALE => 18.0;
+
 my $xs = XML::Simple->new(ForceArray => 1);
 my $ref = $xs->XMLin(shift @ARGV);
 
-print "graph G {\n";
+print "graph EditDistances {\n";
 my $count = 0;
 
 my $prevrevs = [];
@@ -29,19 +31,19 @@ foreach my $page (@{ $ref->{page} }) {
     my $words = $diff->target($text);
 
     doDiff($revid, $diff, $prevrevs, $prevrevids, 1, 1.0);
-    doDiff($revid, $diff, $prevrevs, $prevrevids, 2, 0.9);
-    doDiff($revid, $diff, $prevrevs, $prevrevids, 3, 0.8);
-    doDiff($revid, $diff, $prevrevs, $prevrevids, 5, 0.3);
-    doDiff($revid, $diff, $prevrevs, $prevrevids, 10, 0.2);
-    doDiff($revid, $diff, $prevrevs, $prevrevids, 15, 0.1);
+    doDiff($revid, $diff, $prevrevs, $prevrevids, 2, 0.5);
+    #doDiff($revid, $diff, $prevrevs, $prevrevids, 3, 0.8);
+    #doDiff($revid, $diff, $prevrevs, $prevrevids, 5, 0.3);
+    #doDiff($revid, $diff, $prevrevs, $prevrevids, 10, 0.2);
+    #doDiff($revid, $diff, $prevrevs, $prevrevids, 15, 0.1);
 
-    unshift @$prevrevs, $words;
-    unshift @$prevrevids, $revid;
+    push @$prevrevs, $words;
+    push @$prevrevids, $revid;
     if (@$prevrevids > 15) {
-	pop @$prevrevs;
-	pop @$prevrevids;
+	shift @$prevrevs;
+	shift @$prevrevids;
     }
-    last if $count++ > 20;
+    last if $count++ > 15;
   }
 }
 print "}\n";
@@ -89,14 +91,20 @@ sub getRevInfo {
 sub doDiff {
     my ($revid, $diff, $prevrevs, $prevrevids, $numback, $weight) = @_;
 
-    return if @$prevrevs < $numback;
-    my $editScript;
-    timethis(1, sub { $editScript = $diff->edit_diff($prevrevs->[-$numback]); },
-		    "FasterTextTracking");
+    if ($weight == 1.0) {
+	print "r$revid [label=\"\",shape=circle,height=0.001,width=0.001];\n";
+    }
 
-    my $d = editDistance($editScript);
+    return if @$prevrevs < $numback;
+    my $editScript = $diff->edit_diff($prevrevs->[-$numback]);
+
+    my $d = editDistance($editScript) / SCALE;
+    $d = 0.0001 if $d == 0.0;
+warn "$revid\tback=$numback\tdist=$d\n";
     my $prev_revid = $prevrevids->[-$numback];
-    print "r$revid -- r$prev_revid [len=$d,weight=$weight];\n";
+    my $style = '';
+    $style = ',style=invis' if $weight != 1.0;
+    print "r$revid -- r$prev_revid [len=$d,weight=$weight$style];\n";
 }
 
 
@@ -107,7 +115,7 @@ sub editDistance {
     switch ($m->[0]) {
       case "Ins" { $dist += $m->[2]; }
       case "Del" { $dist += $m->[2]; }
-      case "Mov" { $dist += $m->[4]; }
+      case "Mov" { ; }
       case "Rep" { $dist += $m->[5]; }
       else { die "Bad script: ".$m->[0]; }
     };
