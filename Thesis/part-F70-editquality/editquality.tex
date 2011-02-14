@@ -181,9 +181,9 @@ the robustness of reputation~\cite{AISec08}.
 To compute a quality metric for revision \version{k},
 we decided to fix the revision in the past to \version{k-1},
 and then average the edit survival judgements by the
-next three revisions.
+next several revisions.
 \begin{equation*}
-\quality{elong}{k} = \frac{1}{3} \cdot
-      \sum_{i=k+1}^{k+3} \esurv{}{k,k-1,i}
+\quality{elong}{n}{k} = \frac{1}{|\judges{}{n}{k}|} \cdot
+      \sum_{i \in \judges{}{n}{k}} \esurv{}{k,k-1,i}
 \end{equation*}
 

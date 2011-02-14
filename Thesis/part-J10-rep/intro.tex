@@ -1,9 +1,23 @@
-Reputation is founded on the notion that the past is a good predictor of the
-future.
+One approach to dealing with the vandalism problem is to detect
+it immediately and flag it to administrators.
+We call this the ``immediate vandalism detection'' problem,
+which we discuss further in Chapter~\ref{ch:vandalism}.
+There were already bots making automated edits within Wikipedia
+in~2005 when we began this research, and it was clear that
+expert systems would soon be developed based on natural language processing
+ideas~\cite{wiki:AntiVandalBot,wiki:MartinBot,wiki:ClueBot,Carter2007},
+so we decided to strike out in direction of building a reputation system
+--- and accidentally, we stumbled onto the problem of
+``historical vandalism detection.''
 
-We take it to be a score, and the higher your reputation the more likely you
-are to do good work in the future. When you do bad work, your reputation score
-goes down.
+
+Reputation is founded on the notion that the past is a good
+predictor of the future, but there is also a prescriptive aspect
+as the formulation describes to the world what is important and
+what is not.
+We take it to be a score, and the higher your reputation the more
+likely you are to do good work in the future; when you do bad
+work, your reputation score goes down.
 
 We wrestled for some time about negative reputations. We assign "bad"
 reputations to people in real life, but can this translate to an online

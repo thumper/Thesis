@@ -37,21 +37,21 @@ that we can compute the following quantity measures:
 %
 \begin{itemize}
 
-\item $txt(v_i, v_j)$, for $0 < i \le j \le n$, is the amount of
+\item $\tsurv{}{i,j}$, for $0 < i \le j \le n$, is the amount of
 	text (measured in number of words) that is introduced by
 	$r_i$ in $v_i$, and that is still present (and due to the same
 	author $a_i$) in $v_j$.
-	$txt(v_i,v_i)$ is the amount of new text added by $a_i$ through
+	$\tsurv{}{i,i}$ is the amount of new text added by $a_i$ through
 	$r_i$.
-	We define $txt(r_i) = txt(v_i,v_i)$, and refer to this
+	We define $\tsurv{}{r_i} = \tsurv{}{i,i}$, and refer to this
 	as the \intro{text contribution} of $r_i$.
 
-\item $d(v_i, v_j)$, for $0 \le i < j \le n$, is the
+\item $\dist{}{i,j}$, for $0 \le i < j \le n$, is the
 	\textit{edit distance} between $v_i$ and $v_j$,
 	and measures how much change
 	(word additions, deletions, replacements, displacements, etc.)
 	there has been in going from $v_i$ to $v_j$.
-	We define $d(r_i) = d(v_{i-1}, v_i)$, for the \intro{edit contribution}
+	We define $\dist{}{r_i} = \dist{}{i-1,i}$, for the \intro{edit contribution}
 	made in a revision $r_i$.
 \end{itemize}
 %
