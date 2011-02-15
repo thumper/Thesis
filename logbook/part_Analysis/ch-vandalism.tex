@@ -56,7 +56,7 @@ easy to search.
 I decided that the time had come to fix these bugs, so I have been
 working on a new branch to implement these changes.
 
-\section{Including Reputation+}
+\section{Including Reputation}
 
 \subsection{2-Feb-2011}
 
@@ -93,4 +93,22 @@ adjusted --- but that's probably part of the ``robust reputation''
 work that has been added in.
 
 Need to check on larger dump that reputations actually increase.
+
+\subsection{14-Feb-2011}
+
+The batch process was killing Redherring, so I moved it to Gaston.
+There, it was going so slowly that it seemed it would take months
+to finish, so I spent the weekend working on a parallel process that
+would \texttt{rsync} files to EC2 instances, do the computation,
+and then bring the files back.
+That completed this morning; about 36hrs using 20 instances plus
+my 64-bit server in LA.
+The program I wrote I call \program{dist\_stats.pl}.
+(Note that Gaston is about halfway done with processing, so
+it speeds up as we get further into the history.)
+
+Now I need to sort the statistics and then generate the reputation.
+\begin{verbatim}
+$ ../batch_process --cmd_dir ./tools --dir output-enwiki --do\_sort\_stats /bin/dumps/enwiki-20100130-pages-meta-history.xml.bz2
+\end{verbatim}
 

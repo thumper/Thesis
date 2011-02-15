@@ -1,0 +1,150 @@
+\section{Building Blocks}
+
+We would like to define quantitative measures of author 
+contributions to the Wikipedia.
+Typically, contribution metrics measure only the
+\textit{quantity} of a contribution,
+which implicitly assumes that all authors
+are working towards a common goal.
+We propose that collaborations including anonymous
+authors and other potential bad actors might be better served by factoring
+\textit{quality} with quantity.
+In order to define measures as
+``\textit{quality} $\cdot$ \textit{quantity},''
+we first must define some building blocks that represent
+some ways to measure quality and quantity.
+
+We define various measures of author contribution, taking into
+account the amount of text added or edits performed by the author
+and the quality of those changes.
+We would like to measure contributions both in absolute terms,
+as the amount of text that was added by an author or the
+amount of edits made by an author, and in relative terms, 
+where we take into account the quality of the edits.
+The contributions of all authors is cumulative over the 
+entire revision history of the Wikipedia;
+for our experiments, we picked revisions of all articles
+previous to October~1, 2006.
+
+For every article, $a \in \articles$, in the Wikipedia,
+we consider each version $\version{i} \in \versions{a}$
+to be edited by the author $A_i = \revauthor{\version{i}}$.
+Each of the subsequent authors $A_{i+1}, A_{i+2}, \ldots$ can either
+retain, or remove, the edits performed by $A_i$ in bring
+version \version{i-1} to \version{i}.
+These authors who edit article $a$ after \version{i}
+are implicitly providing feedback on the content of \version{i}, and hence
+act as \intro{judges} of the contribution made by author $A_i$.
+We therefore define \judges{a}{n}{i} to return a set of up to $n$ versions
+after \version{i} that will act as judges of \version{i}.
+For this work, we take \judges{a}{n}{i} to be the \textbf{next} $n$
+versions such that the author of each $\version{} \in \judges{a}{n}{i}$
+is restricted to $\revauthor{\version{}} \ne \revauthor{\version{i}}$.
+It should be noted that other formulations of \judges{a}{n}{i}
+are possible, such as the one proposed in~\cite{AISec08}.
+
+Recalling that
+\begin{equation*}
+    \versions{a} = [ \version{1}, \version{2}, \ldots, \version{n} ],
+\end{equation*}
+we define $\revpos{\version{i}} = i$;
+note that $a$ is implicit in \version{i}, since a revision
+is part of the history of some specific article.
+Crucially, to define contribution formulas for each user,
+we also define the map
+\begin{equation*}
+\authorrevs{} : \users \times \articles \to 2^\versions{},
+\end{equation*}
+which, given a user $u \in \users$ and an article $a \in \articles$, returns
+the set of revisions that were created by user $u$ for article $a$.
+
+\subsection{Quantity Measures.}
+
+We would like to measure the \textit{size} of an author's contribution
+when they create version \version{i} of some article $a \in \articles$.
+The most obvious quantity that can be measured is counting how
+many words the author added in version \version{i},
+which can be computed from the text difference in going from
+\version{i-1} to \version{i}.
+If we let $I(\version{i-1}, \version{i})$ represent the number
+of words that were inserted in going to version \version{i},
+our first quantity measure to measure the size of a
+\intro{text contribution} is:
+\begin{equation*}
+\tsurv{}{\version{i}} = \tsurv{a}{i,i} = I(\version{i-1},\version{i}),
+\end{equation*}
+which is a specific case of the more general
+definition in Equation~\ref{eq:tsurv}.
+
+
+As we have previously noted, counting only the words added in
+an edit ignores the fact that some users of Wikipedia do maintenance
+work in the form of rearranging text or removing vandalism.
+To capture this extra behavior, we would like to also measure
+what words were deleted in the edit, $\version{i-1} \goesto \version{i}$,
+as well as how many words were rearranged.
+This is known in the literature as the \intro{edit distance} between
+versions \version{i-1} and \version{i}.
+There are several ways to compute edit
+distance~\cite{Levenshtein66,TichyEditDist},
+usually based on insertions and deletions of
+characters.\footnote{The careful reader will observe that
+the definition of \tsurv{}{\version{i}} is actually an
+edit distance as well, albeit one which ignores deletions
+and text rearrangement.}
+Our formulation is instead based on words as the fundamental unit,
+to more closely approximate how people perceive edits.
+We define the edit distance in terms of the following quantities:
+\begin{itemize}
+\item $I(\version{i-1}, \version{i})$ is the number of words that are inserted,
+\item $D(\version{i-1}, \version{i})$ is the number of words that are deleted,
+    and
+\item $M(\version{i-1}, \version{i})$ is the number of words that are moved,
+    times the fraction of the document that they move across,
+\end{itemize}
+which can be computed according to the text differencing
+algorithm described in Chapter~\ref{ch:diff}.
+The size of the \intro{edit contribution} for \version{i} is
+then given by:
+%
+\begin{equation*}
+\dist{}{\version{i}} = \dist{a}{i-1,i} = \max(I, D)
+    - \frac{1}{2}\min(I, D) + M,
+\end{equation*}
+which is a specialization of the more general
+edit distance in Equation~\ref{eq:dist}.
+
+
+
+\subsection{Quality Measures.}
+
+In addition to the quantity measures defined above, we need
+multiple quality measures to choose from.
+We start with the two quality measures derived in
+Chapter~\ref{ch:editquality}:
+\begin{itemize}
+\item \quality{decay}{}{i} is the value that best describes
+    the text survival of text inserted in version \version{i}
+    over the next several revision as an exponential
+    decay (Section~\ref{sec:textquality}).
+    This value ranges from 0, for completely removed text,
+    to 1, for text which is completely preserved.
+\item \quality{elong}{10}{i} is the average edit longevity of
+    the contribution of version \version{i} as judged by the
+    next ten revisions (Section~\ref{sec:editquality}).
+    This value ranges from $-1$ for completely reverted edits,
+    to $+1$ for completely preserved edits.
+\end{itemize}
+
+A different way to measure the quality of a text contribution
+is to simply sum the amount of text that remains, over the
+succeeding ten revisions:
+%
+\begin{equation*}
+    \quality{tsurv}{10}{i} = \frac{1}{\tsurv{}{i,i}} \cdot
+    \left( \sum_{v \in \judges{}{10}{\version{i}}} \tsurv{}{i,\revpos{v}} \right)
+\end{equation*}
+%
+This value generally ranges from $0$ for text which is immediately removed,
+to $+10$ for text which completely survives all ten revisions.
+

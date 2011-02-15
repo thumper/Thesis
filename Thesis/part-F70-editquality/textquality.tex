@@ -40,6 +40,7 @@ words introduced in \version{m} that are still present in \version{n}:
 \begin{equation}
 \tsurv{\article{}}{m,n} = \left| \left\{ j \colon
     \exists j . \txtsrcrev{\version{n},j} = m \right\} \right| \\
+\label{eq:tsurv}
 \end{equation}
 
 \subsection{Text Decay Quality}
@@ -168,7 +169,7 @@ to solve for the zero of the related function:
   f(\alpha) = (1 - \alpha) \cdot \sum_{i=0}^n \tsurv{}{k,k+i}
         - (1 - \alpha^{n+1}) \cdot \tsurv{}{k,k}
 \end{equation*}
-where $\alpha = \quality{decay}{k}$.
+where $\alpha = \quality{decay}{}{k}$.
 Newton's method involves making repeated estimations of the form
 \begin{equation*}
   \alpha_{j+1} = \alpha_j - \frac{f(\alpha_j)}{f'(\alpha_j)}

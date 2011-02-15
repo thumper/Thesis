@@ -46,10 +46,11 @@ and deletions by summing over all the matching elements:
 \end{align*}
 We then define the edit distance between revisions
 \version{m} and \version{n} as
-\begin{equation*}
+\begin{equation}
     \dist{}{m,n} = I_{tot}(m,n) + D_{tot}(m,n)
-        - \frac{1}{2}\min(I_{tot}(m,n), D_{tot}(m,n))
-\end{equation*}
+        - \frac{1}{2}\min(I_{tot}(m,n), D_{tot}(m,n)) \\
+\label{eq:dist}
+\end{equation}
 The motivation for this formulation of edit distance is
 to try to account for replacements, which appear within
 the edit script as both insertion and deletions --- but the
@@ -59,7 +60,7 @@ By subtracting off a correction term, we make the assumption
 that edits with both insertions and deletions make some
 replacements which are being counted in both types of edit.
 
-\subsection{Edit Survival}
+\subsection{Edit Longevity}
 
 Given a method to measure the size of an edit contribution,
 the problem still remains of how to compute whether that
@@ -150,7 +151,7 @@ then the contribution could be said to be so-so.
 
 We propose that a good way to measure this judgement
 by \revauthor{\version{j}} of \revauthor{\version{k}},
-which we call \intro{edit survival}, is:
+which we call \intro{edit longevity}, is:
 \begin{equation*}
 \esurv{}{k,k-1,j} = \frac{\dist{}{k-1,j} - \dist{}{k,j}}
                         {\dist{}{k-1,k}},
@@ -180,7 +181,7 @@ the robustness of reputation~\cite{AISec08}.
 
 To compute a quality metric for revision \version{k},
 we decided to fix the revision in the past to \version{k-1},
-and then average the edit survival judgements by the
+and then average the edit longevity judgements by the
 next several revisions.
 \begin{equation*}
 \quality{elong}{n}{k} = \frac{1}{|\judges{}{n}{k}|} \cdot

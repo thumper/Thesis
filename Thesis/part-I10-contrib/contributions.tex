@@ -1,38 +1,8 @@
 \section{Contribution Measures}
 
-We would like to define quantitative measures of author 
-contributions to the Wikipedia.
-Typically, contribution metrics measure only the
-\textit{quantity} of a contribution,
-which implicitly assumes that all authors
-are working towards a common goal.
-We propose that collaborations including anonymous
-authors might be better served by factoring
-\textit{quality} with quantity.
-Each of the measures we define below
-is formulated as
-\textit{quality} $\cdot$ \textit{quantity},
-to make explicit what each value is.
-
-For every page $p$ in the Wikipedia, we consider a revision $r_i$ 
-performed by the author $a_i$ for some $0 < i \le n$.
-Each of the subsequent authors $a_{i+1},a_{i+2},\ldots$ can either
-retain, or remove, the edits performed by $a_i$ in revision
-$r_i$.
-These authors who subsequently edit version $v_i$ of the article
-are considered \intro{judges} of $r_i$ and hence of the 
-contribution made by author $a_i$.
-We define various measures of author contribution, taking into
-account the amount of text added or edits performed by the author
-and the quality of those changes.
-We would like to measure contributions both in absolute terms,
-as the amount of text that was added by an author or the
-amount of edits made by an author, and in relative terms, 
-where we take into account the quality of the edits.
-The contributions of all authors is cumulative over the 
-entire revision history of the Wikipedia;
-for our experiments, we picked revisions of all articles
-previous to October~1, 2006.
+We now present several potential contribution measures in the form of
+``\textit{quality} $\cdot$ \textit{quantity},''
+using the building blocks described in the last section.
 
 \subsection{Number of Edits}
 
@@ -46,7 +16,7 @@ We follow the tradition, and define this precisely
 for some user $u \in \users$ as:
 %
 \[
-\numedits(u) = \sum_{a \in \articles} \sum_{r \in E(u, a)} 1 \cdot 1.
+\numedits(u) = \sum_{a \in \articles} \sum_{v \in E(u, a)} 1 \cdot 1.
 \]
 %
 
@@ -61,7 +31,7 @@ we refer to this measure as \textonly,
 and define it for each $u \in \users$ as:
 %
 \[
-\textonly(u) = \sum_{a \in \articles} \sum_{r \in E(u, a)} 1 \cdot txt(r).
+\textonly(u) = \sum_{a \in \articles} \sum_{v \in E(u, a)} 1 \cdot \tsurv{}{v}.
 \]
 %
 We refer to this measure as the {\em absolute\/} text contribution
@@ -86,7 +56,7 @@ and the version that immediately preceded it.
 The \editonly measure is thus defined for all $u \in \users$ as:
 %
 \[
-\editonly(u) = \sum_{a \in \articles} \sum_{r \in E(u, a)} 1 \cdot d(r).
+\editonly(u) = \sum_{a \in \articles} \sum_{v \in E(u, a)} 1 \cdot \dist{}{v}.
 \]
 %
 We refer to this measure as the {\em absolute\/} edit contribution
@@ -99,13 +69,15 @@ The next level of sophistication is to incorporate
 non-constant quality measures into the calculation of contribution.
 We desire the text longevity of a revision to be
 the amount of original text that was
-added by the author $\revauthor{r_i}$ for a revision $r_i$, discounted by the
-text quality measure $\textquality(r_i)$, which describes
+added by the author $\revauthor{\version{i}}$
+for a revision \version{i}, discounted by the
+text quality measure \quality{decay}{}{\version{i}}, which describes
 how the text decays over the next several revision.
 %
 \[
 \textlong(u) = 
-\sum_{a \in \articles} \sum_{r \in E(u, a)} \textquality(r) \cdot txt(r)
+\sum_{a \in \articles} \sum_{v \in E(u, a)} \quality{decay}{}{v}
+        \cdot \tsurv{}{v}
 \]
 %
 
@@ -113,14 +85,14 @@ how the text decays over the next several revision.
 
 \noindent
 Similar to the text longevity measure, we define the edit longevity
-of a revision $r_i$ as the edit contribution, discounted by the 
-average edit quality measure $\avgeditquality(r_i)$.
+of a revision \version{i} as the edit contribution, discounted by the 
+average edit quality measure \quality{elong}{}{\version{i}}.
 As with all the measures, we accumulate contributions based on 
 edit longevity over all revisions edited by each user $u \in \users$:
 %
 \[
-\editlong(u) = \sum_{a \in \articles} \sum_{r \in E(u, a)} 
-\avgeditquality(r) \cdot d(r)
+\editlong(u) = \sum_{a \in \articles} \sum_{v \in E(u, a)} 
+\quality{elong}{}{v} \cdot \dist{}{v}
 \]
 %
 
@@ -144,14 +116,9 @@ $u \in \users$ as follows:
 %
 \begin{gather*}
 \tenrevs(u) = 
-\sum_{a \in \articles} \sum_{r \in E(u, a)} \textlongevity(r) \cdot txt(r).
+\sum_{a \in \articles} \sum_{v \in E(u, a)} \quality{tsurv}{10}{v}
+        \cdot \tsurv{}{v}.
 \end{gather*}
-%
-Note that our definition of $\textlongevity(r)$ incorporates
-the text survival for the next ten revisions,
-thus simplifying the definition here
-into the \textit{quality}~$\cdot$~\textit{quantity}
-presentation we are favoring.
 
 \subsection{Text Longevity with Penalty}
 
@@ -175,7 +142,7 @@ measure for every $u \in \users$:
 \begin{gather*}
 \punish(u) = \\
 \textlong(u) +
-\sum_{a \in \articles} \sum_{r \in E(u, a)} \min(0, \avgeditquality(r)) \cdot d(r).
+\sum_{a \in \articles} \sum_{v \in E(u, a)} \min(0, \quality{elong}{10}{v}) \cdot \dist{}{v}.
 \end{gather*}
 %
 

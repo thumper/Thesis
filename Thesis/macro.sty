@@ -2,11 +2,13 @@
 \newcommand{\intro}[1]{\index{#1}{\emph{#1}}}
 
 
+\newcommand{\version}[1]{\ensuremath{v_{#1}}}
+
+
 \newcommand{\article}[1]{\ensuremath{a_{#1}}}
 \newcommand{\page}[1]{TODO: change to article}
 
 \newcommand{\editor}[1]{\ensuremath{A_{#1}}}
-\newcommand{\version}[1]{\ensuremath{v_{#1}}}
 \newcommand{\revision}[1]{\ensuremath{e_{#1}}}
 \newcommand{\edit}[1]{\ensuremath{e_{#1}}}
 \newcommand{\rep}{R}
@@ -15,7 +17,7 @@
 
 \newcommand{\tsurv}[2]{\ensuremath{\mathit{TSurv}_{#1}(#2)}}
 \newcommand{\dist}[2]{\ensuremath{d_{#1}(#2)}}
-\newcommand{\esurv}[2]{\ensuremath{\mathit{ESurv}_{#1}(#2)}}
+\newcommand{\esurv}[2]{\ensuremath{\mathit{ELong}_{#1}(#2)}}
 
 \newcommand{\tot}{{\text{\textit{tot}}}}
 %\newcommand{\tenrevsq}{\ensuremath{\beta_\text{\textit{text}}}\xspace}
@@ -48,9 +50,11 @@
 
 \newcommand{\articles}{\ensuremath{\mathbb{A}}}
 \newcommand{\users}{\ensuremath{\mathbb{U}}}
-\newcommand{\revisions}[1]{\ensuremath{\mathbb{R}\ifthenelse{\equal{#1}{}}{}{[#1]}}}
+\newcommand{\revisions}[1]{\ensuremath{\mathbb{Rfixme}\ifthenelse{\equal{#1}{}}{}{[#1]}}}
+\newcommand{\versions}[1]{\ensuremath{\mathbb{V}\ifthenelse{\equal{#1}{}}{}{[#1]}}}
 
-\newcommand{\position}[1]{\ensuremath{\mathrm{Position}(#1)}}
+\newcommand{\authorrevs}[1]{\ensuremath{\mathbb{E}\ifthenelse{\equal{#1}{}}{}{[#1]}}}
+\newcommand{\revpos}[1]{\ensuremath{\mathrm{RevPos}(#1)}}
 \newcommand{\revauthor}[1]{\ensuremath{\mathrm{RevAuthor}(#1)}}
 \newcommand{\txtauthor}[1]{\ensuremath{\mathrm{TxtAuthor}(#1)}}
 \newcommand{\txtsrcrev}[1]{\ensuremath{\mathrm{TxtSrcRev}(#1)}}
