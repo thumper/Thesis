@@ -17,13 +17,14 @@
 
 \newcommand{\tsurv}[2]{\ensuremath{\mathit{TSurv}_{#1}(#2)}}
 \newcommand{\dist}[2]{\ensuremath{d_{#1}(#2)}}
+\newcommand{\txt}[2]{\ensuremath{\mathit{txt}_{#1}(#2)}}
 \newcommand{\esurv}[2]{\ensuremath{\mathit{ELong}_{#1}(#2)}}
 
 \newcommand{\tot}{{\text{\textit{tot}}}}
 %\newcommand{\tenrevsq}{\ensuremath{\beta_\text{\textit{text}}}\xspace}
 \newcommand{\editq}{{\text{\textit{EQual}}}}
 
-\newcommand{\quality}[3]{\ensuremath{q_\mathit{#1}^{#2}(#3)}}
+\newcommand{\quality}[3]{\ensuremath{q_\mathit{#1}^{#2}\ifthenelse{\equal{#3}{}}{}{(#3)}}}
 
 % contribution measures
 \newcommand{\editset}{\ensuremath{E}\xspace}

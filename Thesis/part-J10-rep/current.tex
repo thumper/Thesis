@@ -21,29 +21,6 @@ and \textit{edit survival}~\cite{Adler2007}.
 
 \subsubsection*{Text Survival}
 
-\begin{figure}[t]
-\centering
-\subfigure[Graphical representation of the \textit{text survival} over
-    several subsequent revisions.]{
-\label{fig-textcontr-a} 
-\framebox{\includegraphics[width=0.42\textwidth]{part-J10-rep/textcontr-2}}
-}
-\hspace{1ex}
-\subfigure[Calculating the \textit{text longevity} of a contribution.]{
-\label{fig-textcontr-b}
-\framebox{\includegraphics[width=0.48\textwidth]{part-J10-rep/text-longevity}}
-}
-\caption{A graphical depiction of how a text contribution survives
-	through future revisions.
-	An author, \editor{k}, adds $T_k$ words in version \version{k}.
-	In subsequent versions, only a portion of the words survive.
-	We model the survival over time as a geometric curve,
-	to arrive at a single number describing the longevity
-	of the initial contribution.}
-\label{fig-textsurvival}
-\end{figure}
-
-
   The basic idea of text survival is to track the text introduced in
   \version{k}, and measure how many of those words are
   still present in \version{j}.
@@ -91,33 +68,6 @@ and \textit{edit survival}~\cite{Adler2007}.
 
 \subsubsection*{Edit Survival}
 
-\begin{figure}[t]
-\centering
-\subfigure[Graphical representation of a good edit contribution.]{
-\label{fig-editcontr-a} 
-\framebox{\includegraphics[width=0.35\textwidth]{part-J10-rep/editcontr-good}}
-}
-\hspace{1ex}
-\subfigure[Graphical representation of a bad edit contribution.]{
-\label{fig-editcontr-b}
-\framebox{\includegraphics[width=0.40\textwidth]{part-J10-rep/editcontr-bad}}
-}
-\caption{To measure the quality of version \version{k}, we also
-	look at the previous version \version{k-1} and some future
-	version \version{j}.
-	The three versions form a triangle, using
-	edit distance~\cite{Levenshtein66} to define the separation
-	between each other.
-	Intuitively, we know that when \version{k} is good,
-	the distance to the future, $\dist(\version{k},\version{j})$,
-	will be shorter than if \version{k} is bad.
-	(When \version{k} is bad, more editing is required to
-	bring it back to a better version, plus the editing
-	to bring it to the future.)
-}
-\label{fig-editcontr}
-\end{figure}
-
 \hyphenation{re-arrang-ed}
   We would like to have a similar notion of survival for edits,
   particularly for the case where text is rearranged by an author
@@ -135,19 +85,6 @@ and \textit{edit survival}~\cite{Adler2007}.
   then the edits are of good quality.
   When future versions mostly undo or discard the work of \revision{k},
   then the edits are of bad quality.
-
-%\begin{wrapfigure}{r}{0.55\textwidth}
-\begin{figure}
-\centering
-\framebox{\includegraphics[width=0.35\textwidth]{part-J10-rep/edit-longevity}}
-\caption{Quality is measured by calculating how much \textit{progress}
-	is made towards the future version of the article,
-	and dividing that by the amount of \textit{work done}
-	during the edit.}
-\label{fig-editlong}
-\end{figure}
-%\end{wrapfigure}
-
 
   To calculate the quality of an edit \revision{k},
   we additionally consider two \intro{reference versions}:

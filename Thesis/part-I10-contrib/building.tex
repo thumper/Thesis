@@ -71,7 +71,7 @@ of words that were inserted in going to version \version{i},
 our first quantity measure to measure the size of a
 \intro{text contribution} is:
 \begin{equation*}
-\tsurv{}{\version{i}} = \tsurv{a}{i,i} = I(\version{i-1},\version{i}),
+\txt{}{\version{i}} = \tsurv{a}{i,i} = I(\version{i-1},\version{i}),
 \end{equation*}
 which is a specific case of the more general
 definition in Equation~\ref{eq:tsurv}.
@@ -89,7 +89,7 @@ There are several ways to compute edit
 distance~\cite{Levenshtein66,TichyEditDist},
 usually based on insertions and deletions of
 characters.\footnote{The careful reader will observe that
-the definition of \tsurv{}{\version{i}} is actually an
+the definition of \txt{}{\version{i}} is actually an
 edit distance as well, albeit one which ignores deletions
 and text rearrangement.}
 Our formulation is instead based on words as the fundamental unit,

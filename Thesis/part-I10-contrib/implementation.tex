@@ -1,7 +1,7 @@
 \section{Implementation}
 
-As part of our previous research into author reputation
-and text trust~\cite{Adler2007,trust-techrep-07}, we have
+As part of our research into author reputation
+and text trust~\cite{Adler2007,WikiTrust08}, we have
 created a modular tool for processing XML dumps from
 the Wikipedia.
 It analyzes all the revisions of a page,
@@ -16,12 +16,9 @@ a much smaller \textit{statistics file}.
 We process the statistics file with a second tool,
 which we instrumented to calculate the various
 contribution measures we have defined.
-The original tools are open-source, and can be downloaded
-from our project page, at \url{http://trust.cse.ucsc.edu/}.
-More precise details about text tracking and edit distance
-are available in~\cite{Adler2007}.
 
-Our analysis is based on main namespace article revisions from
+Our analysis is based on main namespace (\texttt{NS\_MAIN})
+article revisions from
 the Wikipedia dump of February~6, 2007,
 which we process to create a reduced statistics file.
 The statistics file contains information about every version,
@@ -31,7 +28,8 @@ persists for ten revisions into the future.
 To ensure that each version we considered had revisions
 after it, we consider only versions before October~1, 2006.
 After further processing on the file,
-we used R\cite{R2007} to analyze the resulting data.
+we used R~\cite{R2007}, an open source statistics package,
+to analyze the resulting data.
 
 \textbf{Bots.}
 During the course of our analysis, we found that
@@ -55,5 +53,6 @@ For our purposes, we decided to define a vandal
 as someone who, on average, makes an edit which is
 completely reverted.
 Precisely, we define a vandal who meets one of two criteria:
-$\textquality < 0.05$, or $\avgeditquality < -0.9$.
+$\quality{decay}{10}{} < 0.05$, or $\quality{elong}{10}{} < -0.9$.
 We justify this choice in the next section.
+

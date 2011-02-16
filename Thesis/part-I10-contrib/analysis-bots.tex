@@ -20,29 +20,29 @@ that of all authors shown in Figure~\ref{fig-revs-quality}.
 We noticed that bots create a large number of revisions with
 high quality.
 We found that $69.56\%$ of the revisions made by
-bots have a text quality measure of $\textquality > 0.95$.
+bots have a text quality measure of $\quality{decay}{10}{} > 0.95$.
 The percentage of revisions made by bots with 
-$\textquality \le 0.05$ was $9.2\%$.
+$\quality{decay}{10}{} \le 0.05$ was $9.2\%$.
 We found that $66.92\%$ of the new text added by bots were with
-$\textquality > 0.95$ and $14.14\%$ of the new text added by
-bots were with $\textquality = 0$, which means they were 
+$\quality{decay}{10}{} > 0.95$ and $14.14\%$ of the new text added by
+bots were with $\quality{decay}{10}{} = 0$, which means they were 
 immediately reverted.
 Similarly, on the edit contributions of bots we found that
 $54.42\%$ of the revisions with edits made by bots were of
-high edit quality, with $\avgeditquality > 0.9$.
-The number of revisions having $\avgeditquality < -0.9$ being
+high edit quality, with $\quality{elong}{10}{} > 0.9$.
+The number of revisions having $\quality{elong}{10}{} < -0.9$ being
 negligible; $1\%$ from our analysis.
 When we counted all edit revisions that had a negative edit
 quality we saw that $12.73\%$ of the revisions were judged to 
-be of poor quality with $\avgeditquality < 0$.
+be of poor quality with $\quality{elong}{10}{} < 0$.
 We found that $93.3\%$ of the edit contributions made by bots
 had positive edit quality and the remaining $6.4\%$ had
 negative edit quality.
 More interestingly, $65.20\%$ of the edit contributions made
-by bots had $\avgeditquality > 0.9$, which means they were
+by bots had $\quality{elong}{10}{} > 0.9$, which means they were
 not edited out in subsequent revisions and represent the
 sheer amount of work done by bots that is of very high quality.
-The contributions with $\avgeditquality < -0.9$ are $1.8\%$.
+The contributions with $\quality{elong}{10}{} < -0.9$ are $1.8\%$.
 This indicates that a large part of the text additions made by bots 
 and a large part of the edit contributions made by bots survive
 indefinitely.
@@ -66,15 +66,15 @@ up with a lower score on $\punish$ when compared to $SmackBot$.
 
 \mynote{This figure was commented out.}
 %
-\begin{figure*}
+\begin{figure*}[tbhp]
     \begin{center}
     \fbox{
     \includegraphics[scale=0.75]{part-I10-contrib/graphs/allbots_anti_hist}
     }
     \end{center}
     \caption[Measuring edit and text quality for all bots and $AntiVandalBot$]{
-    	This graph shows the edit quality measure $\avgeditquality$
-        and text quality $\textquality$ for all bots.
+    	This graph shows the edit quality measure $\quality{elong}{10}{}$
+        and text quality $\quality{decay}{10}{}$ for all bots.
         A quality measure of $1$ indicates that all the changes
         were preserved.
         A quality measure of $0$ indicates that all the changes

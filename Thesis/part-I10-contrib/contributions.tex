@@ -31,7 +31,7 @@ we refer to this measure as \textonly,
 and define it for each $u \in \users$ as:
 %
 \[
-\textonly(u) = \sum_{a \in \articles} \sum_{v \in E(u, a)} 1 \cdot \tsurv{}{v}.
+\textonly(u) = \sum_{a \in \articles} \sum_{v \in E(u, a)} 1 \cdot \txt{}{v}.
 \]
 %
 We refer to this measure as the {\em absolute\/} text contribution
@@ -77,7 +77,7 @@ how the text decays over the next several revision.
 \[
 \textlong(u) = 
 \sum_{a \in \articles} \sum_{v \in E(u, a)} \quality{decay}{}{v}
-        \cdot \tsurv{}{v}
+        \cdot \txt{}{v}
 \]
 %
 
@@ -117,7 +117,7 @@ $u \in \users$ as follows:
 \begin{gather*}
 \tenrevs(u) = 
 \sum_{a \in \articles} \sum_{v \in E(u, a)} \quality{tsurv}{10}{v}
-        \cdot \tsurv{}{v}.
+        \cdot \txt{}{v}.
 \end{gather*}
 
 \subsection{Text Longevity with Penalty}
