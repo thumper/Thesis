@@ -1,0 +1,183 @@
+\section{Evaluation Metrics}
+\label{sec-optimize}
+
+\mynote{Fix up notation for these constants...}
+
+\newcommand{\textmass}{\rho_t}
+\newcommand{\editmass}{\rho_e} 
+\newcommand{\specq}{\alpha}
+\newcommand{\especq}{\alpha_e}
+\newcommand{\tspecq}{\alpha_t}
+\newcommand{\repu}{{\text{\textit{rep}}}}
+\def\eqpun{\;}
+\newcommand{\prece}{{\text{\textit{prec}}}_e}
+\newcommand{\prect}{{\text{\textit{prec}}}_t}
+\newcommand{\recall}{{\text{\textit{rec}}}}
+\newcommand{\recalle}{{\text{\textit{rec}}}_e}
+\newcommand{\recallt}{{\text{\textit{rec}}}_t}
+\newcommand{\boost}{{\text{\textit{boost}}}}
+\newcommand{\booste}{{\text{\textit{boost}}}_e}
+\newcommand{\boostt}{{\text{\textit{boost}}}_t}
+\newcommand{\constraint}{\kappa}
+\newcommand{\constrainte}{\kappa_e}
+\newcommand{\constraintt}{\kappa_t}
+
+
+
+We now develop quantitative measures of the ability of our
+content-driven reputation to predict the quality of future revisions. 
+For a revision $r_i: v_{i-1} \voom v_i$ in a sequence 
+$v_0, v_1, \ldots, v_n$ of versions, 
+let $\textmass(r_i) = \txt(i,i)$ be the new text introduced at $r_i$, 
+and $\editmass(r_i) = \dist(v_{i-1},v_i)$ be the amount of editing
+involved in $r_i$. 
+We define edit and text longevity as follows: 
+%
+\begin{itemize} 
+
+\item The {\em edit longevity\/} $\especq(r_i) \in [-1,1]$ of
+  $r_i$ is the average of $\elong(i,j)$ for $i < j \leq \min(i+3, n)$. 
+
+\item The {\em text longevity\/} $\tspecq(r_i) \in [0,1]$ of
+  $r_i$ is the solution to the following equation: 
+  %
+  \begin{equation} \label{eq-text-long}
+    \sum_{j=i}^n \txt(i,j) = \txt(i,i) \cdot \sum_{j=1}^n (\tspecq(r_i))^{j-i}
+    \eqpun .
+  \end{equation}
+
+\end{itemize}
+%
+Thus, $\tspecq(r_i)$ is the coefficient of exponential decay of the
+text introduced by $r_i$: on average, after $k$ revisions, only a
+fraction $(\tspecq(r_i))^k$ of the introduced text survives.
+As all quantities in (\ref{eq-text-long}) except $\tspecq(r_i)$ are
+known, we can solve for $\tspecq(r_i)$ using standard numerical
+methods. 
+We also indicate by $\repu(r_i)$ the reputation of the author $a_i$ of
+$r_i$ at the time $r_i$ was performed.  
+We note that $\repu(r_i)$ is computed from the history of the
+Wikipedia before $r_i$, while $\especq(r_i)$ and $\tspecq(r_i)$ depend
+only on events after $r_i$. 
+Moreover, $\especq(r_i)$ and $\tspecq(r_i)$ can be computed
+independently of reputations.
+
+Let $R$ be the set of all revisions in the Wikipedia (of all articles). 
+We view revisions as a probabilistic process, with $R$ as the set of
+outcomes.
+We associate with each revision a probability mass (a weight)
+proportional to the number of words it affects. 
+This ensures that the metrics are not affected if revisions by the
+same author are combined or split into multiple ones. 
+Since we keep only the last among consecutive revisions by the same
+user, a ``revision'' is a rather arbitrary unit of measurement, while
+a ``revision amount'' provides a better metric. 
+Thus, when studying edit longevity, we associate with each $r \in R$ a
+probability mass proportional to $\editmass(r)$, giving rise to the
+probability measure $\Pr_e$. 
+Similarly, when studying text longevity, we associate with each 
+$r \in R$ a probability mass proportional to $\textmass(r)$, giving
+rise to the probability measure $\Pr_t$. 
+
+In order to develop figures of merit for our reputation, we define the
+following terminology (used already in the introduction in informal
+fashion):
+%
+\begin{itemize} 
+
+\item We say that the edit performed in $r$ is {\em short-lived\/} if
+  $\especq(r) \leq -0.8$.
+
+\item We say that the new text added in $r$ is {\em short-lived\/}
+  if $\tspecq(r) \leq 0.2$, indicating that at most 20\% of it, on
+  average, survives from one version to the next. 
+
+\item We say that a revision $r$ is {\em low-reputation\/} if
+  $\log (1+\repu(r)) \leq \log(1+\coeffmaxrep) / 5$, indicating that
+  the reputation, after logarithmic scaling, falls in the lowest 20\% of
+  the range. 
+
+\end{itemize}
+%
+Correspondingly, we define three random variables $S_e, S_t, L: R
+\mapsto \set{0,1}$ as follows, for all $r \in R$: 
+%
+\begin{itemize} 
+
+\item $S_e(r)=1$ if $\especq(r) \leq -0.8$, and $S_e(r)=0$ otherwise.
+\item $S_t(r)=1$ if $\especq(r) \leq  0.2$, and $S_t(r)=0$ otherwise.
+\item $L(r)=1$ if $\log (1+\repu(r)) \leq \log(1+\coeffmaxrep) / 5$,
+  and $L(r)=0$ otherwise.
+
+\end{itemize}
+%
+\iflong
+The {\em precision\/} $\prect$ and {\em recall\/} $\recallt$
+for short-lived text, and 
+the {\em precision\/} $\prece$ and {\em recall\/} $\recalle$
+for short-lived edits, are defined as:
+%
+\begin{align*}
+    \prect & = \textstyle\Pr_t(S_t{=}1 \mid L{=}1) 
+  & \recallt & = \textstyle\Pr_t(L{=}1 \mid S_t{=}1) \\
+    \prece & = \textstyle\Pr_e(S_e{=}1 \mid L{=}1) 
+  & \recalle & = \textstyle\Pr_e(L{=}1 \mid S_e{=}1).
+\end{align*}
+\fi
+\ifshort
+For short-lived text, the {\em precision\/} is 
+$
+  \textstyle \prect = \Pr_t(S_t=1 \mid L=1)
+$,
+and the {\em recall\/} is 
+$
+  \textstyle \recallt = \Pr_t(L=1 \mid S_t=1)
+$.
+Similarly, for short-lived edits, we define the 
+precision is $\prece = \Pr_e(S_e=1 \mid L=1)$, 
+and the recall is $\recalle = \Pr_e(L=1 \mid S_e=1)$.
+\fi
+These quantities can be computed as usual; for instance, 
+\[
+  {\textstyle \Pr_e} (S_e=1 \mid L=1) = 
+  \frac{\sum_{r \in R} S_e(r) \cdot L(r) \cdot \editmass(r)}{%
+    \sum_{r \in R} L(r) \cdot \editmass(r)}.
+\]
+%% (noting that it is unnecessary in these expressions to renormalize all
+%% probability masses via $1 / \sum_{r \in R} \editmass(r)$). 
+We also define: 
+%
+\begin{align*}
+  \booste & = \frac{\Pr_e(S_e=1 \mid L=1)}{\Pr_e(S_e=1)}
+            = \frac{\Pr_e(S_e=1 , L=1)}{\Pr_e(S_e=1)\cdot\Pr_e(L=1)} \\
+  \boostt & = \frac{\Pr_t(S_t=1 \mid L=1)}{\Pr_t(S_t=1)}
+            = \frac{\Pr_t(S_t=1 , L=1)}{\Pr_t(S_t=1)\cdot\Pr_t(L=1)}
+\end{align*}
+%
+Intuitively, $\booste$ indicates how much more likely than average
+it is that edits produced by low-reputation authors are short-lived.
+The quantity $\boostt$ has a similar meaning. 
+Our last indicator of quality are the {\em coefficients of constraint\/}
+\[ 
+  \constrainte = I_e(S_e,L) / H_e(L)
+  \qquad 
+  \constraintt = I_t(S_t,L) / H_t(L),
+\]
+where $I_e$ is the {\em mutual information\/} of $S_e$ and $L$,
+computed with respect to $\Pr_e$, and $H_e$ is the entropy of $L$,
+computed with respect to $\Pr_e$ \cite{CoverBook}; similarly for
+$I_t(S_t,L)$ and $H_t(L)$.
+The quantity $\constrainte$ is the fraction of the entropy of the
+edit longevity which can be explained by the reputation of the author; 
+this is an information-theoretic measure of correlation. 
+The quantity $\constraintt$ has an analogous meaning. 
+
+To assign a value to the coefficients $\coeffrep$, $\slack$,
+$\coeffpunish$, $\coefftext$, $\lengthexp$, and $\coeffmaxrep$, 
+we implemented a search procedure, whose goal was to find values for
+the parameters that maximized a given objective function. 
+We applied the search procedure to the Italian Wikipedia, reserving
+the French Wikipedia for validation, once the coefficients were
+determined. 
+We experimented with $I_e(S_e,L)$ and $\prece \cdot \recalle$
+as objective functions, and they gave very similar results. 

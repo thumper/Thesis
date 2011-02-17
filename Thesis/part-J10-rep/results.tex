@@ -1,0 +1,368 @@
+\section{Experimental Results}
+
+\begin{table*}[t]
+\begin{center}
+\begin{tabular}{|r||c|c||c|c||c|c||c|c|} \hline
+ & \multicolumn{2}{|c||}{Precision}
+ & \multicolumn{2}{|c||}{Recall}
+ & \multicolumn{2}{|c||}{Boost}
+ & \multicolumn{2}{|c|}{Coeff.\ of constr.} \\
+ & Edit & Text & Edit & Text  & Edit & Text & Edit & Text \\
+ & $\prece$ & $\prect$ & $\recalle$ & $\recallt$ & $\booste$ & $\boostt$ 
+ & $\constrainte$ & $\constraintt$ \\[0.5ex] \hline 
+\textbf{Excluding anonymous authors: \quad} & & & & & & & & \\
+\qquad French Wikipedia          & 23.92 &  5.85 & 32.24 & 37.80 & 4.21 & 4.51 &  7.33 &  6.29 \\
+\qquad Italian Wikipedia         & 14.15 &  3.94 & 19.39 & 38.69 & 4.03 & 5.83 &  3.35 &  7.17 \\ \hline
+\textbf{Including anonymous authors: \quad} & & & & & & & & \\
+\qquad French Wikipedia          & 48.94 & 19.01 & 82.86 & 90.42 & 2.35 & 2.97 & 25.29 & 23.00 \\
+\qquad Italian Wikipedia         & 30.57 &  7.64 & 71.29 & 84.09 & 3.43 & 3.58 & 19.83 & 17.49 \\ \hline
+\end{tabular}
+\end{center}
+\caption{Summary of the performance of content-driven reputation over
+the Italian and French Wikipedias. All data are expressed as percentages.}
+\label{tbl:summary-results}
+\end{table*}
+
+\begin{comment}
+\begin{table*}
+\begin{center}
+\begin{tabular}{|l||c|c||c|c||c|c||c|c|} \hline
+ & \multicolumn{2}{|c||}{Precision}
+ & \multicolumn{2}{|c||}{Recall}
+ & \multicolumn{2}{|c||}{Boost}
+ & \multicolumn{2}{|c|}{Coeff.\ of constr.} \\
+ & Edit & Text & Edit & Text  & Edit & Text & Edit & Text \\
+ & $\prece$ & $\prect$ & $\recalle$ & $\recallt$ & $\booste$ & $\boostt$ 
+ & $\constrainte$ & $\constraintt$ \\[0.5ex] \hline 
+%% {\bf Content-driven reputation:} & & & & & & & & \\
+Italian Wikipedia     & 14.15 &  3.94 & 19.39 & 38.69 & 4.03 & 5.83 & 3.35 & 7.17 \\
+French Wikipedia      & 23.92 &  5.85 & 32.24 & 37.80 & 4.21 & 4.51 & 7.33 & 6.29 \\ \hline
+\end{tabular}
+\end{center}
+\caption{Summary of the performance of content-driven reputation over
+the Italian and French Wikipedias.  All data are expressed as percentages.}
+\label{tbl:summary-results} 
+\end{table*}
+\end{comment}
+
+
+To evaluate our content-driven reputation, we considered two Wikipedias: 
+%
+\begin{itemize}
+
+\item The Italian Wikipedia, consisting of 154,621 articles and 714,280
+  {\em filtered\/} revisions; we used a snapshot dated December~11, 2005. 
+\item The French Wikipedia, consisting of 536,930 articles and
+  4,837,243 {\em filtered\/} revisions; we used a snapshot dated
+  October~14, 2006. 
+
+\end{itemize}
+%
+Of both wikipedias, we studied only ``NS\_MAIN'' pages, which
+correspond to ordinary articles (other pages are used as comment
+pages, or have other specialized purposes). 
+Moreover, to allow the accurate computation of edit
+longevity, we used only revisions that occurred before October~31, 2005 for
+the Italian Wikipedia, and before July~31, 2006 for the French one. 
+Our algorithms for computing content-driven reputation depend on the
+value of six parameters, as mentioned earlier. 
+We determined values for these parameters by searching the parameter
+space to optimize the coefficient of constraint, using the Italian
+Wikipedia as a training set; the values we determined are: 
+%
+\begin{align*}
+   \coeffrep      & = 13.08
+  & \coeffpunish   & = 19.09
+  & \lengthexp     & = 0.60   \\
+   \slack         & = 2.20
+  & \coefftext     & = 0.60
+  & \coeffmaxrep   & = 22026
+\end{align*}
+%
+We then analyzed the Italian and French Wikipedias using the above
+values. 
+The results are summarized in Table~\ref{tbl:summary-results}. 
+The results are better for the larger French Wikipedia; in particular,
+the reputation's ability to predict short-lived edits is better on the
+French than on the Italian Wikipedias. 
+We are not sure whether this depends on different dynamics in the two
+Wikipedias, or whether it is due to the greater age (and size) of the
+French Wikipedia; we plan to study this in further work. 
+We see that edits performed by low-reputation authors are four times
+as likely as the average to be short-lived. 
+
+To investigate how many of the edits had a short life due to bad quality,
+we asked a group of~7 volunteers to rate revisions performed to the
+Italian Wikipedia. 
+We selected the revisions to be ranked so that they contained
+representatives of all 4 combinations of high/low reputation author,
+and high/low longevity. 
+We asked the volunteers to rate the revisions with $+1$ (good), 
+$0$ (neutral), and $-1$ (bad); in total, 680 revisions
+were ranked. 
+The results, summarized in Table~\ref{tbl:human}, are striking. 
+Of the short-lived edits performed by low-reputation users, fully
+66\% were judged bad. 
+On the other hand, less than 19\% of the short-lived edits performed by
+high-reputation users were judged bad. 
+We analyzed in detail the relationship between user reputation, and
+the percentage of short-lived text and edits that users considered bad. 
+Using these results, we computed the approximate recall factors on the
+Italian Wikipedia of content-driven reputation for {\em bad\/} edits,
+as judged by users, rather than short-lived ones:
+%
+\begin{itemize}
+
+\item The recall for short-lived edits that are judged to be bad is over
+  49\%.
+
+\item The recall for short-lived text that is judged to be bad is over
+  79\%.
+
+\end{itemize}
+%
+These results clearly indicate that our content-driven reputation is a
+very effective tool for spotting, at the moment they are introduced,
+bad contributions that will later be undone. 
+There is some margin of error in this data, as our basis for
+evaluation is a small number of manually-rated revisions, and human
+judgement on the same revisions often contained discrepancies. 
+
+The fact that so few of the short-lived edits performed by
+high-reputation authors were judged to be of bad quality points to the
+fact that edits can be undone for reasons unrelated to quality. 
+Many Wikipedia articles deal with current events; edits to those
+articles are undone regularly, even though they may be of good
+quality. 
+Our algorithms do not treat in any special way current-events pages. 
+Other Wikipedia edits are administrative in nature, flagging pages that
+need work or formatting; when these flags are removed, we classify it
+as text deletion. 
+Furthermore, our algorithms do not track text across articles, so that
+when text is moved from one article to another, they classify it as
+deleted from the source article.
+
+From Table~\ref{tbl:summary-results}, we note that the precision is
+low, by search standards.
+Our problem, however, is a prediction problem, not a retrieval
+problem, and thus it is intrinsically different. 
+The group of authors with low reputation includes many authors who are
+good contributors, but who are new to the Wikipedia, so that they have
+not had time yet to build up their reputation.
+
+Figure~\ref{fig:user-breakdown-by-rep} provides a breakdown of
+the amount of edits and text additions performed, according to the
+reputation of the author.
+
+\begin{table}
+\begin{center}
+\begin{tabular}{|r|c|c|} \hline
+\qquad \qquad Reputation & Judged bad & Judged good \\ \hline
+\multicolumn{1}{|l|}{Short-lived edits: \qquad \quad} & & \\[1ex]
+   Low [0.0--0.2]   &    66  \% &    19 \% \\
+Normal [0.2--1.0]   &    16  \% &    68 \% \\ \hline
+\multicolumn{1}{|l|}{Short-lived text: \qquad \quad} & & \\[1ex]
+   Low [0.0--0.2]   &    74  \% &    13 \% \\
+Normal [0.2--1.0]   &    14  \% &    85 \% \\ \hline
+\end{tabular}
+\end{center}
+\caption{User ranking of short-lived edits and text, as a
+  function of author reputation, for the Italian Wikipedia.  
+  In square brackets, we give the
+  interval where the normalized value $\log(1+r) / \log (1 +
+  \coeffmaxrep)$ of a reputation $r$ falls.  The precentages do not
+  add to 100\%, because users could also rank changes as ``neutral''.} 
+\label{tbl:human}
+\end{table}
+
+\begin{figure}
+\input{part-J10-rep/userrep}
+\caption{Percentage of text and edit contributed to the
+  Italian and French Wikipedias, according to author reputation. 
+  The data includes anonymous authors.}
+\label{fig:user-breakdown-by-rep}
+\end{figure}
+
+
+\iflong 
+
+Table~\ref{tbl:fr-cdr-over-edit-long} provides a more in-depth look at
+the relationship between author reputation and short-lived edits on the
+French Wikipedia. 
+The corresponding data for the Italian Wikipedia is given in
+Table~\ref{tbl:it-cdr-over-edit-long}.
+
+
+\begin{table*}
+\begin{center}
+\input{fr-cdr-over-edit-long}
+\caption{French Wikipedia: Cumulative distribution of revisions over
+    edit longevity, grouped by reputation.  Each row shows how many of
+    the total revisions were edited by users of each reputation range
+    (the ``\%data'' column), and how that subset of revisions was
+    distributed when ranked by edit longevity.}
+\end{center}
+\label{tbl:fr-cdr-over-edit-long}
+\end{table*}
+
+
+\begin{table*}
+\begin{center}
+\input{fr-editlong-over-cdr}
+\caption{French Wikipedia: distribution of revisions over reputation,
+    grouped by edit longevity.  Columns show, as percentages, how revisions
+    of a specific edit longevity fall into reputation ranges, and
+    therefore add to 100\%.}
+\end{center}
+\label{tbl:fr-editlong-over-cdr}
+\end{table*}
+
+
+\begin{table*}
+\begin{center}
+\input{it-cdr-over-edit-long}
+\caption{Italian Wikipedia: cumulative distribution of revisions over
+    edit longevity, grouped by reputation.  Each row shows the
+    percentage of the total revisions were edited by users of each
+    reputation range (the ``\%data'' column), and how that subset of
+    revisions was distributed when ranked by edit longevity (indicated
+    as a percentage).}
+\end{center}
+\label{tbl:it-cdr-over-edit-long}
+\end{table*}
+
+
+\begin{table*}
+\begin{center}
+\input{it-editlong-over-cdr}
+\caption{Italian Wikipedia: distribution of revisions over reputation,
+    grouped by edit longevity.  Columns show, as percentages, how revisions
+    of a specific edit longevity fall into reputation ranges, and
+    therefore add to 100\%.}
+\end{center}
+\label{tbl:it-editlong-over-cdr}
+\end{table*}
+
+\input{text-long-tables}
+
+\fi 
+
+
+
+
+\begin{table*}
+\begin{center}
+\begin{tabular}{|l||c|c||c|c||c|c||c|c|} \hline
+ & \multicolumn{2}{|c||}{Precision}
+ & \multicolumn{2}{|c||}{Recall}
+ & \multicolumn{2}{|c||}{Boost}
+ & \multicolumn{2}{|c|}{Coeff.\ of constr.} \\
+ & Edit & Text & Edit & Text  & Edit & Text & Edit & Text \\
+ & $\prece$ & $\prect$ & $\recalle$ & $\recallt$ & $\booste$ & $\boostt$ 
+ & $\constrainte$ & $\constraintt$ \\[0.5ex] \hline 
+\textbf{Italian Wikipedia:} & & & & & & & & \\
+\qquad Content-driven reputation & 14.15 &  3.94 & 19.39 & 38.69 & 4.03 & 5.83 & 3.35 & 7.17 \\
+\qquad Edit count as reputation  & 11.50 &  3.32 & 19.09 & 39.52 & 3.27 & 4.91 & 2.53 & 6.35 \\ \hline
+\textbf{French Wikipedia:} & & & & & & & & \\
+\qquad Content-driven reputation & 23.92 &  5.85 & 32.24 & 37.80 & 4.21 & 4.51 & 7.33 & 6.29 \\
+\qquad Edit count as reputation &  21.62 &  5.63 & 28.30 & 37.92 & 3.81 & 4.34 & 5.61 & 6.08 \\ \hline
+\end{tabular}
+\end{center}
+\caption{Summary of the performance of content-driven reputation over
+the Italian and French Wikipedias. All data are expressed as
+percentages. Anonymous authors are not included in the comparison.}
+\label{tbl:comparison-with-count} 
+\end{table*}
+
+
+
+\subsection{Comparison with Edit-Count Reputation}
+
+We compared the performance of our content-driven reputation to 
+another basic form of reputation: {\em edit count.} 
+It is commonly believed that, as Wikipedia authors gain experience
+(through revision comments, talk pages, and reading articles on
+Wikipedia standards), the quality of their submissions goes up.
+Hence, it is reasonable to take edit count, that is, the number of
+edits performed, as a form of reputation. 
+We compare the performance of edit count, and of content-driven
+reputation, in Table~\ref{tbl:comparison-with-count}. 
+The comparison does not include anonymous authors, as we do not have a
+meaningful notion of edit-count for them. 
+As we can see, according to our metrics, content-driven reputation
+performs slightly better than edit-count reputation on both the Italian 
+and French Wikipedias. 
+
+We believe that one reason edit-count based reputation performs well
+in our measurements is that authors, after performing edits that are
+often criticized and reverted, commonly either give up their identity
+in favor of a ``fresh'' one, thus zeroing their edit-count reputation
+(thus ``punishing'' themselves), or stop contributing to the
+Wikipedia. 
+However, we believe that the good performance of edit count is an
+artifact, due to the fact that edit count is applied to an
+already-existing history of contributions. 
+Were it announced that edit count is the chosen notion of reputation,
+authors would most likely modify their behavior in a way that both
+rendered edit count useless, and damaged the Wikipedia. 
+For instance, it is likely that, were edit count the measure of
+reputation, authors would adopt strategies (and automated robots) for
+performing very many unneeded edits to the Wikipedia, causing
+instability and damage. 
+In other words, edit count as reputation measure has very little
+prescriptive value. 
+In contrast, we believe our content-driven reputation, by prizing
+long-lasting edits and content, would encourage constructive behavior
+on the part of the authors. 
+
+\subsection{Text Age and Author Reputation as Trust Criteria}
+
+The age of text in the Wikipedia is often considered as an
+indicator of text trustworthiness, the idea being that text that has
+been part of an article for a longer time has been vetted by more
+contributors, and thus, it is more likely to be correct \cite{Cr06}. 
+We were interested in testing the hypothesis that author reputation,
+in addition to text age, can be a useful indicator of
+trustworthiness, especially for text that has just been added to a
+page, and thus that has not yet been vetted by other contributors.
+Let {\em fresh text\/} be the text that has just been inserted in a
+Wikipedia article. 
+We considered all text that is fresh in all the Italian
+Wikipedia, and we measured that 3.87~\% of this fresh text is deleted
+in the next revision.  In other words,
+$\Pr(\mbox{deleted}\mid\mbox{fresh}) = 0.0387$. 
+We then repeated the measurement for text that is both fresh, and is
+due to a low-reputation author: 6.36~\% of it was deleted in the next
+revision, or 
+$\Pr(\mbox{deleted}\mid\mbox{fresh and low-reputation}) = 0.0636$. 
+This indicates that author reputation is a useful factor in predicting
+the survival probability of fresh text, if not directly its
+trustworthiness. 
+Indeed, as remarked above, since text can be deleted for a number of
+reasons aside from bad quality, author reputation is most likely a
+better indicator of trustworthiness than these figures indicate. 
+
+
+\subsection{Conclusions}
+
+After comparing edit and text longevity values with user quality
+ratings for revisions, we believe that the largest residual source of
+error in our content-driven reputation lies in the fact that our text
+analysis does not include specific knowledge of the Wikipedia markup
+language and Wikipedia conventions. 
+We plan to make the text analysis more precise in future work. 
+
+%% It is occasionally claimed that the reputation of Wikipedia authors
+%% should be domain-specific, so that a good reputation for writing about
+%% mathematics does not automatically translate to a good reputation for
+%% writing about history. 
+%% We are not sure domain-specific reputation has more prediction value 
+%% than generic reputation, such as the one we build in this paper.
+%% We suspect that a sense of one's own abilities and limitations, and a
+%% knowledge of Wikipedia customs, may play a more important role than
+%% domain-specific knowledge in determining the average quality of an
+%% author's contributions. 
+%% The techniques developed for this paper enable us to easily measure
+%% the contributions of authors to various categories of the Wikipedia,
+%% so we plan to study the usefulness of domain-specific reputation from
+%% an experimental point of view in future work.

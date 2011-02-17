@@ -1,0 +1,258 @@
+\section{Content-Driven Reputation in a Versioned Document} 
+
+We propose the following method for computing content-driven
+reputation in a versioned document. 
+Consider a revision $r_i: v_{i-1} \voom v_i$, performed by author $a_i$, 
+for some $0 < i \leq n$. 
+Each of the subsequent authors $a_{i+1}, a_{i+2}, \ldots$ can either
+retain, or remove, the edits performed by $a_i$ at $r_i$.
+Thus, we consider later versions $v_j$ of the document, for $i < j
+\leq n$, and we increase, or decrease, the reputation of $a_i$
+according to how much of the change performed at $r_i$ has survived
+until $v_j$. 
+The greater is the reputation of the author $a_j$ of $v_j$, 
+the greater is the change in the reputation of $a_i$. 
+This ensures that high-reputation authors risk little of 
+their reputation when fighting revision wars against low
+reputation authors, such as anonymous authors. 
+If this were not the case, high-reputation authors would be wary of
+undoing damage done by low-reputation authors, including spammers, for
+fear of reprisal.
+
+We use two criteria for awarding reputation: the survival of text, and
+the survival of edits.
+Text survival is the most natural of these two criteria. 
+Adding new text to a Wikipedia article is a fundamental way of
+contributing --- it is how knowledge is added to the Wikipedia. 
+However, text survival alone fails to capture many ways in which authors
+contribute to the Wikipedia. 
+If a user rearranges the content of an article without introducing new
+text, the contribution cannot be captured by text survival. 
+Similarly, reverting an act of vandalism does not result in the
+introduction of new text.\footnote{Our algorithms distinguish between
+new text, and the reintroduction of previously deleted text.}
+%% If we computed reputation on the basis of text survival alone, authors
+%% who revert vandalism would not gain reputation from their actions,
+%% even though the repair they perform is fundamental to the Wikipedia. 
+Edit survival captures how long the re-arrangements performed by an
+author last in the history of a Wikipedia article, and captures all of
+the above ways of contributing. 
+
+%% We use a parameter $\coefftext \in [0,1]$ to determine how much weight
+%% should be given to text versus edit survival. 
+%% We have determined the parameter $\coefftext$, along with other
+%% parameters used in the calculation, via an optimization process aimed
+%% at producing reputation functions of high predictive value; the
+%% optimization process is described later in Section~\ref{sec-optimize}.
+
+
+\subsection{Accounting for Text Survival} 
+
+If text introduced by $r_i$ is still present in $v_j$, for 
+$0 < i < j \leq n$, this indicates that author $a_j$, who performed the
+revision $r_j: v_{j-1} \voom v_j$, agrees that the text is valuable. 
+To reflect this, we increase the reputation of $a_i$ in a manner that
+is proportional both to the amount of residual text, and to the
+reputation of $a_i$. 
+Thus, we propose the following rule.
+
+\begin{regola} \textbf{(reputation update due to text survival)} \label{rule-text}
+  When the revision $r_j$ occurs, for all $0 < i < j$ such that 
+  $j - i \leq 10$ and $a_j \neq a_i$, we add to the reputation
+  of $a_i$ the amount: 
+  \[
+    \coeffrep \cdot \coefftext \cdot \frac{\txt(i,j)}{\txt(i,i)} 
+    \cdot (\txt (i,i))^\lengthexp \cdot \log(1 + \rep(a_j,r_j)),
+  \]
+  where $\coeffrep > 0$, $\coefftext \in [0,1]$, and $\lengthexp \in
+  [0,1]$ are parameters, and where $\rep(a_j,r_j)$ is the reputation of $a_j$
+  at the time $r_j$ is performed. 
+\end{regola}
+
+\noindent
+In the rule, $\txt(i,j) / \txt(i,i)$ is the fraction of text
+introduced at version $v_i$ that is still present in version $v_j$;
+this is a measure of the ``quality'' of $r_i$. 
+The quantity $\log(1 + \rep(a_j,r_j))$ is the ``weight'' of the
+reputation of $a_j$, that is, how much the reputation of $a_j$ lends
+credibility to the judgements of $a_j$. 
+In our reputation system, the reputations of many regular contributors
+soar to very high values; using a logarithmic weight for reputation
+ensures that the feedback coming from new authors is not completely
+overridden by the feedback coming from such regular contributors. 
+The parameters $\coeffrep$, $\coefftext$ and $\lengthexp$ will be
+determined experimentally via an optimization process, as described
+later.
+The parameter $\lengthexp \in [0,1]$ is an exponent that specifies how
+to take into account the length of the original contribution: if
+$\lengthexp = 1$, then the increment is proportional to the length of
+the original contribution; if $\lengthexp = 0$, then the increment
+does not depend on the length of the original contribution.
+The parameter $\coeffrep$ specifies how much the reputation should
+vary in response to an individual feedback. 
+The parameter $\coefftext$ specifies how much the feedback should 
+depends on residual text (Rule~\ref{rule-text}) or residual edit
+(Rule~\ref{rule-edit}, presented later). 
+
+To give feedback on a revision, the rule considers at most 10
+successive versions. 
+This ensures that contributors to early versions of articles do not
+accumulate disproportionate amounts of reputation. 
+%% We considered basing the limit on time, rather than on the number of
+%% versions, but each Wikipedia article has its own rate of change:
+%% using the number of versions ensures that fast and
+%% slow-changing pages are treated in similar fashion.
+A rule using exponential decay, rather than a sharp cutoff at 10,
+would probably have been preferable, at a slightly larger
+computational cost. 
+% cancut above
+
+\subsection{Accounting for Edit Survival}
+
+\iflong
+\begin{figure}
+\begin{center}
+\input{edist.eepic}
+\end{center}
+\vspace*{-3ex}
+\caption{Distances involved in the computation of $\elong(i,j)$.}
+\label{fig-triangle}
+\end{figure}
+\fi 
+
+To judge how much of a revision $r_i: v_{i-1} \voom v_i$ is preserved
+in a later version $v_j$, for $0 < i < j \leq n$, we reason as
+follows. 
+We wish to rate $r_i$ higher, if $r_i$ made the article more similar to
+$v_j$. 
+In particular, we wish to credit $a_i$ in proportion to how much of
+the change $r_i$ is directed towards $v_j$. 
+This suggests using the formula: 
+%
+\begin{equation} \label{eq-edit-long} 
+  \elong(i,j) =
+  \frac{\dist(v_{i-1},v_j) - \dist(v_{i},v_j)}{\dist(v_{i-1},v_i)} . 
+\end{equation}
+%
+\iflong
+Figure~\ref{fig-triangle} depicts the distances involved in the
+computation of $\elong(i,j)$. 
+\fi
+If $\dist{}{}$ satisfies the triangular inequality (as our edit distance
+does, to a high degree of accuracy), then $\elong(i,j) \in [-1,1]$.  
+For two consecutive edits $r_i$, $r_{i+1}$,
+if $r_i$ is completely undone in $r_{i+1}$ 
+(as is common when $r_i$ consists in the introduction of spam or
+inappropriate material), then $\elong(i,i+1) = -1$; 
+if $r_{i+1}$ entirely preserves $r_i$, then $\elong(i,i+1) = +1$.
+For more distant edits, $\elong(i,j)$ is a measure of how much of the
+edit performed during $r_i$ is undone (value $-1$) or preserved (value
+$+1$) before $r_j$. 
+
+Note that $\elong(i,j) < 0$, i.e., $j$ votes to lower the reputation
+of $i$, only when $\dist(v_{i-1},v_j) < \dist(v_{i},v_j)$, that is,
+when $r_j$ is closer to the version $v_{i-1}$ {\em preceding\/}
+$a_i$'s contribution, than to $v_i$.
+Thus, the revision performed by $a_i$ needs to have been undone at
+least in part by $a_{i+1}$, $a_{i+2}$, \ldots, $a_j$, for $a_i$'s
+reputation to suffer.  
+This is one of the two mechanisms we have to ensure that authors whose
+contributions are rewritten, rather than rolled back, still receive
+reputation in return for their efforts. 
+The second mechanism is described in the next section.
+We use the following rule for updating reputations. 
+
+\begin{regola} \textbf{(reputation update due to edit survival)} \label{rule-edit}
+  When the revision $r_j$ occurs, for all $0 < i < j$ such that 
+  $j - i \leq 3$, we add to the reputation
+  of $a_i$ an amount $q$ determined as follows. 
+  If $a_j = a_i$ or $\dist(v_{i-1},v_i) = 0$, then $q=0$; otherwise,
+  $q$ is determined by the following algorithm.
+  %
+  \begin{tabbing}
+  $\displaystyle q := \frac{\slack \cdot \dist(v_{i-1}, v_j) 
+    - \dist(v_i, v_j)}{\dist(v_{i-1}, v_i)}$ \\[1ex]
+  \textbf{if} $q < 0$ \textbf{then} $q := q \cdot \coeffpunish$ \textbf{endif} \\[1ex]
+  $q := q \cdot \coeffrep \cdot (1 - \coefftext) \cdot 
+        (\dist(v_{i-1}, v_i))^\lengthexp \cdot \log(1 + \rep(a_j,r_j))$
+  \end{tabbing}
+  %
+  In the algorithm, $\coeffpunish \geq 1$, $\slack \geq 1$, $\coeffrep > 0$, 
+  $\coefftext \in [0,1]$, and $\lengthexp \in [0,1]$ are parameters,
+  and $\rep(a_j,r_j)$ is the reputation of $a_j$ at the time
+  $r_j$ is performed.
+\end{regola}
+
+\noindent
+The rule adopts a modified version of (\ref{eq-edit-long}).
+The parameter $\slack > 1$ is used to spare $a_i$ from punishment when
+$r_i: v_{i-1} \voom v_i$ is only slightly
+counterproductive.
+On the other hand, when punishment is incurred, its magnitude is
+magnified by the amount $\coeffpunish$, raising the reputation cost of
+edits that are later undone. 
+% cancut next 
+%% Amplifying punishment is instrumental to making the threat a credible one. 
+%% Without amplification, a rogue contributor could use the reputation
+%% gained in one part of the Wikipedia to constantly destroy a small set
+%% of articles elsewhere.
+%% Amplification makes this harder to achieve. 
+The parameters $\slack$ and $\coeffpunish$, as well as $\coeffrep$,
+$\coefftext$ and $\lengthexp$, will be determined via an optimization
+process. 
+To assign edit feedback, we have chosen to consider only
+the~3 previous versions of an article. 
+This approach proved adequate for analyzing an already-existing wiki,
+in which authors could not modify their behavior using knowledge of
+this threshold. 
+If the proposed content-driven reputation were to be used on a live
+Wiki, it would be advisable to replace this hard threshold by a scheme
+in which the feedback of $v_j$ on $r_i$ is weighed by a gradually
+decreasing function of $j-i$ (such as $\exp(c \cdot (i-j))$ for some
+$c > 0$). 
+
+
+\subsection{Computing Content-Driven Reputation}
+
+We compute the reputation for Wikipedia authors as follows. 
+We examine all revisions in chronological order, thus simulating the
+same order in which they were submitted to the Wikipedia servers. 
+We initialize the reputations of all authors to the value~0.1;
+the reputation of anonymous authors is fixed to~0.1.  
+We choose a positive initial value to ensure that the weight
+$\log (1+r)$ of an initial reputation $r = 0.1$ is non-zero, priming
+the process of reputation computation.  
+This choice of initial value is not particularly critical (the
+parameter $\coeffrep$ may need to be adjusted for optimal performance,
+if this initial value is changed). 
+As the revisions are processed, we use Rules~\ref{rule-text}
+and~\ref{rule-edit} to update the reputations of authors in the
+system. 
+When updating reputations, we ensure that they never become negative,
+and that they never grow beyond a bound $\coeffmaxrep > 0$. 
+The bound $\coeffmaxrep$ prevents frequent contributors from
+accumulating unbounded amounts of reputation, and becoming essentially
+immune to negative feedback. 
+The value of $\coeffmaxrep$ will be once again determined via
+optimization techniques. 
+
+Wikipedia allows users to register, and create an {\em author\/}
+identity, whenever they wish. 
+As a consequence, we need to make the initial reputation of new authors
+very low, close to the minimum possible (in our case,~0). 
+If we made the initial reputation of new authors any higher,
+then authors, after committing revisions that damage their reputation,
+would simply re-register as new users to gain the higher value. 
+An unfortunate side-effect of allowing people to obtain new identities
+at will is that we cannot presume that people are innocent until
+proven otherwise: we have to assign to newcomers the same reputation
+as proven offenders. 
+This is a contributing factor to our reputation having low 
+{\em precision:\/} many authors who have low reputation still perform
+very good quality revisions, as they are simply new authors, rather than
+proven offenders. 
+%% We conjecture that content-driven reputation systems for the Wikipedia
+%% would have better predictive value if creating a new author identity
+%% was not free, either monetarily, or in some other sense. 
+
+

@@ -1,0 +1,112 @@
+% GNUPLOT: LaTeX picture using EEPIC macros
+\setlength{\unitlength}{0.120450pt}
+\begin{picture}(2040,1200)(0,0)
+\footnotesize
+\thicklines \path(287,249)(328,249)
+\thicklines \path(1916,249)(1875,249)
+\put(246,249){\makebox(0,0)[r]{ 0\%}}
+\thicklines \path(287,423)(328,423)
+\thicklines \path(1916,423)(1875,423)
+\put(246,423){\makebox(0,0)[r]{10\%}}
+\thicklines \path(287,597)(328,597)
+\thicklines \path(1916,597)(1875,597)
+\put(246,597){\makebox(0,0)[r]{20\%}}
+\thicklines \path(287,770)(328,770)
+\thicklines \path(1916,770)(1875,770)
+\put(246,770){\makebox(0,0)[r]{30\%}}
+\thicklines \path(287,944)(328,944)
+\thicklines \path(1916,944)(1875,944)
+\put(246,944){\makebox(0,0)[r]{40\%}}
+\thicklines \path(287,1118)(328,1118)
+\thicklines \path(1916,1118)(1875,1118)
+\put(246,1118){\makebox(0,0)[r]{50\%}}
+\thicklines \path(287,249)(287,290)
+\thicklines \path(287,1118)(287,1077)
+\put(287,166){\makebox(0,0){ 0}}
+\thicklines \path(468,249)(468,290)
+\thicklines \path(468,1118)(468,1077)
+\put(468,166){\makebox(0,0){ 1}}
+\thicklines \path(649,249)(649,290)
+\thicklines \path(649,1118)(649,1077)
+\put(649,166){\makebox(0,0){ 2}}
+\thicklines \path(830,249)(830,290)
+\thicklines \path(830,1118)(830,1077)
+\put(830,166){\makebox(0,0){ 3}}
+\thicklines \path(1011,249)(1011,290)
+\thicklines \path(1011,1118)(1011,1077)
+\put(1011,166){\makebox(0,0){ 4}}
+\thicklines \path(1192,249)(1192,290)
+\thicklines \path(1192,1118)(1192,1077)
+\put(1192,166){\makebox(0,0){ 5}}
+\thicklines \path(1373,249)(1373,290)
+\thicklines \path(1373,1118)(1373,1077)
+\put(1373,166){\makebox(0,0){ 6}}
+\thicklines \path(1554,249)(1554,290)
+\thicklines \path(1554,1118)(1554,1077)
+\put(1554,166){\makebox(0,0){ 7}}
+\thicklines \path(1735,249)(1735,290)
+\thicklines \path(1735,1118)(1735,1077)
+\put(1735,166){\makebox(0,0){ 8}}
+\thicklines \path(1916,249)(1916,290)
+\thicklines \path(1916,1118)(1916,1077)
+\put(1916,166){\makebox(0,0){ 9}}
+\thicklines \path(287,249)(1916,249)(1916,1118)(287,1118)(287,249)
+\put(1101,42){\makebox(0,0){log (1 + reputation)}}
+\put(1588,1036){\makebox(0,0)[r]{Italian Wikipedia, edit}}
+\thinlines \path(1629,1036)(1834,1036)
+\thinlines \path(287,602)(287,602)(468,257)(649,264)(830,274)(1011,294)(1192,327)(1373,398)(1554,394)(1735,421)(1916,997)
+\put(287,602){\makebox(0,0){$\times$}}
+\put(468,257){\makebox(0,0){$\times$}}
+\put(649,264){\makebox(0,0){$\times$}}
+\put(830,274){\makebox(0,0){$\times$}}
+\put(1011,294){\makebox(0,0){$\times$}}
+\put(1192,327){\makebox(0,0){$\times$}}
+\put(1373,398){\makebox(0,0){$\times$}}
+\put(1554,394){\makebox(0,0){$\times$}}
+\put(1735,421){\makebox(0,0){$\times$}}
+\put(1916,997){\makebox(0,0){$\times$}}
+\put(1731,1036){\makebox(0,0){$\times$}}
+\put(1588,953){\makebox(0,0)[r]{Italian Wikipedia, text}}
+\thicklines \path(1629,953)(1834,953)
+\thicklines \path(287,648)(287,648)(468,258)(649,270)(830,285)(1011,307)(1192,362)(1373,416)(1554,426)(1735,489)(1916,767)
+\put(287,648){\makebox(0,0){$\Box$}}
+\put(468,258){\makebox(0,0){$\Box$}}
+\put(649,270){\makebox(0,0){$\Box$}}
+\put(830,285){\makebox(0,0){$\Box$}}
+\put(1011,307){\makebox(0,0){$\Box$}}
+\put(1192,362){\makebox(0,0){$\Box$}}
+\put(1373,416){\makebox(0,0){$\Box$}}
+\put(1554,426){\makebox(0,0){$\Box$}}
+\put(1735,489){\makebox(0,0){$\Box$}}
+\put(1916,767){\makebox(0,0){$\Box$}}
+\put(1731,953){\makebox(0,0){$\Box$}}
+\put(1588,870){\makebox(0,0)[r]{French Wikipedia, edit}}
+\Thicklines \path(1629,870)(1834,870)
+\Thicklines \path(287,850)(287,850)(468,259)(649,268)(830,279)(1011,293)(1192,323)(1373,341)(1554,389)(1735,421)(1916,805)
+\put(287,850){\makebox(0,0){$+$}}
+\put(468,259){\makebox(0,0){$+$}}
+\put(649,268){\makebox(0,0){$+$}}
+\put(830,279){\makebox(0,0){$+$}}
+\put(1011,293){\makebox(0,0){$+$}}
+\put(1192,323){\makebox(0,0){$+$}}
+\put(1373,341){\makebox(0,0){$+$}}
+\put(1554,389){\makebox(0,0){$+$}}
+\put(1735,421){\makebox(0,0){$+$}}
+\put(1916,805){\makebox(0,0){$+$}}
+\put(1731,870){\makebox(0,0){$+$}}
+\put(1588,787){\makebox(0,0)[r]{French Wikipedia, text}}
+\thinlines \path(1629,787)(1834,787)
+\thinlines \path(287,850)(287,850)(468,259)(649,268)(830,279)(1011,293)(1192,323)(1373,341)(1554,389)(1735,421)(1916,805)
+\put(287,850){\makebox(0,0){$\Diamond$}}
+\put(468,259){\makebox(0,0){$\Diamond$}}
+\put(649,268){\makebox(0,0){$\Diamond$}}
+\put(830,279){\makebox(0,0){$\Diamond$}}
+\put(1011,293){\makebox(0,0){$\Diamond$}}
+\put(1192,323){\makebox(0,0){$\Diamond$}}
+\put(1373,341){\makebox(0,0){$\Diamond$}}
+\put(1554,389){\makebox(0,0){$\Diamond$}}
+\put(1735,421){\makebox(0,0){$\Diamond$}}
+\put(1916,805){\makebox(0,0){$\Diamond$}}
+\put(1731,787){\makebox(0,0){$\Diamond$}}
+\thicklines \path(287,249)(1916,249)(1916,1118)(287,1118)(287,249)
+\end{picture}

@@ -25,6 +25,10 @@ system?
 
 \mynote{Cite Randy's book?}
 
+When we started, we debated using a fixpoint algortihm
+such as the PageRank~\cite{Page1999} or HITS~\cite{Kleinberg99}
+algorithms.
+
 In trying to address the quality issues of the Wikipedia,
 our primary guideline was to preserve the current user experience.
 By relying on article version history, we can assign reputation
@@ -59,4 +63,29 @@ are judged ``good'' by the community.
 Constants in the model we develop are assigned so as to optimize
 for the heuristic that author reputation
 be correlated to edit longevity as much as possible.
+
+\subsection{Summary of Contributions} 
+
+The main contribution of this paper is a content-driven reputation
+system for the Wikipedia. 
+In particular, we define the concepts of edit and text longevity in a
+versioned document, and we show how these two concepts can be used to
+compute a reputation for each contributor. 
+A novel feature of the proposed reputation system is its emphasis on
+the quantitative {\em predictive\/} value of reputation; this emphasis
+enabled us both to tune the behavior of our reputation system, and to
+measure its effectiveness on actual instances of the Wikipedia. 
+
+In the course of developing the main results of the paper, we have
+developed novel techniques which might be of interest in their own
+right. 
+These include algorithms for attributing text authorship in a
+versioned document, along with algorithms for measuring the longevity
+of text additions and edits performed in the various revisions of a
+document. 
+We note that, while we present our work in the context of the
+Wikipedia, our algorithms can be used to compute the reputation, and
+contribution, of users to any set of versioned documents, including
+computer code. 
+
 
