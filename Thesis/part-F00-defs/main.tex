@@ -18,13 +18,13 @@ will be used throughout this work.
     MediaWiki stores IP address information for anonymous users,
     but due to the ambiguity of tracking users this way,
     we map all anonymous use to the single anonymous user.
-\item \revisions{\article{}} \ -- each article $\article{} \in \articles$,
+\item \versions{\article{}} \ -- each article $\article{} \in \articles$,
     has a history of versions
     describing how that article has evolved over time.
     We denote the chronologically ordered list
     of all $n > 0$ revisions of article \article{} by
     \begin{equation}
-	\revisions{\article{}} =
+	\versions{\article{}} =
 		\version{1}, \version{2}, \ldots, \version{n}
     \end{equation}
     Version \version{1} is the first instantiation of the article,
@@ -39,12 +39,12 @@ will be used throughout this work.
     \mynote{Take this out?}
     Sometimes for convenience, we take version \version{0} to be
     an empty revision which precedes all other revisions.
-\item \revisions{} \ -- the chronologically ordered list of all
+\item \versions{} \ -- the chronologically ordered list of all
     revisions, across all articles in \articles.
     That is,
     \begin{equation}
-    \revisions{} = \mathrm{sort}_\mathrm{time}\left[
-	\bigcup_{\article{} \in \articles} \revisions{\article{}}
+    \versions{} = \mathrm{sort}_\mathrm{time}\left[
+	\bigcup_{\article{} \in \articles} \versions{\article{}}
 	\right]
     \end{equation}
 
