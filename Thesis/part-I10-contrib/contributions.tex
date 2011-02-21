@@ -71,12 +71,12 @@ We desire the text longevity of a revision to be
 the amount of original text that was
 added by the author $\revauthor{\version{i}}$
 for a revision \version{i}, discounted by the
-text quality measure \quality{decay}{}{\version{i}}, which describes
+text quality measure \quality{tdecay}{}{\version{i}}, which describes
 how the text decays over the next several revision.
 %
 \[
 \textlong(u) = 
-\sum_{a \in \articles} \sum_{v \in E(u, a)} \quality{decay}{}{v}
+\sum_{a \in \articles} \sum_{v \in E(u, a)} \quality{tdecay}{}{v}
         \cdot \txt{}{v}
 \]
 %

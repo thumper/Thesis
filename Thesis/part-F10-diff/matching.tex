@@ -88,8 +88,9 @@ Appendix~\ref{app:basicdiffsrc} lists a
 \textbf{perl} language implementation of this basic algorithm.
 
 The key to matches meeting the list of criteria we have
-defined above is in the quality function.\footnote{Multiple
-matching of source blocks cannot be handled by the quality
+defined above is in the quality function.\footnote{Except for
+multiple matching of source blocks, which cannot be handled
+by the quality
 function.  The source in Appendix~\ref{app:basicdiffsrc}
 enables this feature by a flag.}
 To prefer matches where the blocks are in similar positions,
@@ -353,3 +354,7 @@ run through priority queue selecting best matches \;
 
 \end{comment}
 
+\mynote{Can we define the greedy matching more algorithmically?}
+\begin{equation}
+Matches(\version{a}, \version{b}) = { (i,j,k) | \forall f s.t. 0 \le f < k, w^a_{i+f} = w^b_{j+f} }
+\end{equation}

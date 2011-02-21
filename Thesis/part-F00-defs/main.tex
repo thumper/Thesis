@@ -82,9 +82,9 @@ will be used throughout this work.
     \intro{judging} revisions associated with revision \version{i}
     of article $a \in \articles$.
     A judging revision for revision \version{i} is a revision \version{j}
-    such that $j > i$ and
+    such that $0 < j - i \le n$ and
     $\revauthor{\version{i}} \not= \revauthor{\version{j}}$.
-    The set is limited to at most $n$ revisions which are nearest
+    Thus, the set is limited to at most $n$ revisions which are nearest
     to \version{i} in time.
 
 \end{itemize}

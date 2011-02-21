@@ -123,15 +123,15 @@ multiple quality measures to choose from.
 We start with the two quality measures derived in
 Chapter~\ref{ch:editquality}:
 \begin{itemize}
-\item \quality{decay}{}{i} is the value that best describes
+\item \quality{tdecay}{10}{i} is the value that best describes
     the text survival of text inserted in version \version{i}
-    over the next several revision as an exponential
+    over the next ten revision as an exponential
     decay (Section~\ref{sec:textquality}).
     This value ranges from 0, for completely removed text,
     to 1, for text which is completely preserved.
 \item \quality{elong}{10}{i} is the average edit longevity of
     the contribution of version \version{i} as judged by the
-    next ten revisions (Section~\ref{sec:editquality}).
+    next ten revisions (see Section~\ref{sec:editquality}).
     This value ranges from $-1$ for completely reverted edits,
     to $+1$ for completely preserved edits.
 \end{itemize}

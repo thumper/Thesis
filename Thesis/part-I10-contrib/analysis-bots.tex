@@ -20,12 +20,12 @@ that of all authors shown in Figure~\ref{fig-revs-quality}.
 We noticed that bots create a large number of revisions with
 high quality.
 We found that $69.56\%$ of the revisions made by
-bots have a text quality measure of $\quality{decay}{10}{} > 0.95$.
+bots have a text quality measure of $\quality{tdecay}{10}{} > 0.95$.
 The percentage of revisions made by bots with 
-$\quality{decay}{10}{} \le 0.05$ was $9.2\%$.
+$\quality{tdecay}{10}{} \le 0.05$ was $9.2\%$.
 We found that $66.92\%$ of the new text added by bots were with
-$\quality{decay}{10}{} > 0.95$ and $14.14\%$ of the new text added by
-bots were with $\quality{decay}{10}{} = 0$, which means they were 
+$\quality{tdecay}{10}{} > 0.95$ and $14.14\%$ of the new text added by
+bots were with $\quality{tdecay}{10}{} = 0$, which means they were 
 immediately reverted.
 Similarly, on the edit contributions of bots we found that
 $54.42\%$ of the revisions with edits made by bots were of
@@ -74,7 +74,7 @@ up with a lower score on $\punish$ when compared to $SmackBot$.
     \end{center}
     \caption[Measuring edit and text quality for all bots and $AntiVandalBot$]{
     	This graph shows the edit quality measure $\quality{elong}{10}{}$
-        and text quality $\quality{decay}{10}{}$ for all bots.
+        and text quality $\quality{tdecay}{10}{}$ for all bots.
         A quality measure of $1$ indicates that all the changes
         were preserved.
         A quality measure of $0$ indicates that all the changes

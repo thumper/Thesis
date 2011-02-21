@@ -152,10 +152,11 @@ then the contribution could be said to be so-so.
 We propose that a good way to measure this judgement
 by \revauthor{\version{j}} of \revauthor{\version{k}},
 which we call \intro{edit longevity}, is:
-\begin{equation*}
+\begin{equation}
 \esurv{}{k,k-1,j} = \frac{\dist{}{k-1,j} - \dist{}{k,j}}
                         {\dist{}{k-1,k}},
-\end{equation*}
+\label{eq:esurv}
+\end{equation}
 It compares the ``useful progress''
 $\dist{}{k-1,j} - \dist{}{k,j}$
 with the ``total work''

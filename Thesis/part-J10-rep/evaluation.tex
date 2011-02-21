@@ -1,5 +1,54 @@
 \section{Evaluation Metrics}
-\label{sec-optimize}
+\label{sec:rep-eval}
+
+In developing a reputation system, one must ask
+``what is it intended to signal?''
+For WikiTrust, our hope was that a high reputation
+would signal that edits made the author were likely
+to be of good quality, while a low reputation would
+signal that the edit was of unknown quality.
+Evaluation of the system becomes the crucial
+factor, so that users can compare one system to another.
+
+
+At the time that this work was conducted, there was
+no annotated corpus of edits available to compare against.
+\mynote{Look up what McGuinness did for evaluation in her papers.}
+
+We propose several different metrics for
+evaluating our reputation systems, by casting the interpretation
+into binary classification problems parameterized by a
+quality metric.
+We use the two quality metrics explored in Chapter~\ref{ch:editquality}
+to define the following categories:
+\begin{itemize} 
+\item We say that the new text added in version \version{i}
+  is \intro{short-lived} if $\quality{tdecay}{10}{i} \leq 0.2$.
+  This indicates that at most 20\% of it, on
+  average, survives from one version to the next. 
+
+\item We say that the edit performed in taking version
+  \version{i-1} to version \version{i}
+  is \textit{short-lived} if
+  $\quality{elong}{3}{i} \leq -0.8$.
+
+\item We say that a version \version{i} is \intro{low-reputation} if
+  $\log (1+\rep(\version{i})) \leq \log(1+\coeffmaxrep) / 5$, indicating that
+  the reputation, after logarithmic scaling, falls in the lowest 20\% of
+  the range.
+  Note that the reputation of \revauthor{\version{i}} does not actually
+  change at the time of version \version{i}'s creation; the reputation
+  of the author of a revision
+  is adjusted as judges become available.
+
+\end{itemize}
+We observe that both quality metrics are computed based on the
+evolution of the article text \textit{after} the time that
+version \version{i} is created, while $\rep(\version{i})$ is
+computed based on events \textit{before} the time of \version{i},
+so that a comparison between them isn't predisposed to showing
+a correlation.
+
 
 \mynote{Fix up notation for these constants...}
 
@@ -22,92 +71,18 @@
 \newcommand{\constrainte}{\kappa_e}
 \newcommand{\constraintt}{\kappa_t}
 
-
-
-We now develop quantitative measures of the ability of our
-content-driven reputation to predict the quality of future revisions. 
-For a revision $r_i: v_{i-1} \voom v_i$ in a sequence 
-$v_0, v_1, \ldots, v_n$ of versions, 
-let $\textmass(r_i) = \txt(i,i)$ be the new text introduced at $r_i$, 
-and $\editmass(r_i) = \dist(v_{i-1},v_i)$ be the amount of editing
-involved in $r_i$. 
-We define edit and text longevity as follows: 
+Using these categories as a basis, we can then define precision
+and recall formally.
+We define three random variables $S_e, S_t, L: \versions{}
+\mapsto \set{0,1}$ as follows, for all $v \in \versions{}$ where
+$i = \revpos{v}$:
 %
 \begin{itemize} 
 
-\item The {\em edit longevity\/} $\especq(r_i) \in [-1,1]$ of
-  $r_i$ is the average of $\elong(i,j)$ for $i < j \leq \min(i+3, n)$. 
-
-\item The {\em text longevity\/} $\tspecq(r_i) \in [0,1]$ of
-  $r_i$ is the solution to the following equation: 
-  %
-  \begin{equation} \label{eq-text-long}
-    \sum_{j=i}^n \txt(i,j) = \txt(i,i) \cdot \sum_{j=1}^n (\tspecq(r_i))^{j-i}
-    \eqpun .
-  \end{equation}
-
-\end{itemize}
-%
-Thus, $\tspecq(r_i)$ is the coefficient of exponential decay of the
-text introduced by $r_i$: on average, after $k$ revisions, only a
-fraction $(\tspecq(r_i))^k$ of the introduced text survives.
-As all quantities in (\ref{eq-text-long}) except $\tspecq(r_i)$ are
-known, we can solve for $\tspecq(r_i)$ using standard numerical
-methods. 
-We also indicate by $\repu(r_i)$ the reputation of the author $a_i$ of
-$r_i$ at the time $r_i$ was performed.  
-We note that $\repu(r_i)$ is computed from the history of the
-Wikipedia before $r_i$, while $\especq(r_i)$ and $\tspecq(r_i)$ depend
-only on events after $r_i$. 
-Moreover, $\especq(r_i)$ and $\tspecq(r_i)$ can be computed
-independently of reputations.
-
-Let $R$ be the set of all revisions in the Wikipedia (of all articles). 
-We view revisions as a probabilistic process, with $R$ as the set of
-outcomes.
-We associate with each revision a probability mass (a weight)
-proportional to the number of words it affects. 
-This ensures that the metrics are not affected if revisions by the
-same author are combined or split into multiple ones. 
-Since we keep only the last among consecutive revisions by the same
-user, a ``revision'' is a rather arbitrary unit of measurement, while
-a ``revision amount'' provides a better metric. 
-Thus, when studying edit longevity, we associate with each $r \in R$ a
-probability mass proportional to $\editmass(r)$, giving rise to the
-probability measure $\Pr_e$. 
-Similarly, when studying text longevity, we associate with each 
-$r \in R$ a probability mass proportional to $\textmass(r)$, giving
-rise to the probability measure $\Pr_t$. 
-
-In order to develop figures of merit for our reputation, we define the
-following terminology (used already in the introduction in informal
-fashion):
-%
-\begin{itemize} 
-
-\item We say that the edit performed in $r$ is {\em short-lived\/} if
-  $\especq(r) \leq -0.8$.
-
-\item We say that the new text added in $r$ is {\em short-lived\/}
-  if $\tspecq(r) \leq 0.2$, indicating that at most 20\% of it, on
-  average, survives from one version to the next. 
-
-\item We say that a revision $r$ is {\em low-reputation\/} if
-  $\log (1+\repu(r)) \leq \log(1+\coeffmaxrep) / 5$, indicating that
-  the reputation, after logarithmic scaling, falls in the lowest 20\% of
-  the range. 
-
-\end{itemize}
-%
-Correspondingly, we define three random variables $S_e, S_t, L: R
-\mapsto \set{0,1}$ as follows, for all $r \in R$: 
-%
-\begin{itemize} 
-
-\item $S_e(r)=1$ if $\especq(r) \leq -0.8$, and $S_e(r)=0$ otherwise.
-\item $S_t(r)=1$ if $\especq(r) \leq  0.2$, and $S_t(r)=0$ otherwise.
-\item $L(r)=1$ if $\log (1+\repu(r)) \leq \log(1+\coeffmaxrep) / 5$,
-  and $L(r)=0$ otherwise.
+\item $S_e(v)=1$ if $\quality{elong}{3}{i} \leq -0.8$, and $S_e(v)=0$ otherwise.
+\item $S_t(v)=1$ if $\quality{tdecay}{10}{i} \leq  0.2$, and $S_t(v)=0$ otherwise.
+\item $L(v)=1$ if $\log (1+\rep(v)) \leq \log(1+\coeffmaxrep) / 5$,
+  and $L(v)=0$ otherwise.
 
 \end{itemize}
 %
@@ -145,6 +120,30 @@ These quantities can be computed as usual; for instance,
 \]
 %% (noting that it is unnecessary in these expressions to renormalize all
 %% probability masses via $1 / \sum_{r \in R} \editmass(r)$). 
+
+
+let $\textmass(r_i) = \txt(i,i)$ be the new text introduced at $r_i$, 
+and $\editmass(r_i) = \dist(v_{i-1},v_i)$ be the amount of editing
+involved in $r_i$. 
+%
+
+Let $R$ be the set of all revisions in the Wikipedia (of all articles). 
+We view revisions as a probabilistic process, with $R$ as the set of
+outcomes.
+We associate with each revision a probability mass (a weight)
+proportional to the number of words it affects. 
+This ensures that the metrics are not affected if revisions by the
+same author are combined or split into multiple ones. 
+Since we keep only the last among consecutive revisions by the same
+user, a ``revision'' is a rather arbitrary unit of measurement, while
+a ``revision amount'' provides a better metric. 
+Thus, when studying edit longevity, we associate with each $r \in R$ a
+probability mass proportional to $\editmass(r)$, giving rise to the
+probability measure $\Pr_e$. 
+Similarly, when studying text longevity, we associate with each 
+$r \in R$ a probability mass proportional to $\textmass(r)$, giving
+rise to the probability measure $\Pr_t$. 
+
 We also define: 
 %
 \begin{align*}

@@ -15,7 +15,7 @@ due to memory limitations of the software package.
 
 In Figure~\ref{fig-revs-quality}, we show the frequency distribution
 of the two quality measures
-\quality{decay}{10}{} and \quality{elong}{10}{} over the revisions we sampled.
+\quality{tdecay}{10}{} and \quality{elong}{10}{} over the revisions we sampled.
 We see both measures are heavily biased towards $+1$, indicating that
 most revisions to the Wikipedia are generally considered useful
 by succeeding authors.
@@ -31,7 +31,7 @@ continues to extend the online encyclopedia in a useful way.
     }
     \end{center}
     \caption[Measuring edit and text quality over revisions]{
-    	This graph shows the text quality $\quality{decay}{10}{}$
+    	This graph shows the text quality $\quality{tdecay}{10}{}$
         and edit quality measure $\quality{elong}{10}{}$
 	for 5 million randomly selected records of each type.
     }
@@ -40,14 +40,14 @@ continues to extend the online encyclopedia in a useful way.
 
 Delving directly into the data for text quality, we observe
 that $10\%$ of the revisions made had 
-$\quality{decay}{10}{} \le 0.05$ while $66.67\%$ of the revisions had
-$\quality{decay}{10}{} > 0.95$.
-When $\quality{decay}{10}{} = 0$, the text is immediately deleted
+$\quality{tdecay}{10}{} \le 0.05$ while $66.67\%$ of the revisions had
+$\quality{tdecay}{10}{} > 0.95$.
+When $\quality{tdecay}{10}{} = 0$, the text is immediately deleted
 in the next revision, so we can infer that these revisions
 are the work of vandals.
 When we look at the size of contributions made, we noticed that
-$6\%$ of the amount of new text added had $\quality{decay}{10}{} = 0$,
-whereas $76.21\%$ of the new text added had $\quality{decay}{10}{} > 0.95$.
+$6\%$ of the amount of new text added had $\quality{tdecay}{10}{} = 0$,
+whereas $76.21\%$ of the new text added had $\quality{tdecay}{10}{} > 0.95$.
 From this we conclude that authors mostly add good new text.
 
 The data is less stark for edit quality.
@@ -97,7 +97,7 @@ and average text quality for all non-anonymous authors.
 In order to compute this, we took all revisions created by each 
 author and took an average of the text and edit qualities of 
 those revisions.
-We notice that $15.9\%$ of authors had $\quality{decay}{10}{} \le 0.05$
+We notice that $15.9\%$ of authors had $\quality{tdecay}{10}{} \le 0.05$
 and $6.3\%$ of authors had $\quality{elong}{10}{} \le -0.9$.
 These are shown by the bars on the left extreme of the
 histograms in Figure~\ref{fig-user-quality}.
@@ -105,7 +105,7 @@ This sharp increase in the number of authors at the lowest end
 of our quality measures, combined with our previous analysis
 of revisions and contributions with respect to quality, gives
 us some justification to define vandals as those
-authors who have either $\quality{decay}{10}{} \le 0.05$ or 
+authors who have either $\quality{tdecay}{10}{} \le 0.05$ or 
 $\quality{elong}{10}{} \le -0.9$ on average.
 We state that the identification of vandals can be made more
 precise using more sophisticated analyses of our data, but we
@@ -118,7 +118,7 @@ don't deal with that in this paper.
     }
     \end{center}
     \caption[Measuring edit and text quality for all authors]{
-    	This graph shows the average text quality $\quality{decay}{10}{}$
+    	This graph shows the average text quality $\quality{tdecay}{10}{}$
 	and the average edit quality measure $\quality{elong}{10}{}$
 	over all non-anonymous authors.
     }
@@ -189,7 +189,7 @@ It corresponds to the data available at
 We separated them from the others with the objective of determining 
 how many of these authors met our definition of vandals.
 We were surprised to note that over $51\%$ of authors had 
-$\quality{decay}{10}{} > 0.95$ and $39\%$ of authors had 
+$\quality{tdecay}{10}{} > 0.95$ and $39\%$ of authors had 
 $\quality{elong}{10}{} > 0.9$.
 In fact, over $47\%$ of the blocked authors make text contributions 
 that have an average text quality over $0.95$.

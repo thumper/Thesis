@@ -1,0 +1,27 @@
+\section{Conclusions}
+
+We have proposed a reputation system that is
+based on metric derived from the content evolution
+of a versioned document.
+
+This most significant challenge of this part of our work
+was in developing evaluations to measure our performance.
+
+As mentioned previously, our system has low precision because,
+as part of our attempt to prevent vandals from avoiding a
+negative reputation by reregistering,
+we assume that new authors are equivalent to proven offenders.
+On reflection, I think that an alternative is to assign an
+initial (low) reputation based on information from vandalism
+detection models such as those discussed in Chapter~\ref{ch:vandalism}.
+This follows the idea that reputation is predictor of future
+behavior based on past behavior; when there is no past behavior
+of the individual, there is still past behavior of other users
+that are somehow similar to the user in question.
+
+Reputations should be allowed to go negative.
+Although a motivated vandal can reregister for a fresh account,
+they might not be sophisticated enough to do so.
+Or, a bot might go bad, and a negative reputation
+would identify it more quickly to administrators.
+

@@ -24,6 +24,23 @@ reputations to people in real life, but can this translate to an online
 system?  
 
 \mynote{Cite Randy's book?}
+An obvious way to build a reputation system would be to build one
+modeled on eBay or Amazon's rating system: elicit votes from users
+on the quality of a revision or the work of an author.
+We had several concerns about this: lack of adoption, sybil attacks
+through puppet votes, block voting by cliques of users, and
+disrupting the current user experience of the Wikipedia community.
+This led us to the idea of \intro{implicit voting} through
+actions already taken by the community as part of their normal activities.
+For example, reading an article and not making an edit to it is
+an implicit vote (though perhaps not a strong one)
+that the article is of good quality; the more page views an article
+has, the more we can believe that there are no errors in it.
+We settled using actual edits as the implicit vote: if a
+user edits the text of a previous author, that would be a
+negative vote for the previous work; but if the user only added
+new text, then implicitly he is saying that the previous text
+was already in good shape.
 
 When we started, we debated using a fixpoint algortihm
 such as the PageRank~\cite{Page1999} or HITS~\cite{Kleinberg99}
@@ -37,8 +54,11 @@ authors who perform long-lived contributions gain reputation; authors
 whose contributions are reverted, or are soon removed, lose reputation.
 There are several possible applications of computing a reputation
 value for authors (for example, to grant or deny editing rights to
-crucial pages \cite{Blaze96}), and we use it to drive a trust system for
-Wikipedia content.
+crucial pages \cite{Blaze96}); within the WikiTrust project,
+we use reputation to drive a trust system for
+Wikipedia content~\cite{WikiTrust2008}.\footnote{This trust data
+is publicly available through our Firefox plugin:
+\url{https://addons.mozilla.org/en-US/firefox/addon/wikitrust/}}
 The fact that authors can only comment on other authors by
 making contributions themselves discourages users from attacking
 each other in an unproductive way, because they risk their own reputation in the process.
@@ -64,7 +84,8 @@ Constants in the model we develop are assigned so as to optimize
 for the heuristic that author reputation
 be correlated to edit longevity as much as possible.
 
-\subsection{Summary of Contributions} 
+This most significant challenge of this part of our work
+was in developing evaluations to measure our performance.
 
 The main contribution of this paper is a content-driven reputation
 system for the Wikipedia. 

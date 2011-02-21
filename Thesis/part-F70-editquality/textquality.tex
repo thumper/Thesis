@@ -10,13 +10,25 @@ The basic assumption of a reputation system is that past performance
 is a reliable indicator of future performance, so we were
 asking the question ``does text added by some users \intro{survive}
 longer than text by other users?''
-To answer this question, we needed to track the authorship of
-units of text, and then compute how much of the original text
-survives into later versions of an article.
-For the WikiTrust project, we opted to use a granularity of words
-to reduce the computational requirements.
+Note that there are other possible measures of quality, for example:
+what size is the contribution, what is the reading level of the text,
+how good is the grammar, and does the text seem to be related to
+the topic of the article.
+We decided not to tackle these kinds of quality measures, both for
+the difficulty of natural language processing, and because such
+methods would require significant work for each language we wanted
+to support.
+Measuring survival has the advantage that it's relatively cheap to
+compute, and works the same way across most languages.
 
-\subsection{Text Survival}
+To calculate how long a piece of text survives,
+we need to track the authorship of
+units of text\footnote{For the WikiTrust project, we opted to
+use a granularity of words to reduce the computational requirements.},
+and then compute authorship again in later
+versions of the article to find those words with an
+authorship dating back to the revision we are trying
+to determine the quality of.
 
 In Chapter~\ref{ch:diff}, we describe how to track text authorship
 for the text in an article $\article{} \in \articles$.
@@ -153,23 +165,24 @@ To measure the overall quality of a single text contribution
 made in revision \version{k}, we need to compute the common ratio
 that best describes the sequence of $n$ text survival values,
 \tsurv{}{k,j}, after \version{k}, where $k < j \le k+n$.
-Let us call this common ration the \intro{decay quality}, \quality{decay}{k}.
-To compute \quality{decay}{k}, we want to solve the following equation:
+Let us call this common ratio the \intro{text decay quality},
+\quality{tdecay}{k}.
+To compute \quality{tdecay}{k}, we want to solve the following equation:
 \begin{align*}
-    \sum_{i=0}^n \tsurv{}{k,k+i} = {} & \tsurv{}{k,k} + \quality{decay}{k} \cdot \tsurv{}{k,k+1} \\
-    & + \quality{decay}{}{k}^2 \cdot \tsurv{}{k,k+2} + \ldots \\
-    & + \quality{decay}{}{k}^n \cdot \tsurv{}{k,k+n} \\
-    = {} & \tsurv{}{k,k} \cdot \sum_{i=0}^n \quality{decay}{}{k}^i \\
-    = {} & \tsurv{}{k,k} \cdot \frac{1 - \quality{decay}{}{k}^{n+1}}{1 - \quality{decay}{}{k}} \\
+    \sum_{i=0}^n \tsurv{}{k,k+i} = {} & \tsurv{}{k,k} + \quality{tdecay}{k} \cdot \tsurv{}{k,k+1} \\
+    & + \quality{tdecay}{}{k}^2 \cdot \tsurv{}{k,k+2} + \ldots \\
+    & + \quality{tdecay}{}{k}^n \cdot \tsurv{}{k,k+n} \\
+    = {} & \tsurv{}{k,k} \cdot \sum_{i=0}^n \quality{tdecay}{}{k}^i \\
+    = {} & \tsurv{}{k,k} \cdot \frac{1 - \quality{tdecay}{}{k}^{n+1}}{1 - \quality{tdecay}{}{k}} \\
 \end{align*}
 
-To solve this for \quality{decay}{}{k}, we can use Newton's method
+To solve this for \quality{tdecay}{}{k}, we can use Newton's method
 to solve for the zero of the related function:
 \begin{equation*}
   f(\alpha) = (1 - \alpha) \cdot \sum_{i=0}^n \tsurv{}{k,k+i}
         - (1 - \alpha^{n+1}) \cdot \tsurv{}{k,k}
 \end{equation*}
-where $\alpha = \quality{decay}{}{k}$.
+where $\alpha = \quality{tdecay}{}{k}$.
 Newton's method involves making repeated estimations of the form
 \begin{equation*}
   \alpha_{j+1} = \alpha_j - \frac{f(\alpha_j)}{f'(\alpha_j)}
