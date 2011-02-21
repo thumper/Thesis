@@ -50,30 +50,25 @@ so that a comparison between them isn't predisposed to showing
 a correlation.
 
 
-\mynote{Fix up notation for these constants...}
+We take the view that revisions are a probabilistic
+process, with \versions{} as the set of outcomes across
+all articles.
+Since we keep only the last revision of several consecutive
+versions by the same author, a ``version'' seems somewhat arbitrary.
+We therefore weight each version $v \in \versions{}$
+(and let $a \in \articles$ be such that $v \in \versions{a}$,
+and $i = \revpos{v}$)
+by a ``revision amount'' appropriate to the quality being studied:
+\begin{itemize}
+\item for edit longevity, we weight revisions by
+        $\editmass(v) = \dist{a}{i-1,i}$.
+\item for text decay, we weight revisions by
+        $\textmass(v) = \tsurv{a}{i,i}$.
+\end{itemize}
 
-\newcommand{\textmass}{\rho_t}
-\newcommand{\editmass}{\rho_e} 
-\newcommand{\specq}{\alpha}
-\newcommand{\especq}{\alpha_e}
-\newcommand{\tspecq}{\alpha_t}
-\newcommand{\repu}{{\text{\textit{rep}}}}
-\def\eqpun{\;}
-\newcommand{\prece}{{\text{\textit{prec}}}_e}
-\newcommand{\prect}{{\text{\textit{prec}}}_t}
-\newcommand{\recall}{{\text{\textit{rec}}}}
-\newcommand{\recalle}{{\text{\textit{rec}}}_e}
-\newcommand{\recallt}{{\text{\textit{rec}}}_t}
-\newcommand{\boost}{{\text{\textit{boost}}}}
-\newcommand{\booste}{{\text{\textit{boost}}}_e}
-\newcommand{\boostt}{{\text{\textit{boost}}}_t}
-\newcommand{\constraint}{\kappa}
-\newcommand{\constrainte}{\kappa_e}
-\newcommand{\constraintt}{\kappa_t}
 
-Using these categories as a basis, we can then define precision
-and recall formally.
-We define three random variables $S_e, S_t, L: \versions{}
+Using our categories as a basis,
+we define three random variables $S_e, S_t, L: \versions{}
 \mapsto \set{0,1}$ as follows, for all $v \in \versions{}$ where
 $i = \revpos{v}$:
 %
@@ -86,7 +81,6 @@ $i = \revpos{v}$:
 
 \end{itemize}
 %
-\iflong
 The {\em precision\/} $\prect$ and {\em recall\/} $\recallt$
 for short-lived text, and 
 the {\em precision\/} $\prece$ and {\em recall\/} $\recalle$
@@ -98,7 +92,7 @@ for short-lived edits, are defined as:
     \prece & = \textstyle\Pr_e(S_e{=}1 \mid L{=}1) 
   & \recalle & = \textstyle\Pr_e(L{=}1 \mid S_e{=}1).
 \end{align*}
-\fi
+\begin{comment}
 \ifshort
 For short-lived text, the {\em precision\/} is 
 $
@@ -112,37 +106,14 @@ Similarly, for short-lived edits, we define the
 precision is $\prece = \Pr_e(S_e=1 \mid L=1)$, 
 and the recall is $\recalle = \Pr_e(L=1 \mid S_e=1)$.
 \fi
+\end{comment}
 These quantities can be computed as usual; for instance, 
-\[
+\begin{equation*}
   {\textstyle \Pr_e} (S_e=1 \mid L=1) = 
-  \frac{\sum_{r \in R} S_e(r) \cdot L(r) \cdot \editmass(r)}{%
-    \sum_{r \in R} L(r) \cdot \editmass(r)}.
-\]
-%% (noting that it is unnecessary in these expressions to renormalize all
-%% probability masses via $1 / \sum_{r \in R} \editmass(r)$). 
+  \frac{\sum_{v \in \versions{}} S_e(v) \cdot L(v) \cdot \editmass(v)}{%
+    \sum_{v \in \versions{}} L(v) \cdot \editmass(v)}.
+\end{equation*}
 
-
-let $\textmass(r_i) = \txt(i,i)$ be the new text introduced at $r_i$, 
-and $\editmass(r_i) = \dist(v_{i-1},v_i)$ be the amount of editing
-involved in $r_i$. 
-%
-
-Let $R$ be the set of all revisions in the Wikipedia (of all articles). 
-We view revisions as a probabilistic process, with $R$ as the set of
-outcomes.
-We associate with each revision a probability mass (a weight)
-proportional to the number of words it affects. 
-This ensures that the metrics are not affected if revisions by the
-same author are combined or split into multiple ones. 
-Since we keep only the last among consecutive revisions by the same
-user, a ``revision'' is a rather arbitrary unit of measurement, while
-a ``revision amount'' provides a better metric. 
-Thus, when studying edit longevity, we associate with each $r \in R$ a
-probability mass proportional to $\editmass(r)$, giving rise to the
-probability measure $\Pr_e$. 
-Similarly, when studying text longevity, we associate with each 
-$r \in R$ a probability mass proportional to $\textmass(r)$, giving
-rise to the probability measure $\Pr_t$. 
 
 We also define: 
 %
@@ -180,3 +151,4 @@ the French Wikipedia for validation, once the coefficients were
 determined. 
 We experimented with $I_e(S_e,L)$ and $\prece \cdot \recalle$
 as objective functions, and they gave very similar results. 
+

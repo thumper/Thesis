@@ -1,6 +1,68 @@
 \section{Experimental Results}
 
-\begin{table*}[t]
+To evaluate our content-driven reputation, we considered two Wikipedias: 
+%
+\begin{itemize}
+
+\item The Italian Wikipedia, consisting of 154,621 articles and 714,280
+  {\em filtered\/} revisions; we used a snapshot dated December~11, 2005. 
+\item The French Wikipedia, consisting of 536,930 articles and
+  4,837,243 {\em filtered\/} revisions; we used a snapshot dated
+  October~14, 2006. 
+
+\end{itemize}
+%
+In both wikipedias, we studied only ``NS\_MAIN'' pages, which
+correspond to ordinary articles (other pages are used as comment
+pages, or have other specialized purposes). 
+Moreover, to allow the accurate computation of our quality
+measures, we used only revisions that occurred before October~31, 2005 for
+the Italian Wikipedia, and before July~31, 2006 for the French one. 
+Our algorithms for computing content-driven reputation depend on the
+value of six parameters, as mentioned earlier. 
+We determined values for these parameters by searching the parameter
+space to optimize the coefficient of constraint $\constrainte$, using the Italian
+Wikipedia as a training set; the values we determined are: 
+%
+\begin{align*}
+   \coeffrep      & = 13.08
+  & \coeffpunish   & = 19.09
+  & \lengthexp     & = 0.60   \\
+   \slack         & = 2.20
+  & \coefftext     & = 0.60
+  & \coeffmaxrep   & = 22026
+\end{align*}
+
+Figure~\ref{fig:user-breakdown-by-rep} provides a breakdown of
+the amount of edits and text additions performed, according to the
+reputation of the author.
+
+\begin{figure}
+\begin{center}
+\input{part-J10-rep/userrep}
+\end{center}
+\caption{Percentage of text and edit contributed to the
+  Italian and French Wikipedias, according to author reputation. 
+  The data includes anonymous authors.}
+\label{fig:user-breakdown-by-rep}
+\end{figure}
+
+
+\subsection{Precision and Recall}
+
+We then analyzed the Italian and French Wikipedias using the above
+values. 
+The results are summarized in Table~\ref{tbl:summary-results}. 
+The results are better for the larger French Wikipedia; in particular,
+the reputation's ability to predict short-lived edits is better on the
+French than on the Italian Wikipedias. 
+We are not sure whether this depends on different dynamics in the two
+Wikipedias, or whether it is due to the greater age (and size) of the
+French Wikipedia.
+We see that edits performed by low-reputation authors are four times
+as likely as the average to be short-lived. 
+
+\begin{sidewaystable}[tp]
 \begin{center}
 \begin{tabular}{|r||c|c||c|c||c|c||c|c|} \hline
  & \multicolumn{2}{|c||}{Precision}
@@ -21,75 +83,10 @@
 \caption{Summary of the performance of content-driven reputation over
 the Italian and French Wikipedias. All data are expressed as percentages.}
 \label{tbl:summary-results}
-\end{table*}
-
-\begin{comment}
-\begin{table*}
-\begin{center}
-\begin{tabular}{|l||c|c||c|c||c|c||c|c|} \hline
- & \multicolumn{2}{|c||}{Precision}
- & \multicolumn{2}{|c||}{Recall}
- & \multicolumn{2}{|c||}{Boost}
- & \multicolumn{2}{|c|}{Coeff.\ of constr.} \\
- & Edit & Text & Edit & Text  & Edit & Text & Edit & Text \\
- & $\prece$ & $\prect$ & $\recalle$ & $\recallt$ & $\booste$ & $\boostt$ 
- & $\constrainte$ & $\constraintt$ \\[0.5ex] \hline 
-%% {\bf Content-driven reputation:} & & & & & & & & \\
-Italian Wikipedia     & 14.15 &  3.94 & 19.39 & 38.69 & 4.03 & 5.83 & 3.35 & 7.17 \\
-French Wikipedia      & 23.92 &  5.85 & 32.24 & 37.80 & 4.21 & 4.51 & 7.33 & 6.29 \\ \hline
-\end{tabular}
-\end{center}
-\caption{Summary of the performance of content-driven reputation over
-the Italian and French Wikipedias.  All data are expressed as percentages.}
-\label{tbl:summary-results} 
-\end{table*}
-\end{comment}
+\end{sidewaystable}
 
 
-To evaluate our content-driven reputation, we considered two Wikipedias: 
-%
-\begin{itemize}
-
-\item The Italian Wikipedia, consisting of 154,621 articles and 714,280
-  {\em filtered\/} revisions; we used a snapshot dated December~11, 2005. 
-\item The French Wikipedia, consisting of 536,930 articles and
-  4,837,243 {\em filtered\/} revisions; we used a snapshot dated
-  October~14, 2006. 
-
-\end{itemize}
-%
-Of both wikipedias, we studied only ``NS\_MAIN'' pages, which
-correspond to ordinary articles (other pages are used as comment
-pages, or have other specialized purposes). 
-Moreover, to allow the accurate computation of edit
-longevity, we used only revisions that occurred before October~31, 2005 for
-the Italian Wikipedia, and before July~31, 2006 for the French one. 
-Our algorithms for computing content-driven reputation depend on the
-value of six parameters, as mentioned earlier. 
-We determined values for these parameters by searching the parameter
-space to optimize the coefficient of constraint, using the Italian
-Wikipedia as a training set; the values we determined are: 
-%
-\begin{align*}
-   \coeffrep      & = 13.08
-  & \coeffpunish   & = 19.09
-  & \lengthexp     & = 0.60   \\
-   \slack         & = 2.20
-  & \coefftext     & = 0.60
-  & \coeffmaxrep   & = 22026
-\end{align*}
-%
-We then analyzed the Italian and French Wikipedias using the above
-values. 
-The results are summarized in Table~\ref{tbl:summary-results}. 
-The results are better for the larger French Wikipedia; in particular,
-the reputation's ability to predict short-lived edits is better on the
-French than on the Italian Wikipedias. 
-We are not sure whether this depends on different dynamics in the two
-Wikipedias, or whether it is due to the greater age (and size) of the
-French Wikipedia; we plan to study this in further work. 
-We see that edits performed by low-reputation authors are four times
-as likely as the average to be short-lived. 
+\subsection{Manual Annotation}
 
 To investigate how many of the edits had a short life due to bad quality,
 we asked a group of~7 volunteers to rate revisions performed to the
@@ -150,9 +147,6 @@ The group of authors with low reputation includes many authors who are
 good contributors, but who are new to the Wikipedia, so that they have
 not had time yet to build up their reputation.
 
-Figure~\ref{fig:user-breakdown-by-rep} provides a breakdown of
-the amount of edits and text additions performed, according to the
-reputation of the author.
 
 \begin{table}
 \begin{center}
@@ -175,80 +169,7 @@ Normal [0.2--1.0]   &    14  \% &    85 \% \\ \hline
 \label{tbl:human}
 \end{table}
 
-\begin{figure}
-\input{part-J10-rep/userrep}
-\caption{Percentage of text and edit contributed to the
-  Italian and French Wikipedias, according to author reputation. 
-  The data includes anonymous authors.}
-\label{fig:user-breakdown-by-rep}
-\end{figure}
-
-
-\iflong 
-
-Table~\ref{tbl:fr-cdr-over-edit-long} provides a more in-depth look at
-the relationship between author reputation and short-lived edits on the
-French Wikipedia. 
-The corresponding data for the Italian Wikipedia is given in
-Table~\ref{tbl:it-cdr-over-edit-long}.
-
-
-\begin{table*}
-\begin{center}
-\input{fr-cdr-over-edit-long}
-\caption{French Wikipedia: Cumulative distribution of revisions over
-    edit longevity, grouped by reputation.  Each row shows how many of
-    the total revisions were edited by users of each reputation range
-    (the ``\%data'' column), and how that subset of revisions was
-    distributed when ranked by edit longevity.}
-\end{center}
-\label{tbl:fr-cdr-over-edit-long}
-\end{table*}
-
-
-\begin{table*}
-\begin{center}
-\input{fr-editlong-over-cdr}
-\caption{French Wikipedia: distribution of revisions over reputation,
-    grouped by edit longevity.  Columns show, as percentages, how revisions
-    of a specific edit longevity fall into reputation ranges, and
-    therefore add to 100\%.}
-\end{center}
-\label{tbl:fr-editlong-over-cdr}
-\end{table*}
-
-
-\begin{table*}
-\begin{center}
-\input{it-cdr-over-edit-long}
-\caption{Italian Wikipedia: cumulative distribution of revisions over
-    edit longevity, grouped by reputation.  Each row shows the
-    percentage of the total revisions were edited by users of each
-    reputation range (the ``\%data'' column), and how that subset of
-    revisions was distributed when ranked by edit longevity (indicated
-    as a percentage).}
-\end{center}
-\label{tbl:it-cdr-over-edit-long}
-\end{table*}
-
-
-\begin{table*}
-\begin{center}
-\input{it-editlong-over-cdr}
-\caption{Italian Wikipedia: distribution of revisions over reputation,
-    grouped by edit longevity.  Columns show, as percentages, how revisions
-    of a specific edit longevity fall into reputation ranges, and
-    therefore add to 100\%.}
-\end{center}
-\label{tbl:it-editlong-over-cdr}
-\end{table*}
-
-\input{text-long-tables}
-
-\fi 
-
-
-
+\subsection{Comparison with Edit-Count Reputation}
 
 \begin{table*}
 \begin{center}
@@ -273,10 +194,6 @@ the Italian and French Wikipedias. All data are expressed as
 percentages. Anonymous authors are not included in the comparison.}
 \label{tbl:comparison-with-count} 
 \end{table*}
-
-
-
-\subsection{Comparison with Edit-Count Reputation}
 
 We compared the performance of our content-driven reputation to 
 another basic form of reputation: {\em edit count.} 
@@ -350,7 +267,6 @@ ratings for revisions, we believe that the largest residual source of
 error in our content-driven reputation lies in the fact that our text
 analysis does not include specific knowledge of the Wikipedia markup
 language and Wikipedia conventions. 
-We plan to make the text analysis more precise in future work. 
 
 %% It is occasionally claimed that the reputation of Wikipedia authors
 %% should be domain-specific, so that a good reputation for writing about
