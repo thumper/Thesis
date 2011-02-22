@@ -17,18 +17,15 @@ abandon the project.
 The key problem this community faces is identifying vandalism
 quickly to prevent the appearance (to casual users)
  of needing maintenance.
-The RC Patrol acts as a guardian, and astonishingly, reverts and
-rollbacks happen in under seven minutes.
-\mynote{Calculate this value.  7min?  Use stats for enwiki-2010 and
-look for edit dist = -1 (and/or text long = 0?)}
+The RC Patrol~\cite{wiki:RCPatrol} acts as a guardian,
+investing a large amount of human capital to scan all
+edits made to the Wikipedia, searching for vandalism and
+other inapprpropriate edits.
 Still, it is not impossible to sneak vandalism by the
-RC Patrol \mynote{There is a paper that discusses this?},
-for example, on articles which aren't
-mainstream.
-\footnote{Survived one year: South Pasadena}
-\footnote{Survived one year: Olwen}
-
-
+RC Patrol; the article on ``South Pasadena, California''
+was vandalized in May~2008 to include a Nazi propaganda film,
+which persisted until April~2009.\footnote{See Chapter~\ref{ch:editquality}
+for more details.}
 
 \begin{figure}[t]
 \centering
@@ -41,11 +38,11 @@ mainstream.
 \label{fig-denmark-b}
 \framebox{\includegraphics[width=0.45\textwidth]{part-C10-intro/Denmark-Fjogh}}
 }
-\caption{An attempt to modify the
+\caption[An example of vandalism which is non-obvious to the casual reader.]{An attempt to modify the
   spelling of the Danish Prime Minister's last name, from Fogh, to Fjogh.
   The casual user who does not speak Danish, and happens to check
   the version history, has little indication on which might be correct.
-  In fact, this is a case of vandalism
+  This is a case of vandalism
   (in Danish, a \textit{fjog} is a \textit{fool})
   that is quite subtle and wouldn't even be noticed by most users.}
 \label{fig-denmark}
@@ -68,7 +65,7 @@ The level of effort to recognize the error and
 verify this relatively small detail is quite high.
 
 Beyond vandalism, another issue which affects the perceived
-quality of the Wikipedia are well-intentioned users to contribute
+quality of the Wikipedia are well-intentioned users that contribute
 very low quality material.
 For instance, material written from a
 neutral point of view\footnote{\url{http://en.wikipedia.org/wiki/Wikipedia:Neutral_point_of_view}}
@@ -102,15 +99,13 @@ The historical approaches have all translated to online
 knowledge repositories (\eg Google Knol\footnote{\url{http://knol.google.com}}
 and Encyclop{\ae}dia Britannica
 are based on formal publication,
-Nupedia\footnote{\url{http://en.wikipedia.org/wiki/Nupedia} \mynote{Maybe
-this should really be a citation since it's not a link to
-Nupedia.}}
+Nupedia~\cite{wiki:Nupedia}
 was based on peer-review,
 and Stack Exchange\footnote{\url{http://stackexchange.com}}
 implements an explicit reputation system).
-The best solution would be based on Artificial Intelligence to
+An ideal solution would be based on artificial intelligence to
 evaluate the veracity of the material being submitted.
-We propose that an automated reputation system can be
-constructed for the Wikipedia that would facilitate the
-detection of vandalism and provide quality cues for users.
+We propose that a first step is constructing an automated reputation system
+for the Wikipedia that would facilitate the
+detection of vandalism.
 

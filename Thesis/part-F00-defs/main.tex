@@ -3,9 +3,11 @@
 \label{ch:defs}
 
 The following terminology and notation
-will be used throughout this work.
+is used throughout this work.
 
 \renewcommand{\labelitemi}{}
+
+\subsection{General Notation}
 \begin{itemize}
 \item \articles \ -- the set of main Wikipedia \intro{articles}.
     We use this term interchangeably with the term \intro{pages},
@@ -48,13 +50,20 @@ will be used throughout this work.
 	\right]
     \end{equation}
 
-\item \version{i} -- each article, $\article{} \in \articles$,
-    has a history of versions
-    describing how that article has evolved over time.
-    The article to which the versions belong will generally be
-    obvious from the context, but where it is not we will
-    write $\version{i}^{\article{}}$ to indicate that we
-    are referring to version \version{i} of article \article{}.
+\item \version{} -- given some $\version{} \in \versions{a}$
+    for a specific $a \in \articles$, we take \version{} to be
+    a list of words,
+    $[w_1, w_2, \ldots, w_{m}]$ where $m$ is the number of
+    words in that version.
+    For us, a \intro{word} is a whitespace-delimited sequence of
+    characters in the Wiki markup language that produces a Wikipedia article:
+    we work at the level of such markup language, rather than at the level
+    of the HTML produced by the wiki engine.
+\end{itemize}
+
+\subsection{Text Matching}
+
+\begin{itemize}
 
 \item \revauthor{\version{i}} -- every revision of an article has
     a user associated with it with the edit.
@@ -69,6 +78,7 @@ will be used throughout this work.
     See Equation~\ref{eq:bestmatch} and the accompanying text
     for further description and development.
         \mynote{Include $a$ in notation?  Take out $v$ part?}
+        \mynote{Move this into definition location.}
 
 \item \dist{a}{i,j} -- is the edit distance between revisions
     \version{i} and \version{j} of article $a \in \articles$.
@@ -88,31 +98,9 @@ will be used throughout this work.
     to \version{i} in time.
 
 \end{itemize}
+
+
 \renewcommand{\labelitemi}{$\bullet$}
 
 
-is obtained by author \editor{i} performing an
-edit $\edit{i}: \version{i-1} \goesto \version{i}$.
-We refer to the change set corresponding to
-$\edit{i}: \version{i-1} \goesto \version{i}$
-as the \intro{edit} performed at $\edit{i}$; the edit consists of the text
-insertions, deletions, displacements, and replacements that led from
-$\version{i-1}$ to $\version{i}$.
-
-When editing versioned documents, authors commonly save several
-versions in a short time frame, in order to avoid losing their work
-due to computer or network problems.
-To ensure that such behavior does not affect reputations, we
-\textit{filter} the versions, keeping only the \textit{last} of consecutive
-versions by the same author; we assume therefore that
-$\editor{i} \neq \editor{i+1}$,
-where $1 \leq i < n$.
-
-Every version $\version{i}$, for $0 \leq i \leq n$, consists of a sequence
-$[w^i_1, \ldots, w^i_{m_i}]$ of words, where $m_i$ is the number of
-words of $v_i$; we have $m_0 = 0$.
-For us, a \intro{word} is a whitespace-delimited sequence of
-characters in the Wiki markup language that produces a Wikipedia article:
-we work at the level of such markup language, rather than at the level
-of the HTML produced by the wiki engine.
 
