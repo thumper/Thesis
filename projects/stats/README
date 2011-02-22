@@ -1,0 +1,11 @@
+The programs in this directory are used to
+process the "stats" files from the batch process
+to compute some aggregate values.
+
+calc-revertspeed.pl - takes a "stats" dir as the argument,
+and reads through all the stats looking for cases that
+look like reverts.  It adds up the time from the vandalism
+to the revert, and then averages.  For the 2010 enwiki stats,
+I computed 185K seconds as the mean time to revert.
+over 1.4 million reverts.
+
