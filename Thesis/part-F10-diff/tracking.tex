@@ -4,18 +4,41 @@
 To answer the question of which author contributed what text to a
 collaborative document, we present first the general procedure to
 perform the calculation.
-We assume, for this discussion, a single article $\article{} \in \articles$,
+We consider the problem, without loss of generality, for
+a single article $\article{} \in \articles$,
 with $n > 0$ revisions given by
 \begin{equation*}
 \versions{\article{}} = [ \version{1}, \version{2}, \ldots, \version{n} ].
 \end{equation*}
 We define the content of version \version{i}
-as being a sequence of $l_i \ge 0$ words for all $0 < i \le n$:
-\begin{equation*}
+as being a sequence of $l_i \ge 0$ words for all $0 < i \le n$,
+given by:
+\begin{equation}
 \words{\version{i}} = [ w_1, w_2, \ldots, w_{l_i} ].
-\end{equation*}
+\label{def:words}
+\end{equation}
+For us, a \intro{word} is a whitespace-delimited sequence of
+characters in the Wiki markup language that produces a Wikipedia article:
+we work at the level of such markup language, rather than at the level
+of the HTML produced by the wiki engine.
+We also desire a function that gives the \intro{author} of a
+revision; for a user $u \in \users$
+that edited and committed article $a$ when version \version{i-1}
+was the most recent, we define:
+\begin{equation}
+\revauthor{\version{i}} = u.
+\label{def:revauthor}
+\end{equation}
+The MediaWiki software associates user $u$ to version \version{i} in
+the database (or the IP address, in the case of anonymous users),
+so that this information is readily available.
 
 
+
+
+We conceive the problem of author attribution as a recursive relation:
+the attribution of words in some version of the document depends on the
+attribution of matching words from earlier versions.
 At an abstract level, we can discover the inductive step by examining
 the first several versions.
 Clearly, for \version{1}, we have the author of the edit,
@@ -46,33 +69,35 @@ Word authorship in \version{3} is similar to the situation in
 
 The general flavor of the computation is now clear, but to describe it
 more precisely we need some additional definitions.
-For a given revision, we need to know the ordered list of earlier
-revisions:
-\begin{equation*}
+For a given revision, we need to know the ordered list of revisions
+earlier than \version{i}:
+\begin{equation}
     \prevrevs{\version{i}} = \left[ \version{j} \colon  0 < j < i \right]
-\end{equation*}
-And given some word $w_r$ from \version{i}, we need to compute the
+\label{def:prevrevs}
+\end{equation}
+And for some particular
+word $w_r \in \words{\version{i}}$, we need to compute the
 location of the best match from a list of earlier revisions:
 \begin{equation}
     \match{\version{i}, r, \prevrevs{\version{i}}} =
     \begin{cases}
-	(\version{k}, s) & \text{if there exists a best match $w_s$ from \version{k}.} \\
+	(\version{k}, s) & \text{if there exists a best match $w_s \in \words{\version{k}}$.} \\
 	\emptyset & \text{if there is no match.} \\
     \end{cases}
-\label{eq:bestmatch}
+\label{def:bestmatch}
 \end{equation}
 where $k < i$ since we are only interested in matches with earlier revisions;
 we will better describe this calculation in the next section.
 
-Now it is possible to define the author of each word as a recursive relation.
-Recalling $\words{\version{n}} = \left[ w_1, w_2, \ldots, w_{l_n} \right]$, let $0 < j \le l_n$ in the following definition:
+Now it is possible to define the author of each word
+$w_j \in \words{\version{i}}$ as a recursive relation:
 \begin{equation}
-\txtauthor{\version{n}, j} =
+\txtauthor{\version{i}, j} =
     \begin{cases}
 	\txtauthor{\version{k}, s}, & \text{ if }
-	\match{\version{n}, j, \prevrevs{\version{n}}} = (\version{k}, s) \\
-	\revauthor{\version{n}}, & \text{ if there is no best match text. } \\
+	\match{\version{i}, j, \prevrevs{\version{i}}} = (\version{k}, s) \\
+	\revauthor{\version{i}}, & \text{ if there is no best match text. } \\
     \end{cases}
-\label{eq:txtauthor}
+\label{def:txtauthor}
 \end{equation}
 

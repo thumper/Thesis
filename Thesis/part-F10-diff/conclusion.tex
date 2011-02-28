@@ -1,9 +1,5 @@
 \section{Conclusion}
 
-    \mynote{Can we show how different quality formulas behave?
-	Find good diffs to show?  Include in appendix?
-        Is there any kind of evaluation we can do?}
-
 The problem of tracking text authorship across multiple revisions
 is not well-studied.
 We have proposed several criteria to define matches which
@@ -20,13 +16,13 @@ unoriginal (to be discarded via a stop-word list~\cite{Kinzler2011},
 or possibly to always be part of some larger phrase),
 so that a match so small should always be discarded.
 Incorporating the $n$-gram frequency into the match quality
-score would be one way to give preference to phrases that
-are commonly used as a unit.
+score would be one way to avoid giving away credit for phrases that
+are commonly used as a unit in the language.
 
 Now consider the case of a larger $n$-gram: suppose there is a match
 of the phrase ``the President of the United States'' between a new
 revision and some older revision.
-We've just suggested that statistically improbably phrases are
+We've just suggested that statistically improbable phrases are
 good candidates for ascribing authorship to the first person to
 introduce the phrase into an article.
 For example, in an article about Caltech, the first person to
@@ -45,6 +41,8 @@ article where a phrase is no longer \textit{original}.
 The challenge illustrated by these two issues is that the notion
 of authorship really revolves around both ideas and specific
 words reflecting those ideas.
+Until natural language understanding makes more progress, this seems
+like a problem that will have to be addressed through heuristics.
 How does one compare two different text tracking algorithms?
 How would we discover other cases that demonstrate where our
 specifications of the solution are incomplete?

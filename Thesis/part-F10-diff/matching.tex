@@ -1,5 +1,6 @@
 \section{Matching Text}
 
+\mynote{Need more graceful start.}
 By ``text evolution,'' we mean noting how text shifts
 around and is added to or deleted from --- that is,
 understanding how it is changed from version to version
@@ -13,7 +14,7 @@ in noting that text has been copied (or even just moved)
 to another part of the article so that we can assign authorship
 correctly.
 In fact, there are several properties that we think are desirable
-when determining how text is reorganized.
+when determining how text is reorganized:
 \begin{itemize}
 \item When text is duplicated within an article, we prefer to assign
     authorship to the author of the original copy.
@@ -27,7 +28,7 @@ when determining how text is reorganized.
     text has evolved.
     We would like to give preference to the most plausible explanation:
     that the text was not rearranged.
-    To do so, we give prefer to match chunks of text that are in the
+    To do so, we prefer to match chunks of text that are in the
     same relative order in their respective document
     versions.\footnote{This might seem irrelevant, given that duplicated
     text is given the same author.  This property becomes important
@@ -55,37 +56,47 @@ when determining how text is reorganized.
 
 
 As described in Section~\ref{sec:diff-related}, there is an extensive
-literature on matching text between two strings (see, \eg,
-\cite{Hunt1976,Hirschberg1977,Tichy1984,Myers1986,Burns1997}).
+literature on matching text between two strings.
 Existing algorithms use somewhat different specifications than what
 we have outlined above, generally optimizing for the size of the edit
-script or for the longest matches.
+script or for the longest matches, and always only from a single
+source string to the target string.
 To achieve our goals, we develop a variation of
-standard greedy algorithms (\eg, \cite{Hirschberg1977,Myers1986,Burns1997})
+standard greedy algorithms
 by modifying the greedy step; instead of selecting a match
 based on length, we use a notion of \intro{match quality}.
 
-The basic procedure for the differencing step is:
+The basic procedure for our greedy-based differencing
+algorithm\footnote{Appendix~\ref{app:basicdiffsrc} lists a
+\textbf{perl} language implementation of this basic algorithm.}
+is:
 \begin{enumerate}
-\item Compute all possible matches (of every length).
-\item For each match, compute a quality score and insert into
+\item Compute all possible matches (of every length):
+\begin{eqnarray*}
+\mathrm{Matches}(\version{a}, \version{b}) = \{ (i,j,k) & |
+            & \exists k \in \mathbb{N}.  (
+    \forall f \in \mathbb{Z}, 0 \le f < k . \\
+    & & ( w^a_{i+f} \in \words{\version{a}},
+    w^b_{j+f} \in \words{\version{b}}, \\
+    & & w^a_{i+f} = w^b_{j+f} ) ) \}.
+\end{eqnarray*}
+
+\item For each match, compute a quality score and insert the match into
     a priority queue, so that the highest quality matches will
     be drawn first.
 \item Draw a match out of the priority queue.
-    If any part of the match has already been previously matched,
-    discard this match.
+    If any part of the match has already been previously matched
+    in the target string, then discard this match.
     Otherwise, record the match as a block \textbf{Move}
-    from the first string to the second string.
+    from the source string to the target string.
     Repeat this step until the priority queue is empty.
-\item Check for all unmatched blocks of text in the first
+\item Check for all unmatched blocks of text in the source
     string, and record them as \textbf{Delete} operations
     in the final edit script.
-\item Check for all unmatched blocks of text in the second
+\item Check for all unmatched blocks of text in the target
     string, and record them as \textbf{Insert} operations
     in the final edit script.
 \end{enumerate}
-Appendix~\ref{app:basicdiffsrc} lists a
-\textbf{perl} language implementation of this basic algorithm.
 
 The key to matches meeting the list of criteria we have
 defined above is in the quality function.\footnote{Except for
@@ -114,6 +125,9 @@ we prefer longer matches of text.
 To achieve this, we use a tuple to represent the quality.
 Given that a match has a length of $k$, we can represent preferring
 longer matches over non-crossing blocks as $(k, q_{block})$.
+The use of a tuple for the priority reflects that we prefer
+matches of longer length, before we ever consider the issue
+of match quality.
 
 So far, this discussion has applied equally to the task of
 computing a difference between two strings.
@@ -122,7 +136,8 @@ need to compute matches with multiple previous revisions,
 to account for text which was deleted and then later restored.
 We describe these previous revisions as \intro{chunks} of text,
 and number them so that chunk~0 is the most recent revision.
-We prefer matches with more recent revisions than with older
+As stated before, we prefer matches with more recent revisions
+than with older
 revisions; if we let $c$ be the chunk that a match comes from,
 one possible quality tuple is $(-c, k, q_{block})$.
 There are other possible quality tuples (\eg $(k, -c, q_{block})$,
@@ -155,7 +170,8 @@ A simple procedure for this would be:
 
 The Wikipedia is a huge corpus of documents, and processing speed
 is a crucial factor in doing timely analysis.
-There are a few steps we can take to reduce the size of the computation.
+There are a few steps we can take to reduce the size of the computation
+that we have described so far.
 
 The first optimization is in computing the possible
 matches in the differencing algorithm.
@@ -248,7 +264,8 @@ Rev & Revs & BasicTextTracking & FasterTextTracking \\
 \hline
 \end{tabular}
 \end{center}
-\caption{Comparing the execution times of our
+\caption[Comparing execution times of our two
+    text tracking algorithms.]{Comparing the execution times of our
     \textbf{basic} and \textbf{fast} text tracking
     algorithms on selected versions of the article
     ``Santa Cruz Beach Boardwalk.''}
@@ -267,7 +284,7 @@ Since the text does not match in any \version{j} for $j > i$,
 it must be the case that the text was deleted in \version{i+1} and
 never restored.
 The size of deleted text in any revision is typically much smaller
-than the size of the live text, so our second optimization is
+than the size of the live text, so our final optimization is
 to check for matches against the deleted text rather than the full
 live text of previous revisions.
 Note that this can change the size of matches that are found,
@@ -357,7 +374,3 @@ run through priority queue selecting best matches \;
 
 \end{comment}
 
-\mynote{Can we define the greedy matching more algorithmically?}
-\begin{equation}
-Matches(\version{a}, \version{b}) = { (i,j,k) | \forall f s.t. 0 \le f < k, w^a_{i+f} = w^b_{j+f} }
-\end{equation}

@@ -50,32 +50,32 @@ is used throughout this work.
 	\right]
     \end{equation}
 
-\item \version{} -- given some $\version{} \in \versions{a}$
-    for a specific $a \in \articles$, we take \version{} to be
-    a list of words,
-    $[w_1, w_2, \ldots, w_{m}]$ where $m$ is the number of
-    words in that version.
-    For us, a \intro{word} is a whitespace-delimited sequence of
-    characters in the Wiki markup language that produces a Wikipedia article:
-    we work at the level of such markup language, rather than at the level
-    of the HTML produced by the wiki engine.
 \end{itemize}
 
-\subsection{Text Matching}
+\subsection{Chapter~\ref{ch:diff} -- Author Attribution}
 
 \begin{itemize}
 
-\item \revauthor{\version{i}} -- every revision of an article has
+\item \words{\version{}} -- gives the sequence of words that make
+    up the content of version \version{}; see
+    Definition~\ref{def:words}.
+
+\item \revauthor{\version{}} -- every revision of an article has
     a user associated with it with the edit.
-    This function gives the user associated with \version{i} of
+    This function gives the user associated with \version{} of
     an article.
     For anonymous users (who are distinguished by IP address in
     MediaWiki), we map each to the single anonymous user in \users.
+    (Definition~\ref{def:revauthor}.)
+
+\item \prevrevs{\version{}} -- for $\version{} \in \versions{a}$,
+    this is the ordered list of revisions previous to \version{}
+    in \versions{a}; see Definition~\ref{def:prevrevs}.
 
 \item \match{\version{i}, r, \prevrevs{\version{i}}} -- a function
     that locates the best matching text for the $r^{th}$ word of
     \version{i} in the text of previous revisions.
-    See Equation~\ref{eq:bestmatch} and the accompanying text
+    See Equation~\ref{def:bestmatch} and the accompanying text
     for further description and development.
         \mynote{Include $a$ in notation?  Take out $v$ part?}
         \mynote{Move this into definition location.}

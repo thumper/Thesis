@@ -4,16 +4,17 @@
 When first approaching the topic of measuring the quality
 of contributions made by users, our thinking (perhaps shaped
 by some of the public discussion surrounding
-contributions~\cite{Swartz2006} \mynote{Other references?})
+contributions~\cite{Swartz2006})
 focused on the text being added by users.
 The basic assumption of a reputation system is that past performance
 is a reliable indicator of future performance, so we were
 asking the question ``does text added by some users \intro{survive}
 longer than text by other users?''
 Note that there are other possible measures of quality, for example:
-what size is the contribution, what is the reading level of the text,
+what size is the contribution, what is the reading level of the
+text\cite{Flesch1948,Gunning1952},
 how good is the grammar, and does the text seem to be related to
-the topic of the article.
+the topic of the article~\cite{Itakura2009}.
 We decided not to tackle these kinds of quality measures, both for
 the difficulty of natural language processing, and because such
 methods would require significant work for each language we wanted
@@ -35,23 +36,22 @@ for the text in an article $\article{} \in \articles$.
 Just tracking authorship isn't enough for tracking survival, since
 we need to know what specific revision a word came from.
 Let us define another recursive relation, like the definition
-for $\txtauthor{}$ in Equation~\ref{eq:txtauthor},
+for $\txtauthor{}$ in Definition~\ref{def:txtauthor},
 which defines the revision that a word was first introduced.
-As before, we recall
-$\words{\version{n}} = \left[ w_1, w_2, \ldots, w_{l_n} \right]$, and let $0 < j \le l_n$ in the following:
+For a word $w_j \in \words{\version{i}}$, we define:
 \begin{equation*}
-\txtsrcrev{\version{n}, j} =
+\txtsrcrev{\version{i}, j} =
     \begin{cases}
         \txtsrcrev{\version{k}, s}, & \text{ if }
-        \match{\version{n}, j, \prevrevs{\version{n}}} = (\version{k}, s) \\
-        n, & \text{ if there is no best match text. } \\
+        \match{\version{i}, j, \prevrevs{\version{i}}} = (\version{k}, s) \\
+        i, & \text{ if there is no best match text. } \\
     \end{cases}
 \end{equation*}
 Now we can define the text survival of words to be the number of
 words introduced in \version{m} that are still present in \version{n}:
 \begin{equation}
 \tsurv{\article{}}{m,n} = \left| \left\{ j \colon
-    \exists j . \txtsrcrev{\version{n},j} = m \right\} \right| \\
+    \exists j \in \mathbb{Z} . ( \txtsrcrev{\version{n},j} = m ) \right\} \right| \\
 \label{eq:tsurv}
 \end{equation}
 
@@ -166,21 +166,22 @@ made in revision \version{k}, we need to compute the common ratio
 that best describes the sequence of $n$ text survival values,
 \tsurv{}{k,j}, after \version{k}, where $k < j \le k+n$.
 Let us call this common ratio the \intro{text decay quality},
-\quality{tdecay}{k}.
-To compute \quality{tdecay}{k}, we want to solve the following equation:
+\quality{tdecay}{n}{k}.
+To compute \quality{tdecay}{n}{k}, we want to solve the following equation:
 \begin{align*}
-    \sum_{i=0}^n \tsurv{}{k,k+i} = {} & \tsurv{}{k,k} + \quality{tdecay}{k} \cdot \tsurv{}{k,k+1} \\
-    & + \quality{tdecay}{}{k}^2 \cdot \tsurv{}{k,k+2} + \ldots \\
-    & + \quality{tdecay}{}{k}^n \cdot \tsurv{}{k,k+n} \\
-    = {} & \tsurv{}{k,k} \cdot \sum_{i=0}^n \quality{tdecay}{}{k}^i \\
-    = {} & \tsurv{}{k,k} \cdot \frac{1 - \quality{tdecay}{}{k}^{n+1}}{1 - \quality{tdecay}{}{k}} \\
+    \sum_{i=0}^n \tsurv{}{k,k+i} = {} & \tsurv{}{k,k} + \quality{tdecay}{n}{k} \cdot \tsurv{}{k,k+1} \\
+    & + (\quality{tdecay}{n}{k})^2 \cdot \tsurv{}{k,k+2} + \ldots \\
+    & + (\quality{tdecay}{n}{k})^n \cdot \tsurv{}{k,k+n} \\
+    = {} & \tsurv{}{k,k} \cdot \sum_{i=0}^n (\quality{tdecay}{n}{k})^i \\
+    = {} & \tsurv{}{k,k} \cdot \frac{1 - (\quality{tdecay}{n}{k})^{n+1}}{1 - \quality{tdecay}{n}{k}} \\
 \end{align*}
 
 To solve this for \quality{tdecay}{}{k}, we can use Newton's method
 to solve for the zero of the related function:
 \begin{equation*}
-  f(\alpha) = (1 - \alpha) \cdot \sum_{i=0}^n \tsurv{}{k,k+i}
+  f(\alpha) =
         - (1 - \alpha^{n+1}) \cdot \tsurv{}{k,k}
+        + (1 - \alpha) \cdot \sum_{i=0}^n \tsurv{}{k,k+i}
 \end{equation*}
 where $\alpha = \quality{tdecay}{}{k}$.
 Newton's method involves making repeated estimations of the form

@@ -2,7 +2,7 @@
 \section{Introduction}
 \label{sec:diff-intro}
 
-The Wikipedia is not unique, either as a collaborative work or as
+The Wikipedia is not one of a kind, either as a collaborative work or as
 a versioned document, although it is uniquely the largest such work
 in colloquial language.
 Programming projects (especially open source projects)
@@ -17,10 +17,10 @@ an interesting analogy because many of the same questions can be asked:
 \end{enumerate}
 Of these questions, we thought to focus on determining who contributed
 how much to the project; as a user contributes more, they gain experience
-in the community mores and our belief is that their future
+in the community mores and our working assumption is that their future
 contributions will be more valuable.
 That is, our notion was to give credit to users for the words that
-they write.
+they write\ldots\ and more words would lead to more credit.
 
 In the field of software engineering, the question of ``who contributed
 how much'' is generally answered by the metric
@@ -29,20 +29,19 @@ Computing who added which lines of text is achieved
 by applying a basic text difference
 algorithm~\cite{Myers86,TichyEditDist,BurnsLong97} to two consecutive
 revisions.
-The output of the algorithm allows us to determine what text was added and
+The output of the algorithm allows us to determine what lines were added and
 deleted at each edit, and attribute the insertions as contributions by the
 author of the second revision.
 In principle, the same technique works in the case of tracking authorship
-on the Wikipedia
-\ldots\quad
-They say fools rush in, and we did.
+on the Wikipedia and should be easy to implement\ldots\ They say fools rush in, and we did.
 
 There are a few problems with this initial model.
 The most obvious is that \textit{lines} are too granular
 a unit for tracking the evolution of English prose;
 editors frequently come in and revise phrases or
 even specific words, so it's necessary to compute
-differences at the granularity of \textit{words}.
+differences at a smaller granularity;
+we chose to work with white-space delimited \textit{words}.
 A bigger problem is that text isn't only inserted
 or deleted; it can also be copied or moved around.
 There are variations of the text difference algorithms that can
@@ -53,7 +52,7 @@ into its final form?
 To answer this last question, let us consider a fairly extreme example.
 Suppose user Alice creates a new article and writes a page of text for it.
 Vanessa is a vandal and decides to \intro{blank} the article,
-\ie, she deletes all the text for the article, but not the article itself.
+\ie she deletes all the text for the article, but not the article itself.
 Robert is part of the RCPatrol, and he notices that the article has
 been tampered with, so he restores all the text back to Alice's version.
 Now who should receive credit for writing the text, Robert or Alice?
@@ -61,10 +60,12 @@ Now who should receive credit for writing the text, Robert or Alice?
 We call this the \intro{author attribution} problem,
 and in the context of the Wikipedia it seems obvious that Robert's
 work is valuable maintenance, but Alice is the true ``author'' of the text.
-Thus, a better model of attribution would give credit
+Thus, a better model of attribution just giving credit
+to the person who inserted the text would instead give credit
 to the author who originally created the text,
 regardless of edit wars.
-For example, the WikiTravel site creates a tree representing
+For example, the WikiTravel\footnote{\url{http://wikitravel.org}}
+site creates a tree representing
 the version history of an article: two consecutive versions
 have a parent-child relationship in the tree, except when
 the second version is identical to an earlier version;
@@ -76,10 +77,10 @@ on organizing revisions).
 Using this revision tree, the WikiTravel site computes the
 authors of the article as being the set of authors starting
 from the most recent version and following parent links
-to the root of the tree.
-(Note that WikiTravel computes a set of authors as a requirement
+to the root of the tree.\footnote{Note that WikiTravel
+computes a set of authors as a requirement
 of the license agreement that applies to contributed content,
-so the problem is more than an academic one.)
+so the problem is more than an academic one.}
 
 
 A second example is now easier to analyze for attribution:
@@ -91,29 +92,27 @@ has been Prime Minister to Denmark~\cite{wiki:Denmark-Fogh}.
 leads the government with the consent of Queen Margrethe II.}
 \end{quote}
 %
-The italicized text has been added, but half the content repeats
-what appears in the previous sentence.
+Alice wrote the first sentence of this example, and Robert
+added the italicized text,
+but Robert's content repeats much of the same information as
+appears in Alice's sentence.
 Clearly, a model of attribution which simply tracks insertions
-and deletions is too simple, as the author of the italicized
-text would receive credit for words that are not his own.
+and deletions is too simple, as Robert
+would receive credit for words that are not his own.
 
 
 We present a method for computing text authorship based on
-first computing a difference between previous revisions and
+first computing a difference between multiple previous revisions and
 the target revision.
+From our two examples, we see already that the differencing
+algorithm must allow matching over multiple past revisions, as
+well as supporting multiple copies of the same block of text.
+Computing these differences in the context of the Wikipedia
+requires some efficiency to avoid unwieldy CPU requirements
+or execution times of several months;
+to this end, we resort to a method based on greedy differencing
+algorithms.
 Using a greedy algorithm for computing the difference, we are
 able to efficiently find matches of old text and propagate authorship
 information to the target revision.
-
-
-Historians of computer science will note a relation
-to \textit{transclusions}~\cite{Nelson81}.
-Nelson's vision for hypertext included the notion
-of micropayments to authors, which required detailed,
-and manual, attributions of text.
-We propose automatically detecting attribution
-(equivalently, transclusions of portions from earlier revisions)
-in the context of a revisioned document edited
-by multiple authors.
-
 
