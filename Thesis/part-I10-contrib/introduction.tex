@@ -34,7 +34,7 @@ author contribution for versioned bodies of textual information that
 evolve via successive modifications, or {\em edits,} performed by
 individual authors. 
 We focus on wikis, and in particular on the Wikipedia, an on-line
-encyclopedia built on wiki technology \cite{Wikis01}. 
+encyclopedia built on wiki technology~\cite{Leuf2001}. 
 
 On the Wikipedia, the problem of measuring author contributions has
 so far been considered mainly in the context of gaining a better
@@ -43,10 +43,10 @@ Wikipedia.
 In particular, measures of author contribution have been used to
 discuss the issue of whether it is a large group of novice users, or a
 small group of experienced editors, who contribute most of the
-content of the Wikipedia \cite{Wales2005,Swartz2006,Bourgeoisie2007}. 
+content of the Wikipedia \cite{Wales2005,Swartz2006,Kittur2007}. 
 In these discussions, author contribution was measured via the number
 of edits performed by authors (edit count) \cite{Wales2005,EditsEqQuality2007,
-Bourgeoisie2007,WikiDashboard2008,OrtegaBarahona2007,SteinHess2007},
+Kittur2007,WikiDashboard2008,OrtegaBarahona2007,SteinHess2007},
 or by the total amount of text the authors introduced (text count)
 \cite{Swartz2006}. 
 We argue that neither of these two measures is robust, or fully
@@ -104,7 +104,7 @@ For each edit, we compute both the {\em edit size\/} and the
 The edit size is measured as the edit distance between the article
 revision produced by the author, and the previous revision; the
 problem of computing edit distances has been studied in 
-\cite{EditDist74,TichyEditDist,EditDistanceMoves}. 
+\cite{EditDist74,TichyEditDist,Cormode2007}. 
 The edit quality is in the interval $[-1, 1]$, and measures how long
 the change lasts in the system: it is close to $1$ for edits that are
 preserved fully in subsequent revisions, and it is close to $-1$ for
@@ -162,7 +162,7 @@ Measuring contributions of individuals in group collaborative
 efforts have been studied for several decades, in the context of
 software project management.
 Most programmers are familiar with the KLOC (thousand lines of 
-code) measurement~\cite{MITRE1988, SLOC1992} ---
+code) measurement~\cite{MITRE1988,Park1992} ---
 it counts how many lines of software a programmer
 writes per week, and is analogous to text count.
 Although intended to measure the progress of a project, it also implicitly 
@@ -180,7 +180,7 @@ gave the largest contribution~\cite{Wales2005}; this result was later
 disputed in \cite{Swartz2006}, where it was argued that the majority
 of the content was due to the large number of authors who perform only
 occasional contributions to the Wikipedia. 
-Kittur et al., \cite{Bourgeoisie2007} discovered that the
+Kittur et al.~\cite{Kittur2007} discovered that the
 percentage of edits made by the masses is larger and growing 
 when compared to the authors who are either sysops or have a 
 very large number of edits to their credit.
@@ -189,9 +189,9 @@ the authors to be promoted to the status of Wikipedia
 administrators~\cite{AdministratorMop2008}.
 There are many works that measure user contributions by the
 number of edits which authors make to an 
-article~\cite{Wales2005,EditsEqQuality2007,Bourgeoisie2007,
+article~\cite{Wales2005,EditsEqQuality2007,Kittur2007,
 WikiDashboard2008,OrtegaBarahona2007,SteinHess2007}.
-In \cite{Bourgeoisie2007}, they consider the number of edits
+In \cite{Kittur2007}, they consider the number of edits
 as well as the change in edits and state that their conclusion
 remains unaffected with either of those measures.
 Wilkinson and Huberman show that the quality of an article improves
@@ -199,7 +199,7 @@ with the number of edits and the number of distinct authors that
 revise that article~\cite{EditsEqQuality2007}.
 
 Another approach consists in measuring contributions indirectly, by
-noting citations~\cite{PageRank98,AckCounting2004,WikiMTWtrust06}.
+noting citations~\cite{PageRank98,Giles2004,WikiMTWtrust06}.
 While this approach enables one to judge the relevance of a complete
 article, it cannot easily be used to ascribe the merit of the
 article to its individual contributors. 
