@@ -1,6 +1,16 @@
 
 \section{Introduction}
 
+History is replete with examples of partnerships where it's
+not clear how to value each person's contribution:
+\begin{itemize}
+\item Steve Jobs and Steve Wozniak.
+\item The Marx Brothers, Groucho and those other two.
+\item Paul Erd\"os and a host of others.
+\item King Arthur and Merlin
+\end{itemize}
+
+
 \begin{itemize}
 \item Real-time collaboration increasing --- github (social networking
     for code), wikipedia, google maps, google earth, yelp,
@@ -46,7 +56,7 @@ small group of experienced editors, who contribute most of the
 content of the Wikipedia \cite{Wales2005,Swartz2006,Kittur2007}. 
 In these discussions, author contribution was measured via the number
 of edits performed by authors (edit count) \cite{Wales2005,EditsEqQuality2007,
-Kittur2007,WikiDashboard2008,OrtegaBarahona2007,SteinHess2007},
+Kittur2007,Suh2008,OrtegaBarahona2007,Stein2007},
 or by the total amount of text the authors introduced (text count)
 \cite{Swartz2006}. 
 We argue that neither of these two measures is robust, or fully
@@ -104,7 +114,7 @@ For each edit, we compute both the {\em edit size\/} and the
 The edit size is measured as the edit distance between the article
 revision produced by the author, and the previous revision; the
 problem of computing edit distances has been studied in 
-\cite{EditDist74,TichyEditDist,Cormode2007}. 
+\cite{Wagner1974,Tichy1984,Cormode2007}. 
 The edit quality is in the interval $[-1, 1]$, and measures how long
 the change lasts in the system: it is close to $1$ for edits that are
 preserved fully in subsequent revisions, and it is close to $-1$ for
@@ -162,7 +172,7 @@ Measuring contributions of individuals in group collaborative
 efforts have been studied for several decades, in the context of
 software project management.
 Most programmers are familiar with the KLOC (thousand lines of 
-code) measurement~\cite{MITRE1988,Park1992} ---
+code) measurement~\cite{Schultz1988,Park1992} ---
 it counts how many lines of software a programmer
 writes per week, and is analogous to text count.
 Although intended to measure the progress of a project, it also implicitly 
@@ -190,7 +200,7 @@ administrators~\cite{AdministratorMop2008}.
 There are many works that measure user contributions by the
 number of edits which authors make to an 
 article~\cite{Wales2005,EditsEqQuality2007,Kittur2007,
-WikiDashboard2008,OrtegaBarahona2007,SteinHess2007}.
+Suh2008,OrtegaBarahona2007,Stein2007}.
 In \cite{Kittur2007}, they consider the number of edits
 as well as the change in edits and state that their conclusion
 remains unaffected with either of those measures.
@@ -199,11 +209,11 @@ with the number of edits and the number of distinct authors that
 revise that article~\cite{EditsEqQuality2007}.
 
 Another approach consists in measuring contributions indirectly, by
-noting citations~\cite{PageRank98,Giles2004,WikiMTWtrust06}.
+noting citations~\cite{Page1999,Giles2004,WikiMTWtrust06}.
 While this approach enables one to judge the relevance of a complete
 article, it cannot easily be used to ascribe the merit of the
 article to its individual contributors. 
-In~\cite{KPB2006}, the authors examine the sequence of edits
+In~\cite{Korfiatis2006}, the authors examine the sequence of edits
 to an article and build a social network of authors based
 on the amount of citation (how much text is removed or preserved)
 by later authors; this social network is then analyzed to derive
@@ -213,7 +223,7 @@ authority values for authors.
 % measure, but is used to ascribe authority values to authors
 % and not to individual edits.
 
-In~\cite{CognitiveSurplus2008}, the total amount of work that went
+In~\cite{Shirky2008}, the total amount of work that went
 into the making of the complete Wikipedia is estimated to be about 
 100 million hours of human thought. 
 This measure is very different from the measures we
