@@ -1,136 +1,71 @@
 \subsection{Related Work}
 
-Measuring contributions of individuals in group collaborative
-efforts have been studied for several decades, in the context of
-software project management.
-Most programmers are familiar with the KLOC (thousand lines of 
-code) measurement~\cite{Schultz1988,Park1992},
-sometimes abused to measure productivity.
-Although intended to measure the progress of an
-entire project, it also implicitly 
-measures each programmers contribution to the project.
-What we propose in this paper can be thought of as combining
-KLOC with defects/KLOC, so that merit is a function of both
-amount of contribution and quality.
+From our point of view, measuring contributions to a collaborative
+work seems most like the software engineering practice of counting
+source lines of code to estimate programmer effort and
+productivity~\cite{Schultz1988,Park1992}.
+There are several other productivity measures that have
+roots in the manufacturing process~\cite{Diewart2005},
+such as measuring the number of defects or customer
+satisfaction~\cite{Tennant2001}.
 
-Shirky and Martin Wattenberg at IBM did a back of the
-envelope calculation, and estimated that the complete Wikipedia
-works amount to about 100 million hours of human
-thought~\cite{Shirky2008}.
-This is interesting, because they are measuring work
-in terms of the amount of human thought that goes into it.
-(We interpret ``Human thought'' as being similar 
-to ``man hours.'').
+Within the Wikipedia, the problem of measuring contributions
+seems to have first arisen in the context of trying to understand
+the process by which knowledge is accumulated and organized
+in such a large group collaboration (a discussion informed
+by such works
+as~\cite{Butler2002,Benkler2002,Surowiecki2004,Reagle2004}).
+Wales conducts a survey in December~2004 which finds that half
+the edits within the Wikipedia are made by only 2.5\% of logged
+in users~\cite{Wales2005}.
+Swartz challenges that \intro{edit counts} capture only one part of the
+story; counting the size of edits presents a different picture,
+and this has policy implications for the Wikipedia in how
+it decides to encourage more contributions~\cite{Swartz2006}.
 
-The debate that started it all!
-Jimbo Wales said that most of Wikipedia is created by
-a handful of people~\cite{Wales2005}.
-We are not sure if he still believes this!
-Aaron Swartz decided to count by characters,
-and discovered that content is mostly added
-by infrequent authors~\cite{Swartz2006}.
-Kittur et al., \cite{Kittur2007} discovered that the
-percentage of edits made by the masses is larger and growing 
-when compared to the authors who are either sysops or have a 
-very large number of edits to their credit.
-Burke and Kraut use a wide variety of edit counts to predict
-which authors be promoted to Wikipedia 
-administrators~\cite{AdministratorMop2008}.
-There are many works that measure user contributions by the
-number of edits which authors make to an 
-article~\cite{Wales2005,EditsEqQuality2007,Kittur2007,
-Suh2008,OrtegaBarahona2007,Stein2007}.
-In \cite{Kittur2007}, they consider the number of edits
-as well as the change in edits and state that their conclusion
-remains unaffected with either of those measures.
+In trying to ascribe a source to the many contributions
+that make up the Wikipedia, Anthony~\etal measure the
+\textit{survivability} of an edit by looking at the percentage of
+characters retained in later edits~\cite{Anthony2005}.
+The authors use the entire content of the version being
+evaluated (since the author could have made edits to any
+part of the content), which distinguishes their metric
+from those we developed in Chapter~\ref{ch:editquality}
+that are designed to track only the changes done specifically
+by the author being evaluated.
+Given that caveat, they find that ``Good Samaritans'' (one-time
+anonymous users) have the highest quality contributions overall.
 
-Wilkinson and Huberman show that the quality of an article improves
-with the number of edits and the number of authors that revise
-that article~\cite{EditsEqQuality2007}.
+Kittur~\etal take up the question of whether \textit{elite}
+or \textit{common} users contribute more content, analyzing both
+the number of edits made by authors and the total size of the
+edit differences~\cite{Kittur2007}.
+Their data suggests that both metrics point to the same
+conclusion: that elites dominated content-generation in the early
+history of the Wikipedia, but the workload had shifted to
+the common users by mid-2006.
+The opposite conclusion is reached by Ortega~\etal,
+who revisit the question of how contributions (as measured by
+edit counts) are distributed over the Wikipedia user base and use
+Gini coefficients to quantify the concentration of
+core contributors~\cite{Ortega2008}.
 
-An interesting direction is the one where a group defines the 
-\textit{impact} of an article as the number of times it is 
-viewed~\cite{WikiImpact2007}. 
-They stitch together several different data sources to build a model 
-which estimates this number for any point in time.
-This has implications on reputation systems and in systems such as
-ours where we try to measure contribution.
+Many other works exist that are, in the abstract, considering
+author contributions.  In practice, we find that most works
+use edit count as their contribution
+metric~\cite{Wilkinson2007,Burke2008,Suh2008,Ortega2007,Stein2007}.
+We suspect that this is due to the relative simplicity of
+counting edits versus computing text differences.
 
-Contributions (or maybe reputation) can sometimes be measured 
-indirectly, by noting 
-citations~\cite{Page1999,Giles2004,WikiMTWtrust06}.
-Our technique is content-driven, and uses text tracking
-to determine the author of each individual 
-word~\cite{RankingControversies2008,Adler2007}.
-The basic unit of measure for the amount of text added or the
-amount of edit performed is a word in our system.
-Our objective is defining a set of contribution measures
-that could be used to measure contributions quantitatively
-and to compare them.
+Our own work differs from previous research in two important ways.
+First, we propose that there are several different measures that
+can represent the ``size'' of contribution.
+Second, and more importantly, we observe that not all
+contributions of the same size are equivalent.
+As an example, consider the addition of the sentence ``UC Santa
+Cruz rocks your socks'' to an article.
+This contribution of six words is considered equivalent to other
+legitimate contributions, but actually is a \intro{negative contribution}
+in that it creates more work for some other author.
+We explore variations of both these parameters.
 
-\mynote{This list was commented out.}
-\begin{itemize}
-
-\item Measuring contributions to group collaborations has been
-	studied for several decades, in the context of
-	software project management.
-	Most programmers are familiar with the KLOC
-	(thousand lines of code) measurement~\cite{Schultz1988,Park1992},
-	sometimes abused to measure productivity.
-	Although used to measure performance, it also
-	implicitly measures each programmers contribution
-	to the project. 
-    Our inclusion of quality is akin
-	to combining KLOC with defects/KLOC.
-
-\item Shirky and Martin Wattenberg at IBM do a back of the
-        envelope calculation, and estimate that the complete Wikipedia
-	works amount to about 100 million hours of human
-	thought~\cite{Shirky2008}.
-	This is interesting, because they are measuring work
-	in terms of the amount of human thought that goes into it.
-%	(``Human thought'' is probably the same as ``man hours.'')
-
-\item The debate that started it all!
-	Jimbo Wales says that most of Wikipedia is created by
-	a handful of people~\cite{Wales2005}.
-	Aaron Swartz decides to count by characters,
-	and discovers that content is mostly added
-	by infrequent authors~\cite{Swartz2006}.
-
-\item Contributions (or maybe reputation) can sometimes be measured indirectly,
-	by noting citations~\cite{Page1999,Giles2004,WikiMTWtrust06}.
-
-\item Burke and Kraut use a wide variety of edit counts to predict
-	which authors be promoted to Wikipedia administrators~\cite{AdministratorMop2008}.
-
-\item Some previous works measure user contributions by the number
-	of edits which authors make to an
-	article~\cite{Wales2005,EditsEqQuality2007,Kittur2007,
-	Suh2008,OrtegaBarahona2007,Stein2007}.
-
-\item Wilkinson and Huberman show that there is a relation between
-	the number of edits and the quality of an article~\cite{EditsEqQuality2007}.
-
-\item One group defines the \textit{impact} of an article as the number
-	of times it is viewed~\cite{WikiImpact2007}.  They stitch together
-	several different data sources to build a model which estimates this number
-	for any point in time.  
-	%Our reputation system should probably include
-	%something like this.
-
-%\item Our technique is content-driven, and uses text tracking
-%	to determine the author of each individual word~\cite{RankingControversies2008,Adler2007}.
-
-\item Cosley et al. concern themselves with how to increase contributions
-	and maintain high quality through \textit{intelligent task routing},
-	which attempts to improve user satisfaction with their
-	participation~\cite{TaskRouting2006}.
-	This is totally different than measuring contributions,
-	but it could be argued that we are measuring to
-	increase competition, and thereby increase the quantity and
-	quality of contributions.  \mynote{Weak?}
-
-\item We used R~\cite{R2007}.
-
-\end{itemize}
