@@ -1,18 +1,23 @@
-\section{Definitions}
+\section{Primitives}
 
-We would like to define quantitative measures of author 
-contributions to the Wikipedia.
-Typically, contribution metrics measure only the
-\textit{quantity} of a contribution,
-which implicitly assumes that all authors
-are working towards a common goal.
-We propose that collaborations including anonymous
-authors and other potential bad actors might be better served by factoring
-\textit{quality} with quantity.
-In order to define measures as
-``\textit{quality} $\cdot$ \textit{quantity},''
-we first must define some building blocks that represent
-some ways to measure quality and quantity.
+In order to construct functions that compute the contributions
+of authors, we need some primitives to work with.
+Our view is that any sizing up of the work or productivity
+of Wikipedia authors must take into account the fact that
+not all contributions are positive; approximately 7\%
+of edits are vandalism~\cite{Potthast2008,Potthast2010a}.
+We propose that besides measuring the magnitude of work done
+by an author, to guage the productivity of authors towards the
+goal of producing a useful reference requires tempering that
+magnitude with a quality metric.
+One way to achieve this is to factor the two together
+as ``\textit{quantity} $\cdot$ \textit{quality},'' with the
+following desireable property for quality: it should be signed,
+where positive values are towards a common goal and negative
+values are away from that goal.
+
+The quantity of a contribution can be measured in several ways.
+
 
 We define various measures of author contribution, taking into
 account the amount of text added or edits performed by the author
