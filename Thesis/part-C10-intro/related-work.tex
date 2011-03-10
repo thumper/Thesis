@@ -4,45 +4,45 @@ As the Wikipedia becomes a standard resource for the Internet
 public, there is rising interest in quality measures.
 A series of incidents show that the Wikipedia can be manipulated,
 despite the ``many eyes'' reviewing the site:
-a prank biography~\cite{Seigenthaler05,NewYorkTimes05a,NewYorkTimes05b},
+a prank biography~\cite{Seigenthaler05,NewYorkTimes05a,NewYorkTimes05b};
 congressional aides adjusting political
-biographies~\cite{Lehmann2006,NewZelandHerald06,Davis2006},
-a user pretending to be a professor~\cite{BBC07},
+biographies~\cite{Lehmann2006,NewZelandHerald06,Davis2006};
+a user pretending to be a professor~\cite{BBC07};
 and a slew of other self-interested parties making
 inappropriate edits~\cite{Wired07,Wikiscanner07,Noguchi2008}.
 Articles have been written questioning the
 general credibility of the Wikipedia~\cite{Stross2006,Schiff2006},
 and a scientific study addressing the question
 has been published~\cite{Giles2005}.
-Should school children be allowed to use the Wikipedia as
+Should schoolchildren be allowed to use the Wikipedia as
 a resource when they might encounter misinformation or foul
 language at any time~\cite{Gralla2007,Olanoff2007}?
 
-Today, there are several lines of research pursuing
+Today, several lines of research are pursuing
 vandalism detection specific to the Wikipedia~\cite{Potthast2010b}.
-These solutions all apply machine learning techniques
+These solutions all apply machine-learning techniques
 to annotated data sets, treating the task as a
 ``supervised learning'' problem.
-At the time our research was started, there were no annotated
+When we started our research, there were no annotated
 data sets available.
-We chose instead to track the work of identified users and compute a
+We chose instead to track the work of identified users and to compute a
 trust value for the text created, which we passively reveal to readers
 by coloring the background of untrusted text.
 
-The idea of assigning trust to specific sections of text of Wikipedia
+The idea of assigning trust to specific sections of text of the Wikipedia
 articles as a guide to readers has been previously proposed in the scientific
 literature~\cite{WikiMTWtrust06,Cross2006,McGuinness06}, as well as in white
 papers~\cite{King2007}; these papers also contain
 the idea of using text background color to visualize trust values.
 
 
-Other studies of Wikipedia quality have focused on trust as
+Other studies of the quality of the Wikipedia have focused on trust as
 article-level, rather than word-level, information.
 These studies can be used to answer the question of whether an
 article is of good quality, or reliable overall, but cannot be used to
-locate within an article the portions of text which deserve more
+locate within an article the portions of text that deserve more
 scrutiny, as our work is able to~\cite{Adler2008}.
-In~\cite{Zeng2006}, which inspired~\cite{McGuinness06}, the
+In Zeng~\etal~\cite{Zeng2006}, which inspired~\cite{McGuinness06}, the
 revision history of a Wikipedia article is used to compute a trust
 value for the entire article.
 In~\cite{Emigh05b,Mingus07}, metrics derived via natural language processing
@@ -54,7 +54,7 @@ in~\cite{Viegas2004}, where a visualization of the Wikipedia editing
 process as a \textit{history flow of text}
 is presented; an approach based on edit frequency and dynamics
 is discussed in~\cite{Wilkinson2007}.
-There is a fast-growing body of literature reporting on
+A fast-growing body of literature reports on
 statistical studies of the evolution of Wikipedia content,
 including~\cite{Viegas2004,Voss2005,Ortega2007}; we refer to~\cite{Ortega2007} for an
 insightful overview of this line of work.
