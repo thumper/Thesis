@@ -12,7 +12,7 @@ is used throughout this work.
 \item \articles \ -- the set of main Wikipedia \intro{articles}.
     We use this term interchangeably with the term \intro{pages},
     as each article appears as a single web page on the Wikipedia site.
-    For this work, we only consider articles which are in
+    For this work, we only consider articles that are in
     the NS0 (Main) namespace to be in \articles.
     Talk and User pages, for example, are in other namespaces.
 \item \users \ -- the set of registered Wikipedia \intro{users},
@@ -40,7 +40,7 @@ is used throughout this work.
     of an article never have the same author.
     \mynote{Take this out?}
     Sometimes for convenience, we take version \version{0} to be
-    an empty revision which precedes all other revisions.
+    an empty revision that precedes all other revisions.
 \item \versions{} \ -- the chronologically ordered list of all
     revisions, across all articles in \articles.
     That is,
@@ -61,7 +61,7 @@ is used throughout this work.
     Definition~\ref{def:words}.
 
 \item \revauthor{\version{}} -- every revision of an article has
-    a user associated with it with the edit.
+    a user associated with the edit.
     This function gives the user associated with \version{} of
     an article.
     For anonymous users (who are distinguished by IP address in
@@ -75,8 +75,8 @@ is used throughout this work.
 \item \match{\version{i}, r, \prevrevs{\version{i}}} -- a function
     that locates the best matching text for the $r^{th}$ word of
     \version{i} in the text of previous revisions.
-    See Equation~\ref{def:bestmatch} and the accompanying text
-    for further description and development.
+    For further description and development, see
+    Equation~\ref{def:bestmatch} and the accompanying text.
         \mynote{Include $a$ in notation?  Take out $v$ part?}
         \mynote{Move this into definition location.}
 
@@ -85,16 +85,16 @@ is used throughout this work.
     \mynote{Put in reference to chapter section.}
 
 \item \tsurv{a}{i,j} -- for article $a \in \articles$, measures the
-    amount of text which was introduced in revision \version{i}
+    amount of text introduced in revision \version{i}
     that survives to \version{j}.
 
-\item \judges{a}{n}{i} -- a function which returns the set of
+\item \judges{a}{n}{i} -- a function that returns the set of
     \intro{judging} revisions associated with revision \version{i}
     of article $a \in \articles$.
     A judging revision for revision \version{i} is a revision \version{j}
     such that $0 < j - i \le n$ and
     $\revauthor{\version{i}} \not= \revauthor{\version{j}}$.
-    Thus, the set is limited to at most $n$ revisions which are nearest
+    Thus, the set is limited to, at most, $n$ revisions which are nearest
     to \version{i} in time.
 
 \end{itemize}

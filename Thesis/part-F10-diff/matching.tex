@@ -10,10 +10,10 @@ string-to-string correction problem.
 
 The simplest string-to-string correction algorithms
 note only insertions and deletions, but we are also interested
-in noting that text has been copied (or even just moved)
+in noting whether text has been copied (or even just moved)
 to another part of the article so that we can assign authorship
 correctly.
-In fact, there are several properties that we think are desirable
+In fact, we think several properties are desirable
 when determining how text is reorganized:
 \begin{itemize}
 \item When text is duplicated within an article, we prefer to assign
@@ -21,14 +21,14 @@ when determining how text is reorganized:
     This prevents a vandal from duplicating text and then deleting the
     original copy.
     To achieve this goal, we must use an algorithm that allows
-    block moves of text, and allows the same source text to be
+    block moves of text and allows the same source text to be
     matched multiple times in the target revision.
 \item If the same text is found multiple times in both the previous
     and new revision, there are multiple ways to describe how the
     text has evolved.
     We would like to give preference to the most plausible explanation:
     that the text was not rearranged.
-    To do so, we prefer to match chunks of text that are in the
+    To do so, we prefer to match chunks of text in the
     same relative order in their respective document
     versions.\footnote{This might seem irrelevant, given that duplicated
     text is given the same author.  This property becomes important
@@ -37,7 +37,7 @@ when determining how text is reorganized:
     edit distance.  If the difference reflected block moves that
     crossed over each other, then there would be a positive edit
     distance contributed by the swapping of equivalent text.}
-\item We don't want to over-reward the first author to use common
+\item We do not want to over-reward the first author to use common
     words (\eg ``the,'' ``of'').
 \item When text is deleted in one version and then restored in a later
     version, we prefer the original author.
@@ -55,9 +55,9 @@ when determining how text is reorganized:
 \end{itemize}
 
 
-As described in Section~\ref{sec:diff-related}, there is an extensive
+As described in Section~\ref{sec:diff-related}, there is extensive
 literature on matching text between two strings.
-Existing algorithms use somewhat different specifications than what
+Existing algorithms use somewhat different specifications than
 we have outlined above, generally optimizing for the size of the edit
 script or for the longest matches, and always only from a single
 source string to the target string.
@@ -91,10 +91,10 @@ is:
     from the source string to the target string.
     Repeat this step until the priority queue is empty.
 \item Check for all unmatched blocks of text in the source
-    string, and record them as \textbf{Delete} operations
+    string and record them as \textbf{Delete} operations
     in the final edit script.
 \item Check for all unmatched blocks of text in the target
-    string, and record them as \textbf{Insert} operations
+    string and record them as \textbf{Insert} operations
     in the final edit script.
 \end{enumerate}
 
@@ -105,19 +105,19 @@ by the quality
 function.  The source in Appendix~\ref{app:basicdiffsrc}
 enables this feature by a flag.}
 To prefer matches where the blocks are in similar positions,
-we can select a quality function which compares the relative
+we can select a quality function, which compares the relative
 positions of a match.
 Suppose that a match of length $k$ occurs at $i_1$ in the source
 string having length $l_1$, matching the same sequence of length $k$ at
 position $i_2$ in the target string having length $l_2$,
 then we can define a quality to preserve the
-ordering of blocks like so:
+ordering of blocks as:
 \begin{equation}
 q_{block} = -\left| \frac{i_1 + k/2}{l_1} - \frac{i_2 + k/2}{l_2} \right|
 \end{equation}
 This formula computes the midpoint of each match and compares
 the relative positions within the full strings; $q_{block}$ will be
-zero when the matches are in the same relative position,
+zero when the matches are in the same relative position
 and increases as the blocks move away from each other.
 
 More important than matching blocks not crossing each other,
@@ -126,14 +126,14 @@ To achieve this, we use a tuple to represent the quality.
 Given that a match has a length of $k$, we can represent preferring
 longer matches over non-crossing blocks as $(k, q_{block})$.
 The use of a tuple for the priority reflects that we prefer
-matches of longer length, before we ever consider the issue
-of match quality.
+matches of longer length, before considering the issue
+of match quality.  \mynote{Is this clear?}
 
 So far, this discussion has applied equally to the task of
 computing a difference between two strings.
 In the problem of computing text authorship, we actually
-need to compute matches with multiple previous revisions,
-to account for text which was deleted and then later restored.
+need to compute matches with multiple previous revisions
+to account for text that was deleted and then later restored.
 We describe these previous revisions as \intro{chunks} of text,
 and number them so that chunk~0 is the most recent revision.
 As stated before, we prefer matches with more recent revisions
@@ -141,9 +141,9 @@ than with older
 revisions; if we let $c$ be the chunk that a match comes from,
 one possible quality tuple is $(-c, k, q_{block})$.
 There are other possible quality tuples (\eg $(k, -c, q_{block})$,
-if the absolute longest match is preferred), and this is
-an area of potential further research to understand the ramifications
-of choosing different quality functions.
+if the absolute longest match is preferred), and
+understanding the ramifications of choosing different quality
+functions is an area of potential further research.
 
 We also prefer not to reward authors that first use very common words
 or expressions.
@@ -154,7 +154,7 @@ To reduce our computation requirements, we chose the simpler idea
 of checking the length of the match: if a match is less than three
 words, then we reject the match.
 
-Once we have an edit script which defines how text evolves from
+Once we have an edit script that defines how text evolves from
 previous revisions to the target (current) revision, we can then propagate
 authorship from the previous revisions to the target.
 A simple procedure for this would be:
@@ -163,20 +163,20 @@ A simple procedure for this would be:
 \item Compute the edit script describing the text evolution from
     previous revisions.
 \item For each block move in the edit script, extract the authorship
-    from the source chunk, and propagate it to the target.
+    from the source chunk and propagate it to the target.
 \end{enumerate}
 
 \subsection{Optimizations}
 
 The Wikipedia is a huge corpus of documents, and processing speed
 is a crucial factor in doing timely analysis.
-There are a few steps we can take to reduce the size of the computation
-that we have described so far.
+We can take a few steps to reduce the size of the computation
+we have described so far.
 
 The first optimization is in computing the possible
 matches in the differencing algorithm.
-Instead of computing every possible match, we can compute
-only the longest matches initially.
+Instead of computing every possible match, we can initially compute
+only the longest matches.
 As matches are drawn from the priority queue, if we find
 that a match has been previously partially matched, we can
 compute the residual match at that time and insert the residual
@@ -212,15 +212,15 @@ Rev & Rev & Words & BasicDiff & FasterDiff \\
 
 
 In computing the text authorship,
-a very simple step to take is to reduce the size of the list of
+a very simple step is to reduce the size of the list of
 previous revisions given by \prevrevs{\version{i}}.
 As defined in Section~\ref{sec:diff-tracking}, \prevrevs{\version{i}} 
 is the ordered list of all previous revisions,
 $\left[ \version{1}, \version{2}, \ldots, \version{i-1} \right]$.
-We use the full list of previous revisions to ensure that text which
-is restored is assigned to the right author.
+We use the full list of previous revisions to ensure that restored text
+is assigned to the right author.
 In practice, the history of an article can extend to several thousand
-revisions, but an editor is likely to only look back a small number
+revisions, but an editor is likely only to look back a small number
 of revisions when searching for text to restore.
 We arbitrarily limit the list of previous revisions to ten:
 \begin{equation*}
@@ -281,7 +281,7 @@ Let us consider the case where a piece of text does not match in the
 most recent revision \version{k},
 but does match in some earlier revision \version{i}, so that we have $i < k$.
 Since the text does not match in any \version{j} for $j > i$,
-it must be the case that the text was deleted in \version{i+1} and
+the text must have been deleted in \version{i+1} and
 never restored.
 The size of deleted text in any revision is typically much smaller
 than the size of the live text, so our final optimization is
@@ -369,7 +369,7 @@ $idx \leftarrow $ IndexWordsByPositions($w_1$) \;
 compute priority queue of longest matches \;
 run through priority queue selecting best matches \;
 
-\caption{Fast differencing algorithm}
+\caption{Fast differencing algorithm.}
 \end{algorithm}
 
 \end{comment}

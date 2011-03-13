@@ -7,7 +7,7 @@ Initial work on this problem revolved around finding the
 Longest Common Subsequence (LCS)~\cite{Gusfield1999}, which identifies the
 sequence of symbols\footnote{Note that the symbols need not be sequential.}
 in common between the two strings.
-From there, it is an easy matter to identify the optimal
+From there, it is easy to identify the optimal
 set of insertions, deletions, and replacements to transform
 one string to the other.
 The well-known UNIX \texttt{diff} utility~\cite{Hunt1976} is based
@@ -29,9 +29,9 @@ obtaining improved performance characteristics.
 
 Specific to the Wikipedia, Fong and Biuk-Aghai present a different
 dimension of the string-to-string correction problem~\cite{Fong2010}.
-In previous formulations, solutions are optimizing for abstract
+In previous formulations, solutions are optimized for abstract
 performance characteristics (\eg running time or
-edit distance~\cite{Levenshtein1966}); but Wikipedia computes text differences
+edit distance~\cite{Levenshtein1966}); but the Wikipedia computes text differences
 to present for human understanding.
 Fong and Biuk-Aghai apply the hierarchical differencing idea of
 Neuwirth~\etal~\cite{Neuwirth1992} to the differencing algorithm used by the
@@ -41,8 +41,8 @@ of the edit script according to common behaviors of Wikipedia editors.
 Historians of computer science will note a relation
 to \textit{transclusions}~\cite{Nelson81}.
 Nelson's vision for hypertext included the notion
-of micropayments to authors, which required detailed,
-and manual, attributions of text.
+of micropayments to authors, which required detailed
+and manual attributions of text.
 We propose automatically detecting attribution
 (equivalently, transclusions of portions from earlier revisions)
 in the context of a revisioned document edited

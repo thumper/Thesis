@@ -3,7 +3,7 @@
 This work is divided into two halves.
 Part~\ref{part:foundations} covers the basic concepts we developed
 before a reputation system could be constructed.
-Part~\ref{part:applications} covers some applications that can
+Part~\ref{part:applications} covers applications that can
 be built atop the basic concepts to create useful tools for
 a collaborative community.
 
@@ -11,7 +11,7 @@ We start Part~\ref{part:foundations}
 by defining terminology and notation in Chapter~\ref{ch:defs}.
 
 We then introduce the author attribution problem in Chapter~\ref{ch:diff}.
-In order to accord credit to authors for the work they do,
+To accord credit to authors for the work they do,
 it is first necessary to identify their contribution properly.
 We extend a traditional \intro{greedy text difference} algorithm to
 account for the existance of multiple authors and the possibility
@@ -20,7 +20,8 @@ of restoring text from older revisions.
 Chapter~\ref{ch:editquality} then looks at measuring the size of
 an author contribution.
 The well-known answer is to use edit distance~\cite{Levenshtein1966},
-but we discover that the traditional formulation seems to fall short.
+but we discover that the traditional formulation must be adjusted
+to take into account the rearranging of text that some editors contribute.
 We refine the definition to build on the result computed by the
 algorithm in Chapter~\ref{ch:diff}, and account for the rearranging
 and substitution of text.
@@ -29,7 +30,7 @@ of edit quality in Chapter~\ref{ch:editquality}.
 We construct this measure to estimate the approval or disapproval of
 later authors on the same article.
 By aggregating the judgement of multiple later authors, we arrive at
-a value which represents the community's assessment of an edit.
+a value that represents the community's assessment of an edit.
 
 \mynote{Need outline for Part II.}
 

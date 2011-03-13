@@ -1,10 +1,10 @@
 \section{Introduction}
 
 One of the key problems in trying to build a reputation system
-for the Wikipedia is that, while there is a massive amount of
-data available, there is little information about how well different
+for the Wikipedia is that while a massive amount of
+data is available, there is little information about how well different
 users or articles are performing.
-Having such data is important, because we'd like to base the
+Having such data is important, because we would like to base the
 descriptive aspect of reputation on the community behavior seen
 in practice.
 To describe an edit as bad or good, we have to know what the
@@ -18,7 +18,7 @@ For example, if user Alice vandalizes an article by blanking it,
 user Bob can revert her changes by restoring the article to the
 state before Alice's edit.
 If there are constructive edits after a bad edit, it is also possible
-to selectively undo just the bad edits.
+selectively to undo just the bad edits.
 When a revert happens, it is a clear indication that some member
 of the community believes that the reverted edit is completely
 inappropriate, so many researchers use this as an indicator of
@@ -28,12 +28,12 @@ There are two issues with using reverts and undos
 as measures of community feedback.
 The first is that there are no definitive
 annotations\footnote{When using the MediaWiki software,
-there is a standard notation that appears in edit comments,
-but this isn't 100\% reliable as reverts can be effected manually.}
+a standard notation appears in edit comments,
+but this is not 100\% reliable, as reverts can be effected manually.}
 indicating that reverts or undos have occurred,
-but they can be detected by
-computation.\footnote{Detecting undos can be fairly expensive, so
-it's typical to restrict checking to a limited number of older revisions.}
+but computation can detect
+them.\footnote{Detecting undos can be fairly expensive, so
+it is typical to restrict checking to a limited number of older revisions.}
 The second more significant issue is that reverts and undos
 are a very blunt feedback mechanism; they indicate only complete disapproval.
 There are no gradations in this evaluation, which does not make
@@ -42,37 +42,37 @@ edits.
 
 When we started the WikiTrust project in 2006, our initial thought was to
 use page views to get a measure of how well reviewed an article is.
-Since Wikipedia works due to the collective action of everybody
-reading the articles, we expected that pages which receive a lot of
+Since the Wikipedia works due to the collective action of everybody
+reading the articles, we expected that pages that receive a lot of
 views would be more accurate because of the higher collective amount
 of scrutiny received.
 At the time, we abandoned this line of thinking because page view
 information was not available.
 (Since then, Priedhorsky~\etal show how page views can be estimated
-from some data sets which are available~\cite{Priedhorsky2007}.
+from some available data sets~\cite{Priedhorsky2007}.
 Log files are also now
 available\footnote{\url{http://dammit.lt/wikistats/}} and
 have a user-friendly front-end\footnote{\url{http://stats.grok.se/}}
 for simple queries.)
-Our experiences during the course of research is even more
-bleak than that: plentiful shallow review isn't equivalent to
-deeper review, and more eyes doesn't mean that anyone will take
+Our experiences during the course of this research is even
+bleaker than that: plentiful shallow review is not equivalent to
+deeper review, and more eyes does not mean that anyone will take
 the effort to correct a mistake.
 For example, the \underline{South Pasadena, California} page was vandalized
 in May 2008\footnote{\url{http://en.wikipedia.org/w/index.php?title=South_Pasadena,_California&oldid=211466067}}
 to add the film ``Triumph of the Will'' as being filmed in that city;
-it wasn't corrected until
+it was not corrected until
 April 2009.\footnote{\url{http://en.wikipedia.org/w/index.php?title=South_Pasadena,_California&oldid=282177714}}
-This is remarkable because the film is well-known in film studies,
+This is remarkable because the Nazi propaganda film is well known in film studies,
 and South Pasadena is in the Los Angeles area,
 where film studies is very popular.
 We know from the data available now that roughly 75 people a day
 read this article, so we have to wonder at how this error might
 have persisted for nearly a year.
 
-The data from the history of revisions seemed to be our primary, and only,
+The data from the history of revisions seemed to be our primary, and only
 data source for community sentiment, so
-we began to examine edits and attempt to manually track how each
+we began to examine edits and attempt manually to track how each
 edit fared in its future.
 Although there is a great deal of variation in edits, this examination
 led us to the hypothesis that text contributions might follow a pattern
@@ -87,16 +87,16 @@ Section~\ref{sec:textquality}.
 Of course, not all useful work consists of adding text to the Wikipedia.
 The RC Patrol and other maintainers all do work that involves
 deleting text or editing and rearranging text contributed by others,
-and this is not captured by any metric that only looks at how text is added.
+and any metric that only looks at how text is added will not capture it.
 How does one go about measuring how much of a delete is preserved
 in future revisions?
 We could answer this by treating it as the complement of insertion
-(that is, counting words which are restored from the delete as a
+(that is, counting words restored from the delete as a
 penalty to the original delete), but measuring word rearrangement
 was a completely different beast.
-The answer came in thinking of the evolution of an article as something
+The answer came in thinking of the evolution of an article
 like a random walk across a bridge: there is a definite start and a
-definite end, but the steps along the way don't always form a neat path.
+definite end, but the steps along the way do not always form a neat path.
 Defining a measure of forward progress led to our second
 quality metric, \intro{edit quality}, which we explain in
 Section~\ref{sec:editquality}.

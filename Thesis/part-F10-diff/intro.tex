@@ -17,7 +17,7 @@ an interesting analogy because many of the same questions can be asked:
 \end{enumerate}
 Of these questions, we thought to focus on determining who contributed
 how much to the project; as a user contributes more, they gain experience
-in the community mores and our working assumption is that their future
+in the community mores, and our working assumption is that their future
 contributions will be more valuable.
 That is, our notion was to give credit to users for the words that
 they write\ldots\ and more words would lead to more credit.
@@ -25,28 +25,28 @@ they write\ldots\ and more words would lead to more credit.
 In the field of software engineering, the question of ``who contributed
 how much'' is generally answered by the metric
 \textit{Source Lines of Code} (SLOC).\footnote{\url{http://en.wikipedia.org/wiki/Source_lines_of_code}}
-Computing who added which lines of text is achieved
+In computing who added which lines of text is achieved
 by applying a basic text difference
 algorithm~\cite{Myers1986,Tichy1984,Burns1997} to two consecutive
 revisions.
-The output of the algorithm allows us to determine what lines were added and
-deleted at each edit, and attribute the insertions as contributions by the
+The output of the algorithm allows us to determine which lines were added and
+deleted at each edit, and to attribute the insertions as contributions by the
 author of the second revision.
 In principle, the same technique works in the case of tracking authorship
-on the Wikipedia and should be easy to implement\ldots\ They say fools rush in, and we did.
+on the Wikipedia and should be easy to implement\ldots
 
 There are a few problems with this initial model.
 The most obvious is that \textit{lines} are too granular
 a unit for tracking the evolution of English prose;
 editors frequently come in and revise phrases or
-even specific words, so it's necessary to compute
+even specific words, so it is necessary to compute
 differences at a smaller granularity;
 we chose to work with white-space delimited \textit{words}.
-A bigger problem is that text isn't only inserted
+A bigger problem is that text is not only inserted
 or deleted; it can also be copied or moved around.
-There are variations of the text difference algorithms that can
-detect moved and copied text, but to whom should we attribute this text,
-the author who created the original text, or the editor who rearranges it
+Variations on text difference algorithms can
+detect moved and copied text, but to whom should we attribute this text:
+the author who created the original text, or the editor who rearranged it
 into its final form?
 
 To answer this last question, let us consider a fairly extreme example.
@@ -55,11 +55,11 @@ Vanessa is a vandal and decides to \intro{blank} the article,
 \ie she deletes all the text for the article, but not the article itself.
 Robert is part of the RCPatrol, and he notices that the article has
 been tampered with, so he restores all the text back to Alice's version.
-Now who should receive credit for writing the text, Robert or Alice?
+Now who should receive credit for writing the text: Robert or Alice?
 
 We call this the \intro{author attribution} problem,
 and in the context of the Wikipedia it seems obvious that Robert's
-work is valuable maintenance, but Alice is the true ``author'' of the text.
+work is valuable maintenance, but that Alice is the true ``author'' of the text.
 Thus, a better model of attribution just giving credit
 to the person who inserted the text would instead give credit
 to the author who originally created the text,
@@ -95,7 +95,7 @@ leads the government with the consent of Queen Margrethe II.}
 Alice wrote the first sentence of this example, and Robert
 added the italicized text,
 but Robert's content repeats much of the same information as
-appears in Alice's sentence.
+in Alice's sentence.
 Clearly, a model of attribution which simply tracks insertions
 and deletions is too simple, as Robert
 would receive credit for words that are not his own.
@@ -108,11 +108,12 @@ From our two examples, we see already that the differencing
 algorithm must allow matching over multiple past revisions, as
 well as supporting multiple copies of the same block of text.
 Computing these differences in the context of the Wikipedia
-requires some efficiency to avoid unwieldy CPU requirements
+requires efficiency to avoid unwieldy CPU requirements
 or execution times of several months;
 to this end, we resort to a method based on greedy differencing
-algorithms.
+algorithms (\mynote{cite some examples}).
 Using a greedy algorithm for computing the difference, we are
-able to efficiently find matches of old text and propagate authorship
-information to the target revision.
+able to find matches of old text and propagate authorship
+information to the target revision efficiently.
+\mynote{Make an estimate of the complexity?}
 

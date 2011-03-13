@@ -8,24 +8,24 @@ contributions~\cite{Swartz2006})
 focused on the text being added by users.
 The basic assumption of a reputation system is that past performance
 is a reliable indicator of future performance, so we were
-asking the question ``does text added by some users \intro{survive}
+asking the question ``Does text added by some users \intro{survive}
 longer than text by other users?''
 Note that there are other possible measures of quality, for example:
-what size is the contribution, what is the reading level of the
-text\cite{Flesch1948,Gunning1952},
-how good is the grammar, and does the text seem to be related to
+what size is the contribution; what is the reading level of the
+text\cite{Flesch1948,Gunning1952};
+how good is the grammar; and does the text seem to be related to
 the topic of the article~\cite{Itakura2009}.
 We decided not to tackle these kinds of quality measures, both for
-the difficulty of natural language processing, and because such
+the difficulty of natural language processing and because such
 methods would require significant work for each language we wanted
 to support.
-Measuring survival has the advantage that it's relatively cheap to
-compute, and works the same way across most languages.
+Measuring survival has the advantage that it is relatively cheap to
+compute and works the same way across most languages.
 
 To calculate how long a piece of text survives,
 we need to track the authorship of
 units of text\footnote{For the WikiTrust project, we opted to
-use a granularity of words to reduce the computational requirements.},
+use a granularity of words to reduce computational requirements.},
 and then compute authorship again in later
 versions of the article to find those words with an
 authorship dating back to the revision we are trying
@@ -33,11 +33,11 @@ to determine the quality of.
 
 In Chapter~\ref{ch:diff}, we describe how to track text authorship
 for the text in an article $\article{} \in \articles$.
-Just tracking authorship isn't enough for tracking survival, since
+Just tracking authorship is not enough for tracking survival, since
 we need to know what specific revision a word came from.
 Let us define another recursive relation, like the definition
 for $\txtauthor{}$ in Definition~\ref{def:txtauthor},
-which defines the revision that a word was first introduced.
+which defines the revision where a word was first introduced.
 For a word $w_j \in \words{\version{i}}$, we define:
 \begin{equation*}
 \txtsrcrev{\version{i}, j} =
@@ -48,7 +48,7 @@ For a word $w_j \in \words{\version{i}}$, we define:
     \end{cases}
 \end{equation*}
 Now we can define the text survival of words to be the number of
-words introduced in \version{m} that are still present in \version{n}:
+words introduced in \version{m} still present in \version{n}:
 \begin{equation}
 \tsurv{\article{}}{m,n} = \left| \left\{ j \colon
     \exists j \in \mathbb{Z} . ( \txtsrcrev{\version{n},j} = m ) \right\} \right| \\
@@ -57,8 +57,8 @@ words introduced in \version{m} that are still present in \version{n}:
 
 \subsection{Text Decay Quality}
 
-Our goal, in the abstract, is to define some metric that we can compute for
-revisions which quantifies some estimate of the \intro{quality} of the
+In the abstract, our goal is to define some metric that we can compute for
+revisions that quantifies some estimate of the \intro{quality} of the
 revision.
 There are many possible ways to define quality measures, which is the
 subject of research on vandalism detection (see
@@ -67,14 +67,14 @@ As an example, a simple quality measure would be the heuristic that
 inappropriate words added as part of an edit would indicate that the revision
 is of poor quality.
 
-For the purposes of building a reputation system, we want a measure
-which provides some insight into the community perception of the
+For the purpose of building a reputation system, we want a measure
+that provides some insight into the community perception of the
 quality of the edit.
 Having defined the notion of text survival, a very simple quality measure
-could be ``what fraction of the text added in a revision survives
+could be ``What fraction of the text added in a revision survives
 ten revisions later?''
 We discuss some variations of these quality measures in
-Chapter~\ref{ch:contrib}, but present here one novel quality measure.
+Chapter~\ref{ch:contrib}, but present one novel quality measure here.
 
 \begin{figure}[htbp]
 \centering
@@ -87,7 +87,7 @@ Chapter~\ref{ch:contrib}, but present here one novel quality measure.
     We say that a later author, \editor{j}, implicitly \intro{judges}
     author \editor{k} by choosing how many of \editor{k}'s words
     to keep or delete or restore; $T_j = \tsurv{}{k,j}$ is the number of words
-    that were introduced in \version{k} that are still present, or
+    that were introduced in \version{k} still present or
     \intro{live}, in \version{j}.
 }
 \label{fig:textsurvival} 
@@ -107,7 +107,7 @@ of how some text introduced at revision \version{k} might
 evolve over the next seven revisions; in this example, the
 figure shows that some text was restored in revision \version{j}.
 We say that author $A_j$ \intro{judges} the work of author
-$A_k$ by deciding how much text to preserve, delete, and restore.
+$A_k$ by deciding how much text to preserve, delete, or restore.
 If author $A_j$ works on a different part of the article, she
 is still implicitly deciding that the current revision of
 $A_k$'s work is okay.\footnote{Some better model of
@@ -125,15 +125,15 @@ several revisions (an idea explored in Chapter~\ref{ch:contrib}),
 but we were struck by the observation that after some initial
 churning, text seems to stabilize and then only slowly change
 as time progresses.
-We propose that a way to model this evolution of text over time
+We propose that one way to model this evolution of text over time
 is as a geometric sequence with a common ratio between zero and one;
 see Figure~\ref{fig:textlongevity} for how such a sequence could
 approximate the text survival over several revisions.
 The intuition behind a geometric model is that if an edit is
 ``bad,'' then most of the text will be removed right away.
-As time passes, the size of the edits gets smaller and
+As time passes, the size of the edits decreases and
 the text tends to stabilize into a form
-that people can agree on, until it eventually no longer changes.
+that people can agree on until it eventually no longer changes.
 
 
 \begin{figure}[tbph]
@@ -155,7 +155,7 @@ that people can agree on, until it eventually no longer changes.
 	as part of the article \textit{Santa Cruz Beach Boardwalk}.
 	The majority of the editing to the contributed text happens
 	in the next few revisions, before the text stabilizes.
-	Also shown in the graph is the text survival quality
+	The graph also shows the text survival quality
 	computed based on 20~revisions.
 	}
 \label{fig:ts-SantaCruzBeachBoardwalk}
@@ -191,17 +191,17 @@ Newton's method involves making repeated estimations of the form
 which we initiate with $\alpha_0 = 0$.
 For efficiency reasons, we limit the number of iterations taken
 to a small number (five in our live system)
-since we are only estimating the quality and high precision
+since we are only estimating the quality, and high precision
 is not very useful.
 
 The beauty of this quality measure is that it varies between
-zero, for text which is immediately deleted, and one, for text
-which is completely preserved.
+zero for text that is immediately deleted, and one, for text
+that is completely preserved.
 Values in between the two extremes reflect the fact that there
 was some debate among the community about what text to preserve
 in the article.
 Figure~\ref{fig:ts-SantaCruzBeachBoardwalk} shows the text survival
-graph of the initial contribution to that article, and how it varies
+graph of the initial contribution to that article and of how it varies
 over the next twenty filtered revisions.
 The figure also shows the curve representing the decay quality,
 calculated with a twenty-iteration Newton's method over the entire
