@@ -180,12 +180,49 @@ shortfall.
 
 \subsection{Edit Longevity Quality}
 
-\mynote{Need to define judges!}
+Our strategy for turning edit longevity into a quality metric
+is to compute an average of edit longevity from several different
+perspectives.
+Edit longevity requires two landmarks to base a judgement on:
+some revision in the past, and some revision in the future of
+the version being judged.
+For simplicity, we choose the revision immediate previous to
+the one being evaluated as the landmark in the past.
+That is, if we are evaluating \version{k}, then we choose
+\version{k-1} as one of the reference points.
+Our motivation for choosing only a single previous revision
+as a reference point is that past revisions cannot be making
+any implicit statements about a revision that has not happened
+yet.\footnote{In hindsight, the previous revision might have been
+blanked or otherwise vandalized, so that multiple previous revisions
+should actually be considered.}
 
-To compute a quality metric for revision \version{k},
-we decided to fix the revision in the past to \version{k-1},
-and then average the edit longevity judgements by the
-next several revisions.
+Our central idea for extracting community sentiment from the
+revision history of an article is to examine what happens to an
+author's contribution as the article continues to evolve.
+We say that later versions of the article act as \intro{judges}
+of the contribution, because each later author implicitly makes
+the decision to delete or revise existing text in the article.
+For text quality we used the ten following revisions as judges,
+but this allows the possibility for the author being judged
+to act as his own judge.
+We address this gap in the case of turning edit longevity into
+a quality by defining a map
+\begin{equation*}
+J : \articles \times \versions{} \times \mathbb{Z} \to 2^\versions{}
+\end{equation*}
+which, for an article $a \in \articles$,
+returns the set of up-to $n$ versions that act as judges
+to version $\version{k} \in \versions{a}$, with the proviso
+that author of \version{i} does not act as his own judge:
+\begin{equation}
+\judges{a}{n}{k} = \{ j : \exists j \in \mathbb{Z}\ .\ 0 < j - k \le n
+    \wedge \revauthor{\version{k}} \ne \revauthor{\version{j}} \}
+\label{def:judges}
+\end{equation}
+
+With our reference points for the past and future selected, we
+can define the average edit longevity as follows:
 \begin{equation*}
 \quality{elong}{n}{k} = \frac{1}{|\judges{}{n}{k}|} \cdot
       \sum_{i \in \judges{}{n}{k}} \esurv{}{k,k-1,i}

@@ -1,7 +1,10 @@
 \section{Matching Text}
 
-\mynote{Need more graceful start.}
-By ``text evolution,'' we mean noting how text shifts
+In defining the recursion for text authorship, we were intentionally
+vague about how to compute the best match for a piece of text
+from the history of revisions for an article.
+Our overall goal is to track \intro{text evolution},
+by which we mean observing how text shifts
 around and is added to or deleted from --- that is,
 understanding how it is changed from version to version
 by examining the differences.
@@ -62,7 +65,7 @@ we have outlined above, generally optimizing for the size of the edit
 script or for the longest matches, and always only from a single
 source string to the target string.
 To achieve our goals, we develop a variation of
-standard greedy algorithms
+the greedy algorithms
 by modifying the greedy step; instead of selecting a match
 based on length, we use a notion of \intro{match quality}.
 
@@ -74,11 +77,11 @@ is:
 \item Compute all possible matches (of every length):
 \begin{eqnarray*}
 \mathrm{Matches}(\version{a}, \version{b}) = \{ (i,j,k) & |
-            & \exists k \in \mathbb{N}.  (
-    \forall f \in \mathbb{Z}, 0 \le f < k . \\
-    & & ( w^a_{i+f} \in \words{\version{a}},
-    w^b_{j+f} \in \words{\version{b}}, \\
-    & & w^a_{i+f} = w^b_{j+f} ) ) \}.
+            & \exists k \in \mathbb{N} \ .\  (
+    \forall f \in \mathbb{Z}, 0 \le f < k \ . \\
+    & & w^a_{i+f} \in \words{\version{a}} \\
+    & & \wedge w^b_{j+f} \in \words{\version{b}} \\
+    & & \wedge w^a_{i+f} = w^b_{j+f} ) \}.
 \end{eqnarray*}
 
 \item For each match, compute a quality score and insert the match into
@@ -97,6 +100,18 @@ is:
     string and record them as \textbf{Insert} operations
     in the final edit script.
 \end{enumerate}
+
+Building our list of matches (as given by $\mathrm{Matches}$)
+roughly follows the work of other greedy differencing
+algorithms~\cite{Reichenberger1991,Burns1997}:
+build a hashtable of string prefixes that stores the list
+of locations where each prefix can be found in the target string.
+Then consider each position of the source string(s) by finding
+the list of matching string prefixes from the hashtable.
+For each match, find the extent of the match
+(beyond the length of the string prefix)
+and add every matching substring into the priority queue
+as a separate match.
 
 The key to matches meeting the list of criteria we have
 defined above is in the quality function.\footnote{Except for
@@ -149,7 +164,7 @@ We also prefer not to reward authors that first use very common words
 or expressions.
 The ideal solution would use language analysis to determine
 $n$-gram frequencies and compute
-a score (\eg tf-idf \mynote{Need citation}) for words and phrases.
+a score (\eg tf-idf~\cite{Jones1972}) for words and phrases.
 To reduce our computation requirements, we chose the simpler idea
 of checking the length of the match: if a match is less than three
 words, then we reject the match.

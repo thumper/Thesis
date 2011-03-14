@@ -37,7 +37,7 @@ it is typical to restrict checking to a limited number of older revisions.}
 The second more significant issue is that reverts and undos
 are a very blunt feedback mechanism; they indicate only complete disapproval.
 There are no gradations in this evaluation, which does not make
-it a good metric for edit quality, except for judging the very worst
+it a good metric for the quality of a revision, except for judging the very worst
 edits.
 
 When we started the WikiTrust project in 2006, our initial thought was to
@@ -101,7 +101,31 @@ Defining a measure of forward progress led to our second
 quality metric, \intro{edit quality}, which we explain in
 Section~\ref{sec:editquality}.
 
-\mynote{Is there any related work for this material?
-Possibly check software engineering for quality of contributions?
-}
+Our motivation for the edit quality metric is that the future
+versions of an article represent decision by the community about
+which contributions were useful and which were not.
+Each later author is implicitly making a commentary about the
+existing text when they decide to make an edit.
+This sort of inference is very like the idea of
+\intro{revealed preferences} in economics~\cite{Samuelson1938,Varian2006},
+in which consumer preference is inferred from data about their
+actual purchases.
+Similar to the economic setting, a valid criticism of our inference
+is that later authors do not necessarily review the entire article
+or its recent history, and so might not be making decisions about
+all past contributions.
+We believe that modeling user attention --- so that there is greater
+belief in our inference for text near the edits made, and less belief
+for portions of the article not modified ---
+can improve our confidence in the inference made.
+Exploring this idea, however, we leave for future work.
+
+The analogy to software engineering raised in Chapter~\ref{ch:diff}
+points to a host of potential quality metrics, such as
+understandability, completeness, and reliability~\cite{wiki:SoftwareQuality}.
+The difficulty of these measures is that they cannot be measured
+in a programmatic way.
+As an example, the reliability of the Wikipedia was compared to that
+of the Encyclop{\ae}dia Brittanica by employing experts to review
+hand-selected articles from both reference works~\cite{Giles2005}.
 
