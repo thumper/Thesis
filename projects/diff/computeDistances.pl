@@ -10,12 +10,16 @@ use Benchmark qw(:all);
 use Data::Dumper;
 use Switch;
 
-use constant SCALE => 18.0;
+use constant SCALE => 10.0;
 
 my $xs = XML::Simple->new(ForceArray => 1);
 my $ref = $xs->XMLin(shift @ARGV);
 
-print "graph EditDistances {\n";
+print <<EOT;
+graph EditDistances {
+  graph [size=20,page=20,orientation=landscape];
+  node [label="",shape=circle,width=.1,height=.1,color=red];
+EOT
 my $count = 0;
 
 my $prevrevs = [];
@@ -30,8 +34,9 @@ foreach my $page (@{ $ref->{page} }) {
     my $diff = WikiTrust::FasterDiff->new();
     my $words = $diff->target($text);
 
+    $revid = $count;
     doDiff($revid, $diff, $prevrevs, $prevrevids, 1, 1.0);
-    doDiff($revid, $diff, $prevrevs, $prevrevids, 2, 0.5);
+    doDiff($revid, $diff, $prevrevs, $prevrevids, 2, 0.99);
     #doDiff($revid, $diff, $prevrevs, $prevrevids, 3, 0.8);
     #doDiff($revid, $diff, $prevrevs, $prevrevids, 5, 0.3);
     #doDiff($revid, $diff, $prevrevs, $prevrevids, 10, 0.2);
@@ -43,7 +48,7 @@ foreach my $page (@{ $ref->{page} }) {
 	shift @$prevrevs;
 	shift @$prevrevids;
     }
-    last if $count++ > 15;
+    last if $count++ > 10;
   }
 }
 print "}\n";
@@ -92,7 +97,7 @@ sub doDiff {
     my ($revid, $diff, $prevrevs, $prevrevids, $numback, $weight) = @_;
 
     if ($weight == 1.0) {
-	print "r$revid [label=\"\",shape=circle,height=0.001,width=0.001];\n";
+	#print "r$revid [label=\"\",shape=circle,height=0.001,width=0.001];\n";
     }
 
     return if @$prevrevs < $numback;
