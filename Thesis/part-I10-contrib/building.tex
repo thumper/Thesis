@@ -131,18 +131,20 @@ Chapter~\ref{ch:editquality}:
 \item \quality{tdecay}{10}{i} is the value that best describes
     the text survival of text inserted in version \version{i}
     over the next ten revision as an exponential
-    decay (Section~\ref{sec:textquality}).
-    This value ranges from 0, for completely removed text,
-    to 1, for text which is completely preserved.
+    decay, defined in Section~\ref{sec:textquality}.
+    This value ranges from 0 for completely removed text,
+    to 1 for text which is completely preserved.
 \item \quality{elong}{10}{i} is the average edit longevity of
-    the contribution of version \version{i} as judged by the
-    next ten revisions (see Section~\ref{sec:editquality}).
+    the contribution of version \version{i} as judged by up
+    to ten judges in the immediate future.
     This value ranges from $-1$ for completely reverted edits,
     to $+1$ for completely preserved edits.
+    See Section~\ref{sec:editquality} for the development of
+    this metric.
 \end{itemize}
 
-A different way to measure the quality of a text contribution
-is to simply sum the amount of text that remains, over the
+A third way to measure the quality of a text contribution
+is to simply sum the fraction of text that remains over the
 succeeding ten revisions:
 %
 \begin{equation*}
