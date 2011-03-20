@@ -64,7 +64,7 @@ $ cd WikiTrust/remote/admin
 $ sudo ./testlaunch enwiki
 \end{verbatim}
 This is most effective if you edit
-\file{/etc/wikitrust/wikis_available.d/enwiki}
+\file{/etc/wikitrust/wikis\_available.d/enwiki}
 so that the \texttt{DISPATCHER} variable is pointing to
 the version of the dispatcher compiled in your directory.
 
@@ -82,7 +82,7 @@ DISPATCHER="env OCAMLRUNPARAM=b /store/thumper/research/WikiTrust/remote/analysi
 This will generate a stack trace with the exception.
 
 Since I was getting a DB exception, I hacked the config a little
-further to add the ``\texttt{-dump_db_calls}'' option.
+further to add the ``\texttt{-dump\_db\_calls}'' option.
 This led to the discovery that I also need to initialize all
 the tables after creating the database.
 
