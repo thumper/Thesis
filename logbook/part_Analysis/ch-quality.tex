@@ -1,0 +1,63 @@
+\chapter{Contribution Quality}
+
+\section{Introduction}
+
+\subsection{19-Mar-2011}
+
+The basis for this chapter was developed in the original
+WikiTrust paper, and then expanded in the AuthorContrib
+paper.
+
+Although the AuthorContrib paper shows that the different
+proposed formulas can be used to partition the authors
+(and thus are useful as features to a machine learning algorithm),
+there is no attempt to perform any kind of evaluation.
+In part, this is because we believe that each formula calculates
+something different; another motivation was that there was
+no benchmark of any kind to compare against.
+The publication of the PAN2010 corpus, which annotates a set
+of edits as either ``vandalism'' or ``not vandalism,''
+now gives a benchmark which we can analyze the different
+formulas against.
+
+
+\section{Edit Distance}
+
+\subsection{Feb-2010}
+
+While speaking with Gary Wolf about Quantified Self materials,
+we got to discussing wikipedia.
+He told me a story about an article
+(``The Battle of Genine'')
+which he heard was being quietly manipulated by the Israelis.
+
+\subsection{14-Apr-2010}
+
+Erica has sent me a link to an article which has many edit
+wars in it.
+
+\url{http://www.doublex.com/blog/xxfactor/bieber-fans-vs-wikipedia}
+
+\section{Edit Quality}
+
+\subsection{19-Mar-2011}
+
+The experiment that I'm proposing is to compute the edit longevity
+and text longevity for each of the PAN2010 edits.
+Then, for each metric, construct two histograms:
+\begin{enumerate}
+\item A histogram showing how many vandalism edits fall within
+    each quality bucket.  Essentially, what is the distribution
+    of vandalism over quality.
+\item A histogram showing how many non-vandalism edits fall within
+    each quality bucket.  Essentially, what is the distribution
+    of good edits over quality.
+\end{enumerate}
+This is very like some histograms that we already used in
+the AuthorContrib paper, but this time we have a ``golden annotation''
+dataset.
+I would also like to somehow compute a correlation, but that
+feels odd since vandalism is a binary categorization;
+maybe I can show the inverse histograms and compute the
+average quality?
+
