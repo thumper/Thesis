@@ -1,7 +1,11 @@
 package WikiTrust::ReplacementDiff;
-# A faster diff, which assumes that longer
-# matches are always prioritized before
-# shorter matches.
+# After locating all the Mov operations,
+# scan the unmatched sections and see if any
+# are bracketed by Mov operations.  If the Mov
+# operations come from the same chunk and
+# there is text in the middle, then this is
+# probably a substitution
+
 use strict;
 use warnings;
 
@@ -19,32 +23,37 @@ sub replacement_scan {
 
   my $i = 0;
   while (1) {
+    # Get the next unmatched chunk in the target
     my ($start, $end) = $this->scan_and_test($l,
 	sub { $matched->[$i+$_[0]] });
     last if !defined $start;
     # Found an unmatched section.
-    # Find the 'before' block
+    # Find the Mov operation that comes 'before' this section.
+    # If we are at the start of the string, then keep as undef.
     my $before = undef;
     $before = $matched->[$i+$start-1]
 	if $i+$start > 0;
-    # And the 'after' block
+    # And find the Mov operation that is after the unmatched section.
+    # (undef == at the end of the string.)
     my $after = undef;
     $after = $matched->[$i+$end]
 	if $end < $l;
 
-    # pre-advance to next block to next block
+    # Keep the parameters of this potential replacement...
     my $rep_start = $i+$start;
     my $rep_end = $i+$end;
     my $rep_len = $end - $start;
+    # and update ($i, $l) for the next scan_and_match call.
     $i += $end;
     $l -= $end;
+
     # now check to see if the before/after chunks
     # indicate that there might be a replacement
 
     # bookends in different chunks?
     next if (defined $before && defined $after && $before->[1] != $after->[1]);
 
-    # calculate all the parameter
+    # calculate all the parameters
     my $src_chunk = 0;
     $src_chunk = $before->[1] if defined $before;
     $src_chunk = $after->[1] if defined $after;
@@ -53,7 +62,8 @@ sub replacement_scan {
     my $src_end = scalar(@{ $chunks->[$src_chunk] });
     $src_end = $after->[2] if defined $after;
 
-    # not a replacement if the size is zero
+    # not a replacement if the size is zero,
+    # which indicates that there was no actual string in the src.
     next if $src_end - $src_start == 0;
 
     # check for any matches in between.
@@ -68,6 +78,9 @@ sub replacement_scan {
     next if $found;
 
     # Well, it sure looks like a replacement!
+    # Note that we can replace a piece of text with a new
+    # piece that is of a different length.
+
     # Mark the pieces as matched
     my $match = WikiTrust::Tuple->new('Rep', $src_chunk,
 	$src_start, $src_end-$src_start,
