@@ -534,3 +534,16 @@ articles that are in one table but not the other (or have a title
 which doesn't match).
 
 
+\section{Spanish Wikipedia}
+
+\subsection{27-Mar-2011}
+
+We received an email that the Spanish Wikipedia would like to use
+our revision selection code.
+We had an \textbf{eswiki} download processed, but never
+loaded it into the database.
+I've downloaded a recent version and started processing it:
+\begin{verbatim}
+$ ./batch_process.py  --cmd_dir ../analysis --dir /raid/eswiki-20110318 /store/thumper/eswiki-20110318-pages-meta-history.xml.7z
+\end{verbatim}
+
