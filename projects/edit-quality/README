@@ -1,0 +1,8 @@
+This directory contains code to evaluate
+text and edit longevity using the PAN2010
+corpus as a golden annotation for "bad edits".
+
+
+The first step is to extract the revision ID values
+from the PAN2010 corpus.
+
