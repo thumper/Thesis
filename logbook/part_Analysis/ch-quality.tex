@@ -61,3 +61,28 @@ feels odd since vandalism is a binary categorization;
 maybe I can show the inverse histograms and compute the
 average quality?
 
+\subsection{6-Apr-2011}
+
+I started writing code in the \program{projects/edit-quality} directory,
+which is able to pull out all the PAN2010 revisions and their classes.
+
+I am stil trying to figure out how to compute the text longevity
+and edit longevity for particular revisions.
+I have the output from analyzing the whole enwiki, which includes
+the \texttt{stats} directory with its \textbf{EditLife}
+and \textbf{EditInc} entires.
+Are these useful for computing the longevities?
+
+By inspecting the code, I find that we compute the text longevity
+as \textbf{text\_life\_text\_decay} in file \file{wikidata.ml}.
+And generating the \textbf{TextLife} entries seems to be off by default.
+
+I'm not eager to reprocess the entire English Wikipedia yet again,
+since this takes around 5~days.
+And I also have this fear in the back of my head that the calculation
+that I do in perl will not match the calculation we do in Ocaml.
+Perhaps the most efficient way to proceed write another script
+which takes the PAN2010 revision IDs and then extracts those revisions
+(and the following 20) from the dumps, to make a much smaller dump?
+
+

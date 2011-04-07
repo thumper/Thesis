@@ -51,3 +51,15 @@ These are open problems outside the scope of this work.
 
 \mynote{Is it important to include the complexity and memory usage
 characteristics of our greedy algorithm?}
+\mynote{Luca also suggested that it might be useful to do benchmarking
+of the original Ocaml code (\texttt{Editdiff.core}) for optimized
+and unoptimized versions, to explore the extent of how useful the
+various optimizations are.}
+
+Our own work has chosen to favor a faster implementation, and
+in this chapter we present some basic algorithms to solve text
+differencing and author tracking in the context of an edit history.
+After including several optimizations, we have achieved run times
+of about a week to process several years of article history for
+the English Wikiedia.
+

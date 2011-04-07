@@ -545,5 +545,11 @@ loaded it into the database.
 I've downloaded a recent version and started processing it:
 \begin{verbatim}
 $ ./batch_process.py  --cmd_dir ../analysis --dir /raid/eswiki-20110318 /store/thumper/eswiki-20110318-pages-meta-history.xml.7z
+$ ./load_db.sh /raid/eswiki-20110318 /tmp/eswiki.log | mysql -u wikiuser eswikidb -p
+$ cat /raid/eswiki-20110318/user_reputations.txt | ../analysis/load_reputations -db_user wikiuser -db_pass <db-pass> -db_name eswikidb
 \end{verbatim}
+
+Also needed to fix the configs for: munin, apache, squid, wikitrust.
+And to \program{chown} the directory to be owned by the \texttt{wikitrust}
+user and group. 
 
