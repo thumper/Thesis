@@ -19,8 +19,12 @@ readCSV($goldfile, [0, 1], sub {
     $edits->{$editid}->{class} = $class;
 });
 
+print '"revid","class"'."\n";
+foreach my $editid (keys %$edits) {
+    print $edits->{$editid}->{revid}, ",\"",
+	$edits->{$editid}->{class}, "\"\n";
+}
 
-print Dumper($edits);
 exit(0);
 
 sub readCSV {
