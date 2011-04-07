@@ -24,7 +24,10 @@ my $output = threads->create(\&getOutput, $q);
 
 searchFiles($dumpFileOrDir);
 
-my $done :shared = { finished => 1 };
+my $donehash :shared = &share({});
+$donehash->{finished} = 1;
+my $done :shared = &share([]);
+push @$done, $donehash;
 $q->enqueue($done);
 
 $output->join();
@@ -34,13 +37,16 @@ exit(0);
 sub getOutput {
     my $q = shift @_;
     while (my $pages = $q->dequeue()) {
-	last if exists $item->{finished};
 	next if @$pages == 0;
-	my $file = $pages->[0]->{file};
+	my $page = $pages->[0];
+	last if exists $page->{finished};
+	my $file = $page->{file};
 	if ($file =~ m/\.gz$/) {
-	    open(INPUT, "gunzip -c $file |") die "gunzip($file): $!";
+	    open(INPUT, "gunzip -c $file |") || die "gunzip($file): $!";
+	} elsif ($file =~ m/\.7z$/) {
+	    open(INPUT, "7za e -so $file |") || die "7za($file): $!";
 	} else {
-	    open(INPUT, "7za e -so $file |") die "7za($file): $!";
+	    open(INPUT, "<$file") || die "open($file): $!";
 	}
 	foreach my $page (@$pages) {
 	    sysseek(INPUT, $page->{start}, 0);
@@ -55,7 +61,7 @@ sub getOutput {
 	    }
 	    print "  </page>\n";
 	}
-	close(<INPUT>);
+	close(INPUT);
     }
 }
 
@@ -67,7 +73,7 @@ sub keepUsefulPages {
 	my @newrevs;		# our new final list of revs
 	my %seen;		# what we've already put on new list
         for (my $j = 0; $j < @$revs; $j++) {
-	    next if !exists $panrevs->{ $revs->[$currev]->{revid} };
+	    next if !exists $panrevs->{ $revs->[$j]->{revid} };
 	    # found one, so add the previous rev, and the 20 following
 	    for (my $k = max(0, $j-1); $k < min(@$revs, $j+20); $k++) {
 		my $revid = $revs->[$k];
@@ -84,15 +90,16 @@ sub processFile {
 
     my $file = $_;
     if (m/\.gz$/) {
-	open(INPUT, "gunzip -c $file |") die "gunzip($file): $!";
+	open(INPUT, "gunzip -c $file |") || die "gunzip($file): $!";
+    } elsif (m/\.7z$/) {
+	open(INPUT, "7za e -so $file |") || die "7za($file): $!";
     } else {
-	open(INPUT, "7za e -so $file |") die "7za($file): $!";
+	open(INPUT, "<$file") || die "open($file): $!";
     }
     # what do we care about in a file?
     # the start of a page, and the location of revs
     my $linepos = 0;
     my $inrev = 0;
-    my $linepos = 0;
     my (@page);
     while (<INPUT>) {
 	if (m/^\s+<page>/) {
@@ -115,7 +122,8 @@ sub processFile {
 	if (m/^\s+<id>(\d+)<\/id>/) {
 	    # Are we in a page, or a revision?
 	    # both use the same tag.  :(
-	    $page[-1]->{revs}->[-1]->{revid} = $1 if $inrev;
+	    $page[-1]->{revs}->[-1]->{revid} = $1
+		if $inrev && !defined $page[-1]->{revs}->[-1]->{revid};
 	}
 	$linepos = tell INPUT;
 	if (m/^\s+<\/revision>/) {
