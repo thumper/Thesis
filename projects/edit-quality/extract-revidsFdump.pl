@@ -16,7 +16,9 @@ readCSV($revids, [0, 1], sub {
     $panrevs->{$revid} = { class => $class };
 });
 
+initOutput();
 searchFiles($dumpFileOrDir);
+finalOutput();
 
 exit(0);
 
@@ -63,6 +65,7 @@ warn "rev: ".$rev->{start}. " to ". $rev->{end}."\n";
 	    read(INPUT, $revdata, $rev->{end} - $rev->{start});
 	    print $revdata;
 	}
+	print "  </page>\n";
     }
     close(INPUT);
 }
@@ -170,5 +173,45 @@ sub readCSV {
 	$func->(map { $cols[$_] } @$fields);
     }
     close(INPUT);
+}
+
+sub initOutput {
+    print <<_EOT_;
+<mediawiki xmlns="http://www.mediawiki.org/xml/export-0.4/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mediawiki.org/xml/export-0.4/ http://www.mediawiki.org/xml/export-0.4.xsd" version="0.4" xml:lang="en">
+  <siteinfo>
+    <sitename>Wikipedia</sitename>
+    <base>http://en.wikipedia.org/wiki/Main_Page</base>
+    <generator>MediaWiki 1.16alpha-wmf</generator>
+    <case>first-letter</case>
+    <namespaces>
+      <namespace key="-2">Media</namespace>
+      <namespace key="-1">Special</namespace>
+      <namespace key="0" />
+      <namespace key="1">Talk</namespace>
+      <namespace key="2">User</namespace>
+      <namespace key="3">User talk</namespace>
+      <namespace key="4">Wikipedia</namespace>
+      <namespace key="5">Wikipedia talk</namespace>
+      <namespace key="6">File</namespace>
+      <namespace key="7">File talk</namespace>
+      <namespace key="8">MediaWiki</namespace>
+      <namespace key="9">MediaWiki talk</namespace>
+      <namespace key="10">Template</namespace>
+      <namespace key="11">Template talk</namespace>
+      <namespace key="12">Help</namespace>
+      <namespace key="13">Help talk</namespace>
+      <namespace key="14">Category</namespace>
+      <namespace key="15">Category talk</namespace>
+      <namespace key="100">Portal</namespace>
+      <namespace key="101">Portal talk</namespace>
+      <namespace key="108">Book</namespace>
+      <namespace key="109">Book talk</namespace>
+    </namespaces>
+  </siteinfo>
+_EOT_
+}
+
+sub finalOutput {
+    print "</mediawiki>\n";
 }
 
