@@ -3,6 +3,15 @@ text and edit longevity using the PAN2010
 corpus as a golden annotation for "bad edits".
 
 
-The first step is to extract the revision ID values
-from the PAN2010 corpus.
+1. Extract the PAN2010 revids from PAN-WVC-10
 
+	export PANDIR=/big/thumper/pan2010/newpan2010/pan-wikipedia-vandalism-corpus-2010
+	./extract-PAN2010-revids.pl $PANDIR/edits.csv $PANDIR/gold-annotations.csv > pan2010.csv
+
+2. Extract "useful" revisions from Wikipedia dump:
+
+	./extract-revidsFdump.pl pan2010.csv /giant/enwiki-20100130/split_wiki/ > /big/thumper/pan2010dump.xml
+
+3. Count how many PAN2010 revisions we actually found:
+
+	./count-matchingRevids.pl pan2010.csv /big/thumper/pan2010dump.xml
