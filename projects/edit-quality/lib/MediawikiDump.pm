@@ -81,6 +81,7 @@ sub readPage {
 	push @{ $pagehdr->{lines} }, $_ if $inpage;
 	$pos = tell($fh);
     }
+    confess "In page?" if $inpage;
 }
 
 sub readRevisions {
@@ -107,9 +108,12 @@ sub readRevisions {
 	    $rev->{end} = $pos - 1;
 	    push @{ $rev->{lines} }, $_;
 	    $this->{rev_handler}->($rev);
-	    $rev->{start} = undef;
-	    $rev->{end} = undef;
-	    $rev->{lines} = [];
+	    $rev = {
+		file => $file,
+		start => $pos,
+		end => undef,
+		lines => [ ],
+	    };
 	}
 	if (m/^\s*<\/page>/) {
 	    confess "In revision!" if $inrev;
@@ -118,8 +122,7 @@ sub readRevisions {
 	}
 	push @{ $rev->{lines} }, $_ if $inrev;
     }
+    confess "In rev?" if $inrev;
 }
-
-
 
 1;
