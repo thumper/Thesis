@@ -15,6 +15,7 @@ sub readCSV {
     my $func = shift @_;
     my $csv = Text::CSV->new({'binary' => 1});
     open(my $fh, "<".$file) || die "open($file): $!";
+    $csv->column_names($csv->getline($fh));
     while (<$fh>) {
 	chomp;
 	$csv->parse($_) || die "csv parsing error on: " . $csv->error_input

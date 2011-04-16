@@ -15,3 +15,12 @@ corpus as a golden annotation for "bad edits".
 3. Count how many PAN2010 revisions we actually found:
 
 	./count-matchingRevids.pl pan2010.csv /big/thumper/pan2010dump.xml
+
+4. Compute the text and edit longevity measures for all the
+   revisions in the dump.
+
+	./compute-LongevityFeatures.pl /big/thumper/pan2010dump.xml > pan2010longevity.csv
+
+   This step seems to take a very long time: about 30sec for text tracking
+   and 5min for edit distances, for each revision.
+
