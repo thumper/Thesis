@@ -139,9 +139,9 @@ sub editdist {
     my ($source, $target) = @_;
 
     my $revid = $target->{revid};
-    if (exists $source->{editdist}) {
-	return $source->{editdist}->{$revid}
-		if exists $source->{editdist}->{$revid};
+    if (exists $source->{editdistcache}) {
+	return $source->{editdistcache}->{$revid}
+		if exists $source->{editdistcache}->{$revid};
     } else {
 	$source->{editdist} = {};
     }
@@ -164,7 +164,7 @@ sub editdist {
 	};
     }
     my $dist = $i_tot + $d_tot - min($i_tot, $d_tot) / 2.0;
-    $source->{editdist}->{$revid} = $dist;
+    $source->{editdistcache}->{$revid} = $dist;
     return $dist;
 }
 
