@@ -34,8 +34,6 @@ foreach my $page (@{ $ref->{page} }) {
 	print "$a\t$author{$a}\n";
     }
 
-    last if $revid == 143906835;
-
     unshift @$prevrevs, $words;
     unshift @$prevrevids, $revid;
     if (@$prevrevids > 10) {

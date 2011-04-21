@@ -80,9 +80,204 @@ And generating the \textbf{TextLife} entries seems to be off by default.
 I'm not eager to reprocess the entire English Wikipedia yet again,
 since this takes around 5~days.
 And I also have this fear in the back of my head that the calculation
-that I do in perl will not match the calculation we do in Ocaml.
+that I do in perl will not match the calculation we do in OCaml.
 Perhaps the most efficient way to proceed write another script
 which takes the PAN2010 revision IDs and then extracts those revisions
 (and the following 20) from the dumps, to make a much smaller dump?
 
+\subsection{16-Apr-2011}
+
+I made a restricted dump.
+I also wrote perl code to compute the longevities.
+The problem I'm having now is that it takes about 30~seconds
+to compute the text tracking for each revision, and over
+5~minutes to compute the edit distances.
+By my calculations, it would take over 22~days to do the
+computations just for the PAN2010 revisions; but we actually
+have many more revisions that we need to do the computation for.
+
+Does this mean that the only solution is to use the OCaml code?
+Can I distribute the work over multiple computers?
+If I use the OCaml code, do I have to describe the zipping of
+the diff lists?
+
+Looking through the OCaml code, I see that the edit longevity
+value for specific edits is calculated in
+function \function{online\_eval\_oldest\_edit} of
+file \file{reputation\_analysis.ml}.
+This code does skip over equivalent authors,
+and I want to not have anonymous users be considered equivalent.
+The final value I want is the \textit{AvgSpecQ} field of
+\textbf{EditLife} lines, where field \textit{rev0} matches
+the revision that I care about.
+
+Text longevity is computed when \textbf{TextLife} lines are read
+into the system.
+The \textbf{TextLife} lines are generated when the text analysis
+option \textit{-do\_text} is included.
+
+\begin{verbatim}
+$ cd $(WIKITRUST)/util
+$ 7za a /raid/thumper/pan2010dump.7z /raid/thumper/pan2010dump.xml
+$ ./batch_process.py --cmd_dir ../analysis --dir output \
+    --do_split --do_compute_stats --do_sort_stats --do_compute_rep \
+    /raid/thumper/pan2010dump.7z
+\end{verbatim}
+
+\subsection{17-Apr-2011}
+
+I wrote another program, \program{extract-ratingsFrepfile.pl}
+to grad the text and edit longevities computed by the OCaml code.
+Only about 18,000 edits get rated, which I think must be related
+to the fact that the robust code doesn't want only the previous
+revision when computing edit longevity.
+I'm not sure why text longevity isn't fully computed.
+
+Also, I need to re-implement the less-optimized versions
+of text tracking and our diff algorithm.
+
+Out of the results that were computed by the system,
+the performance was pretty good --- as shown in
+Table~\ref{table:robustlongevities}.
+
+\begin{table}[htbp]
+\begin{center}
+    \begin{tabular}{|c|c|c|c|}
+    \hline
+    & Revisions & ROC (AUC) & Average Precision \\
+    \hline
+    Text longevity & 18416 & 0.84914 & 0.38763 \\
+    Edit longevity & 14521 & 0.91822 & 0.48467 \\
+    \hline
+    \end{tabular}
+\end{center}
+\caption{Performance of text and edit longevity at predicting
+    vandalism in the PAN2010 corpus, using latest WikiTrust code
+    that includes robustness.}
+\label{table:robustlongevities}
+\end{table}
+
+\subsection{18-Apr-2011}
+
+I tried to load the combined data into Weka to get an idea
+of how well the two measures complement each other, and
+I discovered that the edit longevity measure has some pretty
+far out values.
+I have compiled a list of some revision IDs and edit longevity
+values that I think are suspicious and might need more investigation
+in Table~\ref{table:badeditlong}.
+
+\begin{table}[htbp]
+\begin{center}
+    \begin{tabular}{|c|c|c|c|}
+    \hline
+    Revision & Edit Longevity \\
+    \hline
+    326555367 & 1.875780 \\
+    326794976 & -4.761800 \\
+    326814933 & 5.223380 \\
+    326828633 & -13.299140 \\
+    326929173 & -3.166670 \\
+    326935330 & -2.481480 \\
+    326943048 & -6.000000 \\
+    326943009 & 3.091370 \\
+    327013725 & -4.444440 \\
+    327017804 & -5.768310 \\
+    327114649 & 32.036570 \\
+    327178504 & -8.386600 \\
+    327270892 & -82.386420 \\
+    327613446 & -645.000000 \\
+    327794162 & 610.598730 \\
+    327954412 & 776.837560 \\
+    \hline
+    \end{tabular}
+\end{center}
+\caption{Suspicious edit longevity values computed using the
+    current robust+zipping code in WikiTrust.}
+\label{table:badeditlong}
+\end{table}
+
+The complete list of suspicious edit longevity values is extremely
+long, and while most values are only slightly above 1.0, you can
+see that some values are ridiculously large.
+
+At any rate, I capped all the values to the proper range and
+then ran the data through Weka.
+I used a cost sensitive classifier, and put a cost of 10 on the vandalism
+class.
+For the actual classifier, I used an ADTree like we did in our
+original PAN submittion.
+This gives an ROC of 0.929,
+and the model that's built primarily depends on edit longevity.
+\begin{verbatim}
+: 0.081
+|  (1)editlong < 0.541: -1.055
+|  |  (4)editlong < 0.215: 0.072
+|  |  |  (6)textlong < 0: -0.749
+|  |  |  |  (8)editlong < 0.023: 0.143
+|  |  |  |  |  (9)editlong < 0.022: -0.339
+|  |  |  |  |  (9)editlong >= 0.022: 1.854
+|  |  |  |  (8)editlong >= 0.023: -1.625
+|  |  |  (6)textlong >= 0: 0.064
+|  |  |  (10)editlong < 0.195: 0.01
+|  |  |  (10)editlong >= 0.195: -1.614
+|  |  (4)editlong >= 0.215: 0.479
+|  (1)editlong >= 0.541: 0.98
+|  |  (3)editlong < 0.823: -0.731
+|  |  |  (7)editlong < 0.643: -0.18
+|  |  |  (7)editlong >= 0.643: 0.242
+|  |  (3)editlong >= 0.823: -0.011
+|  |  (5)textlong < 0.535: -0.384
+|  |  (5)textlong >= 0.535: 0.087
+|  (2)textlong < 0.038: -0.541
+|  (2)textlong >= 0.038: 0.241
+Legend: -ve = regular, +ve = vandalism
+\end{verbatim}
+Only the last rule has any real value, and it basically
+says that if text longevity thinks that an edit is
+very likely to be regular, then that's kinda true.
+This is a pretty strong indictment for why text longevity
+isn't very useful when you also have edit longevity.
+
+\subsection{20-Apr-2011}
+
+I wanted to dig into one of these bad values, so I chose
+revision 327794162, and added some debugging.
+What I found is that the edit distance we compute between
+this revision and the revision
+before\footnote{\url{http://en.wikipedia.org/w/index.php?title=Geotagging&diff=next&oldid=327469253}}
+is quite low: 0.000765.
+This leads to very large edit longevity values because of the
+imprecision in our edit distance.
+
+We don't compute any edit longevity when the edit distance to
+the revision before is 0.0.  I wonder if we should set the edit
+longevity to 0, or to 1, in these cases.
+If we were to ``normalize'' the values after we do the calculation,
+we arrive at an edit longevity of 1.0.
+When there's no difference, it's true that this is perfectly
+preserved in the future, but it's a very weird situation.
+In the case where the value is close to zero, having
+a longevity of 1.0 makes more sense to me, since the edit
+is actually preserved.
+
+The fractional distance is because the text moved within
+the document, and the fraction represents how much of the
+document the block moved across.
+
+I briefly thought that the number of judges I selected
+wasn't being respected.
+Looking at my counter-example, I found that the real problem was
+that the same author had edited the article a few times afterwards,
+and then the dump ends.
+
+There is also still the problem that longevities aren't being
+calculated for every PAN revision.
+One revision which has this problem is 327905056.
+This revision was missing both text and edit longevities,
+due to the revision being edited by the same author.
+For the PAN corpus, we actually don't care about filtering the
+previous revision, since the manual annotation doesn't check that.
+
+Revision 328325509 is missing just the edit longevity.
 

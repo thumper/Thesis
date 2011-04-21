@@ -16,9 +16,31 @@ of a contribution along any of these dimensions:
 \end{itemize}
 Our text and edit longevity measures try to go one step
 further into the fuzzy world of human evaluations by using
-later edits as a basis for infering sentiment about earlier edits.
+later edits as a basis for inferring sentiment about earlier edits.
 Is this a valid inference to make?
 How can such a question be answered?
+
+The surest way to measure sentiment would be to interview
+users as they are making edits to the Wikipedia and documenting
+their thought processes as they read an article and make the
+decision to edit an article --- but this would require an enormous
+effort to collect enough data for performance evaluation.
+We propose that we can grossly measure the sentiment of the
+community by recognizing that there is a generally agreed upon
+standard of articles being of ``encyclopedic quality''
+which allows people to recognize vandalism when they see it.
+Accepting that premise allows us to use the PAN-WVC-10
+corpus~\cite{Potthast2010a} as a manually annotated data set for
+such an evaluation.
+
+The PAN-WVC-10 corpus contains 32,440 edits, where each revision was
+manually reviewed by at least three annotators to assign a label
+of either ``regular'' or ``vandalism.''
+We used the dump of the English Wikipedia from January 30, 2010
+to extract the text of each annotated revision, along with the revision
+before and the twenty revisions following so that we could compute
+our text longevity and edit longevity measures for each annotated edit.
+\mynote{Were all 32,440 edits found in the dump?}
 
 \mynote{Need to do evaluation against PAN2010!}
 
