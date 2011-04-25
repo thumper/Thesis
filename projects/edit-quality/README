@@ -24,3 +24,22 @@ corpus as a golden annotation for "bad edits".
    This step seems to take a very long time: about 30sec for text tracking
    and 5min for edit distances, for each revision.
 
+   Since this program takes so long, I instead instrumented our
+   OCaml code to print out the values that I want.
+   In the thumper-vandalrep branch, you need to run:
+      ./batch_process.py --cmd_dir ../analysis --dir output \
+          --do_split --do_compute_stats --do_sort_stats \
+	  --do_compute_rep /raid/thumper/pan2010dump.7z
+
+5. Extract the ratings for the PAN revisions.
+
+    ./extract-ratingsFrepfile.pl pan2010.csv \
+	/store/thumper/research/WikiTrust/util/output/user_reputations.txt
+
+6. Evaluate performance.
+   Download the 'perf' program from
+   http://kodiak.cs.cornell.edu/kddcup/software.html
+
+    ./perf.src/perf < perf-editlong.txt
+    ./perf.src/perf < perf-textlong.txt
+
