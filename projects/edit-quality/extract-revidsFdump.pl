@@ -24,8 +24,8 @@ my $dump = MediawikiDump->new(sub {
 	# We don't want the "</page>" part...
 	pop @{ $pageData->{header}->{lines}};
     }, sub {
-	print join('', @{ $pagedata->{lastrev}->{lines} })
-	    if $pagedata->{printrevs} > 0;
+	print join('', @{ $pageData->{lastrev}->{lines} })
+	    if $pageData->{printrevs} > 0 && defined $pageData->{lastrev};
 	print "  </page>\n" if $pageData->{printpage};
 	$pageData = freshPage();
     }, sub {
@@ -58,6 +58,12 @@ if (0) {
 	if (m/^\s*<id>(\d+)<\/id>/) {
 	    $revid = $1;
 	}
+	if (m/^\s*<contributor deleted=/) {
+	    $user ='XXX-DELETED-XXX';
+	}
+	if (m/^\s*<(?:ip|username) \/>/) {
+	    $user ='XXX-DELETED-XXX';
+	}
 	if (m/^\s*<username>([^<]+)<\/username>/) {
 	    $user = $1;
 	}
@@ -67,7 +73,7 @@ if (0) {
 	last if defined $revid && defined $user;
     }
     die "Revision has no id?" if !defined $revid;
-    die "Revision has no user?" if !defined $user;
+    die "Revision has no user:".join('', @{$revdata->{lines}}[0..10])  if !defined $user;
     $revdata->{revid} = $revid;
     $revdata->{user} = $user;
     my $panrev = exists $panrevs->{$revid};
