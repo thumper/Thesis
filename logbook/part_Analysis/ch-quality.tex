@@ -127,7 +127,7 @@ $ ./batch_process.py --cmd_dir ../analysis --dir output \
 \subsection{17-Apr-2011}
 
 I wrote another program, \program{extract-ratingsFrepfile.pl}
-to grad the text and edit longevities computed by the OCaml code.
+to grab the text and edit longevities computed by the OCaml code.
 Only about 18,000 edits get rated, which I think must be related
 to the fact that the robust code doesn't want only the previous
 revision when computing edit longevity.
@@ -280,4 +280,61 @@ For the PAN corpus, we actually don't care about filtering the
 previous revision, since the manual annotation doesn't check that.
 
 Revision 328325509 is missing just the edit longevity.
+
+\subsection{24-Apr-2011}
+
+There are still plenty of edits missing scores.
+
+Revision 327905056 is missing both scores.
+Inspecting the dump, I find that the next ten revisions are all
+by the same author, so they did not match the requirement for
+no self-judgement.
+I've already modified the code to not care that the immediately
+preceding revision is by the same author.
+To more closely match the our normal definition of revisions,
+I think the best solution is to do our normal filtering on
+the following revisions.
+
+This filtering idea makes me realize that we don't actually compute
+scores for every edit, only the filtered ones.
+But there's something funny about it: in my definitions, I say
+that we take the scores of the following ten filtered revisions,
+but the reality is that we considering the next ten revisions
+and then filter after the fact.
+Wait!
+Actually, we filter all revisions as they come in, but I had
+commented that code out in order to try to get the preceding
+revision to show up.
+
+
+Revision 328038014 is missing only the edit longevity.
+This turns out to be because the edit distance to the previous
+revision is zero.
+I went into Wikipedia to check it out, and the diff does say there's
+a difference in one paragraph, but I checked each work and can't
+detect the actual difference.
+My best guess is that it's an accidental change in the whitespace.
+What does this mean for predicting vandalism?
+I'd say that the safe prediction for a zero distance change is
+to say that it's not vandalism.
+
+\subsection{27-Apr-2011}
+
+After three days of running, I was finally able to build a new dump
+that filters the revisions after one of the PAN2010 edits.
+Weirdly, both 327905056 and 328038014 are still showing up in the same way,
+as if nothing had changed.
+
+Revision 328325509 is no longer a problem, so some change has happened.
+
+Revision 327905056 is not listed because it has no other editors
+afterwards besides the same author.
+
+Revision 328038014 is still the zero edit distance issue.
+I just tried assuming that the edit must then be good,
+and got an ROC of 91.661\%, which is not substantially different
+(but is a little lower).
+
+Based on the revised filtering of revisions, edit longevity is computed
+for 27,730 edits, and text longevity is computed for 28,453 edits.
 
