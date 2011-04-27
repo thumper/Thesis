@@ -178,6 +178,53 @@ Another work dealing with
 the robustness of reputation~\cite{Chatterjee2008} addresses this
 shortfall.
 
+\subsubsection{The Reverse Triangle Inequality}
+
+The insight leading to Equation~\ref{eq:esurv} is that the edit distance
+measure induces a topological space that relates every revision to
+every other revision.
+Using that model for our intuition, we can describe the evolution of
+an article from its creation to the most recent revision as a trajectory
+in the space.
+This is very much like a drunken walk across a bridge;
+there is a clear start and a clear end, but an \mynote{inebreiated}
+pedestrian won't follow a straight line.
+Using the straight line between start and end as a reference,
+we can measure the pedestrian's forward progress, as well as
+how much wasted effort he puts into moving sideways along the bridge.
+Figure~\ref{fig-editlong} is applying that analogy in our
+edit distance based topology, and shows one way to measure
+the forward progress.
+(Another way to measure the progress would be to compute the
+angles of the triangle and multiply the sine of the
+work done angle by its length.)
+
+Continuing with physical intuition of how revisions can be
+related to each other, the reverse triangle
+inequality~\cite{wiki:TriangleInequality} allows us to put bounds
+on the value of Equation~\ref{eq:esurv}.
+The reverse triangle inequality states that any side of
+a triangle is greater than the absolute value of the difference
+of the other two sides:
+\begin{equation}
+|\dist{}{k-1,j} - \dist{}{k,j}| \le \dist{}{k-1,k}
+\end{equation}
+The two sides of this equation are exactly the two terms
+of our fraction, so that we can conclude that edit longevity
+varies from $-1$ to $+1$.
+
+There is just one problem with this analysis: it depends on
+the triangle inequality holding.
+Unfortunately, there is no guarantee that the triangle inequality
+holds because the edit difference we compute is done greedily
+and does not guarantee the shortest difference script.
+\mynote{A review of edits finds how often does it not hold?}
+In order to account for this possible error in the resulting
+value of edit longevity, we explicitly check for when the
+computed value is outside the expected range of $[-1, +1]$
+and cap the value to the nearest end of the range.
+
+
 \subsection{Edit Longevity Quality}
 
 Our strategy for turning edit longevity into a quality metric
