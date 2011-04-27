@@ -49,8 +49,6 @@ while (<$fh>) {
 }
 close($fh);
 
-close($editlong);
-close($textlong);
 
 open(my $combo, ">weka-combined.csv") || die "open: $!";
 print $combo "textlong,editlong,class\n";
@@ -66,10 +64,24 @@ foreach my $revid (keys %$panrevs) {
 	print "Missing both: $revid\n";
 	next;
     }
+if (0) {
+    # This code doesn't actually much improve our performance.
+    if (!exists $panrevs->{$revid}->{editlong}) {
+	# if we're missing editlong but not textlong,
+	# it's likely to be because the edit distance was zero.
+	my $class = $panrevs->{$revid}->{class} eq 'vandalism' ? 1 : 0;
+	my $long = 0;	    # prob it's vandalism is 0.
+	print $editlong "$class $long\n";
+    }
+} else {
     print "Missing editl: $revid\n" if !exists $panrevs->{$revid}->{editlong};
+}
     print "Missing textl: $revid\n" if !exists $panrevs->{$revid}->{textlong};
 }
 close($combo);
+
+close($editlong);
+close($textlong);
 
 exit(0);
 

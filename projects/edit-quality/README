@@ -14,7 +14,7 @@ corpus as a golden annotation for "bad edits".
 
 3. Count how many PAN2010 revisions we actually found:
 
-	./count-matchingRevids.pl pan2010.csv /big/thumper/pan2010dump.xml
+	./count-matchingRevids.pl pan2010.csv /raid/thumper/pan2010dump.xml
 
 4. Compute the text and edit longevity measures for all the
    revisions in the dump.
