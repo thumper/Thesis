@@ -177,6 +177,10 @@ article.
 Another work dealing with
 the robustness of reputation~\cite{Chatterjee2008} addresses this
 shortfall.
+Also, it is sometimes the case that a revision is created with
+no changes (or with changes only in whitespace), so that we
+have $\dist{}{k-1,k} = 0$; in this case, we ignore the triangle
+and do not compute a longevity score for revision \version{k}.
 
 \subsubsection{The Reverse Triangle Inequality}
 
@@ -187,7 +191,7 @@ Using that model for our intuition, we can describe the evolution of
 an article from its creation to the most recent revision as a trajectory
 in the space.
 This is very much like a drunken walk across a bridge;
-there is a clear start and a clear end, but an \mynote{inebreiated}
+there is a clear start and a clear end, but an inebriated
 pedestrian won't follow a straight line.
 Using the straight line between start and end as a reference,
 we can measure the pedestrian's forward progress, as well as
@@ -207,7 +211,7 @@ The reverse triangle inequality states that any side of
 a triangle is greater than the absolute value of the difference
 of the other two sides:
 \begin{equation}
-|\dist{}{k-1,j} - \dist{}{k,j}| \le \dist{}{k-1,k}
+| \dist{}{k-1,j} - \dist{}{k,j} | \le \dist{}{k-1,k}
 \end{equation}
 The two sides of this equation are exactly the two terms
 of our fraction, so that we can conclude that edit longevity
@@ -218,7 +222,6 @@ the triangle inequality holding.
 Unfortunately, there is no guarantee that the triangle inequality
 holds because the edit difference we compute is done greedily
 and does not guarantee the shortest difference script.
-\mynote{A review of edits finds how often does it not hold?}
 In order to account for this possible error in the resulting
 value of edit longevity, we explicitly check for when the
 computed value is outside the expected range of $[-1, +1]$

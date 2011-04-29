@@ -1,7 +1,5 @@
 \section{Evaluation}
 
-\mynote{look up defn of measure versus metric}
-
 A large challenge in creating quality measures is the
 problem of evaluating the performance of the measure.
 ``Quality'' is an imprecise notion by itself, because it
@@ -33,24 +31,75 @@ Accepting that premise allows us to use the PAN-WVC-10
 corpus~\cite{Potthast2010a} as a manually annotated data set for
 such an evaluation.
 
-The PAN-WVC-10 corpus contains 32,440 edits, where each revision was
-manually reviewed by at least three annotators to assign a label
-of either ``regular'' or ``vandalism.''
-We used the dump of the English Wikipedia from January 30, 2010
-to extract the text of each annotated revision, along with the revision
-before and the twenty revisions following so that we could compute
-our text longevity and edit longevity measures for each annotated edit.
-\mynote{Were all 32,439 edits found in the dump?}
-Found 32439 edits.
-
 A complication in our evaluation is our restricted setting of
 \textit{filtered} revisions, where sequential revisions by the
 same author are filtered out to leave only the last revision
 in the sequence.
-This results in several revisions not being evaluated by our system.
+This would limit us in evaluating the performance of our
+quality measures, so we modified the system in the following way:
+we do not filter revisions annotated in the PAN-WVC-10 corpus,
+or the immediately preceding revision (even when they have the
+same author), but we do filter revisions \textit{after} the annotated
+revision in the usual way.
+Even with this loosening of the revision filtering, several
+revisions are still not evaluated for quality; the two
+primary reasons for no evaluation are a lack of subsequent
+edits to base the evaluation on, or the revision was not
+substantially different from the previous revision
+(that is, $\dist{}{k-1,k} = 0$, which can happen when only
+whitespace changes).
+
+The PAN-WVC-10 corpus contains 32,439 edits, where each revision was
+manually reviewed by at least three annotators to assign a label
+of either ``regular'' or ``vandalism.''
+We used the dump of the English Wikipedia from January 30, 2010
+to extract the text of each annotated revision, along with the revision
+before and the ten filtered revisions following so that we could compute
+our text longevity and edit longevity measures for each annotated edit.
+Out of the total 32,439 revisions, we were able to compute
+edit longevity scores for 27,730 revisions, and text longevity
+scores for 28,453 revisions.
+
+We used the straight-forward transformation to convert
+each quality score from its normal range into the range
+$[0,1]$, to be interpreted as a probability that the named
+revision was the result of vandalism.
+As in the PAN 2010 competition~\cite{Potthast2010b}, we use the
+\texttt{perf}\footnote{\url{http://kodiak.cs.cornell.edu/kddcup/software.html}}
+package to evaluate the performance of our quality measures
+by computing the area under the receiver operating characteristic
+curve \footnote{\url{http://en.wikipedia.org/wiki/Receiver_operating_characteristic}},
+and also the mean precision value.
+
+\mynote{Bad triangles; how many?}
 
 
-\mynote{Need to do evaluation against PAN2010!}
+\begin{table}[htbp]
+\begin{center}
+\begin{tabular}{|r|c|c|c|c|c|}
+\cline{3-6}
+\multicolumn{2}{c|}{} & \multicolumn{2}{|c|}{Text Longevity} & \multicolumn{2}{|c|}{Edit Longevity} \\
+\hline
+Diff & Edit Distance & ROC AUC & Mean Prec. & ROC AUC & Mean Prec. \\
+\hline
+\hline
+basic & initial distance & xx & xx & xx & xx \\
+basic & updated distance & xx & xx & xx & xx \\
+live & I+D+M & 85.949\% & 29.235\% & 91.758\% & 44.052\% \\
+live & graph & 85.949\% & 29.235\% & 91.761\% & 46.539\% \\
+\hline
+\end{tabular}
+\end{center}
+\caption{Comparison of the performance of text and edit longevity
+  using three different definitions of edit distance.
+  The edit quality computed was used as a predictor for the probability
+  that annotated revisions from the PAN-WVC-10 corpus were vandalism.
+  Each measure is evaluated by computing the area under the
+  receiver operating characteristic (ROC) curve.
+} 
+\label{tbl:editquality}
+\end{table}
+
 
 Why does text longevity not do so well as edit longevity?
 As part of our investigation, we started looking at specific
@@ -107,4 +156,36 @@ final survival level.
 In other words, we would be measuring how quickly the text stabilizes,
 rather than how much agreement there was that the text belonged in
 the article.
+
+\subsection{The Triangle Inequality}
+
+We previously noted that our formulation of edit longevity does
+not precisely stay within the desired range of $[-1,+1]$,
+because our use of a greedy differencing algorithm does not
+guarantee the shortest edit script.
+In order to quantify how often such an error might crop up,
+we counted how many triangles were evaluated for our PAN-WVC-10
+revisions, and how many of those fell outside of the range $[-1,+1]$.
+
+\begin{table}[htbp]
+\begin{center}
+\begin{tabular}{|r|c|c|c|}
+\hline
+Diff & Edit Distance & Total Triangles & Bad Triangles \\
+\hline
+\hline
+basic & initial distance & xx & xx \\
+basic & updated distance & xx & xx \\
+live & I+D+M & 850,060 & 46,740 \\
+live & graph & 852,040 & 162,922 \\
+\hline
+\end{tabular}
+\end{center}
+\caption{Estimating how often the triangle inequality does
+    not hold when evaluating edit longevity of the
+    PAN-WVC-10 annotated revisions.
+} 
+\label{tbl:badtriangles}
+\end{table}
+
 
