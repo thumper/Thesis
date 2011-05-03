@@ -43,3 +43,10 @@ corpus as a golden annotation for "bad edits".
     ./perf.src/perf < perf-editlong.txt
     ./perf.src/perf < perf-textlong.txt
 
+7. Count the number of triangles computed by the system
+    find output/stats -name "*.gz" -exec gunzip -c {} \; | grep triangles > triangles.tmp
+   The total number of triangles computed by the system is given by:
+     awk '{ print $4 }' triangles.tmp | awk -F: '{total+=$1} END{print total}'
+   The number of bad triangles (no triangle inequality) is given by:
+     awk '{ print $6 }' triangles.tmp | awk -F: '{total+=$1} END{print total}'
+
