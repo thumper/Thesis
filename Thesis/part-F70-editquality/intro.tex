@@ -37,8 +37,8 @@ it is typical to restrict checking to a limited number of older revisions.}
 The second more significant issue is that reverts and undos
 are a very blunt feedback mechanism; they indicate only complete disapproval.
 There are no gradations in this evaluation, which does not make
-it a good metric for the quality of a revision, except for judging the very worst
-edits.
+it a good measure for the quality of a revision, except for judging the very
+worst edits.
 
 When we started the WikiTrust project in 2006, our initial thought was to
 use page views to get a measure of how well reviewed an article is.
@@ -81,13 +81,13 @@ That is, if an edit is not very good, the bulk of it will be removed
 right away, with small amounts more being removed in subsequent edits
 until some kernel of the original edit stabilizes and becomes a fixture
 within the article.
-This became our \intro{text quality} metric, explored further in
+This became our \intro{text quality} measure, explored further in
 Section~\ref{sec:textquality}.
 
 Of course, not all useful work consists of adding text to the Wikipedia.
 The RC Patrol and other maintainers all do work that involves
 deleting text or editing and rearranging text contributed by others,
-and any metric that only looks at how text is added will not capture it.
+and any measure that only looks at how text is added will not capture it.
 How does one go about measuring how much of a delete is preserved
 in future revisions?
 We could answer this by treating it as the complement of insertion
@@ -98,10 +98,10 @@ The answer came in thinking of the evolution of an article
 like a random walk across a bridge: there is a definite start and a
 definite end, but the steps along the way do not always form a neat path.
 Defining a measure of forward progress led to our second
-quality metric, \intro{edit quality}, which we explain in
+quality measure, \intro{edit quality}, which we explain in
 Section~\ref{sec:editquality}.
 
-Our motivation for the edit quality metric is that the future
+Our motivation for the edit quality measure is that the future
 versions of an article represent decision by the community about
 which contributions were useful and which were not.
 Each later author is implicitly making a commentary about the
@@ -121,7 +121,7 @@ can improve our confidence in the inference made.
 Exploring this idea, however, we leave for future work.
 
 The analogy to software engineering raised in Chapter~\ref{ch:diff}
-points to a host of potential quality metrics, such as
+points to a host of potential quality measure, such as
 understandability, completeness, and reliability~\cite{wiki:SoftwareQuality}.
 The difficulty of these measures is that they cannot be measured
 in a programmatic way.
