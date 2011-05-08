@@ -21,3 +21,39 @@ And then ran
 remote/analysis/downloadwp2xml < list.txt > dump-AL.xml
 \end{verbatim}
 
+\section{Algorithms}
+
+\subsection{7-May-2011}
+
+In trying to have an evaluation for the edit quality work,
+I added some options to be able to change some of the internal workings:
+edit distance, match quality, and diff algorithm.
+Which means that now it makes more sense to try to do an evaluation
+of the diff algorithms themselves.
+I have been on-and-off considering what an evaluation of a diff algorithm
+means, and I still think the best metric for our particular application
+is ``a difference which is very related to a human's intuition for
+how to annotate the difference between two revisions.''
+But that's an extremely touch metric to gather manual annotations for.
+Instead, I think that running time (and maybe memory usage) is another
+metric that seems valuable.
+And then there's always ``predictive power.''
+
+\subsection{8-May-2011}
+
+It amazes me how many details just go by without any real thought.
+While trying to go from the \texttt{perl} code to \texttt{OCaml},
+I ran into the issue of dealing with chunks.
+Somehow, it didn't register to me that our edit distance calculations
+were based only on the standard difference between two revisions,
+but that text survival (and text tracking) were based on differences
+that include multiple past revisions.
+
+Why didn't we also do this for edit distance?
+It seems like the work needed to recover old text
+is somehow different than the work needed to insert new text;
+maybe they are different qualitatively, but the same quantitatively?
+After thinking on it, the reason must be that we calculate so many distances
+that using the history of previous revisions (or deleted chunks) is
+just prohibitive.
+
