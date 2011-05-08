@@ -390,3 +390,33 @@ run through priority queue selecting best matches \;
 
 \end{comment}
 
+
+\subsection{Thoughts On Evaluation}
+
+Historically, text differencing algorithms are judged
+on the complexity of the algorithm, or how the memory
+usage scales with the size of the inputs, or in the
+size of the resulting edit script.
+These are important concerns, especially in the context of
+trying to process the over 1.5TB of data that make up the
+revision history of the English Wikipedia.
+Our goal is more than efficiency, however; we are trying
+to measure the work done by authors of a collaborative work.
+People are far from efficient, so our solution attempts to
+simply model a human conception of how text is rearranged
+and reinstated from previous revisions.
+
+The problem we are faced with, then, is how to evaluate
+this measure; do our calculations correlate well with
+human intuition?
+Is it even possible to survey a large number of people
+to generate edit scripts describing the transformation from
+one revision to the next, or can edit script only be generated
+by video taping editors caught in the act?
+Although we do not evaluate the performance of our difference
+algorithm directly, we speculate that it might be possible to
+indirectly evaluate the performance by examining and evaluating
+a different problem which uses a difference algorithm as a basis.
+We investigate this idea in the evaluation of our edit quality
+measures, presented in the next chapter.
+
