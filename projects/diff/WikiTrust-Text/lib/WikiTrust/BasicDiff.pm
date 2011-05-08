@@ -149,15 +149,11 @@ sub scan_and_test {
 sub process_best_matches {
   my ($this, $multimatch, $chunks, $chunkmatch) = @_;
 
-  my $l2 = @{ $this->{dst} };
-
   my @editScript;
 
   while (my $m = $this->{heap}->pop()) {
     my ($chunk, $k, $i1, $i2) = @$m;
-    my $w1 = $chunks->[$chunk];
     my $matched1 = $chunkmatch->[$chunk];
-    my $l1 = @$w1;
     # have any of these words already been matched?
     my ($start, $end) = $this->scan_and_test($k,
 	sub { $matched1->[$i1+$_[0]]
