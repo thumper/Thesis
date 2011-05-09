@@ -10,6 +10,13 @@ use Carp;
 
 our @ISA = qw(WikiTrust::FasterDiff);
 
+sub new {
+  my $class = shift @_;
+  my $self = WikiTrust::FasterDiff->new(@_);
+  $self->{minMatch} = 3;
+  bless $self, $class;
+}
+
 # When we parse a string into words, we actually want
 # to tag each word with a revid.  Later, we will assign
 # proper revids to each word.

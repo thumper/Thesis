@@ -16,7 +16,7 @@ sub new {
   my $this = bless {
     quality => \&match_quality,
     dst => [],
-    minMatch => 3,
+    minMatch => 2,
   }, $class;
   $this->init();
   return $this;
