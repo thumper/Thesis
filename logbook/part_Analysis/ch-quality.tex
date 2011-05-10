@@ -38,6 +38,11 @@ wars in it.
 
 \url{http://www.doublex.com/blog/xxfactor/bieber-fans-vs-wikipedia}
 
+\subsection{8-May-2011}
+
+See note in diff chapter; we're using only the standard
+two revision difference, because of performance.
+
 \section{Edit Quality}
 
 \subsection{19-Mar-2011}
@@ -337,6 +342,37 @@ and got an ROC of 91.661\%, which is not substantially different
 
 Based on the revised filtering of revisions, edit longevity is computed
 for 27,730 edits, and text longevity is computed for 28,453 edits.
+
+\subsection{7-May-2011}
+
+Christina Wodtke told me the story of Richard~III and how
+he's portrayed as a villian but actually wasn't.
+After reading through
+Wikipedia,~\footnote{\url{http://en.wikipedia.org/wiki/Princes_in_the_Tower}}
+I am unconvinced about the claim that he is not a ``villian.''
+Too bad, because this would have been a good example of how
+our consentual reality defines ``truth'' rather than actual facts.
+
+\subsection{8-May-2011}
+
+The Ocaml text tracking code is essentially a reimplementation
+of the regular diff code.
+The problem with this is that it means that I can't easily substitute
+in other diff algorithms.
+The one parameter I can easily adjust is the match quality function.
+
+The way to do unit testing on the \file{chdiff.ml} module is:
+\begin{verbatim}
+make chdiff
+./chdiff
+\end{verbatim}
+
+Found another point I didn't realize: there is no minimum match length
+when computing edit distance.
+That restriction appears to be limited to text tracking.
+There's a caveat to that, though; because the index is built
+by word pairs, there is actually a minimum match length of 2.
+Confusing!
 
 \section{Evaluation}
 
