@@ -338,3 +338,65 @@ and got an ROC of 91.661\%, which is not substantially different
 Based on the revised filtering of revisions, edit longevity is computed
 for 27,730 edits, and text longevity is computed for 28,453 edits.
 
+\section{Evaluation}
+
+\subsection{9-May-2011}
+
+For comparison purposes, we compute the performance of edit longevity
+using several different definitions of edit distance.
+\begin{description}
+\item{\textbf{I+D+M}} --- The most straight-forward definition of an edit
+        distance between revisions \version{m} and \version{n} would be one
+        similar to the Levenshtein distance where
+        the total number of operations is counted:
+        \begin{equation}
+            \dist{}{m,n} = I_{tot}(m,n) + D_{tot}(m,n) + M_{tot}(m,n)
+        \label{eq:dist-idm}
+        \end{equation}
+tem{\textbf{I+D}} --- The \textbf{Move} operation just indicates
+        matching text between the source and target revisions,
+        so it does not usually amount to any work by the editor.
+        \begin{equation}
+            \dist{}{m,n} = I_{tot}(m,n) + D_{tot}(m,n)
+        \label{eq:dist-id}
+        \end{equation}
+\item{\textbf{I+D-$\frac{1}{2}$}} --- The original definition of edit
+        distance used in the WikiTrust project tried to account for
+        \textit{replacements} by observing that some insertions and
+        deletions are actually paired together and represent a
+        replacement which we attempt to correct for.
+\item{\textbf{WikiTrust 2009}} --- A further variation that our
+        project experimented with reincorporates the number of
+        move operations, but scaled by the number of words in
+        the target string.
+        \mynote{Fix numbering of this equation.}
+        \begin{align}
+            \dist{}{m,n} =& I_{tot}(m,n) + D_{tot}(m,n) \\
+                & - \frac{1}{2}\min(I_{tot}(m,n), D_{tot}(m,n))
+                + \frac{M_{tot}(m,n)}{| \words{\version{n}} |}
+        \end{align}
+\item{\textbf{replacements}} --- The currently live version of
+        WikiTrust uses a more elaborate definition of edit distance
+        which attempts to compute from the edit script
+        which insertions and deletions
+        are paired replacements.
+        The exact details are beyond the scope of this work to present,
+        but we include the performance evaluation for comparison purposes.
+\end{description}
+
+
+\begin{sidewaystable}[!tp]
+  \begin{center}
+    \begin{tabular}{|c|c|c||c|c|c|}
+\hline
+Diff & Match Quality & Edit Distance & Num. Revisions
+	& ROC AUC & Mean Precision \\
+\hline
+\hline
+greedy & initial & live & xx & xx & xx \\
+live & initial & live & 28,453 & 85.949\% & 29.235\% \\
+\hline
+    \end{tabular}
+  \end{center}
+\end{sidewaystable}
+
