@@ -378,8 +378,20 @@ Confusing!
 
 \subsection{9-May-2011}
 
-For comparison purposes, we compute the performance of edit longevity
-using several different definitions of edit distance.
+I was initially recording my evaluations directly into my thesis
+document, but there are too many experiments that I am running
+and I think some of them won't be useful.
+So I wanted to organize all the data here first, and then
+figure out what parts to actually include in my thesis.
+
+\subsubsection{Diff Algorithms}
+
+\begin{description}
+\item[diff0] This is the currently live diff algorithm.
+\end{description}
+
+\subsubsection{Edit Distance}
+
 \begin{description}
 \item{\textbf{I+D+M}} --- The most straight-forward definition of an edit
         distance between revisions \version{m} and \version{n} would be one
@@ -389,7 +401,7 @@ using several different definitions of edit distance.
             \dist{}{m,n} = I_{tot}(m,n) + D_{tot}(m,n) + M_{tot}(m,n)
         \label{eq:dist-idm}
         \end{equation}
-tem{\textbf{I+D}} --- The \textbf{Move} operation just indicates
+\item{\textbf{I+D}} --- The \textbf{Move} operation just indicates
         matching text between the source and target revisions,
         so it does not usually amount to any work by the editor.
         \begin{equation}
@@ -420,19 +432,218 @@ tem{\textbf{I+D}} --- The \textbf{Move} operation just indicates
         but we include the performance evaluation for comparison purposes.
 \end{description}
 
+\subsubsection{Results}
+
+In measuring the running time, I used the shell built-in
+\texttt{time} command, which reports the elapsed time as well
+as the user and system times.
+Since this is running on an 8-core CPU, the real-time is about
+one eighth as small as it would normally be.
+I decided to sum the user and system times, and use that as
+the running time.
+
+Another issue in the measuring of running time is that
+text longevity and text longevity are calculated together.
+Although the text longevity is affected by changes in the
+match quality function, it isn't affected by the diff and
+edit distance parameters.
+My thinking is that this means that text longevity is part
+of a fixed overhead of calculation, and that the trend
+of running times is still useful to examine.
+
+\begin{table}[tbph]
+\begin{center}
+\begin{tabular}{|c|c||c|c|c|}
+\hline
+Diff & Match Quality & Num Revs & ROC AUC & Mean Prec. \\
+\hline
+\hline
+diff0 & mq0 & xx & 85.949\% & 29.235\% \\
+diff0 & mq1 & xx & 85.949\% & 29.235\% \\
+diff0 & mq2 & xx & 85.942\% & 29.218\% \\
+diff0 & mq3 & xx & 85.942\% & 29.218\% \\
+\hline
+\end{tabular}
+\end{center}
+\caption{Comparison of the performance of text longevity.
+}
+\end{table}
+
+
 
 \begin{sidewaystable}[!tp]
   \begin{center}
-    \begin{tabular}{|c|c|c||c|c|c|}
+    \begin{tabular}{|c|c|c|c||c|c||c|c|c|c|}
 \hline
-Diff & Match Quality & Edit Distance & Num. Revisions
-	& ROC AUC & Mean Precision \\
+Diff & Precise & Match Quality & Edit Dist
+	& ROC AUC & Mean Prec.
+	& Run Time & Num Revs
+	& Total Triangles & Bad Triangles \\
 \hline
 \hline
-greedy & initial & live & xx & xx & xx \\
-live & initial & live & 28,453 & 85.949\% & 29.235\% \\
+diff0 & N & mq0 & ed0
+	& 91.603\% & 46.897\%
+	& 87m43s & xx
+	& 852,040 & 160,211 \\
+diff0 & Y & mq0 & ed0
+	& 91.761\% & 46.539\%
+	& 288m17s & xx
+	& 852,040 & 162,922 \\
+diff0 & N & mq1 & ed0
+	& 91.603\% & 46.897\%
+	& 89m11s & xx
+	& 852,040 & 160,208 \\
+diff0 & Y & mq1 & ed0
+	& 91.761\% & 46.539\%
+	& 296m17s & xx
+	& 852,040 & 162,922 \\
+diff0 & N & mq2 & ed0
+	& 91.603\% & 46.897\%
+	& 90m16s & xx
+	& 852,040 & 160,208 \\
+diff0 & Y & mq2 & ed0
+	& 91.761\% & 46.539\%
+	& 295m35s & xx
+	& 852,040 & 162,922 \\
+diff0 & N & mq3 & ed0
+	& 91.603\% & 46.897\%
+	& 89m27s & xx
+	& 852,040 & 160,208 \\
+diff0 & Y & mq3 & ed0
+	& 91.761\% & 46.539\%
+	& 287m43s & xx
+	& 852,040 & 162,922 \\
+diff0 & N & mq0 & ed1
+	& 91.395\% & 43.143\%
+	& 87m22s & xx
+	& 850,060 & 32,745 \\
+diff0 & Y & mq0 & ed1
+	& 91.524\% & 43.033\%
+	& 286m53s & xx
+	& 850,060 & 52,221 \\
+diff0 & N & mq1 & ed1
+	& 91.395\% & 43.143\%
+	& 88m58s & xx
+	& 850,060 & 32,745 \\
+diff0 & Y & mq1 & ed1
+	& 91.524\% & 43.033\%
+	& 294m21s & xx
+	& 850,060 & 52,221 \\
+diff0 & N & mq2 & ed1
+	& 91.395\% & 43.143\%
+	& 88m49s & xx
+	& 850,060 & 32,745 \\
+diff0 & Y & mq2 & ed1
+	& 91.524\% & 43.033\%
+	& 294m21s & xx
+	& 850,060 & 52,221 \\
+diff0 & N & mq3 & ed1
+	& 91.395\% & 43.143\%
+	& 86m42s & xx
+	& 850,060 & 32,745 \\
+diff0 & Y & mq3 & ed1
+	& 91.524\% & 43.033\%
+	& 286m34s & xx
+	& 850,060 & 52,221 \\
+diff0 & N & mq0 & ed2
+	& 85.060\% & 30.340\%
+	& 85m07s & xx
+	& 874,143 & 0 \\
+diff0 & Y & mq0 & ed2
+	& 85.176\% & 30.210\%
+	& 285m16s & xx
+	& 874,143 & 0 \\
+diff0 & N & mq1 & ed2
+	& 85.060\% & 30.340\%
+	& 89m03s & xx
+	& 874,143 & 0 \\
+diff0 & Y & mq1 & ed2
+	& 85.176\% & 30.210\%
+	& 294m43s & xx
+	& 874,143 & 0 \\
+diff0 & N & mq2 & ed2
+	& 85.060\% & 30.340\%
+	& 87m47s & xx
+	& 874,143 & 0 \\
+diff0 & Y & mq2 & ed2
+	& 85.176\% & 30.210\%
+	& 292m42s & xx
+	& 874,143 & 0 \\
+diff0 & N & mq3 & ed2
+	& 85.060\% & 30.340\%
+	& 86m02s & xx
+	& 874,143 & 0 \\
+diff0 & Y & mq3 & ed2
+	& 85.176\% & 30.210\%
+	& 296m55s & xx
+	& 874,143 & 0 \\
+diff0 & N & mq0 & ed3
+	& 91.708\% & 45.115\%
+	& 88m57s & xx
+	& 850,060 & 28,048 \\
+diff0 & Y & mq0 & ed3
+	& 91.758\% & 44.052\%
+	& 286m17s & xx
+	& 850,060 & 46,740 \\
+diff0 & N & mq1 & ed3
+	& 91.708\% & 45.115\%
+	& 87m22s & xx
+	& 850,060 & 28,048 \\
+diff0 & Y & mq1 & ed3
+	& 91.758\% & 44.052\%
+	& 294m31s & xx
+	& 850,060 & 46,740 \\
+diff0 & N & mq2 & ed3
+	& 91.708\% & 45.115\%
+	& 87m46s & xx
+	& 850,060 & 28,048 \\
+diff0 & Y & mq2 & ed3
+	& 91.758\% & 44.052\%
+	& 293m16s & xx
+	& 850,060 & 46,740 \\
+diff0 & N & mq3 & ed3
+	& 91.708\% & 45.115\%
+	& 86m45s & xx
+	& 850,060 & 28,048 \\
+diff0 & Y & mq3 & ed3
+	& 91.758\% & 44.052\%
+	& 284m15s & xx
+	& 850,060 & 46,740 \\
+diff0 & N & mq0 & ed4
+	& 87.731\% & 37.760\%
+	& 86m46s & xx
+	& 852,040 & 22,795 \\
+diff0 & Y & mq0 & ed4
+	& 88.077\% & 37.785\%
+	& 285m46s & xx
+	& 852,040 & 33,481 \\
+diff0 & N & mq1 & ed4
+	& 87.731\% & 37.760\%
+	& 88m27s & xx
+	& 852,040 & 22,795 \\
+diff0 & Y & mq1 & ed4
+	& 88.077\% & 37.785\%
+	& 293m13s & xx
+	& 852,040 & 33,481 \\
+diff0 & N & mq2 & ed4
+	& 87.731\% & 37.760\%
+	& 89m08s & xx
+	& 852,040 & 22,795 \\
+diff0 & Y & mq2 & ed4
+	& 88.077\% & 37.785\%
+	& 295m32s & xx
+	& 852,040 & 33,481 \\
+diff0 & N & mq3 & ed4
+	& 87.731\% & 37.760\%
+	& 85m55s & xx
+	& 852,040 & 22,795 \\
+diff0 & Y & mq3 & ed4
+	& 88.077\% & 37.785\%
+	& 286m16s & xx
+	& 852,040 & 33,481 \\
 \hline
     \end{tabular}
   \end{center}
+  \caption{Evaluation of edit longevity.}
 \end{sidewaystable}
 
