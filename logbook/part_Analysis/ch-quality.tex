@@ -388,7 +388,47 @@ figure out what parts to actually include in my thesis.
 
 \begin{description}
 \item[diff0] This is the currently live diff algorithm.
+	This first checks for matches at the front and end of
+	the text, and eliminates those so that they don't go
+	through the greedy matching phase.
+\item[diff1] This is the core edit diff algorithm, including
+	many of our optimizations.
+\item[diff2] This is my version of our basic text difference algorithm.
 \end{description}
+
+\subsubsection{Match Quality Functions}
+
+\begin{description}
+\item[mq0] This is the currently live match quality function.
+	\begin{equation}
+	(-k, -c, abs(\frac{i1}{l1} - \frac{i2}{l2}))
+	\end{equation}
+
+\item[mq1] This function was proposed in our original WikiTrust paper.
+\begin{equation}
+(-k, -c, 0.3  \cdot abs(\frac{i1}{l1} - \frac{i2}{l2}) - \frac{k}{min(l1,l2)})
+\end{equation}
+
+\item[mq2] This variation of our original proposal checks to see if the
+	sign matters for the chunk index.
+\begin{equation}
+(-k, c, 0.3  \cdot abs(\frac{i1}{l1} - \frac{i2}{l2}) - \frac{k}{min(l1,l2)})
+\end{equation}
+
+\item[mq3] This variation checks to see if the sign matters.
+	\begin{equation}
+	(-k, c, abs(\frac{i1}{l1} - \frac{i2}{l2}))
+	\end{equation}
+
+\item[mq4] This variation of our original proposal checks to see
+	we need to select longest match first, rather than letting
+	quality function do the work.
+\begin{equation}
+(0, -c, 0.3  \cdot abs(\frac{i1}{l1} - \frac{i2}{l2}) - \frac{k}{min(l1,l2)})
+\end{equation}
+
+\end{description}
+
 
 \subsubsection{Edit Distance}
 
@@ -458,10 +498,14 @@ of running times is still useful to examine.
 Diff & Match Quality & Num Revs & ROC AUC & Mean Prec. \\
 \hline
 \hline
-diff0 & mq0 & xx & 85.949\% & 29.235\% \\
-diff0 & mq1 & xx & 85.949\% & 29.235\% \\
-diff0 & mq2 & xx & 85.942\% & 29.218\% \\
-diff0 & mq3 & xx & 85.942\% & 29.218\% \\
+diff0 & mq0 & 28,453 & 85.949\% & 29.235\% \\
+diff0 & mq1 & 28,453 & 85.949\% & 29.235\% \\
+diff0 & mq2 & 28,453 & 85.942\% & 29.218\% \\
+diff0 & mq3 & 28,453 & 85.942\% & 29.218\% \\
+diff1 & mq0 & 28,453 & 85.949\% & 29.235\% \\
+diff1 & mq1 & 28,453 & 85.949\% & 29.235\% \\
+diff1 & mq2 & 28,453 & 85.942\% & 29.218\% \\
+diff1 & mq3 & 28,453 & 85.942\% & 29.218\% \\
 \hline
 \end{tabular}
 \end{center}
@@ -483,164 +527,253 @@ Diff & Precise & Match Quality & Edit Dist
 \hline
 diff0 & N & mq0 & ed0
 	& 91.603\% & 46.897\%
-	& 87m43s & xx
+	& 87m43s & 27,730
 	& 852,040 & 160,211 \\
 diff0 & Y & mq0 & ed0
 	& 91.761\% & 46.539\%
-	& 288m17s & xx
+	& 288m17s & 27,730
 	& 852,040 & 162,922 \\
 diff0 & N & mq1 & ed0
 	& 91.603\% & 46.897\%
-	& 89m11s & xx
+	& 89m11s & 27,730
 	& 852,040 & 160,208 \\
 diff0 & Y & mq1 & ed0
 	& 91.761\% & 46.539\%
-	& 296m17s & xx
+	& 296m17s & 27,730
 	& 852,040 & 162,922 \\
 diff0 & N & mq2 & ed0
 	& 91.603\% & 46.897\%
-	& 90m16s & xx
+	& 90m16s & 27,730
 	& 852,040 & 160,208 \\
 diff0 & Y & mq2 & ed0
 	& 91.761\% & 46.539\%
-	& 295m35s & xx
+	& 295m35s & 27,730
 	& 852,040 & 162,922 \\
 diff0 & N & mq3 & ed0
 	& 91.603\% & 46.897\%
-	& 89m27s & xx
+	& 89m27s & 27,730
 	& 852,040 & 160,208 \\
 diff0 & Y & mq3 & ed0
 	& 91.761\% & 46.539\%
-	& 287m43s & xx
+	& 287m43s & 27,730
 	& 852,040 & 162,922 \\
 diff0 & N & mq0 & ed1
 	& 91.395\% & 43.143\%
-	& 87m22s & xx
+	& 87m22s & 27,635
 	& 850,060 & 32,745 \\
 diff0 & Y & mq0 & ed1
 	& 91.524\% & 43.033\%
-	& 286m53s & xx
+	& 286m53s & 27,635
 	& 850,060 & 52,221 \\
 diff0 & N & mq1 & ed1
 	& 91.395\% & 43.143\%
-	& 88m58s & xx
+	& 88m58s & 27,635
 	& 850,060 & 32,745 \\
 diff0 & Y & mq1 & ed1
 	& 91.524\% & 43.033\%
-	& 294m21s & xx
+	& 294m21s & 27,635
 	& 850,060 & 52,221 \\
 diff0 & N & mq2 & ed1
 	& 91.395\% & 43.143\%
-	& 88m49s & xx
+	& 88m49s & 27,635
 	& 850,060 & 32,745 \\
 diff0 & Y & mq2 & ed1
 	& 91.524\% & 43.033\%
-	& 294m21s & xx
+	& 294m21s & 27,635
 	& 850,060 & 52,221 \\
 diff0 & N & mq3 & ed1
 	& 91.395\% & 43.143\%
-	& 86m42s & xx
+	& 86m42s & 27,635
 	& 850,060 & 32,745 \\
 diff0 & Y & mq3 & ed1
 	& 91.524\% & 43.033\%
-	& 286m34s & xx
+	& 286m34s & 27,635
 	& 850,060 & 52,221 \\
 diff0 & N & mq0 & ed2
 	& 85.060\% & 30.340\%
-	& 85m07s & xx
+	& 85m07s & 28,448
 	& 874,143 & 0 \\
 diff0 & Y & mq0 & ed2
 	& 85.176\% & 30.210\%
-	& 285m16s & xx
+	& 285m16s & 28,448
 	& 874,143 & 0 \\
 diff0 & N & mq1 & ed2
 	& 85.060\% & 30.340\%
-	& 89m03s & xx
+	& 89m03s & 28,448
 	& 874,143 & 0 \\
 diff0 & Y & mq1 & ed2
 	& 85.176\% & 30.210\%
-	& 294m43s & xx
+	& 294m43s & 28,448
 	& 874,143 & 0 \\
 diff0 & N & mq2 & ed2
 	& 85.060\% & 30.340\%
-	& 87m47s & xx
+	& 87m47s & 28,448
 	& 874,143 & 0 \\
 diff0 & Y & mq2 & ed2
 	& 85.176\% & 30.210\%
-	& 292m42s & xx
+	& 292m42s & 28,448
 	& 874,143 & 0 \\
 diff0 & N & mq3 & ed2
 	& 85.060\% & 30.340\%
-	& 86m02s & xx
+	& 86m02s & 28,448
 	& 874,143 & 0 \\
 diff0 & Y & mq3 & ed2
 	& 85.176\% & 30.210\%
-	& 296m55s & xx
+	& 296m55s & 28,448
 	& 874,143 & 0 \\
 diff0 & N & mq0 & ed3
 	& 91.708\% & 45.115\%
-	& 88m57s & xx
+	& 88m57s & 27,635
 	& 850,060 & 28,048 \\
 diff0 & Y & mq0 & ed3
 	& 91.758\% & 44.052\%
-	& 286m17s & xx
+	& 286m17s & 27,635
 	& 850,060 & 46,740 \\
 diff0 & N & mq1 & ed3
 	& 91.708\% & 45.115\%
-	& 87m22s & xx
+	& 87m22s & 27,635
 	& 850,060 & 28,048 \\
 diff0 & Y & mq1 & ed3
 	& 91.758\% & 44.052\%
-	& 294m31s & xx
+	& 294m31s & 27,635
 	& 850,060 & 46,740 \\
 diff0 & N & mq2 & ed3
 	& 91.708\% & 45.115\%
-	& 87m46s & xx
+	& 87m46s & 27,635
 	& 850,060 & 28,048 \\
 diff0 & Y & mq2 & ed3
 	& 91.758\% & 44.052\%
-	& 293m16s & xx
+	& 293m16s & 27,635
 	& 850,060 & 46,740 \\
 diff0 & N & mq3 & ed3
 	& 91.708\% & 45.115\%
-	& 86m45s & xx
+	& 86m45s & 27,635
 	& 850,060 & 28,048 \\
 diff0 & Y & mq3 & ed3
 	& 91.758\% & 44.052\%
-	& 284m15s & xx
+	& 284m15s & 27,635
 	& 850,060 & 46,740 \\
+\hline
+    \end{tabular}
+  \end{center}
+  \caption{Evaluation of edit longevity.}
+\end{sidewaystable}
+
+
+\begin{sidewaystable}[!tp]
+  \begin{center}
+    \begin{tabular}{|c|c|c|c||c|c||c|c|c|c|}
+\hline
+Diff & Precise & Match Quality & Edit Dist
+	& ROC AUC & Mean Prec.
+	& Run Time & Num Revs
+	& Total Triangles & Bad Triangles \\
+\hline
+\hline
 diff0 & N & mq0 & ed4
 	& 87.731\% & 37.760\%
-	& 86m46s & xx
+	& 86m46s & 27,730
 	& 852,040 & 22,795 \\
 diff0 & Y & mq0 & ed4
 	& 88.077\% & 37.785\%
-	& 285m46s & xx
+	& 285m46s & 27,730
 	& 852,040 & 33,481 \\
 diff0 & N & mq1 & ed4
 	& 87.731\% & 37.760\%
-	& 88m27s & xx
+	& 88m27s & 27,730
 	& 852,040 & 22,795 \\
 diff0 & Y & mq1 & ed4
 	& 88.077\% & 37.785\%
-	& 293m13s & xx
+	& 293m13s & 27,730
 	& 852,040 & 33,481 \\
 diff0 & N & mq2 & ed4
 	& 87.731\% & 37.760\%
-	& 89m08s & xx
+	& 89m08s & 27,730
 	& 852,040 & 22,795 \\
 diff0 & Y & mq2 & ed4
 	& 88.077\% & 37.785\%
-	& 295m32s & xx
+	& 295m32s & 27,730
 	& 852,040 & 33,481 \\
 diff0 & N & mq3 & ed4
 	& 87.731\% & 37.760\%
-	& 85m55s & xx
+	& 85m55s & 27,730
 	& 852,040 & 22,795 \\
 diff0 & Y & mq3 & ed4
 	& 88.077\% & 37.785\%
-	& 286m16s & xx
+	& 286m16s & 27,730
 	& 852,040 & 33,481 \\
+diff1 & Y & mq0 & ed0
+	& 91.842\% & 46.943\%
+	& 538m34s & 27,730
+	& 852,040 & 157,362 \\
+diff1 & Y & mq1 & ed0
+	& 91.842\% & 46.943\%
+	& 557m37s & 27,730
+	& 852,040 & 157,362 \\
+diff1 & Y & mq2 & ed0
+	& 91.842\% & 46.943\%
+	& 558m42s & 27,730
+	& 852,040 & 157,362 \\
+diff1 & Y & mq3 & ed0
+	& 91.842\% & 46.943\%
+	& 537m47s & 27,730
+	& 852,040 & 157,362 \\
+diff1 & Y & mq0 & ed1
+	& 91.460\% & 42.843\%
+	& 536m15s & 27,669
+	& 850,636 & 21,287 \\
+diff1 & Y & mq1 & ed1
+	& 91.460\% & 42.843\%
+	& 551m08s & 27,669
+	& 850,636 & 21,287 \\
+diff1 & Y & mq2 & ed1
+	& 91.460\% & 42.843\%
+	& 549m38s & 27,669
+	& 850,636 & 21,287 \\
+diff1 & Y & mq3 & ed1
+	& 91.460\% & 42.843\%
+	& 531m38s & 27,669
+	& 850,636 & 21,287 \\
+diff1 & Y & mq0 & ed2
+	& 85.136\% & 29.983\%
+	& 547m06s & 28,448
+	& 874,143 & 0 \\
+diff1 & Y & mq1 & ed2
+	& 85.136\% & 29.983\%
+	& 558m34s & 28,448
+	& 874,143 & 0 \\
+diff1 & Y & mq2 & ed2
+	& 85.136\% & 29.983\%
+	& 551m20s & 28,448
+	& 874,143 & 0 \\
+diff1 & Y & mq3 & ed2
+	& 85.136\% & 29.983\%
+	& 537m55s & 28,448
+	& 874,143 & 0 \\
+diff1 & Y & mq0 & ed3
+	& 91.737\% & 44.042\%
+	& 537m32s & 27,669
+	& 850,636 & 18,915 \\
+diff1 & Y & mq1 & ed3
+	& 91.737\% & 44.042\%
+	& 551m27s & 27,669
+	& 850,636 & 18,915 \\
+diff1 & Y & mq2 & ed3
+	& 91.737\% & 44.042\%
+	& 556m20s & 27,669
+	& 850,636 & 18,915 \\
+diff1 & Y & mq3 & ed3
+	& 91.737\% & 44.042\%
+	& 538m35s & 27,669
+	& 850,636 & 18,915 \\
+diff1 & Y & mq0 & ed4
+	& 88.330\% & 39.059\%
+	& 540m27s & 27,730
+	& 852,040 & 20,077 \\
+diff1 & Y & mq1 & ed4
+	& 88.330\% & 39.059\%
+	& 555m30s & 27,730
+	& 852,040 & 20,077 \\
 \hline
     \end{tabular}
   \end{center}
