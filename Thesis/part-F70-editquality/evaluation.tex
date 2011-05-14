@@ -31,23 +31,24 @@ Accepting that premise allows us to use the PAN-WVC-10
 corpus~\cite{Potthast2010a} as a manually annotated data set for
 such an evaluation.
 
-A complication in our evaluation is our restricted setting of
-\textit{filtered} revisions, where sequential revisions by the
-same author are filtered out to leave only the last revision
-in the sequence.
-This would limit us in evaluating the performance of our
-quality measures, so we modified the system in the following way:
-we do not filter revisions annotated in the PAN-WVC-10 corpus,
-or the immediately preceding revision (even when they have the
-same author), but we do filter revisions \textit{after} the annotated
-revision in the usual way.
-Even with this loosening of the revision filtering, several
-revisions are still not evaluated for quality; the two
-primary reasons for no evaluation are a lack of subsequent
-edits to base the evaluation on, or the revision was not
-substantially different from the previous revision
-(that is, $\dist{}{k-1,k} = 0$, which can happen when only
-whitespace changes).
+The PAN-WVC-10 corpus was used to compare the performance of
+solutions for the 1st International Competition on Wikipedia
+Vandalism Detection~\cite{Potthast2010b}.
+We use it in a similar way here, but with an important distinction:
+we use information ``from the future'' to calculate our
+quality values for the annotated revisions.
+Standard vandalism detection tools make their determination
+immediately as the edit is made, so that any vandalism can be
+quickly repaired by others.
+The necessity for a quick classification precludes waiting
+for future edits or rating to corroborate the edit being judged;
+we term this variation of the problem \textit{immediate vandalism detection}.
+By definition, our two longevity metrics use later edits to
+measure the quality of the revision being judged; we call
+this the \textit{historical vandalism detection} problem.
+Historical vandalism detection has applications such as selecting
+high quality revisions for DVD compilations or for presentation
+to school children.
 
 The PAN-WVC-10 corpus contains 32,439 edits, where each revision was
 manually reviewed by at least three annotators to assign a label
@@ -71,50 +72,7 @@ by computing the area under the receiver operating characteristic
 curve \footnote{\url{http://en.wikipedia.org/wiki/Receiver_operating_characteristic}},
 and also the mean precision value.
 
-
-For comparison purposes, we compute the performance of edit longevity
-using several different definitions of edit distance.
-\begin{description}
-\item{\textbf{I+D+M}} --- The most straight-forward definition of an edit
-	distance between revisions \version{m} and \version{n} would be one
-	similar to the Levenshtein distance~\cite{Levenshtein1966} where
-	the total number of operations is counted:
-	\begin{equation}
-	    \dist{}{m,n} = I_{tot}(m,n) + D_{tot}(m,n) + M_{tot}(m,n)
-	\label{eq:dist-idm}
-	\end{equation}
-\item{\textbf{I+D}} --- The \textbf{Move} operation just indicates
-	matching text between the source and target revisions,
-	so it does not usually amount to any work by the editor.
-	\begin{equation}
-	    \dist{}{m,n} = I_{tot}(m,n) + D_{tot}(m,n)
-	\label{eq:dist-id}
-	\end{equation}
-\item{\textbf{I+D-$\frac{1}{2}$}} --- The original definition of edit
-	distance used in the WikiTrust project tried to account for
-	\textit{replacements} by observing that some insertions and
-	deletions are actually paired together and represent a
-	replacement which we attempt to correct for~\cite{Adler2007}
-	(see Equation~\ref{eq:dist}).
-\item{\textbf{WikiTrust 2009}} --- A further variation that our
-	project experimented with reincorporates the number of
-	move operations, but scaled by the number of words in
-	the target string.
-	\mynote{Fix numbering of this equation.}
-	\begin{align}
-	    \dist{}{m,n} =& I_{tot}(m,n) + D_{tot}(m,n) \\
-		& - \frac{1}{2}\min(I_{tot}(m,n), D_{tot}(m,n))
-		+ \frac{M_{tot}(m,n)}{| \words{\version{n}} |}
-	\end{align}
-\item{\textbf{replacements}} --- The currently live version of
-	WikiTrust uses a more elaborate definition of edit distance
-	which attempts to compute from the edit script
-	which insertions and deletions
-	are paired replacements.
-	The exact details are beyond the scope of this work to present,
-	but we include the performance evaluation for comparison purposes.
-\end{description}
-
+\subsection{Difference Algorithms}
 
 Each formula for edit distance we have defined so far is calculated
 from the operations within the edit script describing the transformation
@@ -133,21 +91,45 @@ our greedy algorithm that is used in the live WikiTrust system today,
 with the code implementing it being available from
 Github.\footnote{\url{http://www.github.com/collaborativetrust/WikiTrust}}
 
-\begin{table}[tbph]
-\begin{center}
-\begin{tabular}{|c|c||c|c|c|}
-\hline
-Diff & Match Quality & Num. Revisions & ROC AUC & Mean Precision \\
-\hline
-\hline
-greedy & initial & xx & xx & xx \\
-live & initial & 28,453 & 85.949\% & 29.235\% \\
-\hline
-\end{tabular}
-\end{center}
-\caption{Comparison of the performance of text longevity.
-} 
-\end{table}
+\subsection{Match Quality Formulas}
+
+\mynote{Insert list here.}
+
+\subsection{Edit Distance Formulas}
+
+\mynote{Insert list here.}
+
+\subsection{Results}
+
+A complication in our evaluation is our restricted setting of
+\textit{filtered} revisions, where sequential revisions by the
+same author are filtered out to leave only the last revision
+in the sequence.
+This would limit us in evaluating the performance of our
+quality measures, so we modified the system in the following way:
+we do not filter revisions annotated in the PAN-WVC-10 corpus,
+or the immediately preceding revision (even when they have the
+same author), but we do filter revisions \textit{after} the annotated
+revision in the usual way.
+Even with this loosening of the revision filtering, several
+revisions are still not evaluated for quality; the two
+primary reasons for no evaluation are a lack of subsequent
+edits to base the evaluation on, or the revision was not
+substantially different from the previous revision
+(that is, $\dist{}{k-1,k} = 0$, which can happen when only
+whitespace changes).
+
+\subsubsection{Edit Longevity}
+
+Edit longevity performs quite well, at over 91\% ROC-AUC;
+very close to the performance of the winning solution from
+the Wikipedia Vandalism Detection competition~\cite{Potthast2010b}.
+The PR-AUC is more middling, near fourth place in the competition.
+
+This result is very encouraging, because it means that can
+estimate the quality of revisions in a relatively simple way.
+Knowing the quality of edits, we can build up a reputation
+system for authors based on the quality of their work.
 
 
 \begin{table}[tbph]
@@ -173,6 +155,45 @@ live & initial &replacements & 27,730 & 91.761\% & 46.539\% \\
 } 
 \end{table}
 
+
+\subsubsection{Text Longevity}
+
+The number of revisions is good: 28,453 / 32,439.
+Text longevity is not calculated when there are no
+judging editors after the revision we are computing
+the text longevity for.
+This argues that 28,453 is an upper bound for the number
+of revisions that we are able to calculate \textit{any}
+quality measure for.
+
+The ROC-AUC of 85.9\% seems good, but ranks in seventh place
+in the PAN-2010 competition.
+But this is quite bad, because we're doing \textit{historical
+vandalism detection}, where we use data from the future to
+inform our evaluation of the revision.
+
+The most interesting result in this table of results
+is the fact that the match quality function made
+nearly no difference in the predictive ability of
+text longevity.
+
+\mynote{Try mq just using length.}
+
+\begin{table}[tbph]
+\begin{center}
+\begin{tabular}{|c|c||c|c|c|}
+\hline
+Diff & Match Quality & Num. Revisions & ROC AUC & Mean Precision \\
+\hline
+\hline
+greedy & initial & xx & xx & xx \\
+live & initial & 28,453 & 85.949\% & 29.235\% \\
+\hline
+\end{tabular}
+\end{center}
+\caption{Comparison of the performance of text longevity.
+} 
+\end{table}
 
 Why does text longevity not do so well as edit longevity?
 As part of our investigation, we started looking at specific

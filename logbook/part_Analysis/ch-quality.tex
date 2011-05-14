@@ -510,6 +510,7 @@ diff1 & mq3 & 28,453 & 85.942\% & 29.218\% \\
 \end{tabular}
 \end{center}
 \caption{Comparison of the performance of text longevity.
+\label{tab:textlongeval}
 }
 \end{table}
 
@@ -573,22 +574,22 @@ diff0 & Y & mq1 & ed1
 	& 91.524\% & 43.033\%
 	& 294m21s & 27,635
 	& 850,060 & 52,221 \\
-diff0 & N & mq2 & ed1
-	& 91.395\% & 43.143\%
-	& 88m49s & 27,635
-	& 850,060 & 32,745 \\
-diff0 & Y & mq2 & ed1
-	& 91.524\% & 43.033\%
-	& 294m21s & 27,635
-	& 850,060 & 52,221 \\
-diff0 & N & mq3 & ed1
-	& 91.395\% & 43.143\%
-	& 86m42s & 27,635
-	& 850,060 & 32,745 \\
-diff0 & Y & mq3 & ed1
-	& 91.524\% & 43.033\%
-	& 286m34s & 27,635
-	& 850,060 & 52,221 \\
+% diff0 & N & mq2 & ed1
+% 	& 91.395\% & 43.143\%
+% 	& 88m49s & 27,635
+% 	& 850,060 & 32,745 \\
+% diff0 & Y & mq2 & ed1
+% 	& 91.524\% & 43.033\%
+% 	& 294m21s & 27,635
+% 	& 850,060 & 52,221 \\
+% diff0 & N & mq3 & ed1
+% 	& 91.395\% & 43.143\%
+% 	& 86m42s & 27,635
+% 	& 850,060 & 32,745 \\
+% diff0 & Y & mq3 & ed1
+% 	& 91.524\% & 43.033\%
+% 	& 286m34s & 27,635
+% 	& 850,060 & 52,221 \\
 diff0 & N & mq0 & ed2
 	& 85.060\% & 30.340\%
 	& 85m07s & 28,448
@@ -613,14 +614,31 @@ diff0 & Y & mq2 & ed2
 	& 85.176\% & 30.210\%
 	& 292m42s & 28,448
 	& 874,143 & 0 \\
-diff0 & N & mq3 & ed2
-	& 85.060\% & 30.340\%
-	& 86m02s & 28,448
-	& 874,143 & 0 \\
-diff0 & Y & mq3 & ed2
-	& 85.176\% & 30.210\%
-	& 296m55s & 28,448
-	& 874,143 & 0 \\
+% diff0 & N & mq3 & ed2
+% 	& 85.060\% & 30.340\%
+% 	& 86m02s & 28,448
+% 	& 874,143 & 0 \\
+% diff0 & Y & mq3 & ed2
+% 	& 85.176\% & 30.210\%
+% 	& 296m55s & 28,448
+% 	& 874,143 & 0 \\
+% \hline
+%     \end{tabular}
+%   \end{center}
+%   \caption{Evaluation of edit longevity.}
+% \end{sidewaystable}
+% 
+% 
+% \begin{sidewaystable}[!tp]
+%   \begin{center}
+%     \begin{tabular}{|c|c|c|c||c|c||c|c|c|c|}
+% \hline
+% Diff & Precise & Match Quality & Edit Dist
+% 	& ROC AUC & Mean Prec.
+% 	& Run Time & Num Revs
+% 	& Total Triangles & Bad Triangles \\
+% \hline
+% \hline
 diff0 & N & mq0 & ed3
 	& 91.708\% & 45.115\%
 	& 88m57s & 27,635
@@ -637,22 +655,118 @@ diff0 & Y & mq1 & ed3
 	& 91.758\% & 44.052\%
 	& 294m31s & 27,635
 	& 850,060 & 46,740 \\
-diff0 & N & mq2 & ed3
-	& 91.708\% & 45.115\%
-	& 87m46s & 27,635
-	& 850,060 & 28,048 \\
-diff0 & Y & mq2 & ed3
-	& 91.758\% & 44.052\%
-	& 293m16s & 27,635
-	& 850,060 & 46,740 \\
-diff0 & N & mq3 & ed3
-	& 91.708\% & 45.115\%
-	& 86m45s & 27,635
-	& 850,060 & 28,048 \\
-diff0 & Y & mq3 & ed3
-	& 91.758\% & 44.052\%
-	& 284m15s & 27,635
-	& 850,060 & 46,740 \\
+% diff0 & N & mq2 & ed3
+% 	& 91.708\% & 45.115\%
+% 	& 87m46s & 27,635
+% 	& 850,060 & 28,048 \\
+% diff0 & Y & mq2 & ed3
+% 	& 91.758\% & 44.052\%
+% 	& 293m16s & 27,635
+% 	& 850,060 & 46,740 \\
+% diff0 & N & mq3 & ed3
+% 	& 91.708\% & 45.115\%
+% 	& 86m45s & 27,635
+% 	& 850,060 & 28,048 \\
+% diff0 & Y & mq3 & ed3
+% 	& 91.758\% & 44.052\%
+% 	& 284m15s & 27,635
+% 	& 850,060 & 46,740 \\
+diff0 & N & mq0 & ed4
+	& 87.731\% & 37.760\%
+	& 86m46s & 27,730
+	& 852,040 & 22,795 \\
+diff0 & Y & mq0 & ed4
+	& 88.077\% & 37.785\%
+	& 285m46s & 27,730
+	& 852,040 & 33,481 \\
+diff0 & N & mq1 & ed4
+	& 87.731\% & 37.760\%
+	& 88m27s & 27,730
+	& 852,040 & 22,795 \\
+diff0 & Y & mq1 & ed4
+	& 88.077\% & 37.785\%
+	& 293m13s & 27,730
+	& 852,040 & 33,481 \\
+% diff0 & N & mq2 & ed4
+% 	& 87.731\% & 37.760\%
+% 	& 89m08s & 27,730
+% 	& 852,040 & 22,795 \\
+% diff0 & Y & mq2 & ed4
+% 	& 88.077\% & 37.785\%
+% 	& 295m32s & 27,730
+% 	& 852,040 & 33,481 \\
+% diff0 & N & mq3 & ed4
+% 	& 87.731\% & 37.760\%
+% 	& 85m55s & 27,730
+% 	& 852,040 & 22,795 \\
+% diff0 & Y & mq3 & ed4
+% 	& 88.077\% & 37.785\%
+% 	& 286m16s & 27,730
+% 	& 852,040 & 33,481 \\
+diff1 & Y & mq0 & ed0
+	& 91.842\% & 46.943\%
+	& 538m34s & 27,730
+	& 852,040 & 157,362 \\
+diff1 & Y & mq1 & ed0
+	& 91.842\% & 46.943\%
+	& 557m37s & 27,730
+	& 852,040 & 157,362 \\
+% diff1 & Y & mq2 & ed0
+% 	& 91.842\% & 46.943\%
+% 	& 558m42s & 27,730
+% 	& 852,040 & 157,362 \\
+% diff1 & Y & mq3 & ed0
+% 	& 91.842\% & 46.943\%
+% 	& 537m47s & 27,730
+% 	& 852,040 & 157,362 \\
+diff1 & Y & mq0 & ed1
+	& 91.460\% & 42.843\%
+	& 536m15s & 27,669
+	& 850,636 & 21,287 \\
+diff1 & Y & mq1 & ed1
+	& 91.460\% & 42.843\%
+	& 551m08s & 27,669
+	& 850,636 & 21,287 \\
+% diff1 & Y & mq2 & ed1
+% 	& 91.460\% & 42.843\%
+% 	& 549m38s & 27,669
+% 	& 850,636 & 21,287 \\
+% diff1 & Y & mq3 & ed1
+% 	& 91.460\% & 42.843\%
+% 	& 531m38s & 27,669
+% 	& 850,636 & 21,287 \\
+diff1 & Y & mq0 & ed2
+	& 85.136\% & 29.983\%
+	& 547m06s & 28,448
+	& 874,143 & 0 \\
+diff1 & Y & mq1 & ed2
+	& 85.136\% & 29.983\%
+	& 558m34s & 28,448
+	& 874,143 & 0 \\
+% diff1 & Y & mq2 & ed2
+% 	& 85.136\% & 29.983\%
+% 	& 551m20s & 28,448
+% 	& 874,143 & 0 \\
+% diff1 & Y & mq3 & ed2
+% 	& 85.136\% & 29.983\%
+% 	& 537m55s & 28,448
+% 	& 874,143 & 0 \\
+diff1 & Y & mq0 & ed3
+	& 91.737\% & 44.042\%
+	& 537m32s & 27,669
+	& 850,636 & 18,915 \\
+diff1 & Y & mq1 & ed3
+	& 91.737\% & 44.042\%
+	& 551m27s & 27,669
+	& 850,636 & 18,915 \\
+% diff1 & Y & mq2 & ed3
+% 	& 91.737\% & 44.042\%
+% 	& 556m20s & 27,669
+% 	& 850,636 & 18,915 \\
+% diff1 & Y & mq3 & ed3
+% 	& 91.737\% & 44.042\%
+% 	& 538m35s & 27,669
+% 	& 850,636 & 18,915 \\
 \hline
     \end{tabular}
   \end{center}
@@ -670,102 +784,6 @@ Diff & Precise & Match Quality & Edit Dist
 	& Total Triangles & Bad Triangles \\
 \hline
 \hline
-diff0 & N & mq0 & ed4
-	& 87.731\% & 37.760\%
-	& 86m46s & 27,730
-	& 852,040 & 22,795 \\
-diff0 & Y & mq0 & ed4
-	& 88.077\% & 37.785\%
-	& 285m46s & 27,730
-	& 852,040 & 33,481 \\
-diff0 & N & mq1 & ed4
-	& 87.731\% & 37.760\%
-	& 88m27s & 27,730
-	& 852,040 & 22,795 \\
-diff0 & Y & mq1 & ed4
-	& 88.077\% & 37.785\%
-	& 293m13s & 27,730
-	& 852,040 & 33,481 \\
-diff0 & N & mq2 & ed4
-	& 87.731\% & 37.760\%
-	& 89m08s & 27,730
-	& 852,040 & 22,795 \\
-diff0 & Y & mq2 & ed4
-	& 88.077\% & 37.785\%
-	& 295m32s & 27,730
-	& 852,040 & 33,481 \\
-diff0 & N & mq3 & ed4
-	& 87.731\% & 37.760\%
-	& 85m55s & 27,730
-	& 852,040 & 22,795 \\
-diff0 & Y & mq3 & ed4
-	& 88.077\% & 37.785\%
-	& 286m16s & 27,730
-	& 852,040 & 33,481 \\
-diff1 & Y & mq0 & ed0
-	& 91.842\% & 46.943\%
-	& 538m34s & 27,730
-	& 852,040 & 157,362 \\
-diff1 & Y & mq1 & ed0
-	& 91.842\% & 46.943\%
-	& 557m37s & 27,730
-	& 852,040 & 157,362 \\
-diff1 & Y & mq2 & ed0
-	& 91.842\% & 46.943\%
-	& 558m42s & 27,730
-	& 852,040 & 157,362 \\
-diff1 & Y & mq3 & ed0
-	& 91.842\% & 46.943\%
-	& 537m47s & 27,730
-	& 852,040 & 157,362 \\
-diff1 & Y & mq0 & ed1
-	& 91.460\% & 42.843\%
-	& 536m15s & 27,669
-	& 850,636 & 21,287 \\
-diff1 & Y & mq1 & ed1
-	& 91.460\% & 42.843\%
-	& 551m08s & 27,669
-	& 850,636 & 21,287 \\
-diff1 & Y & mq2 & ed1
-	& 91.460\% & 42.843\%
-	& 549m38s & 27,669
-	& 850,636 & 21,287 \\
-diff1 & Y & mq3 & ed1
-	& 91.460\% & 42.843\%
-	& 531m38s & 27,669
-	& 850,636 & 21,287 \\
-diff1 & Y & mq0 & ed2
-	& 85.136\% & 29.983\%
-	& 547m06s & 28,448
-	& 874,143 & 0 \\
-diff1 & Y & mq1 & ed2
-	& 85.136\% & 29.983\%
-	& 558m34s & 28,448
-	& 874,143 & 0 \\
-diff1 & Y & mq2 & ed2
-	& 85.136\% & 29.983\%
-	& 551m20s & 28,448
-	& 874,143 & 0 \\
-diff1 & Y & mq3 & ed2
-	& 85.136\% & 29.983\%
-	& 537m55s & 28,448
-	& 874,143 & 0 \\
-diff1 & Y & mq0 & ed3
-	& 91.737\% & 44.042\%
-	& 537m32s & 27,669
-	& 850,636 & 18,915 \\
-diff1 & Y & mq1 & ed3
-	& 91.737\% & 44.042\%
-	& 551m27s & 27,669
-	& 850,636 & 18,915 \\
-diff1 & Y & mq2 & ed3
-	& 91.737\% & 44.042\%
-	& 556m20s & 27,669
-	& 850,636 & 18,915 \\
-diff1 & Y & mq3 & ed3
-	& 91.737\% & 44.042\%
-	& 538m35s & 27,669
-	& 850,636 & 18,915 \\
 diff1 & Y & mq0 & ed4
 	& 88.330\% & 39.059\%
 	& 540m27s & 27,730
@@ -779,4 +797,53 @@ diff1 & Y & mq1 & ed4
   \end{center}
   \caption{Evaluation of edit longevity.}
 \end{sidewaystable}
+
+\subsection{13-May-2011}
+
+The results on text longevity
+(presented in Table~\ref{tab:textlongeval})
+are interesting, because they are so consistent.
+The match qualities are apparently not as different
+as I expected.
+
+The most startling thing for me is that mq2 and mq3
+perform worse than mq0 and mq1.
+The only difference between these two sets of functions
+is that mq2/mq3 prefer to match against deleted chunks from
+more recent revisions; mq0/mq1 prefer to match older deleted chunks.
+I expected that more recently deleted chunks would do better
+because they were more likely to be seen by the current editor;
+also, I assumed that chunk~0 (the previous revision) would always
+be the preferred match.
+
+Since the function \texttt{make\_survival\_index} creates
+an index based on work triples, I suspect that the performance
+is nearly identical because deleted chunks are rarely restored
+and rarely have so many words in a row.
+
+The fact that there's any difference at all implies to me
+that there is deleted text in some old revision that is
+also found in chunk~0 (the immediately previous revision)\ldots
+\textbf{and} that these are assigned to different authors?
+Assigning credit to the older revision predicts vandalism
+better than assigning credit to the newer revision.
+That seems weird.
+Maybe the right way to think of this is that the newer revision
+already received credit, but the one that is still a deleted
+chunk hasn't received any credit yet for being good;
+and this difference is enough to push the revision from
+being bad to good.
+
+Edit longevity makes an even bolder statement: all the
+match qualities we proposed are the same.
+Well, there's no difference from mq2/mq3 because we only
+take differences between two revisions, and there are never
+any deleted chunks.
+
+\subsection{14-May-2011}
+
+On text longevity, since the match quality function matters so little,
+does this mean that length of match is the dominating factor?
+Can we try a match quality function that \textit{only} uses
+length of match?
 
