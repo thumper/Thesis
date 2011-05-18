@@ -1,15 +1,6 @@
 \section{Outline}
 
-This work is divided into two halves.
-Part~\ref{part:foundations} covers the basic concepts we developed
-before a reputation system could be constructed.
-Part~\ref{part:applications} covers applications that can
-be built atop the basic concepts to create useful tools for
-a collaborative community.
-
-We start Part~\ref{part:foundations}
-by defining terminology and notation in Chapter~\ref{ch:defs}.
-
+We start by defining terminology and notation in Chapter~\ref{ch:defs}.
 We then introduce the author attribution problem in Chapter~\ref{ch:diff}.
 To accord credit to authors for the work they do,
 it is first necessary to identify their contribution properly.
@@ -32,5 +23,15 @@ later authors on the same article.
 By aggregating the judgement of multiple later authors, we arrive at
 a value that represents the community's assessment of an edit.
 
-\mynote{Need outline for Part II.}
+In Chapter~\ref{ch:contrib} we propose a simple model to combine
+quality measures into a measure of an author's \textit{contribution}.
+Chapter~\ref{ch:reputation} constructs a reputation system
+out of the contribution measure, and evaluates the performance
+via several different metrics.
+Chapter~\ref{ch:vandalism} uses the reputation system as a feature
+for machine learning in the vandalism detection problem, and compares
+the performance to other solutions for the same problem.
+
+In Chapter~\ref{ch:conclusion}, we summarize the results of this work
+and present some directions for future work.
 
