@@ -13,7 +13,7 @@ my ($revids, $dumpFileOrDir) = @ARGV;
 
 my $panrevs = {};
 
-readCSV($revids, [0, 2], sub {
+readCSV($revids, [0, 3], sub {
     my ($revid, $class) = @_;
     $panrevs->{$revid} = { class => $class };
 });
