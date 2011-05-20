@@ -22,7 +22,13 @@ corpus as a golden annotation for "bad edits".
 	./compute-LongevityFeatures.pl /big/thumper/pan2010dump.xml > pan2010longevity.csv
 
    This step seems to take a very long time: about 30sec for text tracking
-   and 5min for edit distances, for each revision.
+   and 5min for edit distances, for each revision.  See below.
+
+
+==========
+
+This is the manual version of how to run the experiments.
+There is now a script, "run-expt.sh" which automates this process.
 
    Since this program takes so long, I instead instrumented our
    OCaml code to print out the values that I want.
