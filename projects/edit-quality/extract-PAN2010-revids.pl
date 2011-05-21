@@ -30,7 +30,7 @@ print '"revid","time","author","class"'."\n";
 foreach my $editid (keys %$edits) {
     print $edits->{$editid}->{revid}, ",",
 	$edits->{$editid}->{'time'}, ",\"",
-	$edits->{$editid}->{'author'}, ",\"",
+	$edits->{$editid}->{'author'}, "\",\"",
 	$edits->{$editid}->{class}, "\"\n";
 }
 
