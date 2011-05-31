@@ -393,7 +393,15 @@ figure out what parts to actually include in my thesis.
 	through the greedy matching phase.
 \item[diff1] This is the core edit diff algorithm, including
 	many of our optimizations.
-\item[diff2] This is my version of our basic text difference algorithm.
+\item[diff2] This is my version of our faster text difference algorithm.
+    I originally tried the basic version, but brought the machine to
+    its knees because of the memory requirements.
+    The faster text difference also isn't sufficient; I had to
+    use word pairs in the index made of the target string,
+    and ignore any word pairs that occur more than 50~times
+    in the target string.  Even with these optimizations, I
+    see a 23GB process running, which now seems to have brought
+    the machine to its knees again.
 \end{description}
 
 \subsubsection{Match Quality Functions}
@@ -846,4 +854,16 @@ On text longevity, since the match quality function matters so little,
 does this mean that length of match is the dominating factor?
 Can we try a match quality function that \textit{only} uses
 length of match?
+
+\subsection{18-May-2011}
+
+Hung the machine over the weekend, and just hung it again.
+Problem is that our basic and faster text diff algorithms
+still use too much memory.
+I just tried modifying the system to use word pairs and
+a maximum match count, but the system choked up again.
+Before the choke, I see a 23GB process running.
+
+I should have put \texttt{ulimit} commands into the
+experiment script, to prevent this from happening.
 

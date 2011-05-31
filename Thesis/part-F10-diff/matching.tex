@@ -169,6 +169,8 @@ a score (\eg tf-idf~\cite{Jones1972}) for words and phrases.
 To reduce our computation requirements, we chose the simpler idea
 of checking the length of the match: if a match is less than three
 words, then we reject the match.
+(Note that the hashtable of string prefixes can then be indexed by
+word pairs without missing any potential matches.)
 
 Once we have an edit script that defines how text evolves from
 previous revisions to the target (current) revision, we can then propagate
@@ -189,7 +191,7 @@ is a crucial factor in doing timely analysis.
 We can take a few steps to reduce the size of the computation
 we have described so far.
 
-The first optimization is in computing the possible
+The first optimization is in reducing the possible
 matches in the differencing algorithm.
 Instead of computing every possible match, we can initially compute
 only the longest matches.
@@ -202,7 +204,6 @@ prefers longer matches over shorter matches.
 Appendix~\ref{app:fasterdiffsrc} demonstrates this
 modification, with some representative runtimes shown
 in Table~\ref{tab:comparediff}.
-
 
 \begin{table}
 \begin{center}

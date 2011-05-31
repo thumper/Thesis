@@ -109,6 +109,31 @@ it speeds up as we get further into the history.)
 
 Now I need to sort the statistics and then generate the reputation.
 \begin{verbatim}
-$ ../batch_process --cmd_dir ./tools --dir output-enwiki --do\_sort\_stats /bin/dumps/enwiki-20100130-pages-meta-history.xml.bz2
+$ ../batch_process --cmd_dir ./tools --dir output-enwiki --do\_sort\_stats /raid/dumps/enwiki-20100130-pages-meta-history.xml.bz2
+\end{verbatim}
+
+\subsection{20-May-2011}
+
+So much time has passed that I don't recall where this was at.
+A user reputation file is available on Gaston at
+\texttt{/raid/thumper/util/tmp/output-enwiki/user\_reputations.txt},
+so I seem to have completed the sorting and reputation steps.
+
+The next step to completing this experiment is to write code to
+extract features for each of the PAN2010 edits, and put them into
+a single file for analysis by Weka.
+
+Looking over the codebase, what I did was add a \texttt{VANDALREP}
+line every time a user's reputation was adjusted.
+Included in that line was a revid, a timestamp, the userid and username,
+and the old and new reputation (and reputation bins).
+
+Tragedy!  The \texttt{generate\_reputation} program was hard-coded
+to not calculate reputations past 2008-10-30!
+Now I have to recalculate the reputations.
+
+\begin{verbatim}
+$ cd /raid/thumper/util/tmp
+$ ../batch_process --cmd_dir ./tools --dir output-enwiki --do\_sort\_stats --do\_compute\_rep /raid/dumps/enwiki-20100130-pages-meta-history.xml.bz2
 \end{verbatim}
 
