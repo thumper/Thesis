@@ -89,6 +89,7 @@ sub compute_heap {
   my $l1 = scalar(@$w1);
   my $l2 = scalar(@$w2);
   my $idx = $this->make_index($w1);
+  my $prev_matches = [];
   for (my $i2 = 0; $i2 < @$w2; $i2++) {
     # For every unmatched word in w2,
     # find the list of matches in w1
@@ -96,7 +97,7 @@ sub compute_heap {
     my $matches = $idx->{ $w2->[$i2] } || [];
     foreach my $i1 (@$matches) {
       # Do we want to skip this match for some reason?
-      next if $skipmatch->($chunk, $i1, $i2);
+      next if $skipmatch->($chunk, $i1, $i2, $prev_matches);
       # for each match, compute all the longer strings
       # that match starting at this point.
       # Note that we already know $k == 0 is a match
@@ -112,6 +113,7 @@ sub compute_heap {
       # this same length of match.
       $maxk->($chunk, $i1, $l1, $i2, $l2, $k);
     }
+    $prev_matches = $matches;
   }
 }
 

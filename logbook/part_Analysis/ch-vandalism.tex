@@ -134,6 +134,16 @@ Now I have to recalculate the reputations.
 
 \begin{verbatim}
 $ cd /raid/thumper/util/tmp
-$ ../batch_process --cmd_dir ./tools --dir output-enwiki --do\_sort\_stats --do\_compute\_rep /raid/dumps/enwiki-20100130-pages-meta-history.xml.bz2
+$ ../batch_process.py --cmd_dir ./tools --dir output-enwiki --do\_sort\_stats --do\_compute\_rep /raid/dumps/enwiki-20100130-pages-meta-history.xml.bz2
 \end{verbatim}
+
+\subsection{31-May-2011}
+
+Another tragedy: I needed to use the batch process script from
+my \texttt{thumper-vandalrep} branch, not the version from the
+mainline development.
+The one from my branch turns on a few more options which generate
+the \texttt{VANDALREP} messages.
+I copied in the right file and am running the command again,
+this time without the sorting of stats.
 
