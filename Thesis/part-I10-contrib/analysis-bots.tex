@@ -38,10 +38,10 @@ be of poor quality with $\quality{elong}{10}{} < 0$.
 We found that $93.3\%$ of the edit contributions made by bots
 had positive edit quality and the remaining $6.4\%$ had
 negative edit quality.
-More interestingly, $65.20\%$ of the edit contributions made
-by bots had $\quality{elong}{10}{} > 0.9$, which means they were
-not edited out in subsequent revisions and represent the
-sheer amount of work done by bots that is of very high quality.
+As we would expect from a selection of bots which is biased
+towards good bots, $65.20\%$ of the edit contributions made
+by bots had $\quality{elong}{10}{} > 0.9$, indicating that
+the work is generally regarded as high quality.
 The contributions with $\quality{elong}{10}{} < -0.9$ are $1.8\%$.
 This indicates that a large part of the text additions made by bots 
 and a large part of the edit contributions made by bots survive
@@ -64,7 +64,6 @@ Most of its edits are of smaller size than $AntiVandalBot$.
 Since they have similar quality measures, $AntiVandalBot$ ends
 up with a lower score on $\punish$ when compared to $SmackBot$.
 
-\mynote{This figure was commented out.}
 %
 \begin{figure*}[tbhp]
     \begin{center}
@@ -77,7 +76,8 @@ up with a lower score on $\punish$ when compared to $SmackBot$.
         and text quality $\quality{tdecay}{10}{}$ for all bots.
         A quality measure of $1$ indicates that all the changes
         were preserved.
-        A quality measure of $0$ indicates that all the changes
+        A quality measure of $0$ for text quality (and $-1$ for edit quality)
+	indicates that all the changes
         were reverted in the very next revision.
         The histograms on the left are for all bots.
         The ones on the right are the quality measures and the absolute amounts

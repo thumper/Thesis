@@ -1,29 +1,3 @@
-One approach to dealing with the vandalism problem is to detect
-it immediately and flag it to administrators.
-We call this the ``immediate vandalism detection'' problem,
-which we discuss further in Chapter~\ref{ch:vandalism}.
-There were already bots making automated edits within Wikipedia
-in~2005 when we began this research, and it was clear that
-expert systems would soon be developed based on natural language processing
-ideas~\cite{wiki:AntiVandalBot,wiki:MartinBot,wiki:ClueBot,Carter2007},
-so we decided to strike out in the direction of building a reputation system
---- and accidentally, we stumbled onto the problem of
-``historical vandalism detection.''
-
-
-Reputation is founded on the notion that the past is a good
-predictor of the future, but there is also a prescriptive aspect
-as the formulation describes to the world what is important and
-what is not.
-We take it to be a score, and the higher your reputation the more
-likely you are to do good work in the future; when you do bad
-work, your reputation score goes down.
-
-We wrestled for some time about negative reputations. We assign "bad"
-reputations to people in real life, but can this translate to an online
-system?  
-
-\mynote{Cite Randy's book?}
 An obvious way to build a reputation system would be to build one
 modeled on eBay or Amazon's rating system: elicit votes from users
 on the quality of a revision or the work of an author.
@@ -36,27 +10,22 @@ For example, reading an article and not making an edit to it is
 an implicit vote (though perhaps not a strong one)
 that the article is of good quality; the more page views an article
 has, the more we can believe that there are no errors in it.
-We settled using actual edits as the implicit vote: if a
+We settled on using actual edits as the implicit vote: if a
 user edits the text of a previous author, that would be a
 negative vote for the previous work; but if the user only added
 new text, then implicitly he is saying that the previous text
 was already in good shape.
-
-When we started, we debated using a fixpoint algortihm
-such as the PageRank~\cite{Page1999} or HITS~\cite{Kleinberg1999}
-algorithms.
-
-In trying to address the quality issues of the Wikipedia,
-our primary guideline was to preserve the current user experience.
-By relying on article version history, we can assign reputation
+By preserving the current user experience and only
+relying on article version history, we can assign reputation
 through examination of the content evolution:
 authors who perform long-lived contributions gain reputation; authors
 whose contributions are reverted, or are soon removed, lose reputation.
+
 There are several possible applications of computing a reputation
 value for authors (for example, to grant or deny editing rights to
 crucial pages~\cite{Blaze1996}); within the WikiTrust project,
 we use reputation to drive a trust system for
-Wikipedia content~\cite{Adler2008b}.\footnote{This trust data
+Wikipedia content~\cite{Adler2008b}.\footnote{This trust coloring
 is publicly available through our Firefox plugin:
 \url{https://addons.mozilla.org/en-US/firefox/addon/wikitrust/}}
 The fact that authors can only comment on other authors by
@@ -83,6 +52,38 @@ are judged ``good'' by the community.
 Constants in the model we develop are assigned so as to optimize
 for the heuristic that author reputation
 be correlated to edit longevity as much as possible.
+
+
+
+One approach to dealing with the vandalism problem is to detect
+it immediately and flag it to administrators.
+We call this the ``immediate vandalism detection'' problem,
+which we discuss further in Chapter~\ref{ch:vandalism}.
+There were already bots making automated edits within Wikipedia
+in~2005 when we began this research, and it was clear that
+expert systems would soon be developed based on natural language processing
+ideas~\cite{wiki:AntiVandalBot,wiki:MartinBot,wiki:ClueBot,Carter2007},
+so we decided to strike out in the direction of building a reputation system
+--- and accidentally, we stumbled onto the problem of
+``historical vandalism detection.''
+
+
+Reputation is founded on the notion that the past is a good
+predictor of the future, but there is also a prescriptive aspect
+as the formulation describes to the world what is important and
+what is not.
+We take it to be a score, and the higher your reputation the more
+likely you are to do good work in the future; when you do bad
+work, your reputation score goes down.
+
+We wrestled for some time about negative reputations. We assign "bad"
+reputations to people in real life, but can this translate to an online
+system?  
+
+When we started, we debated using a fixpoint algortihm
+such as the PageRank~\cite{Page1999} or HITS~\cite{Kleinberg1999}
+algorithms.
+\mynote{Does anyone care?}
 
 This most significant challenge of this part of our work
 was in developing evaluations to measure our performance.
