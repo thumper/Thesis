@@ -19,15 +19,6 @@ context of WikiTrust, some of which is described here.
     subject areas, so that there is some extra work that must go
     into classifying the type of edit (\eg~\cite{Fong2010}).
 
-\item[\textbf{edit distance topologies}]
-    Edit distance functions induce a topology over the revisions
-    of an article.
-    Edit warring is one feature that is easily observable in the
-    path that describes the evolution of the article, but are there
-    others?
-    Can we observe when there are major events related to the article?
-    Can we observe the political leanings of factions of editors?
-
 \item[\textbf{revision selection}]
    In response to the fluid nature of Wikipedia content,
     some users would like to identify versions which
@@ -56,6 +47,20 @@ context of WikiTrust, some of which is described here.
     The evaluation used is one based on the resulting predictive ability
     of edit quality, but is there some better way to evaluate a difference
     algorithm whose aim is to model the human view of a text edit?
+
+\item[\textbf{reputation as probabilities}]  This view of reputation is
+    interesting because interpreting the results becomes clear.
+    It also introduces the significant question of how should probabilities
+    be adjusted as new information becomes available.
+    Owen Martin's work on estimating bug counts provides a nice example:
+    you are trying to build a rocketship, and you run many
+    tests to try to uncover bugs~\cite{Martin2011}.
+    If the test succeeds, your estimate
+    of the number of bugs (which is a form of reputation: ``what is
+    the probability that the system will fail?'') goes down.
+    If the test fails, how do revise your estimate of the number
+    of bugs?  And once the engineers have fixed the problem, can
+    you be sure they haven't introduced new problems?
 
 \end{description}
 
