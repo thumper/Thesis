@@ -1,25 +1,46 @@
 An obvious way to build a reputation system would be to build one
 modeled on eBay or Amazon's rating system: elicit votes from users
 on the quality of a revision or the work of an author.
-We had several concerns about this: lack of adoption, sybil attacks
-through puppet votes, block voting by cliques of users, and
+We had several concerns about this style of system: lack of adoption,
+Sybil attacks through puppet votes, block voting by cliques of users, and
 disrupting the current user experience of the Wikipedia community.
 This led us to the idea of \intro{implicit voting} through
-actions already taken by the community as part of their normal activities.
+actions already taken by the community as part of their normal activities
+(an idea related to \intro{revealed preferences}~\cite{Samuelson1938}).
 For example, reading an article and not making an edit to it is
 an implicit vote (though perhaps not a strong one)
 that the article is of good quality; the more page views an article
 has, the more we can believe that there are no errors in it.
-We settled on using actual edits as the implicit vote: if a
-user edits the text of a previous author, that would be a
-negative vote for the previous work; but if the user only added
-new text, then implicitly he is saying that the previous text
-was already in good shape.
-By preserving the current user experience and only
-relying on article version history, we can assign reputation
-through examination of the content evolution:
-authors who perform long-lived contributions gain reputation; authors
-whose contributions are reverted, or are soon removed, lose reputation.
+
+
+The simplest idea for a content-driven reputation system would measure
+how much text an author contributed.
+During the course of our research, however, we realized that there are
+two distinct ways that authors contribute to the Wikipedia: by adding
+new content, and by revising existing content.
+Both are important to consider, since several users will
+adopt one contribution style and not the other.
+We introduce in Chapter~\ref{ch:editquality} the notions of
+\intro{text survival}, which measures how much text survives
+into later revisions, and \intro{edit survival}, which measures
+how consistent an edit is with later revisions,
+to account for these different methods of contribution.
+We use the principle that every future author is
+implicitly making an evaluation on the work of past authors:
+edits and new text that are consistent with later revisions
+are judged ``good'' by the community.
+
+A reputation system must be able to recognize and reward
+``good'' work.
+In Chapter~\ref{ch:contrib}, we propose several different ways
+to measure the contribution of authors.
+Two of those models, \textlong and \editlong,
+form the underlying basis of the reputation system analyzed
+in this chapter.
+There are several constants in our final model, which were assigned
+values by optimizing for the heuristic that author reputation at
+the time of an edit
+should be correlated with the edit longevity of that revision.
 
 There are several possible applications of computing a reputation
 value for authors (for example, to grant or deny editing rights to
@@ -31,83 +52,4 @@ is publicly available through our Firefox plugin:
 The fact that authors can only comment on other authors by
 making contributions themselves discourages users from attacking
 each other in an unproductive way, because they risk their own reputation in the process.
-
-
-The simplest idea for a content-driven reputation system would measure
-how much text an author contributed.
-During the course of our research, however, we realized that there are
-two distinct ways that authors contribute to the Wikipedia: by adding
-new content, and by revising existing content.
-Both are important to consider, since several users will
-adopt one contribution style and not the other.
-We introduced the notions of
-\intro{text survival}, which measures how much text survives
-into later revisions, and \intro{edit survival}, which measures
-how consistent an edit is with later revisions,
-to account for these different methods of contribution~\cite{Adler2007}.
-We use the principle that every future author is
-implicitly making an evaluation on the work of past authors:
-edits and new text that are consistent with later revisions
-are judged ``good'' by the community.
-Constants in the model we develop are assigned so as to optimize
-for the heuristic that author reputation
-be correlated to edit longevity as much as possible.
-
-
-
-One approach to dealing with the vandalism problem is to detect
-it immediately and flag it to administrators.
-We call this the ``immediate vandalism detection'' problem,
-which we discuss further in Chapter~\ref{ch:vandalism}.
-There were already bots making automated edits within Wikipedia
-in~2005 when we began this research, and it was clear that
-expert systems would soon be developed based on natural language processing
-ideas~\cite{wiki:AntiVandalBot,wiki:MartinBot,wiki:ClueBot,Carter2007},
-so we decided to strike out in the direction of building a reputation system
---- and accidentally, we stumbled onto the problem of
-``historical vandalism detection.''
-
-
-Reputation is founded on the notion that the past is a good
-predictor of the future, but there is also a prescriptive aspect
-as the formulation describes to the world what is important and
-what is not.
-We take it to be a score, and the higher your reputation the more
-likely you are to do good work in the future; when you do bad
-work, your reputation score goes down.
-
-We wrestled for some time about negative reputations. We assign "bad"
-reputations to people in real life, but can this translate to an online
-system?  
-
-When we started, we debated using a fixpoint algortihm
-such as the PageRank~\cite{Page1999} or HITS~\cite{Kleinberg1999}
-algorithms.
-\mynote{Does anyone care?}
-
-This most significant challenge of this part of our work
-was in developing evaluations to measure our performance.
-
-The main contribution of this paper is a content-driven reputation
-system for the Wikipedia. 
-In particular, we define the concepts of edit and text longevity in a
-versioned document, and we show how these two concepts can be used to
-compute a reputation for each contributor. 
-A novel feature of the proposed reputation system is its emphasis on
-the quantitative {\em predictive\/} value of reputation; this emphasis
-enabled us both to tune the behavior of our reputation system, and to
-measure its effectiveness on actual instances of the Wikipedia. 
-
-In the course of developing the main results of the paper, we have
-developed novel techniques which might be of interest in their own
-right. 
-These include algorithms for attributing text authorship in a
-versioned document, along with algorithms for measuring the longevity
-of text additions and edits performed in the various revisions of a
-document. 
-We note that, while we present our work in the context of the
-Wikipedia, our algorithms can be used to compute the reputation, and
-contribution, of users to any set of versioned documents, including
-computer code. 
-
 

@@ -35,45 +35,45 @@ From the correlation table, we notice that text based measures are
 better positively correlated with each other.
 Similarly, the edit based measures are better positively correlated 
 with each other as we expected.
-The measures $\editlong$ and $\editonly$ are highly correlated as 
+The measures \editlong and \editonly are highly correlated as 
 borne out by the fact that a large percentage of the edits are of
 good quality.
-We notice that the same is true for $\textlong$ and $\textonly$.
-The correlation between $\punish$ and the absolute measure
-$\editonly$ is low, demonstrating that $\punish$
+We notice that the same is true for \textlong and \textonly.
+The correlation between \punish and the absolute measure
+\editonly is low, demonstrating that \punish
 penalizes authors for bad edits, gives no credit to good edits,
 and accumulates the quality discounted text contribution measure 
-$\textlong$.
+\textlong.
 Therefore, authors need to contribute high quality text, while
 ensuring that they have no bad edits to get a high score on
-$\punish$.
-$\tenrevs$ being a text contribution measure, is highly correlated
-with the other text contribution measures $\textonly$ and
-$\textlong$.
-$\numedits$ is positively correlated with all measures as we would
+\punish.
+\tenrevs being a text contribution measure, is highly correlated
+with the other text contribution measures \textonly and
+\textlong.
+\numedits is positively correlated with all measures as we would
 expect, since the majority of contributions are deemed good by
 each of the quality measures.
 
-While $\textonly$ and $\editonly$ appear to be reasonable measures 
+While \textonly and \editonly appear to be reasonable measures 
 of author contribution, we have found evidence that vandals
 accrue large contributions against these measures.
-For instance, we found that author $1065172$ is in the $99th$ 
-percentile when measured using $\textonly$, but is nearly at the
+For instance, we found that author $1065172$ is in the 99\superscript{th}
+percentile when measured using \textonly, but is nearly at the
 bottom of the ranks, at $0.000001$ quantile when we look at his
-$\punish$ measure.
+\punish measure.
 We found five revisions in which this author added new text, but
 four of those were immediately reverted.
 The only revision that was kept around was a one word addition to a
 page!
 From the edits made by this author, we saw that he is a spammer.
-On the other hand, using $\textlong$ instead of $\textonly$ we
-noticed that the author was below the $25th$ percentile.
-On the $\editlong$ measure, this author was below the 
+On the other hand, using \textlong instead of \textonly we
+noticed that the author was below the 25\superscript{th} percentile.
+On the \editlong measure, this author was below the 
 $0.001$ quantile; among the lowest in rank.
-Therefore, we argue that the measures that discount $\textonly$ and 
-$\editonly$ by a text or edit quality measure are more indicative
+Therefore, we argue that the measures that discount \textonly and 
+\editonly by a text or edit quality measure are more indicative
 of the ``useful'' work added to the Wikipedia.
-We argue that $\numedits$ is not as good a measure, since 
+We argue that \numedits is not as good a measure, since 
 vandals and bots can easily make large numbers of bad edits.
 
 We present two figures, Figure~\ref{fig-zoom-editonly-editlong}
@@ -85,19 +85,19 @@ we see a vee shape, which separates the authors into
 two groups: those that have positive edit quality and those
 that have negative edit quality, as measured by $\quality{elong}{10}{}$.
 The worse the quality of edits made by authors the less they
-accumulate of the $\editlong$ measure, whereas the $\editonly$
+accumulate of the \editlong measure, whereas the \editonly
 measure, being oblivious to edit quality, attributes the same
 contribution to an author whose contributions persists as it 
 does to an author whose contributions do not.
-On the negative side of $\editlong$, there are points that represent
+On the negative side of \editlong, there are points that represent
 vandals, who edit large sections of existing pages, which are
 then immediately reverted.
-Clearly, $\editonly$ ranks some of these authors very highly,
-whereas $\editlong$ is able to distinguish them and rank
+Clearly, \editonly ranks some of these authors very highly,
+whereas \editlong is able to distinguish them and rank
 them very low.
 
 In Figure~\ref{fig-zoom-textonly-textlong},
-we see a similar vee shape; in this case, $\textlong$
+we see a similar vee shape; in this case, \textlong
 cannot go below zero as the text quality measure is always 
 non-negative, so vandals, by our definition, receive no 
 contribution.
@@ -106,23 +106,23 @@ distinguish vandals from non-vandals and attribute a contribution
 measure to authors that is proportional to the merit of their
 contribution.
 
-Of the various measures we introduced, $\punish$ is perhaps the
+Of the various measures we introduced, \punish is perhaps the
 one with the least tolerance, since by this measure, the only way
 an author can accumulate contribution is by adding new
 text that persists and by making edits that are judged to be
 of good quality.
 Further, this measure does not reward authors for good edits,
 but penalizes them for bad edits.
-In Figure~\ref{fig-zoom-textonly-textwithpunish}, we plot $\textonly$
-against $\punish$.
+In Figure~\ref{fig-zoom-textonly-textwithpunish}, we plot \textonly
+against \punish.
 We see the vee shape, with vandals falling on a noticeable line in
-the fourth quadrant, that has no $\textonly$ contribution.
+the fourth quadrant, that has no \textonly contribution.
 Since almost all new text added by vandals is immediate reverted,
 and their edits always have low quality, we notice that they get
-low negative $\punish$ contributions.
+low negative \punish contributions.
 In fact, we noticed that the bottom ten authors by rank when
-measured according to $\punish$ were all vandals with the exception
-of $AntiVandalBot$.
+measured according to \punish were all vandals with the exception
+of \textit{AntiVandalBot}.
 We explain this in the subsection on bots.
 
 \begin{figure}[tbhp]

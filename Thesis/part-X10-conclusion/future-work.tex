@@ -1,44 +1,34 @@
 \section{Future Work}
 
-Of course we could delve into more details about
-the things described so far.  Or we could push forward
-on new topics that might bear more fruit.
+A critical part of the training received in graduate school
+is the ability to ask questions that creatively expand on your
+existing work.
+There are a great number of questions left to explore in the
+context of WikiTrust, some of which is described here.
 
-\subsection{Match Quality}
+\begin{description}
+\item[\textbf{category reputation}]
+    This is probably the one idea that we hear the most from audiences.
+    Everyone has this intuitive understanding that a person can be
+    an expert in one area but not another, and that some people don't
+    recognize their lack of expertise.
+    By keeping track of separate reputation scores for every category,
+    the system should be more able to predict the longevity of an edit.
+    It is worth noting that, within the Wikipedia community, there
+    are those editors which specialize in grammar and style rather than
+    subject areas, so that there is some extra work that must go
+    into classifying the type of edit (\eg~\cite{Fong2010}).
 
-How should the match quality be defined?  How can this be evaluated?
-How do we compare text tracking algorithms?
+\item[\textbf{edit distance topologies}]
+    Edit distance functions induce a topology over the revisions
+    of an article.
+    Edit warring is one feature that is easily observable in the
+    path that describes the evolution of the article, but are there
+    others?
+    Can we observe when there are major events related to the article?
+    Can we observe the political leanings of factions of editors?
 
-\subsection{Text Trust}
-
-Please see Ian's thesis.
-
-\subsection{Category Reputation}
-
-Just as some users prefer to edit the grammar of
-articles instead of the content, we believe that
-users will tend to focus their efforts on subject
-areas where they have some expertise.
-If true, it enables a refinement to the author
-reputation system which tracks reputations in
-each subject area.
-
-
-\subsection{Edit Distance Graphs}
-
-\subsection{Batch Jobs}
-
-    Relation to user contributions.
-    Can a Javascript interpreter be inserted into the processing?
-
-\subsection{Revision Selection}
-
-    Work of Martin Walker.
-    Original idea to pick revision with highest average reputation.
-    Idea to propagate reputation backwards, to give better reputation
-    to old revisions.
-    New idea is to pick revisions least likely to have vandalism.
-
+\item[\textbf{revision selection}]
    In response to the fluid nature of Wikipedia content,
     some users would like to identify versions which
     are ``trustworthy;'' currently, the leading proposal
@@ -48,7 +38,24 @@ each subject area.
     an article which requires greater scrutiny, but
     still requires a diligent user to review previous
     revisions to understand how the article is evolving.
-    We propose an automatic analysis of the article evolution
-    to identify revisions which we believe
-    have the highest overall trust.
+    In a system like WikiTrust, an obvious idea would be to pick
+    a recent revision which is least likely to have vandalism.
+    An interesting modification to our existing system would be
+    to propagate the text trust information we learn from new edits
+    back to earlier revisions; in essence, once we know that some
+    text is trustworthy, we use that information to reanalyze the
+    trust of the revision where it was introduced.
+
+\item[\textbf{match quality}] Our greedy text differencing algorithm
+    uses a match quality function to prioritize which matches are
+    preferable according to the criteria described in Chapter~\ref{ch:diff}.
+    The evaluation in Chapter~\ref{ch:editquality}
+    suggests that as long as length
+    is the primary discriminant, there is not too much difference
+    between the different quality functions.
+    The evaluation used is one based on the resulting predictive ability
+    of edit quality, but is there some better way to evaluate a difference
+    algorithm whose aim is to model the human view of a text edit?
+
+\end{description}
 

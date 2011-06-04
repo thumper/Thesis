@@ -71,12 +71,12 @@ We desire the text longevity of a revision to be
 the amount of original text that was
 added by the author $\revauthor{\version{i}}$
 for a revision \version{i}, discounted by the
-text quality measure \quality{tdecay}{}{\version{i}}, which describes
+text quality measure \quality{tdecay}{10}{\version{i}}, which describes
 how the text decays over the next several revision.
 %
 \[
 \textlong(u) = 
-\sum_{a \in \articles} \sum_{v \in E(u, a)} \quality{tdecay}{}{v}
+\sum_{a \in \articles} \sum_{v \in E(u, a)} \quality{tdecay}{10}{v}
         \cdot \txt{}{v}
 \]
 %
@@ -86,13 +86,13 @@ how the text decays over the next several revision.
 \noindent
 Similar to the text longevity measure, we define the edit longevity
 of a revision \version{i} as the edit contribution, discounted by the 
-average edit quality measure \quality{elong}{}{\version{i}}.
+average edit quality measure \quality{elong}{10}{\version{i}}.
 As with all the measures, we accumulate contributions based on 
 edit longevity over all revisions edited by each user $u \in \users$:
 %
 \[
 \editlong(u) = \sum_{a \in \articles} \sum_{v \in E(u, a)} 
-\quality{elong}{}{v} \cdot \dist{}{v}
+\quality{elong}{10}{v} \cdot \dist{}{v}
 \]
 %
 

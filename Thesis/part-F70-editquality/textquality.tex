@@ -140,11 +140,13 @@ that people can agree on until it eventually no longer changes.
 \centering
 \framebox{\includegraphics[width=0.9\textwidth]{part-F70-editquality/text-longevity}}
 \caption{
-    \mynote{Redo picture to change alpha to proper symbol.}
     To calculate the \intro{text longevity} of the contribution
     of $T_k$ words, we model the text survival as a geometric curve
     and compute a single number that describes how the text evolves
-    over several revisions.}
+    over several revisions.
+    Value $\alpha$ is the solution to the function in
+    Eq.~\ref{eq:soln-tdecay} based on the geometric series.
+    }
 \label{fig:textlongevity}
 \end{figure}
 
@@ -165,11 +167,12 @@ To compute \quality{tdecay}{n}{k}, we want to solve the following equation:
 
 To solve this for \quality{tdecay}{}{k}, we can use Newton's method
 to solve for the zero of the related function:
-\begin{equation*}
+\begin{equation}
   f(\alpha) =
         - (1 - \alpha^{n+1}) \cdot \tsurv{}{k,k}
         + (1 - \alpha) \cdot \sum_{i=0}^n \tsurv{}{k,k+i}
-\end{equation*}
+\label{eq:soln-tdecay}
+\end{equation}
 where $\alpha = \quality{tdecay}{}{k}$.
 Newton's method involves making repeated estimations of the form
 \begin{equation*}

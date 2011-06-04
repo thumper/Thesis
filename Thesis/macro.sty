@@ -71,13 +71,13 @@
 
 %\newcommand{\repexact}{\mathsf{ExactReputation}}
 %\newcommand{\contribrep}{\ensuremath{\mathsf{Reputation}}\xspace}
-\newcommand{\numedits}{\ensuremath{\mathsf{NumEdits}}\xspace}
-\newcommand{\textonly}{\ensuremath{\mathsf{TextOnly}}\xspace}
-\newcommand{\editonly}{\ensuremath{\mathsf{EditOnly}}\xspace}
-\newcommand{\textlong}{\ensuremath{\mathsf{TextLongevity}}\xspace}
-\newcommand{\editlong}{\ensuremath{\mathsf{EditLongevity}}\xspace}
-\newcommand{\punish}{\ensuremath{\mathsf{TextLongevityWithPenalty}}\xspace}
-\newcommand{\tenrevs}{\ensuremath{\mathsf{TenRevisions}}\xspace}
+\newcommand{\numedits}{\ifmmode{\mathsf{NumEdits}}\else{\textsf{NumEdits}}\fi\xspace}
+\newcommand{\textonly}{\ifmmode{\mathsf{TextOnly}}\else{\textsf{TextOnly}}\fi\xspace}
+\newcommand{\editonly}{\ifmmode{\mathsf{EditOnly}}\else{\textsf{EditOnly}}\fi\xspace}
+\newcommand{\textlong}{\ifmmode{\mathsf{TextLongevity}}\else{\textsf{TextLongevity}}\fi\xspace}
+\newcommand{\editlong}{\ifmmode{\mathsf{EditLongevity}}\else{\textsf{EditLongevity}}\fi\xspace}
+\newcommand{\punish}{\ifmmode{\mathsf{TextLongevityWithPenalty}}\else{\textsf{TextLongevityWithPenalty}}\fi\xspace}
+\newcommand{\tenrevs}{\ifmmode{\mathsf{TenRevisions}}\else{\textsf{TenRevisions}}\fi\xspace}
 %% needs fixing?
 %% \newcommand{\elong}{\ensuremath{\mathit{ELong}}}
 \newcommand{\avgspecQ}{\ensuremath{\mathit{AvgSpecQ}}}
@@ -90,4 +90,7 @@
 \newcommand{\textlongevity}{\ensuremath{\beta_{text}}}
 \newcommand{\tlong}{TODO: change to quality} %{\ensuremath{\alpha_\text{\textit{text}}}\xspace}
 \newcommand{\elong}{TODO: change to quality} %{\ensuremath{\alpha_\text{\textit{edit}}}\xspace}
+
+
+\newcommand{\superscript}[1]{\ensuremath{^{\textrm{#1}}}}
 

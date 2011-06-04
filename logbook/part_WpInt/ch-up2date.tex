@@ -553,3 +553,25 @@ Also needed to fix the configs for: munin, apache, squid, wikitrust.
 And to \program{chown} the directory to be owned by the \texttt{wikitrust}
 user and group. 
 
+\section{The Creeping CPU Bug}
+
+\subsection{2-Jun-2011}
+
+Ever since I rewrote the \texttt{dispatcher} code to start
+new processes more quickly last year, there has been this
+nagging CPU bug.
+As the days pass, the CPU usage drifts upwards.
+This last week, I did some tests where I stop all pages from being
+queued up so that nothing was happening on the system, and I
+regularly see that the CPU usage is still more than 2\%
+and I think that some of it is I/O related.
+
+I am not sure what is going on.
+As far as I can tell, the only interaction that should be happening
+are requests to \texttt{mysql} to see if there are new pages in the
+queue, but the database isn't the one using the CPU.
+Adding some profiling code, it appears that the call to
+\texttt{fetch\_work} is where the slowdown is.
+I am thinking about using the \texttt{inotifywait} command
+to figure out what files are being hit on the disk.
+

@@ -2,7 +2,7 @@
 
 We propose a \intro{content-driven} reputation system in
 order to preserve the current user experience of the Wikipedia.
-There are two behaviors that we chose to promote as desirable:
+There are two behaviors that we choose to promote as desirable:
 contributing text to articles, and editing text.
 Adding text to articles is a necessary behavior for the Wikipedia
 to acquire new knowledge and continue to expand.
@@ -10,15 +10,10 @@ However, adding text is not sufficient to make the Wikipedia a
 useful resource --- the text must be edited for formatting and
 readability, and vandalism must be removed, so the removal and
 rearrangement of text is also very important.
-We note that the scope of potential future work around possible
-signals is quite large, as there are many other behaviors that
-might be desirable in promoting the general Wikipedia community,
-and in fact many of those behaviors have been enumerated in the form
-of \intro{Barnstars}.\footnote{\url{http://en.wikipedia.org/wiki/Wikipedia:Barnstars}}
 
 To measure text contributions and the amount of editing performed
 by an author, we examine only the revision history of each article
-and use a text differencing algorithm to compute these values.
+and use a text differencing algorithm to assist in computing these values.
 Deriving implicit judgements from the history was an important
 challenge in this work, and our reputation system builds upon
 the ideas developed in Chapter~\ref{ch:editquality} for judgements.
