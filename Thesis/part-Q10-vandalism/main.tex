@@ -5,72 +5,18 @@
 \textit{This chapter explores a variation of the ideas
 published as~\cite{Adler2010}, and includes material
 published in~\cite{Adler2011}.}
+\mynote{Get letters from co-authors.}
 \end{quote}
 
 Multiple studies have found that roughly 7\% of edits are
-vandalism~\cite{Potthast2008,Potthast2010a} \mynote{I think
-that Luca cites another}.
+vandalism~\cite{Potthast2008,Potthast2010a}.
 Due to the preservation of the entire revision history,
 anyone can revert an edit, and a group of volunteers scans the
 list of recent changes to catch vandalism
 quickly~\cite{wiki:RCPatrol}.
 
-
-\mynote{Running batch process in redherring screen 6.
-  Sat, Feb 5.}
-
 \input{part-Q10-vandalism/related-work}
 \input{part-Q10-vandalism/experiment}
-
-
-\section{Questions}
-
-
-The minor question I had was, what is the performance of just Mola+WT?
-That is, Potthast got PR-AUC=0.78 by using a random-forest(1000 trees,
-4 features) -- can we beat 78% by using the raw features rather than
-the output of the classifier?  (I expect not, but I suspect we are
-close.)  Is the solution (M+WT) a "sufficient cover set" of the
-features explored in PAN2010, and STiki brings a new dimension of
-features?
-
-Another minor question: is there a way for us to rank the importance
-of features?  Santiago almost does this in his PAN submission, and the
-answer is tantalizing only to social scientists: does it matter more
-what you say, or who you are?
-
-Had crazy idea while looking at graphs for joint vandalism paper:
-\begin{quote}
-BTW, I don't know if you looked at the graphs/data that Santiago added today.  He was right in pointing out that they are "interesting"; see Fig 4, historical sets.  L+M+T and L+M+R+T perform nearly identically, suggesting that R seems to capture the same notions as L+M+T.  Also, the R and M+T curves are nearly identical (which is kinda begging for a comparison with an L+R curve).  Probably this will change because of the 3 I reclassified, but it's amazing how closely they track each other.
-
-To answer my first question (same notion, or just same predictive power), we'd have to compare which edits are predicted for each threshold, and see how well they correlate.  Which seems unlikely for us to do for this paper...
-
-To answer the second question, we could do "leave one out" calculations for each feature, and see if the lines cluster or scatter.  Hmm, that's interesting, because I thought my "discrete steps" imagery was crazy and would be impossible to test.  Anyway, for sure this is not possible to do for this paper.
-\end{quote}
-
-
-    \section{Features}
-        Is it possible to visualize the amount of information
-        contained in each feature?
-        Has previous work always been a blend of metadata, NLP,
-        and reputation?
-    \section{Edits}
-        Which edits did we guess correctly, where others didn't?
-        Why did we guess correctly?  Was it because they were edits
-        by old users?
-
-\section{Conclusion}
-
-        Ultimately, Druck~\etal are right when they proclaim that
-        vandalism detection must look at the content of the
-        edit~\cite{Druck2008}.
-        Although metadata methods for identifying bad edits are
-        fairly capable, they can always be fooled by a sufficiently
-        motivated vandal.
-        Vandalism detection will eventually incorporate better
-        language models such as those used at Google,
-        and will also have specialized topic models (someone did
-        something like this!  and compression techniques are
-        related).
-
+\input{part-Q10-vandalism/evaluation}
+\input{part-Q10-vandalism/conclusion}
 

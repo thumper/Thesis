@@ -1,0 +1,31 @@
+\section{Evaluation}
+
+The results of the PAN~2010 competition~\cite{Potthast2010b}
+provides a benchmark of comparison for vandalism detection systems.
+Although receiver operating characteristic was used to judge the
+competition, the analysis by Potthast~\etal points to the conclusion
+that the class imbalance between vandalized and regular edits
+leads to better discriminatory power by precision-recall curves.
+
+\mynote{Need to actually build models and add data to tables, then
+write some kind of analysis.}
+
+\begin{table}[tbhp]
+    \begin{center}
+        \begin{tabular}{|l|c|c|}
+\hline
+\textbf{System} & \textbf{AUC-PR} & \textbf{AUC-ROC} \\
+\hline
+\hline
+Combined NLP+Rep+Metadata~\cite{Adler2011} & 0.81829 & 0.96902 \\
+PAN'10 Meta Detector~\cite{Potthast2010b} & 0.77609 & 0.95689 \\
+Mola-Velasco + topic~\cite{Mola2011} & 0.7541 & \textit{n/a} \\
+Mola-Velasco~\cite{Adler2011} & 0.73121 & 0.94567 \\
+WikiTrust~\cite{Adler2011} & 0.61047 & 0.93647 \\
+STiki~\cite{Adler2011} & 0.52534 & 0.91520 \\
+PAN~2010 WikiTrust~\cite{Potthast2010b} & 0.49263 & 0.90351 \\
+\hline
+        \end{tabular}
+    \end{center}
+    \caption{Comparison of various vandalism detection systems.}
+\end{table}

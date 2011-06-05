@@ -71,14 +71,16 @@ active learning can help the training process by requesting
 annotations for examples which will make a significant difference to
 the algorithm.)
 
-A different way of looking at the content approach (and perhaps ought
-be considered ``statistical models in the extreme'') is the
+A different way of looking at the content approach is the
 realization that appropriate content somehow ``belongs together,'' and
 one way to measure that is through compression of the successive
 revisions of an article~\cite{Smets2008,Itakura2009}.
 If inappropriate content is added to the article, then the compression
 level is lower than it would be for text which is similar to text
 already in the article.
+This is much more powerful than the bag-of-words model, because
+phrases are significant and lead to better compression; nonsensical
+sentences that include some key words will not compress as well.
 A significant drawback of these compression techniques is that they
 require manipulation of the content of a large number of revisions
 from the article being edited.
@@ -94,6 +96,9 @@ West~\etal~\cite{West2010} demonstrate astonishing results because
 they are based entirely on metadata (some of which is processed into
 \textit{reputations}) that indicate there is more relatedness between
 vandals than is readily apparent to the human eye.
+One particularly interesting result was that using IP geolocation
+to cluster users leads to better predictions, presumably because
+anti-US sentiment also tends to cluster by geographic region.
 
 The first systematic review and organization of features appears
 by Potthast~\etal~\cite{Potthast2010b} as part of the competition
@@ -108,24 +113,20 @@ Potthast~\etal conclude their analysis by building a meta-classifier
 based on the nine entries and discover that the result performs
 significantly better than any single entry.
 
-The top two entries in the PAN~2010 competition are worth mentioning
-because they form the basis of the work presented here.
 User reputation systems~\cite{Zeng2006,WikiMTWtrust06,Adler2007}
 have been previously proposed as an underlying technology for
-vandalism prevention or detection.
-Druck~\etal~\cite{Druck2008} argues that a system built only on user
-features isn't sufficient for predicting article quality, and conducts
-an evaluation demonstrating that a classifier including features about
-the content of the edit performs much better at predicting reverts.
-As part of the PAN~2010 competition on vandalism detection,
-Adler~\etal~\cite{Adler2010} show that a mixture of user reputation
-and simple metadata signals performas quite well.
-This work~\cite{Adler2010}, and the work of
-West~\etal~\cite{West2010}, demonstrate that features sometimes
-require additional processing to gain the maximum benefit to a classifier.
+vandalism prevention or detection, and the second place entry in
+the PAN~2010 competition was a system based on the
+WikiTrust project~\cite{Adler2010}.
+In that entry, the WikiTrust user reputation system was not
+directly used as a feature due to not having a historical record
+of the reputation values.
+The work presented in this chapter extends~\cite{Adler2010} by
+tracking the historical user reputation values and using that
+as an additional feature to the machine learning algorithms.
 
 The winner of the PAN~2010 competition, by a notable margin, was
-an entry by Mola Velasco~\cite{Mola2010} that extended the features
+an entry by Mola-Velasco~\cite{Mola2010} that extended the features
 originally proposed by Potthast~\etal~\cite{Potthast2008}.
 This entry was composed of 21~features (the largest in the
 competition) that comprehensively model the content of the edit,
@@ -133,17 +134,10 @@ including features that rated use of language, formatting of text,
 compressibility with earlier text, spelling,
 and the size of the edit.
 
-\begin{quote}
-[[My take on this history is that the field of vandalism detection
-amounts to a random walk over the possible feature space.
-Many papers, for a given set of features, review multiple machine
-learning algorithms to discover the best.
-Short of the review by Potthast~\etal~\cite{Potthast2010b}, no one
-has systematically explored the set of features and the amount of
-information contained in each.
-Some PAN papers (I think) order the features they examine by the
-information gain.
-It would be useful to more carefully organize the set of features,
-make source code available, and compare features within groups.]]
-\end{quote}
+The combining of features used by Mola-Velasco~\cite{Mola2010},
+WikiTrust~\cite{Adler2010} and West~\cite{West2010}
+is explored in~\cite{Adler2011}.
+That work improves on earlier results, and categorizes features
+according to the difficulty of analysis.
+
 
