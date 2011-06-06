@@ -1,0 +1,11 @@
+This directory contains code to evaluate
+reputation using the PAN2010
+corpus as a golden annotation for "bad edits".
+
+1. Follow the initial steps from "../edit-quality/README"
+
+2. Extract the ratings for the PAN revisions.
+
+    ./extract-repsFrepfile.pl pan2010.csv \
+	/raid/thumper/util/tmp/output-enwiki/user_reputations.txt
+
