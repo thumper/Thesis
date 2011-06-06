@@ -8,6 +8,7 @@ use List::Util qw( min max );
 use lib 'lib';
 use PAN;
 use MediawikiDump;
+use Carp;
 
 my ($revids, $repFile) = @ARGV;
 
@@ -28,6 +29,8 @@ while (<$fh>) {
     next if !exists $panrevs->{$fields[3]};
     my $revid = $fields[3];
     my $long = $fields[5];
+    my $c1 = $panrevs->{$revid}->{class};
+    croak "Bad class for rev $revid" if !defined $c1;
     my $class = $panrevs->{$revid}->{class} eq 'vandalism' ? 1 : 0;
     if ($fields[1] eq 'EditLong') {
 	# convert to probability
