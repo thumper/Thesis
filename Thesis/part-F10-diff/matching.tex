@@ -71,7 +71,7 @@ by modifying the greedy step; instead of selecting a match
 based on length, we use a notion of \intro{match quality}.
 
 The basic procedure for our greedy-based differencing
-algorithm\footnote{Appendix~\ref{app:basicdiffsrc} lists a
+algorithm\footnote{Appendix~\ref{app:basicdiffsrc-perl} lists a
 \textbf{perl} language implementation of this basic algorithm.}
 is:
 \begin{enumerate}
@@ -118,7 +118,7 @@ The key to matches meeting the list of criteria we have
 defined above is in the quality function.\footnote{Except for
 multiple matching of source blocks, which cannot be handled
 by the quality
-function.  The source in Appendix~\ref{app:basicdiffsrc}
+function.  The source in Appendix~\ref{app:basicdiffsrc-perl}
 enables this feature by a flag.}
 To prefer matches where the blocks are in similar positions,
 we can select a quality function, which compares the relative
@@ -201,9 +201,18 @@ compute the residual match at that time and insert the residual
 into the priority queue.
 This makes the assumption that the quality function always
 prefers longer matches over shorter matches.
-Appendix~\ref{app:fasterdiffsrc} demonstrates this
+Appendix~\ref{app:fasterdiffsrc-perl} demonstrates this
 modification, with some representative runtimes shown
 in Table~\ref{tab:comparediff}.
+
+Another optimization which can dramatically reduce the
+number of potential matches is to assume that matching text
+at the beginning and end of an article will always be the best match.
+This assumption fits well with our desire that the resulting
+edit script try to match a human description of the edit.
+Some care should be taken in the handling of authorship;
+if the header or trailer is duplicated elsewhere in the article,
+then the original authorship still needs to be retained.
 
 \begin{table}
 \begin{center}
@@ -257,8 +266,8 @@ then we can construct the edit script piecewise by differencing
 only a single revision at a time.
 When looking at older chunks, the fact that the target has already
 been partially matched will reject many potential matches.
-Appendix~\ref{app:basictextsrc} shows an implementation of the
-basic text tracking algorithm, and Appendix~\ref{app:fastertextsrc}
+Appendix~\ref{app:basictextsrc-perl} shows an implementation of the
+basic text tracking algorithm, and Appendix~\ref{app:fastertextsrc-perl}
 shows the optimization; Table~\ref{tab:comparetext} shows representative
 running times.
 

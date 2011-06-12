@@ -575,3 +575,23 @@ Adding some profiling code, it appears that the call to
 I am thinking about using the \texttt{inotifywait} command
 to figure out what files are being hit on the disk.
 
+\subsection{11-Jun-2011}
+
+I added more profiling code in the \texttt{fetch\_work} code.
+The profiling code keeps track of the maximum time that it has
+seen so far, and prints out a debugging message whenever a
+new maximum is reached.
+To reset the counters, you send a \texttt{USR1} signal to the
+main dispatcher process; before that, I usually stop the apache
+server and the \texttt{GetFeedFIRC} script so that there are
+no requests coming into the system.
+Even with no requests, I regular see the 2\% CPU usage,
+as mentioned in the last entry.
+
+Now I have to wait another week for the load to build up
+before I can test again.
+My current thinking is that there's some kind of
+problem happening to the \mysql connection; maybe
+it needs to be closed before forking, or maybe it just
+needs to be closed and reopened periodically?
+
