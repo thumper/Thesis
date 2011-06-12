@@ -24,6 +24,12 @@ corpus as a golden annotation for "bad edits".
    This step seems to take a very long time: about 30sec for text tracking
    and 5min for edit distances, for each revision.  See below.
 
+5. Run the various tests for diff algo, match quality, etc.
+	time ./run-expt.sh > expt.out 2>&1
+
+6. Compute the latex tables from the output
+	./parse-exptResults.pl expt.out
+    output will be in expt.out-table-textlong.tex and expt.out-table-editlong.tex
 
 ==========
 
