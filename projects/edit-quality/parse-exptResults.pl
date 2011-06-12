@@ -5,9 +5,13 @@ use warnings;
 
 open(my $editout, ">expt.out-table-editlong.tex") || die "open(editlong): $!";
 open(my $textout, ">expt.out-table-textlong.tex") || die "open(textlong): $!";
+open(my $editshout, ">expt.out-table-editlong-short.tex")
+    || die "open(editlong-short): $!";
+open(my $textshout, ">expt.out-table-textlong-short.tex")
+    || die "open(textlong-short): $!";
 writeHeader();
 
-my %textcache;
+my %textcache, %textshcache, %editshcache;
 my $expt = undef;
 
 while (<>) {
@@ -64,6 +68,27 @@ Diff & Precise & Match Quality & Edit Dist
 \hline
 \hline
 EOF
+    print $textshout <<'EOF';
+\begin{table}[tbph]
+\begin{center}
+\begin{tabular}{|c||c|c|c|}
+\hline
+Match Quality & ROC AUC & Mean Prec. & Num Revs \\
+\hline
+\hline
+EOF
+    print $editshout <<'EOF';
+\begin{sidewaystable}[!tp]
+  \begin{center}
+    \begin{tabular}{|c|c||c|c||c|c|c|c|}
+\hline
+Diff & Edit Dist
+        & ROC AUC & Mean Prec.
+        & Num Revs & Run Time
+        & Total Triangles & Bad Triangles \\
+\hline
+\hline
+EOF
 }
 
 sub writeFooter {
@@ -76,6 +101,22 @@ sub writeFooter {
 \end{table}
 EOF
     print $editout <<'EOF';
+\hline
+\end{tabular}
+\end{center}
+\caption{Comparison of edit longevity performance using
+    varying parameters.}
+\end{sidewaystable}
+EOF
+    print $textshout <<'EOF';
+\hline
+\end{tabular}
+\end{center}
+\caption{Comparison of text longevity performance using
+    multiple difference algorithms.}
+\end{table}
+EOF
+    print $editshout <<'EOF';
 \hline
 \end{tabular}
 \end{center}
@@ -110,6 +151,33 @@ sub writeExpt {
     }
     $textcache{$key} = $val;
     print $textout $val;
+
+    return if $expt->{precise} eq 'N';
+
+    # EDIT LONG
+    my $key = "d".$expt->{diff}."ed".$expt->{editdist};
+    next if exists $editshcache{$key};
+    $editshcache{$key} = 1;
+    printf $editshout 'diff%d & ed%d & %0.3f\\%% & %0.3f\\%% & %s & %dm & %s & %s \\\\'."\n",
+	$expt->{diff}, $expt->{mq}, $expt->{editdist},
+	$expt->{edit}->{ROC} * 100.0, $expt->{edit}->{APR} * 100.0,
+	commify($expt->{edit}->{size}),
+	$expt->{timing},
+	commify($expt->{tri_tot}), commify($expt->{tri_bad});
+
+    # TEXT LONG
+    my $key = "mq".$expt->{mq};
+    my $val = sprintf 'mq%d & %0.3f\\%% & %0.3f\\%% & %s \\\\'."\n",
+	$expt->{mq},
+	$expt->{text}->{ROC} * 100.0, $expt->{text}->{APR} * 100.0,
+	commify($expt->{text}->{size});
+    if (exists $textshcache{$key}) {
+        die "conflicing data" if $textshcache{$key} ne $val;
+	return;
+    }
+    $textshcache{$key} = $val;
+    print $textshout $val;
+
 }
 
 sub parseExpt {
