@@ -20,10 +20,13 @@ sub build_heap {
   my $chunk = shift @_;
   my $src = shift @_;
   $src = $this->parse($src, @_) if !ref $src;
+  my %matched;
   $this->compute_heap($chunk, $src,
     sub {
       my ($chunk, $i1, $i2, $prev_matches) = @_;
-      return (grep { $i1 - 1 == $_ } @$prev_matches) > 0;
+      # The 'prev match' optimization:
+      # return (grep { $i1 - 1 == $_ } @$prev_matches) > 0;
+      return $matched{$chunk, $i1, $i2};
     },
     sub {
       # If we want to keep small matches, then we
@@ -38,6 +41,12 @@ sub build_heap {
     sub {
       my ($chunk, $i1, $l1, $i2, $l2, $k) = @_;
       return if $k < $this->{minMatch};		# skip short matches
+
+      # mark the positions as matched; not necessary for
+      # the 'prev matches' optimization
+      foreach my $i (0..$k-1) {
+        $matched{$chunk, $i1+$i,$i2+$i} = 1;
+      }
 
       my $q = $this->{quality}->($chunk, $k, $i1, $l1, $i2, $l2);
       $this->{heap}->insert($q,

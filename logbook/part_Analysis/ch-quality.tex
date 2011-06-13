@@ -402,10 +402,23 @@ figure out what parts to actually include in my thesis.
     in the target string.  Even with these optimizations, I
     see a 23GB process running, which now seems to have brought
     the machine to its knees again.
+    To finally get the memory usage low enough to be practical,
+    I had to use Luca's trick of just checking the previous
+    matches to see if an entry was already in the heap,
+    rather than keeping a big hashtable of every match that
+    had been made so far.
 \item[diff3] Same as diff2, but uses the header/trailer matching
     optimization.
 \item[diff4] Same as diff3, but using the slow version of heap
-    generation.
+    generation.  I expect the performance is this version to be
+    the same as diff3, since the fast and slow heap generation
+    should produce exactly the same results.
+\item[diff5] Same as diff3, but the heap building step uses the older
+    method of having a hashtable to track the previous matches.
+    I expect the same results as diff3 and diff4, but more memory usage.
+    I just wanted to verify that the results are the same when
+    using the optimization of checking against the list of previous
+    matches.
 \end{description}
 
 \subsubsection{Match Quality Functions}
@@ -593,4 +606,34 @@ actually change that part of the code.
 The timing is off by enough that I'm suspicious, but maybe the
 difference comes from the fact that I'm using a smaller number
 of CPUs now.
+
+\subsection{12-Jun-2011}
+
+Updated the performance tables for both text and edit longevity.
+Realized that I hadn't fixed diff4 to use the slow heap method,
+so I restarted that last night; and killed Gaston again, it seems.
+My quick pass over the tables shows:
+\begin{enumerate}
+\item The diff algorithm doesn't matter to text longevity, but
+    the match quality does.  The ranking of match quality is:
+    mq4 is best, $1 = 0$, $2 = 3$.  All of them are relatively
+    close, however.
+\item In edit longevity, the match quality doesn't matter, but
+    the difference algorithm does.
+\item In edit longevity, using precise differences slows down
+    the performance by more than a factor of three,
+    but the performance is slightly ($< 1\%$ for both
+    precision and recall) worse.
+\item In edit longevity, the edit distance can make a big
+    difference in performance.  The difference algorithm itself
+    makes a small difference.
+\item In edit longevity, the edit distance also makes a big difference
+    in how many bad (and total) triangles there are.
+\end{enumerate}
+
+\section{Reverse Triangle Inequality}
+
+\subsection{12-Jun-2011}
+
+Luca has asked, ``why does the triangle inequality not hold?''
 

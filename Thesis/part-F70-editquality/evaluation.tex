@@ -82,31 +82,52 @@ compute the difference between the revisions.
 To provide a more complete picture of how the choice of difference
 algorithm affects the performance of the quality measures,
 we present an evaluation of some variations of the algorithms.
-The \textit{live} difference algorithm is an updated version of
-our greedy algorithm that is used in the live WikiTrust system today,
+The list of algorithm variations that we tried are as follows:
 
 \begin{description}
 
 \item[\textbf{diff0}] The difference algorithm implemented on the production
     WikiTrust system running live on a single 8-core CPU machine.
-    It includes every optimization discussed,
+    It includes every optimization discussed in
+    Section~\ref{sec:diff-optimizations},
     and is able to process user reputations and text trust fast enough
     to keep up with each change being made to the English Wikipedia.
     The source code implementing this version is available from
     Github.\footnote{\url{http://www.github.com/collaborativetrust/WikiTrust}}
 
 \item[\textbf{diff1}] This version is the same as \textbf{diff0},
-    except that it does not include the optimization for matching
-    the header and trailer text from one revision to the next.
+    except that it does not include the \textbf{header/trailer}
+    optimization.
     We separate this optimization from the others because we believe
     it makes such a dramatic difference on the running time.
+    This is borne out by the runtime data in Table~\ref{tab:editlongeval},
+    which shows that \textbf{diff0} is roughly twice as fast
+    as \textbf{diff1}, with only a small decrease in the
+    ability of edit longevity to label vandalism correctly.
 
 \item[\textbf{diff2}] This diff algorithm implements exactly the matching
-    and optimizations we describe in Chapter~\ref{ch:diff}, except
-    for the matching of header and trailer text.
-    The code for this implementation can be found in
-    \mynote{Appendix ??}; a Perl language implementation of
+    we describe in Chapter~\ref{ch:diff}, with all optimizations except
+    for the \textbf{header/trailer} optimization.
+    A Perl language implementation of
     this algorithm is listed in Appendix~\ref{app:fasterdiffsrc-perl}.
+
+\item[\textbf{diff3}] This version is a modification of \textbf{diff2}
+    to also include the \textbf{header/trailer} optimization.
+
+\item[\textbf{diff4}] This version is a modification of \textbf{diff3}
+    to remove the \textbf{longest match} optimization.
+    This is primarily a sanity check to verify that the performance
+    of \textbf{diff3} and \textbf{diff4} are the same, which
+    we find to be true in Table~\ref{tab:editlongeval}.
+    \mynote{There was a bug in the code so that diff3 and diff4 were
+    exactly the same.  Need to rerun and verify that they have the
+    same performance.}
+
+\item[\textbf{diff5}] This version is a modification of \textbf{diff3}
+    to remove the \textbf{prev matches} optimization.
+    This is primarily to verify that \textbf{prev matches} is
+    actually an optimization.
+    \mynote{Not yet implemented.}
 
 \end{description}
 
@@ -264,28 +285,14 @@ Knowing the quality of edits, we can build up a reputation
 system for authors based on the quality of their work.
 
 
-\begin{table}[tbph]
-\begin{center}
-\begin{tabular}{|c|c|c||c|c|c|}
-\hline
-Diff & Match Quality & Edit Distance & Num Revs & ROC AUC & Mean Prec \\
-\hline
-\hline
-greedy & initial &initial distance & xx & xx & xx \\
-greedy & initial &updated distance & xx & xx & xx \\
-live & initial &I+D-$\frac{1}{2}$ & 27,635 & 91.758\% & 44.052\% \\
-live & initial &replacements & 27,730 & 91.761\% & 46.539\% \\
-\hline
-\end{tabular}
-\end{center}
-\caption{Comparison of the performance of edit longevity
+\input{part-F70-editquality/quality-table-editlong}
+\mynote{Comparison of the performance of edit longevity
   using three different definitions of edit distance.
   The edit quality computed was used as a predictor for the probability
   that annotated revisions from the PAN-WVC-10 corpus were vandalism.
   Each measure is evaluated by computing the area under the
   receiver operating characteristic (ROC) curve.
 } 
-\end{table}
 
 
 \subsubsection{Text Longevity}
@@ -310,22 +317,9 @@ nearly no difference in the predictive ability of
 text longevity.
 
 \mynote{Try mq just using length.}
+\mynote{mq4 was only tested with diff2 -- diff4.}
 
-\begin{table}[tbph]
-\begin{center}
-\begin{tabular}{|c|c||c|c|c|}
-\hline
-Diff & Match Quality & Num. Revisions & ROC AUC & Mean Precision \\
-\hline
-\hline
-greedy & initial & xx & xx & xx \\
-live & initial & 28,453 & 85.949\% & 29.235\% \\
-\hline
-\end{tabular}
-\end{center}
-\caption{Comparison of the performance of text longevity.
-} 
-\end{table}
+\input{part-F70-editquality/quality-table-textlong}
 
 \subsubsection{Explaining the Performance Gap}
 
@@ -395,25 +389,8 @@ In order to quantify how often such an error might crop up,
 we counted how many triangles were evaluated for our PAN-WVC-10
 revisions, and how many of those fell outside of the range $[-1,+1]$.
 
-\begin{table}[htbp]
-\begin{center}
-\begin{tabular}{|r|c|c|c|}
-\hline
-Diff & Edit Distance & Total Triangles & Bad Triangles \\
-\hline
-\hline
-basic & initial distance & xx & xx \\
-basic & updated distance & xx & xx \\
-live & I+D+M & 850,060 & 46,740 \\
-live & graph & 852,040 & 162,922 \\
-\hline
-\end{tabular}
-\end{center}
-\caption{Estimating how often the triangle inequality does
-    not hold when evaluating edit longevity of the
-    PAN-WVC-10 annotated revisions.
-} 
-\label{tbl:badtriangles}
-\end{table}
-
+\mynote{Need to flesh out this section, and include references
+to works that define when triangle inequality holds and when it
+doesn't.  Seems to be related to generalized levenshtein distance (GLD)
+and maybe normalized levenshtein distance.}
 
