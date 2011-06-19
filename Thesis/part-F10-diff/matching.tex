@@ -448,63 +448,6 @@ run through priority queue selecting best matches \;
 
 \end{comment}
 
-\mynote{Maybe it would be easier to put optimizations into a
-    list, since I refer to them by name in the next chapter.}
-
-\begin{description}
-\item[\textbf{min wordlen}] 
-    We can reduce the number of potential matches examined
-    by the algorithm by requiring a minimum number of words to match
-    before a string will be added to the priority queue.
-    WikiTrust accomplishes this by index word tuples in the
-    hashtable of matches computed for the greedy algorithm;
-    for edit distances, we index word pairs, and for text authorship
-    we track word triples.
-
-\item[\textbf{max matches}]
-    The hashtable constructed for the greedy algorithm is used
-    to find the initial string prefixes for all possible matches.
-    If there are too many matching string prefixes (for example,
-    a common phrase such as ``to the'' might appear many times
-    within a single article), then we believe that the string prefix
-    is too common to really be considered to have been authored
-    by a single individual.
-    WikiTrust ignore string prefixes which have more than 50 matches.
-
-\item[\textbf{longest match}] Put only the longest possible match
-    onto the priority queue, instead of every possible match (that is, don't
-    place substrings of the longest match onto the priority queue).
-    This saves a lot of CPU and memory by not having to store
-    these substrings in the priority queue.
-    Also, since the longest match is likely to be the one that is
-    actually selected, there is a savings from not having to remove
-    the substrings from the priority queue later.
-    The complication of this optimization is that if a string on
-    the priority queue has been partly matched by an earlier selection,
-    then the residual non-matched parts of the string need to
-    be placed into the priority queue for possible selection later.
-    This makes the assumption that the quality function always
-    prefers longer matches over shorter matches.
-    Appendix~\ref{app:fasterdiffsrc-perl} demonstrates this
-    modification, with some representative runtimes shown
-    in Table~\ref{tab:comparediff}.
-
-\item[\textbf{header/trailer}] When users edit an article, the beginning
-    and end of the article are not likely to change much.
-    If the first few words of an article are the same from one revision to
-    the next, it is reasonable to conclude that they are a match
-    without having to test other possible sources of block moves
-    from the article; this fits well with our desire that the resulting
-    edit script try to match a human description of the edit.
-    This pre-matching of the heading and trailing portions of the
-    article can significantly reduce the number of potential matches
-    that are computed in the initial step of the algorithm.
-    Some care should be taken in the handling of authorship;
-    if the header or trailer is duplicated elsewhere in the article,
-    then the original authorship still needs to be retained.
-
-\end{description}
-
 
 \subsection{Thoughts On Evaluation}
 

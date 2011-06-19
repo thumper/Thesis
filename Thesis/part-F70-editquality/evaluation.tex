@@ -85,49 +85,103 @@ we present an evaluation of some variations of the algorithms.
 The list of algorithm variations that we tried are as follows:
 
 \begin{description}
-
-\item[\textbf{diff0}] The difference algorithm implemented on the production
-    WikiTrust system running live on a single 8-core CPU machine.
-    It includes every optimization discussed in
-    Section~\ref{sec:diff-optimizations},
-    and is able to process user reputations and text trust fast enough
-    to keep up with each change being made to the English Wikipedia.
-    The source code implementing this version is available from
-    Github.\footnote{\url{http://www.github.com/collaborativetrust/WikiTrust}}
-
-\item[\textbf{diff1}] This version is the same as \textbf{diff0},
-    except that it does not include the \textbf{header/trailer}
-    optimization.
-    We separate this optimization from the others because we believe
-    it makes such a dramatic difference on the running time.
-    This is borne out by the runtime data in Table~\ref{tab:editlongeval},
-    which shows that \textbf{diff0} is roughly twice as fast
-    as \textbf{diff1}, with only a small decrease in the
-    ability of edit longevity to label vandalism correctly.
-
-\item[\textbf{diff2}] This diff algorithm implements exactly the matching
+\item[\textbf{diff1}]
+    This diff algorithm implements exactly the matching
     we describe in Chapter~\ref{ch:diff}, with all optimizations except
     for the \textbf{header/trailer} optimization.
     A Perl language implementation of
-    this algorithm is listed in Appendix~\ref{app:fasterdiffsrc-perl}.
+    this algorithm is listed in Appendix~\ref{app:fasterdiffsrc-perl};
+    the OCaml version appears in Appendix \mynote{TODO}.
+    %
+    \begin{description}
+    \item[Includes:]
+	\textbf{min wordlen}, \textbf{max matches},
+	\textbf{header/trailer}.
+    \item[Excludes:]
+	\textbf{longest match}, \textbf{prev matches}.
+    \end{description}
 
-\item[\textbf{diff3}] This version is a modification of \textbf{diff2}
-    to also include the \textbf{header/trailer} optimization.
+\item[\textbf{diff2}]
+    %
+    \begin{description}
+    \item[Includes:]
+	\textbf{min wordlen}, \textbf{max matches},
+	\textbf{header/trailer}, \textbf{longest match}.
+    \item[Excludes:]
+	\textbf{prev matches}.
+    \end{description}
 
-\item[\textbf{diff4}] This version is a modification of \textbf{diff3}
-    to remove the \textbf{longest match} optimization.
-    This is primarily a sanity check to verify that the performance
-    of \textbf{diff3} and \textbf{diff4} are the same, which
-    we find to be true in Table~\ref{tab:editlongeval}.
-    \mynote{There was a bug in the code so that diff3 and diff4 were
-    exactly the same.  Need to rerun and verify that they have the
-    same performance.}
+\item[\textbf{diff3}]
+    %
+    \begin{description}
+    \item[Includes:]
+	\textbf{min wordlen}, \textbf{max matches},
+	\textbf{prev matches}, \textbf{header trailer}.
+    \item[Excludes:]
+	\textbf{longest match}.
+    \end{description}
 
-\item[\textbf{diff5}] This version is a modification of \textbf{diff3}
-    to remove the \textbf{prev matches} optimization.
-    This is primarily to verify that \textbf{prev matches} is
-    actually an optimization.
-    \mynote{Not yet implemented.}
+\item[\textbf{diff4}]
+    This variation of our difference algorithm explores another
+    combination of optimizations.
+    We believe that the \textbf{header/trailer} optimization generates
+    an edit script which is closer to a human understanding of text
+    differencing, so that we expect this variation to perform worse
+    than \textbf{diff1}.
+    %
+    \begin{description}
+    \item[Includes:]
+	\textbf{min wordlen}, \textbf{max matches}, \textbf{longest match},
+	\textbf{prev matches}.
+    \item[Excludes:]
+	\textbf{header/trailer}.
+    \end{description}
+
+\item[\textbf{diff5}]
+    %
+    \begin{description}
+    \item[Includes:]
+	\textbf{min wordlen}, \textbf{max matches},
+	\textbf{header/trailer}, \textbf{longest match},
+	\textbf{prev matches}.
+    \item[Excludes:] \textit{none}.
+    \end{description}
+
+\item[\textbf{diff6}] This is the original difference algorithm
+    for comparing two revisions in the WikiTrust system, as
+    described in~\cite{Adler2007}.
+    %
+    \begin{description}
+    \item[Includes:]
+	\textbf{min wordlen}, \textbf{max matches}, \textbf{longest match},
+	\textbf{prev matches}.
+    \item[Excludes:]
+	\textbf{header/trailer}.
+    \end{description}
+    This version of the difference algorithm includes other
+    functionality not described here.
+    The source code implementing this version is available from
+    Github,\footnote{\url{http://www.github.com/collaborativetrust/WikiTrust}}
+    and corresponds to the function \texttt{edit\_diff\_core} in
+    file \texttt{chdiff.ml}.
+
+\item[\textbf{diff7}]
+    This is the difference algorithm currently running on the live
+    production
+    WikiTrust system.
+    %
+    \begin{description}
+    \item[Includes:]
+	\textbf{min wordlen}, \textbf{max matches}, \textbf{longest match},
+	\textbf{prev matches}, \textbf{header trailer}.
+    \item[Excludes:] \textit{none}.
+    \end{description}
+    %
+    It is able to process user reputations and text trust fast enough
+    to keep up with each change being made to the English Wikipedia.
+    The source code implementing this version
+    corresponds to the function \texttt{edit\_diff} in
+    file \texttt{chdiff.ml}, available via Github.
 
 \end{description}
 
@@ -143,109 +197,211 @@ which take as parameters the length of the match (parameter $k$),
 the matching positions in the source and target revisions
 (parameters $i_1$ and $i_2$), and the total length of
 each revision (parameters $l_1$ and $l_2$);
-a ``chunk index'' (parameter $c$) is also passed to the
-match quality function, but is only used in the computation
-of text longevity.
+a ``chunk index'' (parameter $c$
+\footnote{The \textit{chunk index} refers
+to which chunk a block of text comes from.
+Chunk~0 refers to the full text of the older revision being compared.
+Chunk~1 refers to text from the revision previous to that which was
+deleted in the edit that resulted in the revision of chunk~0.
+Chunk~2 refers to deleted text from the revision previous to the
+revision of chunk~1, and so on.
+This is an optimization described in Section~\ref{sec:diff-optimizations}
+for more efficient calculation of text authorship.
+In computing the edit distance, differences are only computed
+between two revisions, so we always have $c=0$.
+}) is also passed to the match quality function,
+but is only used in the computation of text longevity.
 The match qualities computed by our system are tuples,
 with lexicographically smaller tuples considered to be
-of higher quality.
+of higher quality.\footnote{Note that this is the inverse ordering
+to that described in Section~\ref{sec:diff-greedy}.}
 
+
+The initial set of match quality functions we present form the baseline
+functions of what would be achieved using the standard greedy
+algorithms for text differencing.
+They use the length of the match and the chunk index in various
+combinations.
+In these, and later match quality functions we define,
+we mark with a dagger ($\dagger$) those functions which are
+not compatible with the assumption that longest matches are
+preferred, used in our \textbf{longest match} optimization
+to the difference algorithms.
+%
+\begin{description}
+\item[\textbf{mq1}]
+    This version uses a match quality tuple of $(-k, c, 0)$.
+
+\item[\textbf{mq2}]
+    This version uses a match quality tuple of $(-k, -c, 0)$,
+    changing the sign of the chunk index to instead prefer
+    matches with older revisions.
+    Since the chunks older than chunk~0 are only fragments of
+    deleted text, potentially longer matches in more recent
+    text will be missed; for that reason, we expect this
+    match qualiy function to perform worse than \textbf{mq1}.
+
+\item[\textbf{mq3}]
+    This version uses a match quality tuple of $(c, -k, 0)$,
+    making the matching revision the dominant factor.
+    ${}^\dagger$
+
+\item[\textbf{mq4}]
+    This version uses a match quality tuple of $(-c, -k, 0)$,
+    reversing the preference for matches in the most recent revision.
+    We expect this match quality function to perform
+    worse than \textbf{mq3}.
+    ${}^\dagger$
+
+\end{description}
+
+The next set of match quality functions we present are
+based on the match quality described in the
+original WikiTrust publication~\cite{Adler2007}.
+%
 \begin{description}
 
-\item[\textbf{mq0}] This is the quality function used in the
-    live production WikiTrust system.
+\item[\textbf{mq5}]
+    Define
     \begin{equation*}
-    q := \abs{\cfrac{ i_1 + \cfrac{k}{2} }{l_1}
+    q := \cfrac{k}{\min{l_1, k_2}} - 0.3 \cdot
+        \abs{\cfrac{ i_1 + \cfrac{k}{2} }{l_1}
             - \cfrac{ i_2 + \cfrac{k}{2} }{l_2} }
     \end{equation*}
-    It computes the midpoint of each end of the match,
+    The match quality tuple generated by \textbf{mq5} is $(0, -c, -q)$.
+    ${}^\dagger$
+    This is exactly the match quality used in~\cite{Adler2007}.
+
+\item[\textbf{mq6}]
+    As with \textbf{mq5}, define
+    \begin{equation*}
+    q := \cfrac{k}{\min{l_1, l_2}} - 0.3 \cdot
+        \abs{\cfrac{ i_1 + \cfrac{k}{2} }{l_1}
+            - \cfrac{ i_2 + \cfrac{k}{2} }{l_2} }
+    \end{equation*}
+    To make \textbf{mq5} compatible with the \textbf{longest match}
+    optimization to the difference algorithm, we introduce the
+    match length as the primary discriminant:
+    the match quality tuple for \textbf{mq6} is $(-k, -c, -q)$.
+
+\item[\textbf{mq7}] This is a modification of \textbf{mq6}
+    to change the priority of the chunk index.
+    Define
+    \begin{equation*}
+    q := \cfrac{k}{\min{l_1, k_2}} - 0.3 \cdot
+        \abs{\cfrac{ i_1 + \cfrac{k}{2} }{l_1}
+            - \cfrac{ i_2 + \cfrac{k}{2} }{l_2} }
+    \end{equation*}
+    The match quality tuple is $(-k, c, -q)$.
+
+\end{description}
+
+The difficulty in working with the original WikiTrust
+match quality functions, \textbf{mq5}--\textbf{mq7},
+is that the definition of $q$ is doing too much.
+It tries to balance length of the match as a fraction
+of the document length, against the relative positioning
+of the matches.
+To get this balance right requires much experimentation across
+many documents, and even then might require revision as
+the dynamics of group collaboration in a document change over time.
+As part of the \textbf{longest match} optimization for the
+difference algorithm, it became necessary to separate the
+concern for match length from that of relative positioning,
+resulting in our current scheme of tuples to represent
+the match quality.
+This final set of match quality functions tests two variations
+of that idea:
+%
+\begin{description}
+
+\item[\textbf{mq8}] This is the quality function used in the
+    live production WikiTrust system.
+    Define
+    \begin{equation*}
+    q' := \abs{\cfrac{ i_1 + \cfrac{k}{2} }{l_1}
+            - \cfrac{ i_2 + \cfrac{k}{2} }{l_2} }
+    \end{equation*}
+    This computes the midpoint of each end of the match,
     and then compares their relative positions within
     the source and target revisions.
     The closer to the same relative position each end of
     the match is, the closer to zero $q'$ gets.
-    The final match quality tuple used is $(-k, -c, q)$.
+    The final match quality tuple used is $(-k, -c, q')$.
 
-\item[\textbf{mq1}] This is the quality function used in the
-    original WikiTrust publication~\cite{Adler2007}.
-    \begin{equation*}
-    q' := \cfrac{k}{\min{l_1, k_2}} - 0.3 \cdot
-        \abs{\cfrac{ i_1 + \cfrac{k}{2} }{l_1}
-            - \cfrac{ i_2 + \cfrac{k}{2} }{l_2} }
-    \end{equation*}
-    The match quality tuple is $(-l, -c, -q')$.
-
-    Note that this match quality will not work with
-    \textbf{diff0}, \textbf{diff1}, or \textbf{diff2}.
-
-\item[\textbf{mq2}] This is a modification of \textbf{mq1}
-    to change the priority of the chunk index; this would
-    only be reflected in text longevity.
-    \begin{equation*}
-    q' := \cfrac{k}{\min{l_1, k_2}} - 0.3 \cdot
-        \abs{\cfrac{ i_1 + \cfrac{k}{2} }{l_1}
-            - \cfrac{ i_2 + \cfrac{k}{2} }{l_2} }
-    \end{equation*}
-    The match quality tuple is $(-k, c, -q')$.
-
-\item[\textbf{mq3}] This modification of \textbf{mq0}
+\item[\textbf{mq9}] This modification of \textbf{mq8}
     changes the priority of the chunk index, to test
     the effect on text longevity.
     \begin{equation*}
-    q := \abs{\cfrac{ i_1 + \cfrac{k}{2} }{l_1}
+    q' := \abs{\cfrac{ i_1 + \cfrac{k}{2} }{l_1}
             - \cfrac{ i_2 + \cfrac{k}{2} }{l_2} }
     \end{equation*}
-    The final match quality tuple used is $(-k, c, q)$.
-
-\item[\textbf{mq4}] This is the quality function used in the
-    original WikiTrust publication~\cite{Adler2007}.
-    \begin{equation*}
-    q' := \cfrac{k}{\min{l_1, k_2}} - 0.3 \cdot
-        \abs{\cfrac{ i_1 + \cfrac{k}{2} }{l_1}
-            - \cfrac{ i_2 + \cfrac{k}{2} }{l_2} }
-    \end{equation*}
-    The match quality tuple is $(0, -c, -q')$,
-    but note that this match quality will not work with
-    \textbf{diff0}, \textbf{diff1}, or \textbf{diff2}
-    since it doesn't guarantee that longest matches
-    will occur first.
+    The final match quality tuple returned is $(-k, c, q')$.
 
 \end{description}
 
 \subsection{Edit Distance Formulas}
 
+The edit longevity measure uses edit distance as a proxy for the
+amount of work that an author puts into an edit.
+We tested the following definitions of edit distance to understand
+how this choice impacts the quality of the results.
+%
 \begin{description}
 
-\item[\textbf{ed0}] This is the edit distance computation used
-    in the live production system of WikiTrust.
-    Please refer to the source code, available at
-    Github,\footnote{\url{http://www.github.com/collaborativetrust/WikiTrust}}
-    for the details of this implementation.
-
 \item[\textbf{ed1}] This edit distance computes the sum of the lengths
-    of insertions and deletions, but ignores move operations.
+    of insertions and deletions, that is, the amount of text which
+    is either added or deleted from one revisions to the next:
     \begin{equation*}
     I_{tot} + D_{tot}
     \end{equation*}
 
-\item[\textbf{ed2}] This edit distance computes the sum of the lengths
+\item[\textbf{ed2}] Traditionally, edit distance functions incorporate
+    all the elements of an edit script, we define
+    this edit distance computes the sum of the lengths
     of insertions, deletions, and move operations.
-    \mynote{This probably isn't useful since this value is related
-    to the lengths of the two strings, minus the overlap.}
     \begin{equation*}
-    I_{tot} + D_{tot} + M_{tot}
+    I_{tot} + D_{tot} + M_{sum}
     \end{equation*}
-
-\item[\textbf{ed3}] This edit distance computes the sum of the lengths
-    of insertions and deletions, but includes a correction factor
-    to account for the fact that some insertion and deletion pairs
-    are actually replacements.
+    where
     \begin{equation*}
-    I_{tot} + D_{tot} - \frac{\min{I_{tot}, D_{tot}}}{2}
+    M_{sum}(m,n) = \sum_{\mathbf{Move}(i, j, k) \in E(m,n)} k \\
+    \end{equation*}
+    Note that any text which appears in both revisions which are being
+    compared will be counted as a move operation, even if it has not
+    relocated within the document.
+    For example, if there is no difference between two revisions of
+    an article, the edit script will consist of a single $\mathbf{Move}$
+    operation that is the size of the revisions.
+    Thus, we expect that this function will perform poorly because
+    it will be dominated by the size of the article.
+
+\item[\textbf{ed3}]
+    The WikiTrust difference algorithms do not keep track of replacements
+    in the text; instead, a replacement appears in the edit script as
+    both a deletion and corresponding insertion at the same point in the text.
+    We modify \textbf{ed1} to apply a correction factor which
+    assumes that some part of the work is always a replacement:
+    \begin{equation*}
+    I_{tot} + D_{tot} - \frac{\min(I_{tot}, D_{tot})}{2}
     \end{equation*}
 
 \item[\textbf{ed4}] This is the edit distance described in
+    Section~\ref{sec:eq-distances}, first proposed in
     the original WikiTrust paper~\cite{Adler2007}.
-    \mynote{TODO: Add this description in.}
+    \begin{equation*}
+    \max(I_{tot}, D_{tot}) - \frac{\min(I_{tot}, D_{tot})}{2}
+		+ M_{tot}
+    \end{equation*}
+
+\item[\textbf{ed5}] This is the edit distance computation used
+    in the live production system of WikiTrust.
+    Please refer to the source code, available at
+    Github,\footnote{\url{http://www.github.com/collaborativetrust/WikiTrust}}
+    for the details of this implementation.
+    \mynote{Do I need to say more here?  This is using some
+    code to calculate over connected components, but I don't see
+    what the intuition of it is.}
 
 \end{description}
 
