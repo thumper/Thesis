@@ -11,11 +11,11 @@ open(my $textshout, ">expt.out-table-textlong-short.tex")
     || die "open(textlong-short): $!";
 writeHeader();
 
-my %textcache, %textshcache, %editshcache;
+my (%textcache, %textshcache, %editshcache);
 my $expt = undef;
 
 while (<>) {
-    die "Memory error" if m/memory/i;
+    die "Error detected" if m/traceback/i;
     chomp;
     if (m/^\+ doexpt /) {
 	writeExpt($expt);
@@ -32,6 +32,8 @@ while (<>) {
 	parsePerf($expt, 'text');
     } elsif (m/^COMPUTING THE STATISTICS/) {
 	$expt->{timing} = parseCPUTime();
+    } elsif (m/^new max heap:/) {
+	parseHeapInfo($expt, $_);
     }
 }
 writeExpt($expt);
@@ -61,19 +63,25 @@ EOF
   \begin{center}
     \begin{tabular}{|c|c|c|c||c|c||c|c|c|c|}
 \hline
-Diff & Precise & Match Quality & Edit Dist
-        & ROC AUC & Mean Prec.
-        & Num Revs & Run Time
-        & Total Triangles & Bad Triangles \\
+ &  & Match & Edit 
+        & ROC & Mean
+        & Num & Run
+        & Total & Bad
+	& Heap & Memory \\
+Diff & Precise & Quality & Dist
+        & AUC & Prec.
+        & Revs & Time
+        & Triangles & Triangles
+	& Size & Usage \\
 \hline
 \hline
 EOF
     print $textshout <<'EOF';
 \begin{table}[tbph]
 \begin{center}
-\begin{tabular}{|c||c|c|c|}
+\begin{tabular}{|c||c||c|c|c|}
 \hline
-Match Quality & ROC AUC & Mean Prec. & Num Revs \\
+Diff & Match Quality & ROC AUC & Mean Prec. & Num Revs \\
 \hline
 \hline
 EOF
@@ -131,12 +139,13 @@ sub writeExpt {
     return if !defined $expt;
 
     # EDIT LONG
-    printf $editout 'diff%d & %s & mq%d & ed%d & %0.3f\\%% & %0.3f\\%% & %s & %dm & %s & %s \\\\'."\n",
+    printf $editout 'diff%d & %s & mq%d & ed%d & %0.3f\\%% & %0.3f\\%% & %s & %dm & %s & %s & %s & %sMB \\\\'."\n",
 	$expt->{diff}, $expt->{precise}, $expt->{mq}, $expt->{editdist},
 	$expt->{edit}->{ROC} * 100.0, $expt->{edit}->{APR} * 100.0,
 	commify($expt->{edit}->{size}),
 	$expt->{timing},
-	commify($expt->{tri_tot}), commify($expt->{tri_bad});
+	commify($expt->{tri_tot}), commify($expt->{tri_bad}),
+	commify($expt->{heaplen}), commify($expt->{maxmem});
 
 
     # TEXT LONG
@@ -146,7 +155,8 @@ sub writeExpt {
 	$expt->{text}->{ROC} * 100.0, $expt->{text}->{APR} * 100.0,
 	commify($expt->{text}->{size});
     if (exists $textcache{$key}) {
-        die "conflicing data" if $textcache{$key} ne $val;
+        die "conflicing data:\n1: $textcache{$key}\n2: $val\nfor key $key"
+	    if $textcache{$key} ne $val;
 	return;
     }
     $textcache{$key} = $val;
@@ -155,10 +165,10 @@ sub writeExpt {
     return if $expt->{precise} eq 'N';
 
     # EDIT LONG
-    my $key = "d".$expt->{diff}."ed".$expt->{editdist};
+    $key = "d".$expt->{diff}."ed".$expt->{editdist};
     next if exists $editshcache{$key};
     $editshcache{$key} = 1;
-    printf $editshout 'diff%d & ed%d & %0.3f\\%% & %0.3f\\%% & %s & %dm & %s & %s \\\\'."\n",
+    printf $editshout 'diff%d & mq%d & ed%d & %0.3f\\%% & %0.3f\\%% & %s & %dm & %s & %s \\\\'."\n",
 	$expt->{diff}, $expt->{mq}, $expt->{editdist},
 	$expt->{edit}->{ROC} * 100.0, $expt->{edit}->{APR} * 100.0,
 	commify($expt->{edit}->{size}),
@@ -166,13 +176,15 @@ sub writeExpt {
 	commify($expt->{tri_tot}), commify($expt->{tri_bad});
 
     # TEXT LONG
-    my $key = "mq".$expt->{mq};
-    my $val = sprintf 'mq%d & %0.3f\\%% & %0.3f\\%% & %s \\\\'."\n",
+    $key = "d".$expt->{diff}."mq".$expt->{mq};
+    $val = sprintf 'diff%d & mq%d & %0.3f\\%% & %0.3f\\%% & %s \\\\'."\n",
+	$expt->{diff},
 	$expt->{mq},
 	$expt->{text}->{ROC} * 100.0, $expt->{text}->{APR} * 100.0,
 	commify($expt->{text}->{size});
     if (exists $textshcache{$key}) {
-        die "conflicing data" if $textshcache{$key} ne $val;
+        die "conflicing textlong data:\n1: $textshcache{$key}\n2: $val\nfor key $key"
+	    if $textshcache{$key} ne $val;
 	return;
     }
     $textshcache{$key} = $val;
@@ -213,6 +225,7 @@ sub parseExpt {
 
 sub parseTriangles {
     while (<>) {
+	die "Error detected" if m/traceback/i;
 	next if m/^\+/;
 	chomp;
 	return $_ + 0 if m/^\d+$/;
@@ -224,6 +237,7 @@ sub parseSetSize {
     my $expt = shift @_;
     my $c = 0;
     while (<>) {
+	die "Error detected" if m/traceback/i;
 	chomp;
 	my @f = split(' ', $_);
         if ($f[3] eq 'perf-editlong.txt') {
@@ -239,11 +253,33 @@ sub parseSetSize {
     die "EOF on set size";
 }
 
+sub parseHeapInfo {
+    my ($expt, $line) = @_;
+    my $heaplen = 0;
+    my $maxmem = 0;
+    if (m/^new max heap:\s+(\d+)/) {
+	$heaplen = 0+$1;
+	$expt->{heaplen} = $heaplen if $heaplen > ($expt->{heaplen} || 0);
+    }
+    while (<>) {
+	die "Error detected" if m/traceback/i;
+	chomp;
+	if (m/^debug: kbytes = (\d+) ;/) {
+	    $maxmem = (0 + $1) / 1024.0;
+	    $maxmem = int($maxmem + 0.5);
+	    $expt->{maxmem} = $maxmem if $maxmem > ($expt->{maxmem} || 0);
+	    return;
+	}
+    }
+    die "EOF on heap info";
+}
+
 sub parsePerf {
     my $expt = shift @_;
     my $type = shift @_;
     my $c = 0;
     while (<>) {
+	die "Error detected" if m/traceback/i;
 	chomp;
 	if (m/^APR\b/) {
 	    my @f = split(' ');
@@ -262,6 +298,7 @@ sub parsePerf {
 sub parseCPUTime {
     my $total = 0.0;
     while (<>) {
+	die "Error detected" if m/traceback/i;
 	chomp;
 	if (m/^user\s+(\d+)m(\d+)\b/) {
 	    $total += $1 * 60 + $2;
