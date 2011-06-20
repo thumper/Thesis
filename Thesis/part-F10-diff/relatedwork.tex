@@ -29,15 +29,21 @@ Interestingly,
 Myers shows that LCS and shortest edit script are equivalent to finding
 different paths in an edit graph~\cite{Myers1986}.
 
-Specific to the Wikipedia, Fong and Biuk-Aghai present a different
-dimension of the string-to-string correction problem~\cite{Fong2010}.
+Specific to the Wikipedia, our work presents a different
+dimension of the string-to-string correction problem.
 In previous formulations, solutions are optimized for abstract
 performance characteristics (\eg running time or
-edit distance~\cite{Levenshtein1966}); but the Wikipedia computes text differences
-to present for human understanding.
-Fong and Biuk-Aghai apply the hierarchical differencing idea of
-Neuwirth~\etal~\cite{Neuwirth1992} to the differencing algorithm used by the
-WikiTrust project~\cite{Adler2007}, and additionally classify components
+edit distance~\cite{Levenshtein1966}); the Wikipedia instead computes text
+differences to present for human understanding.
+We use the block moves of Tichy~\cite{Tichy1984}}, but rather
+than using greedy selection of the longest match given a specific
+starting location, we perform a global greedy selection of the
+\textit{best match} (\eg the longest match) anywhere within the
+source and target strings.
+Fong and Biuk-Aghai extend the WikiTrust work by applying
+the hierarchical differencing idea of
+Neuwirth~\etal~\cite{Neuwirth1992} to our differencing algorithm,
+and additionally classify components
 of the edit script according to common behaviors of Wikipedia editors.
 
 Historians of computer science will note a relation
