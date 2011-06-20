@@ -631,6 +631,229 @@ My quick pass over the tables shows:
     in how many bad (and total) triangles there are.
 \end{enumerate}
 
+\subsection{19-Jun-2011}
+
+Spent yesterday going over each of the algorithms and making
+sure that I had described them correctly; decided to label
+by what optimizations are included and excluded.
+Also wrote a separate ``memory test'' for each diff algorithm,
+to be able to get a rough idea that it would succeed.
+Discovered that the ``slow diff'' (that is, not using the
+\textbf{longest match} optimization) uses a ridiculous amount
+of memory --- I'm not sure if it's ever succeeded, now.
+In my testing, I gave it up to 600MB, and it still ran out;
+since I only have about 1.4GB free on Gaston, I don't want
+to experiment too much more with it.
+
+Just looked harder into the \textbf{prev matches} optimization.
+This is an optimization that uses the list of matches from the
+previous word to decide whether the current word is part of a longer
+match that was already submitted; the idea is that comparing against
+this list uses less memory (and probably faster)
+than a hashtable of all the matches found so far.
+I guess I hadn't thought about this optimization much; it only
+makes sense as a variation of the \textbf{longest match} optimization,
+since it is a way to eliminate substrings.
+And I had previously thought that it would only eliminate the
+second word of a longer match, because I was thinking of Move
+operations from the edit script.  The \textbf{prev matches}
+variation works because it's checking against the matches
+from hashtable of string prefixes; by induction, if the word
+at position $i$ is part of a longer match, then so is the word
+at position $i-1$, both of which are returned by the hashtable
+for their respective words.
+
+The new labels are:
+\begin{description}
+\item[\textbf{diff1}]
+    Implementation of the Tichy greedy algorithm, including optimizations
+    suggested by Obst and Reichenberger.
+    \begin{description}
+    \item[Includes:]
+        \textbf{min wordlen}, \textbf{max matches},
+    \item[Excludes:]
+        \textbf{header/trailer}.
+        \textbf{longest match}, \textbf{prev matches}.
+    \end{description}
+
+\item[\textbf{diff2}]
+    Implementation of the Tichy greedy algorithm, including optimizations
+    suggested by Obst and Reichenberger.  Also includes the
+    \textbf{header/trailer} optimization.
+    \begin{description}
+    \item[Includes:]
+        \textbf{min wordlen}, \textbf{max matches}, \textbf{header/trailer}
+    \item[Excludes:]
+        \textbf{longest match}, \textbf{prev matches}.
+    \end{description}
+
+\item[\textbf{diff3}]
+    \begin{description}
+    \item[Includes:]
+        \textbf{min wordlen}, \textbf{max matches},
+        \textbf{header/trailer}, \textbf{longest match}.
+    \item[Excludes:]
+        \textbf{prev matches}.
+    \end{description}
+
+\item[\textbf{diff4}]
+    \begin{description}
+    \item[Includes:]
+        \textbf{min wordlen}, \textbf{max matches}, \textbf{longest match},
+        \textbf{prev matches}.
+    \item[Excludes:]
+        \textbf{header/trailer}.
+    \end{description}
+\item[\textbf{diff5}]
+    \begin{description}
+    \item[Includes:]
+        \textbf{min wordlen}, \textbf{max matches},
+        \textbf{header/trailer}, \textbf{longest match},
+        \textbf{prev matches}.
+    \item[Excludes:] \textit{none}.
+    \end{description}
+
+\item[\textbf{diff6}] This is the original difference algorithm,
+    \texttt{edit\_diff\_core}.
+    \begin{description}
+    \item[Includes:]
+        \textbf{min wordlen}, \textbf{max matches}, \textbf{longest match},
+        \textbf{prev matches}.
+    \item[Excludes:]
+        \textbf{header/trailer}.
+    \end{description}
+
+\item[\textbf{diff7}]
+    This is the currently live difference algorithm on the production system.
+    \begin{description}
+    \item[Includes:]
+        \textbf{min wordlen}, \textbf{max matches}, \textbf{longest match},
+        \textbf{prev matches}, \textbf{header trailer}.
+   \item[Excludes:] \textit{none}.
+    \end{description}
+
+\item[\textbf{diff8}]
+    \begin{description}
+    \item[Includes:]
+        \textbf{min wordlen}, \textbf{max matches}, \textbf{longest match}.
+    \item[Excludes:]
+        \textbf{prev matches}, \textbf{header/trailer}
+    \end{description}
+
+\item[\textbf{diff9}]
+    This version uses too much memory to be able to get a good read
+    on it.  It should generate the same results as those which use
+    the \textbf{longest match} optimization, and I included it just
+    to verify that the results were actually the same.
+    \begin{description}
+    \item[Includes:]
+        \textbf{min wordlen}, \textbf{max matches},
+        \textbf{header/trailer}.
+    \item[Excludes:]
+        \textbf{longest match}, \textbf{prev matches}.
+    \end{description}
+
+\end{description}
+
+
+\begin{description}
+\item[\textbf{mq1}]
+    This version uses a match quality tuple of $(-k, c, 0)$.
+
+\item[\textbf{mq2}]
+    This version uses a match quality tuple of $(-k, -c, 0)$.
+
+\item[\textbf{mq3}]
+    This version uses a match quality tuple of $(c, -k, 0)$.
+    ${}^\dagger$
+
+\item[\textbf{mq4}]
+    This version uses a match quality tuple of $(-c, -k, 0)$.
+    ${}^\dagger$
+
+\item[\textbf{mq5}]
+    Define
+    \begin{equation*}
+    q := \cfrac{k}{\min{l_1, k_2}} - 0.3 \cdot
+        \abs{\cfrac{ i_1 + \cfrac{k}{2} }{l_1}
+            - \cfrac{ i_2 + \cfrac{k}{2} }{l_2} }
+    \end{equation*}
+    The match quality tuple generated by \textbf{mq5} is $(0, -c, -q)$.
+    ${}^\dagger$
+    This is exactly the match quality used in the original
+    WikiTrust paper.
+
+\item[\textbf{mq6}]
+    Define
+    \begin{equation*}
+    q := \cfrac{k}{\min{l_1, l_2}} - 0.3 \cdot
+        \abs{\cfrac{ i_1 + \cfrac{k}{2} }{l_1}
+            - \cfrac{ i_2 + \cfrac{k}{2} }{l_2} }
+    \end{equation*}
+    The match quality tuple for \textbf{mq6} is $(-k, -c, -q)$.
+
+\item[\textbf{mq7}]
+    Define
+    \begin{equation*}
+    q := \cfrac{k}{\min{l_1, k_2}} - 0.3 \cdot
+        \abs{\cfrac{ i_1 + \cfrac{k}{2} }{l_1}
+            - \cfrac{ i_2 + \cfrac{k}{2} }{l_2} }
+    \end{equation*}
+    The match quality tuple is $(-k, c, -q)$.
+\item[\textbf{mq8}] This is the quality function used in the
+    live production WikiTrust system.
+    Define
+    \begin{equation*}
+    q' := \abs{\cfrac{ i_1 + \cfrac{k}{2} }{l_1}
+            - \cfrac{ i_2 + \cfrac{k}{2} }{l_2} }
+    \end{equation*}
+    The final match quality tuple used is $(-k, -c, q')$.
+
+\item[\textbf{mq9}]
+    \begin{equation*}
+    q' := \abs{\cfrac{ i_1 + \cfrac{k}{2} }{l_1}
+            - \cfrac{ i_2 + \cfrac{k}{2} }{l_2} }
+    \end{equation*}
+    The final match quality tuple returned is $(-k, c, q')$.
+\end{description}
+
+
+\begin{description}
+
+\item[\textbf{ed1}]
+    \begin{equation*}
+    I_{tot} + D_{tot}
+    \end{equation*}
+\item[\textbf{ed2}]
+    \begin{equation*}
+    I_{tot} + D_{tot} + M_{sum}
+    \end{equation*}
+    where
+    \begin{equation*}
+    M_{sum}(m,n) = \sum_{\mathbf{Move}(i, j, k) \in E(m,n)} k \\
+    \end{equation*}
+\item[\textbf{ed3}]
+    \begin{equation*}
+    I_{tot} + D_{tot} - \frac{\min(I_{tot}, D_{tot})}{2}
+    \end{equation*}
+
+\item[\textbf{ed4}]
+    \begin{equation*}
+    \max(I_{tot}, D_{tot}) - \frac{\min(I_{tot}, D_{tot})}{2}
+                + M_{tot}
+    \end{equation*}
+
+\item[\textbf{ed5}] This is the edit distance computation used
+    in the live production system of WikiTrust.
+
+\end{description}
+
+
+\mynote{Waiting for memory test to finish on Gaston.}
+
+
+
+
 \section{Reverse Triangle Inequality}
 
 \subsection{12-Jun-2011}

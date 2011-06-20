@@ -17,15 +17,17 @@ Tichy advances the idea that finding the shortest edit script is a
 useful solution to the string-to-string correction problem, and
 introduces \intro{block moves} as a useful operation in edit
 scripts~\cite{Tichy1984}.
-This takes advantage of the fact that strings may include internal
-replication of symbols.
-
+The algorithm loops through the target string and greedily chooses
+the longest match from the source string, which Tichy proves as
+generating the shortest edit script transforming the source to the
+target string.
+This greedy solution is refined by in several way,
+by indexing on string prefixes~\cite{Obst1987},
+efficient generation of deletion operations~\cite{Reichenberger1997},
+and restricting block moves to be in sequence~\cite{Burns1997}.
+Interestingly,
 Myers shows that LCS and shortest edit script are equivalent to finding
-different paths in an edit graph~\cite{Myers1986}, and develops a
-``greedy'' solution to the problem.
-Burns and Long~\cite{Burns1997} extend~\cite{Reichenberger1991},
-which combines the greedy technique with Tichy's solution,
-obtaining improved performance characteristics.
+different paths in an edit graph~\cite{Myers1986}.
 
 Specific to the Wikipedia, Fong and Biuk-Aghai present a different
 dimension of the string-to-string correction problem~\cite{Fong2010}.

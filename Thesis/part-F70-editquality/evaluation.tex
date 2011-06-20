@@ -83,32 +83,29 @@ To provide a more complete picture of how the choice of difference
 algorithm affects the performance of the quality measures,
 we present an evaluation of some variations of the algorithms.
 The list of algorithm variations that we tried are as follows:
-
+%
 \begin{description}
+
 \item[\textbf{diff1}]
-    This diff algorithm implements exactly the matching
-    we describe in Chapter~\ref{ch:diff}, with all optimizations except
-    for the \textbf{header/trailer} optimization.
-    A Perl language implementation of
-    this algorithm is listed in Appendix~\ref{app:fasterdiffsrc-perl};
-    the OCaml version appears in Appendix \mynote{TODO}.
-    %
+    Implementation of the Tichy greedy algorithm, including optimizations
+    suggested by Obst and Reichenberger.
     \begin{description}
     \item[Includes:]
-	\textbf{min wordlen}, \textbf{max matches},
-	\textbf{header/trailer}.
+        \textbf{min wordlen}, \textbf{max matches},
     \item[Excludes:]
-	\textbf{longest match}, \textbf{prev matches}.
+        \textbf{header/trailer}.
+        \textbf{longest match}, \textbf{prev matches}.
     \end{description}
 
 \item[\textbf{diff2}]
-    %
+    Implementation of the Tichy greedy algorithm, including optimizations
+    suggested by Obst and Reichenberger.  Also includes the
+    \textbf{header/trailer} optimization.
     \begin{description}
     \item[Includes:]
-	\textbf{min wordlen}, \textbf{max matches},
-	\textbf{header/trailer}, \textbf{longest match}.
+        \textbf{min wordlen}, \textbf{max matches}, \textbf{header/trailer}
     \item[Excludes:]
-	\textbf{prev matches}.
+        \textbf{longest match}, \textbf{prev matches}.
     \end{description}
 
 \item[\textbf{diff3}]
@@ -116,9 +113,9 @@ The list of algorithm variations that we tried are as follows:
     \begin{description}
     \item[Includes:]
 	\textbf{min wordlen}, \textbf{max matches},
-	\textbf{prev matches}, \textbf{header trailer}.
+	\textbf{header/trailer}, \textbf{longest match}.
     \item[Excludes:]
-	\textbf{longest match}.
+	\textbf{prev matches}.
     \end{description}
 
 \item[\textbf{diff4}]
@@ -182,6 +179,32 @@ The list of algorithm variations that we tried are as follows:
     The source code implementing this version
     corresponds to the function \texttt{edit\_diff} in
     file \texttt{chdiff.ml}, available via Github.
+
+\item[\textbf{diff8}]
+    This diff algorithm implements exactly the matching
+    we describe in Chapter~\ref{ch:diff}, with all optimizations except
+    for the \textbf{header/trailer} optimization.
+    A Perl language implementation of
+    this algorithm is listed in Appendix~\ref{app:fasterdiffsrc-perl};
+    the OCaml version appears in Appendix \mynote{TODO}.
+    %
+    \begin{description}
+    \item[Includes:]
+	\textbf{min wordlen}, \textbf{max matches}, \textbf{longest match}.
+    \item[Excludes:]
+	\textbf{prev matches}, \textbf{header trailer}.
+    \end{description}
+
+\item[\textbf{diff9}]
+    This version is too slow and uses too much memory.
+    %
+    \begin{description}
+    \item[Includes:]
+	\textbf{min wordlen}, \textbf{max matches},
+	\textbf{header/trailer}.
+    \item[Excludes:]
+	\textbf{longest match}, \textbf{prev matches}.
+    \end{description}
 
 \end{description}
 

@@ -246,17 +246,6 @@ step are:
     if the header or trailer is duplicated elsewhere in the article,
     then the original authorship still needs to be retained.
 
-\item[\textbf{prev matches}]
-    For computing the edit distance between two revisions,
-    our mechanism of comparing against multiple older revisions
-    is unnecessary.
-    In that case, we can avoid placing an substring match
-    into the priority queue by checking to see if the previous
-    word was the beginning of a match; in that case, we know this
-    word must also be part of that same match.
-    \mynote{This seems like it would skip the second word, but
-    not later words of the same match!}
-
 \end{description}
 
 \begin{table}

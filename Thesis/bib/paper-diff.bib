@@ -66,6 +66,13 @@
     number = 4,
     pages = {309--321},
     year = 1984,
+    annote = {Loops through the target string, and greedily chooses
+        the longest match it can find.
+        Introduces the idea of having an index of positions
+        for all symbols in the alphabet (first improvement).
+        Also uses suffix trees, making the final algorithm
+        have total runnint time and space requirements of O(m + n).
+    }
 }
 
 @book{Gusfield1999,
@@ -104,6 +111,12 @@
     number = 2,
     pages = {251--266},
     year = 1986,
+    annote = {This paper shows that finding the longest common
+        subsequence and shortest edit script are equivalent to
+        finding the shortest and longest paths in an edit graph.
+        He uses this observation to develop a new algorithm
+        which has time and space requirements of O(M+N+D),
+        where D is the size of the minimum edit script.},
 }
 
 @inproceedings{Burns1997,
@@ -113,7 +126,49 @@
 	Conference},
 	pages = "429--436",
     publisher = "{IEEE} International",
-    year = 1997
+    year = 1997,
+    annote = {
+	In part II, they show that a greedy algorithm is optimal,
+	but takes time O(l1 * l2).  Their assumption is that all
+	symbols appear in the original revision, so that the full
+	edit script is simply a collection of Move operations.
+	Their proof shows that in this case, the optimal encoding
+	and the greedy method have the same size edit script.
+
+	In II.B, they talk about the hash of string prefixes.
+	They use a footprint, rather than the actual actual symbols.
+	The number of matching footprints can grow at O(l1 * l2);
+	consider case where original document is "the the" and
+	new document is duplicated 2 times.
+	The hash itself grows at O(l2).
+
+	Part III.  To get linear time performance, they only
+	consider matches that are beyond the offset of the
+	previous match.  The actual algorithm uses a hash table
+	constructed by looping through both versions simultaneously.
+
+        Their final algorithm runs in O(M+N) and uses constant space, O(1).
+    }
+}
+
+@inproceedings{Obst1987,
+    author = {Wolfgang Obst},
+    title = {Delta Technique and String-to-String Correction},
+    booktitle = {Proceedings of the 1st European Software Engineering
+	Conference},
+    series = {ESEC 1987},
+    pages = {64--68},
+    publisher = {Springer},
+    series = {Lecture Notes in Computer Science},
+    volume = 289,
+    year = 1987,
+    annote = {
+	Introduces the idea of hashing on string prefixes?
+        Actually, Tichy1984 already mentions having an index
+        for each symbol in the alphabet.
+        Probably, this paper introduces the idea of using
+        string prefixes to improve performance.
+    }
 }
 
 @inproceedings{Reichenberger1991,
@@ -124,7 +179,26 @@
     pages = {144--152},
     publisher = {ACM},
     year = 1991,
+    annote = {
+	References Obst1987 for hashing of string prefixes.
+        Tichy1984 already includes an index of every symbol
+        in the alphabet, so maybe Obst introduces the
+        idea of multi-symbol prefixes to improve performance.
+
+	The key insight added by this paper is that you can
+	coalesce individual byte delete operations while
+	you are looping over the list of words.
+	This works because they are choosing the longest
+	possible match, working from left to right,
+	rather than the longest possible match in the whole
+	document.
+
+        Seems to describe Tichy1984 as having the one-byte Inserts,
+        which I suppose is right given how Tichy wrote the
+        description of the algorithm.
+    }
 }
+
 
 @inproceedings{Neuwirth1992,
     author = {Christine M. Neuwirth and Ravinder Chandhok
