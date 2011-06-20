@@ -52,12 +52,14 @@ function doexpt {
 
 ####################################################################
 
-#doexpt "diff=1 precise match-quality=1 edist=1" "--diff 1 --precise --match_quality 1 --edit_distance 1"
-#doexpt "diff=2 precise match-quality=1 edist=1" "--diff 2 --precise --match_quality 1 --edit_distance 1"
+doexpt "diff=1 precise match-quality=1 edist=1" "--diff 1 --precise --match_quality 1 --edit_distance 1"
+doexpt "diff=2 precise match-quality=1 edist=1" "--diff 2 --precise --match_quality 1 --edit_distance 1"
 doexpt "diff=3 precise match-quality=1 edist=1" "--diff 3 --precise --match_quality 1 --edit_distance 1"
 doexpt "diff=4 precise match-quality=1 edist=1" "--diff 4 --precise --match_quality 1 --edit_distance 1"
 doexpt "diff=5 precise match-quality=1 edist=1" "--diff 5 --precise --match_quality 1 --edit_distance 1"
 doexpt "diff=6 precise match-quality=1 edist=1" "--diff 6 --precise --match_quality 1 --edit_distance 1"
 doexpt "diff=7 precise match-quality=1 edist=1" "--diff 7 --precise --match_quality 1 --edit_distance 1"
+doexpt "diff=8 precise match-quality=1 edist=1" "--diff 8 --precise --match_quality 1 --edit_distance 1"
+#doexpt "diff=9 precise match-quality=1 edist=1" "--diff 9 --precise --match_quality 1 --edit_distance 1"
 
 
