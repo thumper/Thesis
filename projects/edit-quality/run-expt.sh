@@ -50,164 +50,25 @@ function doexpt {
 
 ####################################################################
 
-doexpt "diff=0" ""
-doexpt "diff=0 precise" "--precise"
-doexpt "diff=0 match-quality=1" "--match_quality 1"
-doexpt "diff=0 precise match-quality=1" "--precise --match_quality 1"
-doexpt "diff=0 match-quality=2" "--match_quality 2"
-doexpt "diff=0 precise match-quality=2" "--precise --match_quality 2"
-doexpt "diff=0 match-quality=3" "--match_quality 2"
-doexpt "diff=0 precise match-quality=3" "--precise --match_quality 3"
-
-doexpt "diff=0 edist=1" "--edit_distance 1"
-doexpt "diff=0 precise edist=1" "--precise --edit_distance 1"
-doexpt "diff=0 match-quality=1 edist=1" "--match_quality 1 --edit_distance 1"
-doexpt "diff=0 precise match-quality=1 edist=1" "--precise --match_quality 1 --edit_distance 1"
-doexpt "diff=0 match-quality=2 edist=1" "--match_quality 2 --edit_distance 1"
-doexpt "diff=0 precise match-quality=2 edist=1" "--precise --match_quality 2 --edit_distance 1"
-doexpt "diff=0 match-quality=3 edist=1" "--match_quality 3 --edit_distance 1"
-doexpt "diff=0 precise match-quality=3 edist=1" "--precise --match_quality 3 --edit_distance 1"
-
-doexpt "diff=0 edist=2" "--edit_distance 2"
-doexpt "diff=0 precise edist=2" "--precise --edit_distance 2"
-doexpt "diff=0 match-quality=1 edist=2" "--match_quality 1 --edit_distance 2"
-doexpt "diff=0 precise match-quality=1 edist=2" "--precise --match_quality 1 --edit_distance 2"
-doexpt "diff=0 match-quality=2 edist=2" "--match_quality 2 --edit_distance 2"
-doexpt "diff=0 precise match-quality=2 edist=2" "--precise --match_quality 2 --edit_distance 2"
-doexpt "diff=0 match-quality=3 edist=2" "--match_quality 3 --edit_distance 2"
-doexpt "diff=0 precise match-quality=3 edist=2" "--precise --match_quality 3 --edit_distance 2"
-
-doexpt "diff=0 edist=3" "--edit_distance 3"
-doexpt "diff=0 precise edist=3" "--precise --edit_distance 3"
-doexpt "diff=0 match-quality=1 edist=3" "--match_quality 1 --edit_distance 3"
-doexpt "diff=0 precise match-quality=1 edist=3" "--precise --match_quality 1 --edit_distance 3"
-doexpt "diff=0 match-quality=2 edist=3" "--match_quality 2 --edit_distance 3"
-doexpt "diff=0 precise match-quality=2 edist=3" "--precise --match_quality 2 --edit_distance 3"
-doexpt "diff=0 match-quality=3 edist=3" "--match_quality 3 --edit_distance 3"
-doexpt "diff=0 precise match-quality=3 edist=3" "--precise --match_quality 3 --edit_distance 3"
-
-doexpt "diff=0 edist=4" "--edit_distance 4"
-doexpt "diff=0 precise edist=4" "--precise --edit_distance 4"
-doexpt "diff=0 match-quality=1 edist=4" "--match_quality 1 --edit_distance 4"
-doexpt "diff=0 precise match-quality=1 edist=4" "--precise --match_quality 1 --edit_distance 4"
-doexpt "diff=0 match-quality=2 edist=4" "--match_quality 2 --edit_distance 4"
-doexpt "diff=0 precise match-quality=2 edist=4" "--precise --match_quality 2 --edit_distance 4"
-doexpt "diff=0 match-quality=3 edist=4" "--match_quality 3 --edit_distance 4"
-doexpt "diff=0 precise match-quality=3 edist=4" "--precise --match_quality 3 --edit_distance 4"
+for diff in {1..8}
+do
+  for mq in {1..9}
+  do
+    for ed in {1..5}
+    do
+      doexpt "diff=$diff precise match-quality=$mq edist=$ed" "--diff $diff --precise --match_quality $mq --edit_distance $ed"
+    done
+  done
+done
+exit 0;
 
 ####################################################################
 
-doexpt "diff=1 precise" "--diff 1 --precise"
-doexpt "diff=1 precise match-quality=1" "--diff 1 --precise --match_quality 1"
-doexpt "diff=1 precise match-quality=2" "--diff 1 --precise --match_quality 2"
-doexpt "diff=1 precise match-quality=3" "--diff 1 --precise --match_quality 3"
-
-doexpt "diff=1 precise edist=1" "--diff 1 --precise --edit_distance 1"
-doexpt "diff=1 precise match-quality=1 edist=1" "--diff 1 --precise --match_quality 1 --edit_distance 1"
-doexpt "diff=1 precise match-quality=2 edist=1" "--diff 1 --precise --match_quality 2 --edit_distance 1"
-doexpt "diff=1 precise match-quality=3 edist=1" "--diff 1 --precise --match_quality 3 --edit_distance 1"
-
-doexpt "diff=1 precise edist=2" "--diff 1 --precise --edit_distance 2"
-doexpt "diff=1 precise match-quality=1 edist=2" "--diff 1 --precise --match_quality 1 --edit_distance 2"
-doexpt "diff=1 precise match-quality=2 edist=2" "--diff 1 --precise --match_quality 2 --edit_distance 2"
-doexpt "diff=1 precise match-quality=3 edist=2" "--diff 1 --precise --match_quality 3 --edit_distance 2"
-
-doexpt "diff=1 precise edist=3" "--diff 1 --precise --edit_distance 3"
-doexpt "diff=1 precise match-quality=1 edist=3" "--diff 1 --precise --match_quality 1 --edit_distance 3"
-doexpt "diff=1 precise match-quality=2 edist=3" "--diff 1 --precise --match_quality 2 --edit_distance 3"
-doexpt "diff=1 precise match-quality=3 edist=3" "--diff 1 --precise --match_quality 3 --edit_distance 3"
-
-doexpt "diff=1 precise edist=4" "--diff 1 --precise --edit_distance 4"
-doexpt "diff=1 precise match-quality=1 edist=4" "--diff 1 --precise --match_quality 1 --edit_distance 4"
-doexpt "diff=1 precise match-quality=2 edist=4" "--diff 1 --precise --match_quality 2 --edit_distance 4"
-doexpt "diff=1 precise match-quality=3 edist=4" "--diff 1 --precise --match_quality 3 --edit_distance 4"
-
-####################################################################
-
-doexpt "diff=2" "--diff 2 "
-doexpt "diff=2 precise" "--diff 2 --precise"
-doexpt "diff=2 precise match-quality=1" "--diff 2 --precise --match_quality 1"
-doexpt "diff=2 precise match-quality=2" "--diff 2 --precise --match_quality 2"
-doexpt "diff=2 precise match-quality=3" "--diff 2 --precise --match_quality 3"
-
-doexpt "diff=2 precise edist=1" "--diff 2 --precise --edit_distance 1"
-doexpt "diff=2 precise match-quality=1 edist=1" "--diff 2 --precise --match_quality 1 --edit_distance 1"
-doexpt "diff=2 precise match-quality=2 edist=1" "--diff 2 --precise --match_quality 2 --edit_distance 1"
-doexpt "diff=2 precise match-quality=3 edist=1" "--diff 2 --precise --match_quality 3 --edit_distance 1"
-
-doexpt "diff=2 precise edist=2" "--diff 2 --precise --edit_distance 2"
-doexpt "diff=2 precise match-quality=1 edist=2" "--diff 2 --precise --match_quality 1 --edit_distance 2"
-doexpt "diff=2 precise match-quality=2 edist=2" "--diff 2 --precise --match_quality 2 --edit_distance 2"
-doexpt "diff=2 precise match-quality=3 edist=2" "--diff 2 --precise --match_quality 3 --edit_distance 2"
-
-doexpt "diff=2 precise edist=3" "--diff 2 --precise --edit_distance 3"
-doexpt "diff=2 precise match-quality=1 edist=3" "--diff 2 --precise --match_quality 1 --edit_distance 3"
-doexpt "diff=2 precise match-quality=2 edist=3" "--diff 2 --precise --match_quality 2 --edit_distance 3"
-doexpt "diff=2 precise match-quality=3 edist=3" "--diff 2 --precise --match_quality 3 --edit_distance 3"
-
-doexpt "diff=2 precise edist=4" "--diff 2 --precise --edit_distance 4"
-doexpt "diff=2 precise match-quality=1 edist=4" "--diff 2 --precise --match_quality 1 --edit_distance 4"
-doexpt "diff=2 precise match-quality=2 edist=4" "--diff 2 --precise --match_quality 2 --edit_distance 4"
-doexpt "diff=2 precise match-quality=3 edist=4" "--diff 2 --precise --match_quality 3 --edit_distance 4"
-doexpt "diff=2 precise match-quality=4 edist=4" "--diff 2 --precise --match_quality 4 --edit_distance 4"
-
-####################################################################
-
-doexpt "diff=3" "--diff 3 "
-doexpt "diff=3 precise" "--diff 3 --precise"
-doexpt "diff=3 precise match-quality=1" "--diff 3 --precise --match_quality 1"
-doexpt "diff=3 precise match-quality=2" "--diff 3 --precise --match_quality 2"
-doexpt "diff=3 precise match-quality=3" "--diff 3 --precise --match_quality 3"
-
-doexpt "diff=3 precise edist=1" "--diff 3 --precise --edit_distance 1"
-doexpt "diff=3 precise match-quality=1 edist=1" "--diff 3 --precise --match_quality 1 --edit_distance 1"
-doexpt "diff=3 precise match-quality=2 edist=1" "--diff 3 --precise --match_quality 2 --edit_distance 1"
-doexpt "diff=3 precise match-quality=3 edist=1" "--diff 3 --precise --match_quality 3 --edit_distance 1"
-
-doexpt "diff=3 precise edist=2" "--diff 3 --precise --edit_distance 2"
-doexpt "diff=3 precise match-quality=1 edist=2" "--diff 3 --precise --match_quality 1 --edit_distance 2"
-doexpt "diff=3 precise match-quality=2 edist=2" "--diff 3 --precise --match_quality 2 --edit_distance 2"
-doexpt "diff=3 precise match-quality=3 edist=2" "--diff 3 --precise --match_quality 3 --edit_distance 2"
-
-doexpt "diff=3 precise edist=3" "--diff 3 --precise --edit_distance 3"
-doexpt "diff=3 precise match-quality=1 edist=3" "--diff 3 --precise --match_quality 1 --edit_distance 3"
-doexpt "diff=3 precise match-quality=2 edist=3" "--diff 3 --precise --match_quality 2 --edit_distance 3"
-doexpt "diff=3 precise match-quality=3 edist=3" "--diff 3 --precise --match_quality 3 --edit_distance 3"
-
-doexpt "diff=3 precise edist=4" "--diff 3 --precise --edit_distance 4"
-doexpt "diff=3 precise match-quality=1 edist=4" "--diff 3 --precise --match_quality 1 --edit_distance 4"
-doexpt "diff=3 precise match-quality=2 edist=4" "--diff 3 --precise --match_quality 2 --edit_distance 4"
-doexpt "diff=3 precise match-quality=3 edist=4" "--diff 3 --precise --match_quality 3 --edit_distance 4"
-doexpt "diff=3 precise match-quality=4 edist=4" "--diff 3 --precise --match_quality 4 --edit_distance 4"
-
-####################################################################
-
-doexpt "diff=4" "--diff 4 "
-doexpt "diff=4 precise" "--diff 4 --precise"
-doexpt "diff=4 precise match-quality=1" "--diff 4 --precise --match_quality 1"
-doexpt "diff=4 precise match-quality=2" "--diff 4 --precise --match_quality 2"
-doexpt "diff=4 precise match-quality=3" "--diff 4 --precise --match_quality 3"
-
-doexpt "diff=4 precise edist=1" "--diff 4 --precise --edit_distance 1"
-doexpt "diff=4 precise match-quality=1 edist=1" "--diff 4 --precise --match_quality 1 --edit_distance 1"
-doexpt "diff=4 precise match-quality=2 edist=1" "--diff 4 --precise --match_quality 2 --edit_distance 1"
-doexpt "diff=4 precise match-quality=3 edist=1" "--diff 4 --precise --match_quality 3 --edit_distance 1"
-
-doexpt "diff=4 precise edist=2" "--diff 4 --precise --edit_distance 2"
-doexpt "diff=4 precise match-quality=1 edist=2" "--diff 4 --precise --match_quality 1 --edit_distance 2"
-doexpt "diff=4 precise match-quality=2 edist=2" "--diff 4 --precise --match_quality 2 --edit_distance 2"
-doexpt "diff=4 precise match-quality=3 edist=2" "--diff 4 --precise --match_quality 3 --edit_distance 2"
-
-doexpt "diff=4 precise edist=3" "--diff 4 --precise --edit_distance 3"
-doexpt "diff=4 precise match-quality=1 edist=3" "--diff 4 --precise --match_quality 1 --edit_distance 3"
-doexpt "diff=4 precise match-quality=2 edist=3" "--diff 4 --precise --match_quality 2 --edit_distance 3"
-doexpt "diff=4 precise match-quality=3 edist=3" "--diff 4 --precise --match_quality 3 --edit_distance 3"
-
-doexpt "diff=4 precise edist=4" "--diff 4 --precise --edit_distance 4"
-doexpt "diff=4 precise match-quality=1 edist=4" "--diff 4 --precise --match_quality 1 --edit_distance 4"
-doexpt "diff=4 precise match-quality=2 edist=4" "--diff 4 --precise --match_quality 2 --edit_distance 4"
-doexpt "diff=4 precise match-quality=3 edist=4" "--diff 4 --precise --match_quality 3 --edit_distance 4"
-doexpt "diff=4 precise match-quality=4 edist=4" "--diff 4 --precise --match_quality 4 --edit_distance 4"
+for diff in {1..8}
+do
+  doexpt "diff=$diff match-quality=1 edist=5" "--diff $diff --match_quality 1 --edit_distance 5"
+  doexpt "diff=$diff match-quality=8 edist=5" "--diff $diff --match_quality 8 --edit_distance 5"
+done
 
 ####################################################################
 
