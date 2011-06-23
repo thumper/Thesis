@@ -5,8 +5,10 @@ set -x
 
 WIKITRUST=/store/thumper/research/WikiTrust
 PANDUMP=/raid/thumper/pan2010dump.7z
-MAXMEM=400000
-CORES=3
+MAXMEM1=400000
+CORES1=3
+MAXMEM2=650000
+CORES2=2
 
 function doexpt {
     echo "**************************************"
@@ -17,12 +19,12 @@ function doexpt {
     (cd $WIKITRUST/util ; rm -rf output/sql)
     (cd $WIKITRUST/util ; rm -rf output/stats)
     (cd $WIKITRUST/util ; rm -rf output/user*)
-    (ulimit -v $MAXMEM -m $MAXMEM -d $MAXMEM; cd $WIKITRUST/util ; time ./batch_process.py --n_core $CORES --cmd_dir ../analysis \
+    (ulimit -v $MAXMEM1 -m $MAXMEM1 -d $MAXMEM1; cd $WIKITRUST/util ; time ./batch_process.py --n_core $CORES1 --cmd_dir ../analysis \
 	  --dir output \
 	  $2 \
           --do_compute_stats $PANDUMP)
-    (ulimit -v $MAXMEM -m $MAXMEM -d $MAXMEM; cd $WIKITRUST/util ; \
-	time ./batch_process.py --n_core $CORES --cmd_dir ../analysis \
+    (ulimit -v $MAXMEM2 -m $MAXMEM2 -d $MAXMEM2; cd $WIKITRUST/util ; \
+	time ./batch_process.py --n_core $CORES2 --cmd_dir ../analysis \
 	  --dir output \
 	  $2 \
 	  --do_sort_stats \

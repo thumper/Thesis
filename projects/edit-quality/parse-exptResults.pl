@@ -2,6 +2,7 @@
 
 use strict;
 use warnings;
+use Error qw(:try);
 
 open(my $editout, ">expt.out-table-editlong.tex") || die "open(editlong): $!";
 open(my $textout, ">expt.out-table-textlong.tex") || die "open(textlong): $!";
@@ -12,9 +13,11 @@ open(my $textshout, ">expt.out-table-textlong-short.tex")
 writeHeader();
 
 my (%textcache, %textshcache, %editshcache);
+my (@editout, @textout, @editshout, @textshout);
 my $expt = undef;
 
-while (<>) {
+try {
+  while (<>) {
     die "Error detected" if m/traceback/i;
     chomp;
     if (m/^\+ doexpt /) {
@@ -35,17 +38,32 @@ while (<>) {
     } elsif (m/^new max heap:/) {
 	parseHeapInfo($expt, $_);
     }
+  }
+  writeExpt($expt);
+} otherwise { 
+  writeFooter();
+};
+@editout = sort { $a->[0] <=> $b->[0] } @editout;
+@textout = sort { $a->[0] <=> $b->[0] } @textout;
+foreach (@editout) {
+  print $editout $_->[1];
 }
-writeExpt($expt);
-writeFooter();
+foreach (@textout) {
+  print $textout $_->[1];
+}
 close($editout);
 close($textout);
 exit(0);
 
 sub commify {
-    my $text = reverse $_[0];
-    $text =~ s/(\d\d\d)(?=\d)(?!\d*\.)/$1,/g;
-    return scalar reverse $text;
+    my $result = "N/A";
+    my $unit = $_[1] || "";
+    if (defined $_[0]) {
+	my $text = reverse $_[0];
+	$text =~ s/(\d\d\d)(?=\d)(?!\d*\.)/$1,/g;
+	$result =  scalar reverse $text;
+    }
+    return $result;
 }
 
 sub writeHeader {
@@ -139,18 +157,19 @@ sub writeExpt {
     return if !defined $expt;
 
     # EDIT LONG
-    printf $editout 'diff%d & %s & mq%d & ed%d & %0.3f\\%% & %0.3f\\%% & %s & %dm & %s & %s & %s & %sMB \\\\'."\n",
+    my $val = sprintf 'diff%d & %s & mq%d & ed%d & %0.3f\\%% & %0.3f\\%% & %s & %dm & %s & %s & %s & %s \\\\'."\n",
 	$expt->{diff}, $expt->{precise}, $expt->{mq}, $expt->{editdist},
 	$expt->{edit}->{ROC} * 100.0, $expt->{edit}->{APR} * 100.0,
 	commify($expt->{edit}->{size}),
 	$expt->{timing},
 	commify($expt->{tri_tot}), commify($expt->{tri_bad}),
-	commify($expt->{heaplen}), commify($expt->{maxmem});
+	commify($expt->{heaplen}), commify($expt->{maxmem}, "MB");
+    push @editout, [$expt->{edit}->{APR} || 0.0, $val];
 
 
     # TEXT LONG
     my $key = "d".$expt->{diff}."mq".$expt->{mq};
-    my $val = sprintf 'diff%d & mq%d & %0.3f\\%% & %0.3f\\%% & %s \\\\'."\n",
+    $val = sprintf 'diff%d & mq%d & %0.3f\\%% & %0.3f\\%% & %s \\\\'."\n",
 	$expt->{diff}, $expt->{mq},
 	$expt->{text}->{ROC} * 100.0, $expt->{text}->{APR} * 100.0,
 	commify($expt->{text}->{size});
@@ -160,13 +179,14 @@ sub writeExpt {
 	return;
     }
     $textcache{$key} = $val;
+    push @textout, [$expt->{text}->{APR} || 0.0, $val];
     print $textout $val;
 
     return if $expt->{precise} eq 'N';
 
     # EDIT LONG
     $key = "d".$expt->{diff}."ed".$expt->{editdist};
-    next if exists $editshcache{$key};
+    return if exists $editshcache{$key};
     $editshcache{$key} = 1;
     printf $editshout 'diff%d & mq%d & ed%d & %0.3f\\%% & %0.3f\\%% & %s & %dm & %s & %s \\\\'."\n",
 	$expt->{diff}, $expt->{mq}, $expt->{editdist},
