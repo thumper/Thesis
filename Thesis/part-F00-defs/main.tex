@@ -99,6 +99,35 @@ is used throughout this work.
 
 \end{itemize}
 
+\subsection{Chapter~\ref{ch:editquality} -- Contribution Quality}
+
+\begin{itemize}
+
+\item \quality{tdecay}{n}{k} -- the text decay quality of revision
+    \version{k} (we leave the article to which \version{k} belongs
+    implicit in the context of usage), as given by the the $n$ revisions
+    after \version{k}.
+    The value of this quality is given by the solution to
+    Equation~\ref{eq:soln-tdecay}.
+    \mynote{Make article explicit, as with elong!}
+
+\item \quality{elong}{a,n}{k} -- the edit longevity quality of
+    revision $\version{k} \in \article{a}$, as judged by up to
+    $n$ judging revisions after \version{k}.
+    See Definition~\ref{def:elong}.
+
+\end{itemize}
+
+\subsection{Chapter~\ref{ch:contrib} -- Sizing Up Authors}
+
+\begin{itemize}
+
+\item \revpos{\version{i}} -- the revisions of an article form a
+    chronological sequence; this function gives back the position
+    of the revision in the sequence of revisions for the article.
+    \mynote{Add in article a?}
+
+\end{itemize}
 
 \renewcommand{\labelitemi}{$\bullet$}
 
