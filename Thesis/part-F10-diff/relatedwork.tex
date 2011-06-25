@@ -23,7 +23,7 @@ generating the shortest edit script transforming the source to the
 target string.
 This greedy solution is refined by in several way,
 by indexing on string prefixes~\cite{Obst1987},
-efficient generation of deletion operations~\cite{Reichenberger1997},
+efficient generation of deletion operations~\cite{Reichenberger1991},
 and restricting block moves to be in sequence~\cite{Burns1997}.
 Interestingly,
 Myers shows that LCS and shortest edit script are equivalent to finding
@@ -35,7 +35,7 @@ In previous formulations, solutions are optimized for abstract
 performance characteristics (\eg running time or
 edit distance~\cite{Levenshtein1966}); the Wikipedia instead computes text
 differences to present for human understanding.
-We use the block moves of Tichy~\cite{Tichy1984}}, but rather
+We use the block moves of Tichy~\cite{Tichy1984}, but rather
 than using greedy selection of the longest match given a specific
 starting location, we perform a global greedy selection of the
 \textit{best match} (\eg the longest match) anywhere within the
