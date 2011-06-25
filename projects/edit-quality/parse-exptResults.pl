@@ -41,18 +41,22 @@ try {
   }
   writeExpt($expt);
 } otherwise { 
+  warn $@;
+  foreach my $pair ([\@editout, $editout], [\@textout, $textout],
+		    [\@editshout, $editshout], [\@textshout, $textshout])
+  {
+    my ($array, $fh) = @$pair;
+    my @sorted = sort { $a->[0] <=> $b->[0] } @$array;
+    foreach (@sorted) {
+	print $fh $_->[1];
+    }
+  }
   writeFooter();
 };
-@editout = sort { $a->[0] <=> $b->[0] } @editout;
-@textout = sort { $a->[0] <=> $b->[0] } @textout;
-foreach (@editout) {
-  print $editout $_->[1];
-}
-foreach (@textout) {
-  print $textout $_->[1];
-}
 close($editout);
+close($editshout);
 close($textout);
+close($textshout);
 exit(0);
 
 sub commify {
@@ -106,9 +110,9 @@ EOF
     print $editshout <<'EOF';
 \begin{sidewaystable}[!tp]
   \begin{center}
-    \begin{tabular}{|c|c||c|c||c|c|c|c|}
+    \begin{tabular}{|c|c|c||c|c||c|c|c|c|}
 \hline
-Diff & Edit Dist
+Diff & Match Quality & Edit Dist
         & ROC AUC & Mean Prec.
         & Num Revs & Run Time
         & Total Triangles & Bad Triangles \\
@@ -174,26 +178,33 @@ sub writeExpt {
 	$expt->{text}->{ROC} * 100.0, $expt->{text}->{APR} * 100.0,
 	commify($expt->{text}->{size});
     if (exists $textcache{$key}) {
-        die "conflicing data:\n1: $textcache{$key}\n2: $val\nfor key $key"
+        die "text: conflicing data:\n1: $textcache{$key}\n2: $val\nfor key $key"
 	    if $textcache{$key} ne $val;
 	return;
     }
     $textcache{$key} = $val;
     push @textout, [$expt->{text}->{APR} || 0.0, $val];
-    print $textout $val;
 
     return if $expt->{precise} eq 'N';
 
     # EDIT LONG
-    $key = "d".$expt->{diff}."ed".$expt->{editdist};
-    return if exists $editshcache{$key};
-    $editshcache{$key} = 1;
-    printf $editshout 'diff%d & mq%d & ed%d & %0.3f\\%% & %0.3f\\%% & %s & %dm & %s & %s \\\\'."\n",
+    $key = "d".$expt->{diff}."ed".$expt->{editdist}."mq".$expt->{mq};
+    $val = sprintf 'diff%d & mq%d & ed%d & %0.3f\\%% & %0.3f\\%% & %s & %dm & %s & %s \\\\'."\n",
 	$expt->{diff}, $expt->{mq}, $expt->{editdist},
 	$expt->{edit}->{ROC} * 100.0, $expt->{edit}->{APR} * 100.0,
 	commify($expt->{edit}->{size}),
 	$expt->{timing},
 	commify($expt->{tri_tot}), commify($expt->{tri_bad});
+    if (exists $editshcache{$key}) {
+	my $dist = distance($val, $editshcache{$key});
+        die "edit conflicing data of distance $dist:\n"
+	    . "1: $editshcache{$key}\n2: $val\nfor key $key"
+	    if ($editshcache{$key} ne $val)
+		&& ($dist > 10);
+	return;
+    }
+    $editshcache{$key} = $val;
+    push @editshout, [$expt->{edit}->{APR} || 0.0, $val];
 
     # TEXT LONG
     $key = "d".$expt->{diff}."mq".$expt->{mq};
@@ -208,8 +219,7 @@ sub writeExpt {
 	return;
     }
     $textshcache{$key} = $val;
-    print $textshout $val;
-
+    push @textshout, [$expt->{edit}->{APR} || 0.0, $val];
 }
 
 sub parseExpt {
@@ -332,4 +342,15 @@ sub parseCPUTime {
     die "EOF on cputime";
 }
 
+sub distance {
+  my ($a, $b) = @_;
+  my $len = (length($a) < length($b)) ? length($b) : length($a);
+  my $dist = 0;
+  for (my $i = 0; $i < $len; $i++) {
+    my $d = ord(substr($a, $i, 1)) - ord(substr($b, $i, 1));
+    warn "@ $i, d = $d\n" if $d != 0;
+    $dist += abs($d);
+  }
+  return $dist;
+}
 
