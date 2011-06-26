@@ -46,7 +46,7 @@ try {
 		    [\@editshout, $editshout], [\@textshout, $textshout])
   {
     my ($array, $fh) = @$pair;
-    my @sorted = sort { $a->[0] <=> $b->[0] } @$array;
+    my @sorted = sort { $b->[0] <=> $a->[0] } @$array;
     foreach (@sorted) {
 	print $fh $_->[1];
     }
@@ -101,7 +101,7 @@ EOF
     print $textshout <<'EOF';
 \begin{table}[tbph]
 \begin{center}
-\begin{tabular}{|c||c||c|c|c|}
+\begin{tabular}{|c|c||c|c|c|}
 \hline
 Diff & Match Quality & ROC AUC & Mean Prec. & Num Revs \\
 \hline
@@ -219,7 +219,7 @@ sub writeExpt {
 	return;
     }
     $textshcache{$key} = $val;
-    push @textshout, [$expt->{edit}->{APR} || 0.0, $val];
+    push @textshout, [$expt->{text}->{APR} || 0.0, $val];
 }
 
 sub parseExpt {
