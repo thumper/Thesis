@@ -14,7 +14,9 @@ sub edit_diff {
   my ($this, $chunk, $src) = @_;
   # do not initialize the heap!
   $this->build_heap($chunk, $src);
-  my $editScript = $this->process_best_matches(1, $src, []);
+  my $editScript = $this->process_best_matches(
+    1, $src, []
+  );
   return $editScript;
 }
 

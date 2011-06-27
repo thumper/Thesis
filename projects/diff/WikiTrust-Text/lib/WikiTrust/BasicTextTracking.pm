@@ -23,7 +23,8 @@ sub new {
 sub parse {
   my ($this, $str, $revid) = @_;
   my $words = $this->SUPER::parse($str);
-  my @words = map { WikiTrust::Word->new($_, $revid) } @$words;
+  my @words = map { WikiTrust::Word->new($_, $revid) }
+    @$words;
   return \@words;
 }
 
@@ -56,8 +57,8 @@ sub track_text {
   }
   # And then find the best matches
 
-  my $editScript = $this->process_best_matches(1, $prevrevs,
-    $chunk_matches);
+  my $editScript = $this->process_best_matches(1,
+    $prevrevs, $chunk_matches);
   # And copy the proper authors from the prev revs
   $this->fix_author($editScript, $prevrevs);
 

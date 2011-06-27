@@ -5,8 +5,6 @@ package WikiTrust::FasterDiff;
 use strict;
 use warnings;
 
-use constant DEBUG => 0;
-
 use WikiTrust::Tuple;
 use WikiTrust::BasicDiff;
 
@@ -40,7 +38,8 @@ sub build_heap {
     },
     sub {
       my ($chunk, $i1, $l1, $i2, $l2, $k) = @_;
-      return if $k < $this->{minMatch};		# skip short matches
+      # skip short matches
+      return if $k < $this->{minMatch};
 
       # mark the positions as matched; not necessary for
       # the 'prev matches' optimization
@@ -48,19 +47,20 @@ sub build_heap {
         $matched{$chunk, $i1+$i,$i2+$i} = 1;
       }
 
-      my $q = $this->{quality}->($chunk, $k, $i1, $l1, $i2, $l2);
+      my $qfunc = $this->{quality};
+      my $q = $qfunc->($chunk, $k, $i1, $l1, $i2, $l2);
       $this->{heap}->insert($q,
 	WikiTrust::Tuple->new($chunk, $k, $i1, $i2));
-      warn "Adding Mov $chunk, $i1, $i2, $k => $q\n" if DEBUG;
     }
   );
 }
 
-# This is exactly the same as in the parent class,
-# except for when a region has already been previously matched.
-# In that case, we construct the residual matches and add them
-# to the heap.  For this to work properly, we must have that
-# the quality measure puts longer matches before shorter matches.
+# This is exactly the same as in the parent class, except
+# for when a region has already been previously matched.
+# In that case, we construct the residual matches and add
+# them to the heap.  For this to work properly, we must have
+# that the quality measure puts longer matches before
+# shorter matches.
 sub process_best_matches {
   my ($this, $multimatch, $chunks, $chunkmatch) = @_;
 
@@ -80,7 +80,9 @@ sub process_best_matches {
     next if !defined $start;	# whole thing is matched
     if ($end - $start == $k) {
       # the whole sequence is still unmatched
-      my $match = WikiTrust::Tuple->new('Mov', $chunk, $i1, $i2, $k);
+      my $match = WikiTrust::Tuple->new(
+	'Mov', $chunk, $i1, $i2, $k
+      );
       push @editScript, $match;
       # and mark it matched
       for (my $i = $start; $i < $end; $i++) {
@@ -96,12 +98,13 @@ sub process_best_matches {
       # we just found.
       do {
 	my $newK = $end - $start;
+	# skip too-short matches
 	if ($newK >= $this->{minMatch}) {
-	  # skip too-short matches
-	  my $q = $this->{quality}->($chunk, $newK, $i1, $l1, $i2, $l2);
-	  warn "Split into $i1, $i2, $newK ==> $q\n" if DEBUG;
-	  $this->{heap}->insert($q,
-	      WikiTrust::Tuple->new($chunk, $newK, $i1, $i2));
+	  my $qfunc = $this->{quality};
+	  my $q = $qfunc->($chunk, $newK, $i1, $l1, $i2, $l2);
+	  $this->{heap}->insert($q, WikiTrust::Tuple->new(
+	    $chunk, $newK, $i1, $i2
+	  ));
 	}
 	$i1 += $end;
 	$i2 += $end;

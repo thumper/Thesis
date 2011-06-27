@@ -34,7 +34,9 @@ such an evaluation.
 The PAN-WVC-10 corpus was used to compare the performance of
 solutions for the 1st International Competition on Wikipedia
 Vandalism Detection~\cite{Potthast2010b}.
-We use it in a similar way here, but with an important distinction:
+We use it in a similar way here to compare how well our quality
+measures are able to predict vandalism within the corpus,
+but with an important distinction:
 we use information ``from the future'' to calculate our
 quality values for the annotated revisions.
 Standard vandalism detection tools make their determination
@@ -57,9 +59,6 @@ We used the dump of the English Wikipedia from January 30, 2010
 to extract the text of each annotated revision, along with the revision
 before and the ten filtered revisions following so that we could compute
 our text longevity and edit longevity measures for each annotated edit.
-Out of the total 32,439 revisions, we were able to compute
-edit longevity scores for 27,730 revisions, and text longevity
-scores for 28,453 revisions.
 
 We used the straight-forward transformation to convert
 each quality score from its normal range into the range
@@ -81,7 +80,9 @@ This edit script is highly dependent on the algorithm used to
 compute the difference between the revisions.
 To provide a more complete picture of how the choice of difference
 algorithm affects the performance of the quality measures,
-we present an evaluation of some variations of the algorithms.
+we present an evaluation of some variations of the algorithms;
+the OCaml source representing these algorithms appears
+in Appendix \ref{app:diffsrc-ocaml}.
 The list of algorithm variations that we tried are as follows:
 %
 \begin{description}
@@ -185,8 +186,7 @@ The list of algorithm variations that we tried are as follows:
     we describe in Chapter~\ref{ch:diff}, with all optimizations except
     for the \textbf{header/trailer} optimization.
     A Perl language implementation of
-    this algorithm is listed in Appendix~\ref{app:fasterdiffsrc-perl};
-    the OCaml version appears in Appendix \mynote{TODO}.
+    this algorithm is listed in Appendix~\ref{app:fasterdiffsrc-perl}.
     %
     \begin{description}
     \item[Includes:]
@@ -196,7 +196,9 @@ The list of algorithm variations that we tried are as follows:
     \end{description}
 
 \item[\textbf{diff9}]
-    This version is too slow and uses too much memory.
+    This version is the basic difference algorithm we describe,
+    where every possible match (including substring matches) are
+    added to the heap.  This is too slow and uses too much memory.
     %
     \begin{description}
     \item[Includes:]
@@ -215,7 +217,7 @@ The list of algorithm variations that we tried are as follows:
 The match quality formula is the key to our greedy algorithm
 choosing matches which meet the desired properties outlined
 in Chapter~\ref{ch:diff}.
-We experimented with the following \mynote{?howmany?} definitions,
+We experimented with the following nine definitions,
 which take as parameters the length of the match (parameter $k$),
 the matching positions in the source and target revisions
 (parameters $i_1$ and $i_2$), and the total length of
@@ -430,9 +432,6 @@ how this choice impacts the quality of the results.
 
 \subsection{Results}
 
-\mynote{Results not finished yet.  Here are some initial numbers,
-but I am regenerating everything based on new definitions above.}
-
 A complication in our evaluation is our restricted setting of
 \textit{filtered} revisions, where sequential revisions by the
 same author are filtered out to leave only the last revision
@@ -447,9 +446,13 @@ Even with this loosening of the revision filtering, several
 revisions are still not evaluated for quality; the two
 primary reasons for no evaluation are a lack of subsequent
 edits to base the evaluation on, or the revision was not
-substantially different from the previous revision
-(that is, $\dist{}{k-1,k} = 0$, which can happen when only
-whitespace changes).
+substantially different from the previous
+revision.\footnote{That is, when $\dist{}{k-1,k} = 0$.
+This typically happens when there are only whitespace changes
+from one revision to the next, but some of the proposed edit distance
+measures don't consider the entirety of the edit script and
+will have a higher incidence where the distance from the
+previous revision is zero.}
 
 \subsubsection{Edit Longevity}
 

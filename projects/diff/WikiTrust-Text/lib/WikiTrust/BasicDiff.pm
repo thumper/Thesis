@@ -163,7 +163,8 @@ sub process_best_matches {
     next if !defined $start;	# whole thing is matched
     if ($end - $start == $k) {
       # the whole sequence is still unmatched
-      my $match = WikiTrust::Tuple->new('Mov', $chunk, $i1, $i2, $k);
+      my $match =
+	WikiTrust::Tuple->new('Mov', $chunk, $i1, $i2, $k);
       push @editScript, $match;
       # and mark it matched
       for (my $i = $start; $i < $end; $i++) {
@@ -207,52 +208,14 @@ sub edit_diff {
   my $matched_chunks = [ [] ];
   $matched_chunks->[0]->[scalar(@$src)-1] = undef;
   my $editScript = $this->process_best_matches(0, [$src],
-      $matched_chunks);
-  $this->replacement_scan($editScript, $this->{matched_dst}, scalar(@{ $this->{dst} }), $matched_chunks);
+    $matched_chunks);
+  $this->replacement_scan($editScript, $this->{matched_dst},
+    scalar(@{ $this->{dst} }), $matched_chunks);
   $this->cover_unmatched($matched_chunks->[0],
-      scalar(@$src), $editScript, 'Del');
+    scalar(@$src), $editScript, 'Del');
   $this->cover_unmatched($this->{matched_dst},
-      scalar(@{ $this->{dst} }),
-      $editScript, 'Ins');
+    scalar(@{ $this->{dst} }), $editScript, 'Ins');
   return $editScript;
 }
 
 1;
-__END__
-# Below is stub documentation for your module. You'd better edit it!
-
-=head1 NAME
-
-WikiTrust::Diff - Perl extension for text differencing
-
-=head1 SYNOPSIS
-
-  use WikiTrust::BasicDiff;
-  my $diff = WikiTrust::BasicDiff->new();
-  $diff->target("The final string.");
-  my $src = "The initial string.";
-  my $script = $diff->edit_diff($src);
-
-=head1 DESCRIPTION
-
-A module to demonstrate the basic differencing algorithm
-used in the WikiTrust project.
-
-=head1 SEE ALSO
-
-B<WikiTrust::FasterDiff>, B<WikiTrust::TextTracking>
-
-=head1 AUTHOR
-
-Bo Adler, E<lt>thumper@alumni.caltech.eduE<gt>
-
-=head1 COPYRIGHT AND LICENSE
-
-Copyright (C) 2011 by Bo Adler
-
-This library is free software; you can redistribute it and/or modify
-it under the same terms as Perl itself, either Perl version 5.10.0 or,
-at your option, any later version of Perl 5 you may have available.
-
-
-=cut
