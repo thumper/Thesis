@@ -3,14 +3,19 @@
 use strict;
 use warnings;
 use Error qw(:try);
+use Switch;
+use constant EDITOUT => 1;
+use constant EDITSHOUT => 2;
+use constant TEXTOUT => 3;
+use constant TEXTSHOUT => 4;
 
-open(my $editout, ">expt.out-table-editlong.tex") || die "open(editlong): $!";
-open(my $textout, ">expt.out-table-textlong.tex") || die "open(textlong): $!";
-open(my $editshout, ">expt.out-table-editlong-short.tex")
+my $base = $ARGV[0];
+open(my $editout, ">$base-table-editlong.tex") || die "open(editlong): $!";
+open(my $textout, ">$base-table-textlong.tex") || die "open(textlong): $!";
+open(my $editshout, ">$base-table-editlong-short.tex")
     || die "open(editlong-short): $!";
-open(my $textshout, ">expt.out-table-textlong-short.tex")
+open(my $textshout, ">$base-table-textlong-short.tex")
     || die "open(textlong-short): $!";
-writeHeader();
 
 my (%textcache, %textshcache, %editshcache);
 my (@editout, @textout, @editshout, @textshout);
@@ -42,17 +47,29 @@ try {
   writeExpt($expt);
 } otherwise { 
   warn $@;
-  foreach my $pair ([\@editout, $editout], [\@textout, $textout],
-		    [\@editshout, $editshout], [\@textshout, $textshout])
-  {
-    my ($array, $fh) = @$pair;
-    my @sorted = sort { $b->[0] <=> $a->[0] } @$array;
-    foreach (@sorted) {
-	print $fh $_->[1];
-    }
-  }
-  writeFooter();
 };
+foreach my $tuple ([\@editout, $editout, EDITOUT],
+		  [\@textout, $textout, TEXTOUT],
+		  [\@editshout, $editshout, EDITSHOUT],
+		  [\@textshout, $textshout, TEXTSHOUT])
+{
+  my ($array, $fh, $type) = @$tuple;
+  my @sorted = sort { $b->[0] <=> $a->[0] } @$array;
+  my $lines = 0;
+  my $tablenum = 0;
+  writeHeader($type);
+  foreach (@sorted) {
+    $lines++;
+    if ($lines >= 25) {
+      writeFooter($type, $tablenum);
+      writeHeader($type);
+      $lines = 0;
+      $tablenum++;
+    }
+    print $fh $_->[1];
+  }
+  writeFooter($type, $tablenum);
+}
 close($editout);
 close($editshout);
 close($textout);
@@ -71,89 +88,114 @@ sub commify {
 }
 
 sub writeHeader {
+  my $file = shift @_;
+  switch ($file) {
+  case TEXTOUT {
     print $textout <<'EOF';
 \begin{table}[tbph]
 \begin{center}
-\begin{tabular}{|c|c||c|c|c|}
+\begin{tabular}{|c|c|c||c|c|c|}
 \hline
-Diff & Match Quality & ROC AUC & Mean Prec. & Num Revs \\
+Diff & Match Quality & Edit Distance & ROC-AUC & PR-AUC & Num Revs \\
 \hline
 \hline
 EOF
+  }
+  case EDITOUT {
     print $editout <<'EOF';
 \begin{sidewaystable}[!tp]
   \begin{center}
     \begin{tabular}{|c|c|c|c||c|c||c|c|c|c|}
 \hline
  &  & Match & Edit 
-        & ROC & Mean
+        & ROC & PR
         & Num & Run
         & Total & Bad
 	& Heap & Memory \\
 Diff & Precise & Quality & Dist
-        & AUC & Prec.
+        & AUC & AUC 
         & Revs & Time
         & Triangles & Triangles
 	& Size & Usage \\
 \hline
 \hline
 EOF
+  }
+  case TEXTSHOUT {
     print $textshout <<'EOF';
 \begin{table}[tbph]
 \begin{center}
-\begin{tabular}{|c|c||c|c|c|}
+\begin{tabular}{|c|c|c||c|c|c|}
 \hline
-Diff & Match Quality & ROC AUC & Mean Prec. & Num Revs \\
+Diff & Match Quality & Edit Distance & ROC-AUC & PR-AUC & Num Revs \\
 \hline
 \hline
 EOF
+  }
+  case EDITSHOUT {
     print $editshout <<'EOF';
 \begin{sidewaystable}[!tp]
   \begin{center}
     \begin{tabular}{|c|c|c||c|c||c|c|c|c|}
 \hline
 Diff & Match Quality & Edit Dist
-        & ROC AUC & Mean Prec.
+        & ROC-AUC & PR-AUC
         & Num Revs & Run Time
         & Total Triangles & Bad Triangles \\
 \hline
 \hline
 EOF
+  }
+  };
 }
 
 sub writeFooter {
+  my $type = shift @_;
+  my $counter = shift @_;
+  switch ($type) {
+  case TEXTOUT {
     print $textout <<'EOF';
 \hline
 \end{tabular}
 \end{center}
 \caption{Comparison of text longevity performance using
-    multiple difference algorithms.}
+    multiple difference algorithms, sorted by PR-AUC.}
 \end{table}
 EOF
+  }
+  case EDITOUT {
     print $editout <<'EOF';
 \hline
 \end{tabular}
 \end{center}
 \caption{Comparison of edit longevity performance using
-    varying parameters.}
+    varying parameters, sorted by PR-AUC.}
 \end{sidewaystable}
 EOF
-    print $textshout <<'EOF';
-\hline
-\end{tabular}
-\end{center}
-\caption{Comparison of text longevity performance using
-    multiple difference algorithms.}
-\end{table}
+  }
+  case TEXTSHOUT {
+    print $textshout <<EOF;
+\\hline
+\\end{tabular}
+\\end{center}
+\\caption{Comparison of text longevity performance using
+    multiple difference algorithms, sorted by PR-AUC.}
+\\label{tab:textshout$counter}
+\\end{table}
 EOF
-    print $editshout <<'EOF';
-\hline
-\end{tabular}
-\end{center}
-\caption{Comparison of edit longevity performance using
-    varying parameters.}
-\end{sidewaystable}
+  }
+  case EDITSHOUT {
+    print $editshout <<EOF;
+\\hline
+\\end{tabular}
+\\end{center}
+\\caption{Comparison of edit longevity performance using
+    varying parameters, sorted by PR-AUC.}
+\\label{tab:editshout$counter}
+\\end{sidewaystable}
 EOF
+  }
+  };
 }
 
 sub writeExpt {
@@ -172,18 +214,18 @@ sub writeExpt {
 
 
     # TEXT LONG
-    my $key = "d".$expt->{diff}."mq".$expt->{mq};
-    $val = sprintf 'diff%d & mq%d & %0.3f\\%% & %0.3f\\%% & %s \\\\'."\n",
-	$expt->{diff}, $expt->{mq},
+    my $key = "d".$expt->{diff}."mq".$expt->{mq}."ed".$expt->{editdist};
+    $val = sprintf 'diff%d & mq%d & ed%d & %0.3f\\%% & %0.3f\\%% & %s \\\\'."\n",
+	$expt->{diff}, $expt->{mq}, $expt->{editdist},
 	$expt->{text}->{ROC} * 100.0, $expt->{text}->{APR} * 100.0,
 	commify($expt->{text}->{size});
     if (exists $textcache{$key}) {
         die "text: conflicing data:\n1: $textcache{$key}\n2: $val\nfor key $key"
 	    if $textcache{$key} ne $val;
-	return;
+    } else {
+      $textcache{$key} = $val;
+      push @textout, [$expt->{text}->{APR} || 0.0, $val];
     }
-    $textcache{$key} = $val;
-    push @textout, [$expt->{text}->{APR} || 0.0, $val];
 
     return if $expt->{precise} eq 'N';
 
@@ -207,10 +249,9 @@ sub writeExpt {
     push @editshout, [$expt->{edit}->{APR} || 0.0, $val];
 
     # TEXT LONG
-    $key = "d".$expt->{diff}."mq".$expt->{mq};
-    $val = sprintf 'diff%d & mq%d & %0.3f\\%% & %0.3f\\%% & %s \\\\'."\n",
-	$expt->{diff},
-	$expt->{mq},
+    $key = "d".$expt->{diff}."mq".$expt->{mq}."ed".$expt->{editdist};
+    $val = sprintf 'diff%d & mq%d & ed%d & %0.3f\\%% & %0.3f\\%% & %s \\\\'."\n",
+	$expt->{diff}, $expt->{mq}, $expt->{editdist},
 	$expt->{text}->{ROC} * 100.0, $expt->{text}->{APR} * 100.0,
 	commify($expt->{text}->{size});
     if (exists $textshcache{$key}) {
