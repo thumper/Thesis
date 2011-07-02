@@ -23,26 +23,41 @@ my $expt = undef;
 
 try {
   while (<>) {
-    die "Error detected" if m/traceback/i;
-    chomp;
-    if (m/^\+ doexpt /) {
+    try {
+      die "Error detected" if m/traceback/i;
+      chomp;
+      if (m/^\+ doexpt /) {
 	writeExpt($expt);
 	$expt = parseExpt($_);
-    } elsif (m/^TOTAL TRIANGLES/) {
+      }
+      if (!defined $expt) {
+	# skip
+      } elsif (m/^TOTAL TRIANGLES/) {
 	$expt->{tri_tot} = parseTriangles();
-    } elsif (m/^BAD TRIANGLES/) {
+      } elsif (m/^BAD TRIANGLES/) {
 	$expt->{tri_bad} = parseTriangles();
-    } elsif (m/^\+ wc perf/) {
+      } elsif (m/^\+ wc perf/) {
 	parseSetSize($expt);
-    } elsif ($_ eq 'EDITLONG') {
+      } elsif ($_ eq 'EDITLONG') {
 	parsePerf($expt, 'edit');
-    } elsif ($_ eq 'TEXTLONG') {
+      } elsif ($_ eq 'TEXTLONG') {
 	parsePerf($expt, 'text');
-    } elsif (m/^COMPUTING THE STATISTICS/) {
+      } elsif (m/^COMPUTING THE STATISTICS/) {
 	$expt->{timing} = parseCPUTime();
-    } elsif (m/^new max heap:/) {
+      } elsif (m/^new max heap:/) {
 	parseHeapInfo($expt, $_);
-    }
+      }
+    } otherwise {
+      warn $@;
+      if (defined $expt) {
+	$expt->{diff} ||= 'NA';
+	$expt->{mq} ||= 'NA';
+	$expt->{editdist} ||= 'NA';
+	my $key = "d".$expt->{diff}."mq".$expt->{mq}."ed".$expt->{editdist};
+	warn "Skipping $key\n";
+      }
+      $expt = undef;
+    };
   }
   writeExpt($expt);
 } otherwise { 
@@ -56,7 +71,7 @@ foreach my $tuple ([\@editout, $editout, EDITOUT],
   my ($array, $fh, $type) = @$tuple;
   my @sorted = sort { $b->[0] <=> $a->[0] } @$array;
   my $lines = 0;
-  my $tablenum = 0;
+  my $tablenum = 'A';
   writeHeader($type);
   foreach (@sorted) {
     $lines++;
@@ -103,7 +118,7 @@ EOF
   }
   case EDITOUT {
     print $editout <<'EOF';
-\begin{sidewaystable}[!tp]
+\begin{sidewaystable}[!ph]
   \begin{center}
     \begin{tabular}{|c|c|c|c||c|c||c|c|c|c|}
 \hline
@@ -134,7 +149,7 @@ EOF
   }
   case EDITSHOUT {
     print $editshout <<'EOF';
-\begin{sidewaystable}[!tp]
+\begin{sidewaystable}[!ph]
   \begin{center}
     \begin{tabular}{|c|c|c||c|c||c|c|c|c|}
 \hline
@@ -171,6 +186,7 @@ EOF
 \caption{Comparison of edit longevity performance using
     varying parameters, sorted by PR-AUC.}
 \end{sidewaystable}
+\clearpage
 EOF
   }
   case TEXTSHOUT {
@@ -193,6 +209,7 @@ EOF
     varying parameters, sorted by PR-AUC.}
 \\label{tab:editshout$counter}
 \\end{sidewaystable}
+\\clearpage
 EOF
   }
   };
@@ -201,6 +218,9 @@ EOF
 sub writeExpt {
     my $expt = shift @_;
     return if !defined $expt;
+
+    # if we don't have a complete record, just skip it.
+    return if !defined $expt->{tri_bad};
 
     # EDIT LONG
     my $val = sprintf 'diff%d & %s & mq%d & ed%d & %0.3f\\%% & %0.3f\\%% & %s & %dm & %s & %s & %s & %s \\\\'."\n",
@@ -306,6 +326,7 @@ sub parseTriangles {
 
 sub parseSetSize {
     my $expt = shift @_;
+    return if !defined $expt;
     my $c = 0;
     while (<>) {
 	die "Error detected" if m/traceback/i;
@@ -326,6 +347,7 @@ sub parseSetSize {
 
 sub parseHeapInfo {
     my ($expt, $line) = @_;
+    return if !defined $expt;
     my $heaplen = 0;
     my $maxmem = 0;
     if (m/^new max heap:\s+(\d+)/) {
@@ -348,6 +370,7 @@ sub parseHeapInfo {
 sub parsePerf {
     my $expt = shift @_;
     my $type = shift @_;
+    return if !defined $expt;
     my $c = 0;
     while (<>) {
 	die "Error detected" if m/traceback/i;
