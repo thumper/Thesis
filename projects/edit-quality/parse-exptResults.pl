@@ -111,7 +111,7 @@ sub writeHeader {
 \begin{center}
 \begin{tabular}{|c|c|c||c|c|c|}
 \hline
-Diff & Match Quality & Edit Distance & ROC-AUC & PR-AUC & Num Revs \\
+Diff & Match Quality & Edit Distance & PR-AUC & ROC-AUC & Num Revs \\
 \hline
 \hline
 EOF
@@ -142,7 +142,7 @@ EOF
 \begin{center}
 \begin{tabular}{|c|c|c||c|c|c|}
 \hline
-Diff & Match Quality & Edit Distance & ROC-AUC & PR-AUC & Num Revs \\
+Diff & Match Quality & Edit Distance & PR-AUC & ROC-AUC & Num Revs \\
 \hline
 \hline
 EOF
@@ -154,7 +154,7 @@ EOF
     \begin{tabular}{|c|c|c||c|c||c|c|c|c|}
 \hline
 Diff & Match Quality & Edit Dist
-        & ROC-AUC & PR-AUC
+        & PR-AUC & ROC-AUC
         & Num Revs & Run Time
         & Total Triangles & Bad Triangles \\
 \hline
@@ -237,7 +237,8 @@ sub writeExpt {
     my $key = "d".$expt->{diff}."mq".$expt->{mq}."ed".$expt->{editdist};
     $val = sprintf 'diff%d & mq%d & ed%d & %0.3f\\%% & %0.3f\\%% & %s \\\\'."\n",
 	$expt->{diff}, $expt->{mq}, $expt->{editdist},
-	$expt->{text}->{ROC} * 100.0, $expt->{text}->{APR} * 100.0,
+	$expt->{text}->{APR} * 100.0,
+	$expt->{text}->{ROC} * 100.0,
 	commify($expt->{text}->{size});
     if (exists $textcache{$key}) {
         die "text: conflicing data:\n1: $textcache{$key}\n2: $val\nfor key $key"
@@ -253,7 +254,8 @@ sub writeExpt {
     $key = "d".$expt->{diff}."ed".$expt->{editdist}."mq".$expt->{mq};
     $val = sprintf 'diff%d & mq%d & ed%d & %0.3f\\%% & %0.3f\\%% & %s & %dm & %s & %s \\\\'."\n",
 	$expt->{diff}, $expt->{mq}, $expt->{editdist},
-	$expt->{edit}->{ROC} * 100.0, $expt->{edit}->{APR} * 100.0,
+	$expt->{edit}->{APR} * 100.0,
+	$expt->{edit}->{ROC} * 100.0,
 	commify($expt->{edit}->{size}),
 	$expt->{timing},
 	commify($expt->{tri_tot}), commify($expt->{tri_bad});
