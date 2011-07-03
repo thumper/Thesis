@@ -1,27 +1,20 @@
 \section{Conclusions}
 
-\mynote{I have not worked on this section yet.}
-
 We propose two measures of revision quality computed
 from Wikipedia's revision history, and evaluate them
 using the PAN-WVC-10 annotated dataset.
+Edit longevity performs quite well, at over 91\% ROC-AUC;
+very close to the performance of the winning solution from
+the Wikipedia Vandalism Detection competition~\cite{Potthast2010b}.
+The PR-AUC is more middling, near fourth place in the competition.
+Text longevity is a much poorer predictor of vandalism.
 
+Overall, this result is very encouraging because it means that one can
+estimate the quality of revisions in a relatively simple way.
+Knowing the quality of edits, we can build up a reputation
+system for authors based on the quality of their work;
+we describe such a system in Chapter~\ref{ch:reputation}.
 
-Evaluation of quality measures is a real challenge.
-
-What benchmark is appropriate for comparison?
-Should a quality measure make a prediction about
-the future of the revision it is measuring?
-Or should it be aggregated by author and used
-to predict the quality of future edits by the
-same author?
-We choose this latter strategy, by incorporating
-both text longevity and edit longevity into a reputation
-system, which we evaluate by making predictions about the
-future.
-See Chapter~\ref{ch:reputation}.
-
-\mynote{Do evaluation by comparing against PAN2010 annotations!}
 
 \mynote{Cite Halfaker2009, Halfaker2011}
 

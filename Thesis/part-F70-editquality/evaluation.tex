@@ -456,15 +456,64 @@ previous revision is zero.}
 
 \subsubsection{Edit Longevity}
 
-Edit longevity performs quite well, at over 91\% ROC-AUC;
-very close to the performance of the winning solution from
-the Wikipedia Vandalism Detection competition~\cite{Potthast2010b}.
-The PR-AUC is more middling, near fourth place in the competition.
+The chief measure of performance that we consider is
+the area under the precision-recall curve (PR-AUC),
+which Tables~\ref{tab:editshoutA} through~\ref{tab:editshoutJ}
+present in descending order.
+We chose this as the primary measure because it gives better
+discrimination between predictive models for the PAN~2010
+corpus, as explained in~\cite{Potthast2010b}.
+In the case of our variations, PR-AUC is highly correlated
+with ROC-AUC.
+We note that PR-AUC is calculated relative to the number of
+predictions made by the combination of difference algorithm,
+match quality, and edit distance; when the edit distance is
+zero, a prediction will not be made.
+Each combination we tested made predictions for a number of
+revisions numbering in the range from 27,500 to 28,500.
 
-This result is very encouraging, because it means that can
-estimate the quality of revisions in a relatively simple way.
-Knowing the quality of edits, we can build up a reputation
-system for authors based on the quality of their work.
+
+\mynote{NumRevs is how many PAN2010 revisions we made predictions for.
+We would like this to be as high as possible, but WikiTrust will skip
+calculating a quality for a revision if it believes the edit distance
+from the previous revision is 0; this is because the calculation
+includes a division.
+It would be better, probably, if it skipped the calculation if the
+size of the \textit{edit script} is one (meaning that it must be
+a single block copy).
+If the edit distance function returns zero, I believe that it
+would be better for the quality function to also return zero.}
+
+The typical measure used to compare difference algorithm is the
+running time, and so we include this value.
+The running time is not really affected by either the
+match quality or the edit distance calculations,
+except for algorithm \textbf{diff6}
+(see Table~\ref{tab:difftiming}), which has a running
+time which climbs up to approximately 418 minutes
+when used with match qualities \textbf{mq5}, \textbf{mq6},
+or \textbf{mq7}.
+Table~\ref{tab:difftiming} reveals that Reichenberger's
+difference algorithm runs in half the time (or more) that the
+WikiTrust algorithms complete in,
+and can also predict vandalism very competitively
+(Table~\ref{tab:editshoutA}).
+\mynote{Diff7 and diff8 not calculated yet.}
+
+\input{part-F70-editquality/quality-table-timing}
+
+\mynote{I included the total number of triangles calculated.
+Like NumRevs, this number is dependent on the edit distance
+from the previous rev being non-zero.
+More interesting is the number of bad triangles; a bad triangle
+is one that doesn't satisfy the triangle inequality.
+What is interesting to note about this column is that
+it's generally correlated with the PR-AUC.
+Is it necessary for the edit distance to not respect the
+triangle inequality in order for the edit longevity to make
+good predictions?
+That seems unbelievable to me.}
+
 
 
 \input{part-F70-editquality/quality-table-editlong}
