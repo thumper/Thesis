@@ -4,6 +4,7 @@ use strict;
 use warnings;
 use Error qw(:try);
 use Switch;
+use List::Util qw(sum);
 use constant EDITOUT => 1;
 use constant EDITSHOUT => 2;
 use constant TEXTOUT => 3;
@@ -19,6 +20,7 @@ open(my $textshout, ">$base-table-textlong-short.tex")
 
 my (%textcache, %textshcache, %editshcache);
 my (@editout, @textout, @editshout, @textshout);
+my (%runtimes);
 my $expt = undef;
 
 try {
@@ -89,6 +91,45 @@ close($editout);
 close($editshout);
 close($textout);
 close($textshout);
+
+# Compute mean of runtimes
+my (%avgtime, %stddev);
+foreach my $diff (keys %runtimes) {
+    my $array = $runtimes{$diff};
+    my $sum = sum @$array;
+    my $elems = scalar(@$array);
+    my $avgtime = $sum / $elems;
+    $avgtime{$diff} =  $avgtime;
+    my @diffs = map { ($_- $avgtime) * ($_ - $avgtime) } @$array;
+    my $avgdiff = (sum @diffs) / $elems;
+    $stddev{$diff} = sqrt($avgdiff);
+    # warn "diff$diff: ".join(", ", @$array)."\n";
+}
+open(my $diffout, ">$base-table-timing.tex")
+    || die "open(timing): $!";
+print $diffout <<'EOF';
+\begin{table}[tbph]
+\begin{center}
+\begin{tabular}{|c||c|c|}
+\hline
+Diff & Avg Run Time & Std Dev RT  \\
+\hline
+\hline
+EOF
+foreach my $diff (sort { $avgtime{$a} <=> $avgtime{$b} } keys %runtimes) {
+  my $line = sprintf "diff%d & %dm & %0.2fm \\\\\n", $diff,
+    $avgtime{$diff}, $stddev{$diff};
+  print $diffout $line;
+}
+print $diffout <<'EOF';
+\hline
+\end{tabular}
+\end{center}
+\caption{Average running time of difference algorithms.}
+\label{tab:difftiming}
+\end{table}
+EOF
+close($diffout);
 exit(0);
 
 sub commify {
@@ -222,6 +263,10 @@ sub writeExpt {
     # if we don't have a complete record, just skip it.
     return if !defined $expt->{tri_bad};
 
+    # Build data for running time table
+    $runtimes{$expt->{diff}} = [] if !exists $runtimes{$expt->{diff}};
+    push @{ $runtimes{$expt->{diff}} }, $expt->{timing};
+
     # EDIT LONG
     my $val = sprintf 'diff%d & %s & mq%d & ed%d & %0.3f\\%% & %0.3f\\%% & %s & %dm & %s & %s & %s & %s \\\\'."\n",
 	$expt->{diff}, $expt->{precise}, $expt->{mq}, $expt->{editdist},
@@ -230,7 +275,11 @@ sub writeExpt {
 	$expt->{timing},
 	commify($expt->{tri_tot}), commify($expt->{tri_bad}),
 	commify($expt->{heaplen}), commify($expt->{maxmem}, "MB");
-    push @editout, [$expt->{edit}->{APR} || 0.0, $val];
+    push @editout,
+	[Tuple->new(
+	  $expt->{edit}->{APR},
+	  $expt->{diff}, $expt->{mq}, $expt->{editdist}
+	), $val];
 
 
     # TEXT LONG
@@ -245,7 +294,11 @@ sub writeExpt {
 	    if $textcache{$key} ne $val;
     } else {
       $textcache{$key} = $val;
-      push @textout, [$expt->{text}->{APR} || 0.0, $val];
+      push @textout,
+	[Tuple->new(
+	  $expt->{edit}->{APR},
+	  $expt->{diff}, $expt->{mq}, $expt->{editdist}
+	), $val];
     }
 
     return if $expt->{precise} eq 'N';
@@ -268,7 +321,11 @@ sub writeExpt {
 	return;
     }
     $editshcache{$key} = $val;
-    push @editshout, [$expt->{edit}->{APR} || 0.0, $val];
+    push @editshout,
+      [Tuple->new(
+	$expt->{edit}->{APR},
+	$expt->{diff}, $expt->{mq}, $expt->{editdist}
+      ), $val];
 
     # TEXT LONG
     $key = "d".$expt->{diff}."mq".$expt->{mq}."ed".$expt->{editdist};
@@ -282,7 +339,11 @@ sub writeExpt {
 	return;
     }
     $textshcache{$key} = $val;
-    push @textshout, [$expt->{text}->{APR} || 0.0, $val];
+    push @textshout,
+      [Tuple->new(
+	$expt->{text}->{APR},
+	$expt->{diff}, $expt->{mq}, $expt->{editdist}
+      ), $val];
 }
 
 sub parseExpt {
@@ -418,5 +479,28 @@ sub distance {
     $dist += abs($d);
   }
   return $dist;
+}
+
+package Tuple;
+use strict; use warnings;
+use overload '<=>' => \&mycompare;
+
+sub new {
+  my $class = shift @_;
+  my $values = [ @_ ];
+  bless $values, $class;
+}
+
+sub mycompare {
+  my ($a, $b, $order) = @_;
+  my $i = 0;
+  my $scale = 1;
+  $scale = -1 if $order;
+  while ($i < scalar(@$a)) {
+    my $cmp = ($a->[$i] <=> $b->[$i]);
+    return ($scale * $cmp) if $cmp != 0;
+    $i++;
+  }
+  return 0;
 }
 
