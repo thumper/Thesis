@@ -34,7 +34,7 @@ while (<$fh>) {
     my $class = $panrevs->{$revid}->{class} eq 'vandalism' ? 1 : 0;
     if ($fields[1] eq 'EditLong') {
 	# convert to probability
-	warn "Crazy long: $long @ $revid" if $long > 1 || $long < -1;
+	warn "Crazy edit long: $long @ $revid" if $long > 1 || $long < -1;
 	$long = min($long, 1.0);
 	$long = max($long, -1.0);
 	$long = (1 + $long) / 2;
@@ -42,7 +42,7 @@ while (<$fh>) {
 	print $editlong "$class $long\n";
 	$panrevs->{$revid}->{editlong} = $long;
     } elsif ($fields[1] eq 'TextLong') {
-	die "Crazy long: $long @ $revid" if $long > 1 || $long < 0;
+	warn "Crazy text long: $long @ $revid" if $long > 1 || $long < 0;
 	$long = min($long, 1.0);
 	$long = max($long, 0);
 	$long = 1 - $long;
@@ -60,6 +60,7 @@ foreach my $revid (keys %$panrevs) {
     if (exists $rev->{editlong} && exists $rev->{textlong}) {
 	print $combo join(",", $rev->{textlong}, $rev->{editlong},
 	    $rev->{class}) . "\n";
+	next;
     }
     if (!exists $panrevs->{$revid}->{editlong}
 	    && !exists $panrevs->{$revid}->{textlong})
