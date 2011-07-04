@@ -165,7 +165,9 @@ EOF
 \\end{tabular}
 \\end{center}
 \\caption{Performance of difference algorithms for
-  edit distance \\textbf{ed$ed}.}
+  edit distance \\textbf{ed$ed}.  Where multiple match
+  quality functions resulted in the same performance, they
+  have been grouped together.}
 \\label{tab:editlongbyed$ed}
 \\end{table}
 EOF
@@ -265,8 +267,8 @@ EOF
 \hline
 \end{tabular}
 \end{center}
-\caption{Comparison of edit longevity performance using
-    varying parameters, sorted by PR-AUC.}
+\caption{Comparison of edit longevity performance,
+    sorted by PR-AUC.}
 \end{sidewaystable}
 \clearpage
 EOF
@@ -287,8 +289,8 @@ EOF
 \\hline
 \\end{tabular}
 \\end{center}
-\\caption{Comparison of edit longevity performance using
-    varying parameters, sorted by PR-AUC.}
+\\caption{Comparison of edit longevity performance,
+    sorted by PR-AUC.}
 \\label{tab:editshout$counter}
 \\end{sidewaystable}
 \\clearpage
@@ -313,7 +315,7 @@ sub recordEditlongByED {
       $record->{mq} = {};
       $record->{APR} = $apr;
     }
-    die "Exactly the same APR"
+    die "Exactly the same APR but bad diff $d"
       if $record->{diff} != $d;
     $record->{mq}->{$mq} = 1;
 }
