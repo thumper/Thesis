@@ -33,7 +33,7 @@ such an evaluation.
 
 The PAN-WVC-10 corpus was used to compare the performance of
 solutions for the 1st International Competition on Wikipedia
-Vandalism Detection~\cite{Potthast2010b}.
+Vandalism Detection (PAN-WVD~2010)~\cite{Potthast2010b}.
 We use it in a similar way here to compare how well our quality
 measures are able to predict vandalism within the corpus,
 but with an important distinction:
@@ -48,9 +48,9 @@ we term this variation of the problem \textit{immediate vandalism detection}.
 By definition, our two longevity metrics use later edits to
 measure the quality of the revision being judged; we call
 this the \textit{historical vandalism detection} problem.
-Historical vandalism detection has applications such as selecting
-high quality revisions for DVD compilations or for presentation
-to school children.
+Historical vandalism detection has its own set of important
+applications, such as selecting high quality revisions for
+DVD compilations or for presentation to school children.
 
 The PAN-WVC-10 corpus contains 32,439 edits, where each revision was
 manually reviewed by at least three annotators to assign a label
@@ -64,12 +64,12 @@ We used the straight-forward transformation to convert
 each quality score from its normal range into the range
 $[0,1]$, to be interpreted as a probability that the named
 revision was the result of vandalism.
-As in the PAN 2010 competition~\cite{Potthast2010b}, we use the
-\texttt{perf}\footnote{\url{http://kodiak.cs.cornell.edu/kddcup/software.html}}
+As in the PAN-WVD~2010 competition~\cite{Potthast2010b}, we use the
+\texttt{perf}\footnote{\url{http://osmot.cs.cornell.edu/kddcup/software.html}}
 package to evaluate the performance of our quality measures
-by computing the area under the receiver operating characteristic
+by computing the areas under the receiver operating characteristic
 curve \footnote{\url{http://en.wikipedia.org/wiki/Receiver_operating_characteristic}},
-and also the mean precision value.
+and the precision-recall curve.
 
 \subsection{Difference Algorithms}
 
@@ -110,6 +110,11 @@ The list of algorithm variations that we tried are as follows:
     \end{description}
 
 \item[\textbf{diff3}]
+    The \textbf{prev matches} optimization is only applicable
+    on top of the \textbf{longest match} optimization.
+    On average, it has significantly reduced memory requirements
+    over \textbf{longest match} implemented with an associative array
+    to track matches made so far.
     %
     \begin{description}
     \item[Includes:]
@@ -125,7 +130,7 @@ The list of algorithm variations that we tried are as follows:
     We believe that the \textbf{header/trailer} optimization generates
     an edit script which is closer to a human understanding of text
     differencing, so that we expect this variation to perform worse
-    than \textbf{diff1}.
+    than \textbf{diff5}.
     %
     \begin{description}
     \item[Includes:]
@@ -167,6 +172,8 @@ The list of algorithm variations that we tried are as follows:
     This is the difference algorithm currently running on the live
     production
     WikiTrust system.
+    It is the same as \textbf{diff6}, with the addition of the
+    \textbf{header/trailer} optimization.
     %
     \begin{description}
     \item[Includes:]
@@ -456,104 +463,168 @@ previous revision is zero.}
 
 \subsubsection{Edit Longevity}
 
+\input{part-F70-editquality/quality-table-editlongbyed}
+
 The chief measure of performance that we consider is
-the area under the precision-recall curve (PR-AUC),
-which Tables~\ref{tab:editshoutA} through~\ref{tab:editshoutJ}
-present in descending order.
+the area under the precision-recall curve (PR-AUC);
+we summarize the data here, with
+the full data is available in Appendix~\ref{app:editlong-data}.
 We chose this as the primary measure because it gives better
 discrimination between predictive models for the PAN~2010
 corpus, as explained in~\cite{Potthast2010b}.
 In the case of our variations, PR-AUC is highly correlated
-with ROC-AUC.
-We note that PR-AUC is calculated relative to the number of
-predictions made by the combination of difference algorithm,
-match quality, and edit distance; when the edit distance is
-zero, a prediction will not be made.
-Each combination we tested made predictions for a number of
-revisions numbering in the range from 27,500 to 28,500.
+with ROC-AUC, so the choice does not largely impact the ordering
+of the different algorithms.
+Our methodology for calculating PR-AUC and ROC-AUC is important
+to make clear: a standard evaluation (as was used in the
+PAN-WVD~2010 competition) requires predictions for all 32,439
+edits in the PAN-WVC-10 corpus; we measure the performance
+for each combination of parameters only according to the number
+of revisions that a prediction is available for, which varies
+in a range from 27,500 to 28,500.
+As mentioned previously, we will not calculate a prediction
+when the edit distance from the previous revision is zero,
+or when there are no suitable judging revisions after the
+edit being judged.
+By computing the performance according to the number of revisions
+for which a prediction is available there is a slight bias towards
+parameter combinations which make fewer predictions,
+but this allows comparison of each combination in their best
+possible light without the distortion of a default guess when
+there is not enough data.
 
+The most striking thing about the results presented
+in Appendix~\ref{app:editlong-data} is the clustering
+by edit distance (and to a much lesser extent, of difference
+algorithm) that occurs.
+Clearly revealed is that use of \textbf{ed5} leads to the most superior
+predictions, while \textbf{ed2} makes the worst predictions
+(and \textbf{ed4}, the second worst).
+These results align with the intuition that the choice
+of edit distance function measures of the amount
+of \textit{effort} done by an author in making an edit;
+the more closely that choice matches the human intuition,
+the better the ability to compute how much effort is \textit{useful}.
+In particular, \textbf{ed2} was expected to perform poorly
+because its inclusion of all \textbf{Mov} operations leads
+to a value that is dominated by the size of the revisions,
+and \textbf{ed5} tries the hardest to estimate the amount of
+effort that goes into rearranging blocks of text.
 
-\mynote{NumRevs is how many PAN2010 revisions we made predictions for.
-We would like this to be as high as possible, but WikiTrust will skip
-calculating a quality for a revision if it believes the edit distance
-from the previous revision is 0; this is because the calculation
-includes a division.
-It would be better, probably, if it skipped the calculation if the
-size of the \textit{edit script} is one (meaning that it must be
-a single block copy).
-If the edit distance function returns zero, I believe that it
-would be better for the quality function to also return zero.}
+\mynote{Include some thoughts on relative performance of
+different diff algorithms.  Later mynote explains that there
+is bug in implementation of diff4, diff5, and diff6.
+Those need to be redone, so can't say anything until later.}
+
 
 The typical measure used to compare difference algorithm is the
 running time, and so we include this value.
-The running time is not really affected by either the
-match quality or the edit distance calculations,
-except for algorithm \textbf{diff6}
-(see Table~\ref{tab:difftiming}), which has a running
-time which climbs up to approximately 418 minutes
-when used with match qualities \textbf{mq5}, \textbf{mq6},
-or \textbf{mq7}.
-Table~\ref{tab:difftiming} reveals that Reichenberger's
-difference algorithm runs in half the time (or more) that the
-WikiTrust algorithms complete in,
-and can also predict vandalism very competitively
-(Table~\ref{tab:editshoutA}).
-\mynote{Diff7 and diff8 not calculated yet.}
+We find in Appendix~\ref{app:editlong-data} that the running time
+is not really affected by either the
+match quality or the edit distance calculations, so we
+summarize the results in Table~\ref{tab:difftiming} by
+computing the average and standard deviation of running times.
+The running time measured is the time required to run the
+WikiTrust analysis on the reduced corpus that includes
+the PAN-WVC-10 revisions; this includes the time to compute
+both edit longevity and text longevity for each revision,
+but not the time to sort the resulting statistics and generate
+reputation scores for authors.
+(Text longevity uses a fixed difference algorithm and only varies
+the match quality function, so that it is essentially a constant
+overhead in the time.)
+
+The notable issue to our grouping the results of
+Table~\ref{tab:difftiming} by difference algorithm
+is the standard deviation of \textbf{diff6}.
+The values for \textbf{diff6} actually do depend on the
+match quality function, and are a bimodal distribution:
+match qualities \textbf{mq1} through \textbf{mq4} have
+running times of roughly 200~minutes, while
+\textbf{mq5} through \textbf{mq9} have running times
+of roughly 400~minutes.
+\mynote{I expect that this is some kind of timing
+mistake, since \textbf{diff7} should have shown the
+same behavior.}
 
 \input{part-F70-editquality/quality-table-timing}
 
-\mynote{I included the total number of triangles calculated.
-Like NumRevs, this number is dependent on the edit distance
-from the previous rev being non-zero.
-More interesting is the number of bad triangles; a bad triangle
-is one that doesn't satisfy the triangle inequality.
-What is interesting to note about this column is that
-it's generally correlated with the PR-AUC.
-Is it necessary for the edit distance to not respect the
-triangle inequality in order for the edit longevity to make
-good predictions?
-That seems unbelievable to me.}
+With respect to the different optimizations, Table~\ref{tab:difftiming}
+provides some insights.
+The most notable conclusion is that Reichenberger's
+difference algorithm is faster than the WikiTrust
+greedy algorithm by nearly a factor of two.
+We expect this sort of result because, while both algorithms
+inspect every possible match and then mark the actual
+match as used, the WikiTrust algorithm additionally
+re-traverses the non-longest matches to search for
+\textit{residual} matches.
+The ordering of \textbf{diff3}, \textbf{diff4}, and \textbf{diff5}
+allows us to infer that the \textbf{header/trailer} optimization
+is more beneficial than the \textbf{prev matches} optimization.
+Incorporated into the Reichenberger algorithm, the
+\textbf{header/trailer} optimization makes little difference
+to the running time.
 
+The caveat to use of the \textbf{header/trailer} optimization
+is that it can lead to different edit scripts being computed
+to describe the transformation from one revision to the next.
+Our hypothesis was that the \textbf{header/trailer} optimization
+more naturally conforms to a human description of how to transform
+one revision into another, leading to improved predictions of
+vandalism; this is not born out by the data in
+Tables~\ref{tab:editlongbyed5} through~\ref{tab:editlongbyed1}.
+There are three pairs of difference algorithms that are the same
+except for the use of the \textbf{header/trailer} optimization:
+\textbf{diff1}/\textbf{diff2}, \textbf{diff4}/\textbf{diff5},
+and \textbf{diff6}/\textbf{diff7}.
 
+\mynote{Diff4 always performs the worst.  Why is that?}
+\mynote{Diff3 and Diff5 should be exactly the same, but they are not!
+I was expecting that the prev match optimization was only more efficient.
+I think that it gives different results because the i2 loop isn't guaranteed
+to call skipmatch for every value of i2; for example, if
+parts of w2 are already matched.
+Ah, looks like bug in my code: didn't set prev match to empty list
+if there was no match.
+I think this explains the problem with Diff4, as well.
+Redo: diff4, diff5, diff6.
+}
 
-\input{part-F70-editquality/quality-table-editlong}
-\mynote{Comparison of the performance of edit longevity
-  using three different definitions of edit distance.
-  The edit quality computed was used as a predictor for the probability
-  that annotated revisions from the PAN-WVC-10 corpus were vandalism.
-  Each measure is evaluated by computing the area under the
-  receiver operating characteristic (ROC) curve.
-} 
+\mynote{
+Diff4 and Diff6 should also be the same.
+}
+\mynote{Since redoing some diffs, consider adding matchskip
+idea, for even better speedup.}
 
 
 \subsubsection{Text Longevity}
 
-The number of revisions is good: 28,453 / 32,439.
-Text longevity is not calculated when there are no
-judging editors after the revision we are computing
-the text longevity for.
-This argues that 28,453 is an upper bound for the number
-of revisions that we are able to calculate \textit{any}
-quality measure for.
+For measuring the performance of text longevity,
+we fixed the text matching algorithm to be the one
+used in the live production system of WikiTrust,
+which is a variation of the difference algorithm
+\textbf{diff7}.\footnote{The source code implementing
+this functionality is available from Github,
+\url{http://www.github.com/collaborativetrust/WikiTrust},
+and corresponds to the function \texttt{text\_tracking}
+in file \texttt{chdiff.ml}.}
+Edit distance does not affect the text longevity calculation,
+so our only significant parameter is match quality;
+results are presented in Table~\ref{tab:textshoutA}.
+Each variation made predictions for 28,453 revisions.
 
-The ROC-AUC of 85.9\% seems good, but ranks in seventh place
-in the PAN-2010 competition.
-But this is quite bad, because we're doing \textit{historical
-vandalism detection}, where we use data from the future to
-inform our evaluation of the revision.
-
-The most interesting result in this table of results
-is the fact that the match quality function made
-nearly no difference in the predictive ability of
-text longevity.
-
-\mynote{Try mq just using length.}
-\mynote{mq4 was only tested with diff2 -- diff4.}
+The match quality function has only a very small influence on
+the performance, mirroring the small influence it has on edit longevity.
+We believe this is because the possible edit scripts for
+each edit have a high degree of overlap; that is,
+the different algorithms generally produce the same edit script
+except for very minor differences.
 
 \input{part-F70-editquality/quality-table-textlong}
 
-\subsubsection{Explaining the Performance Gap}
-
+In comparison to edit longevity, the performance of ${\approx}29.26\%$
+PR-AUC is quite poor.
 Why does text longevity not do so well as edit longevity?
 As part of our investigation, we started looking at specific
 instances of text longevity values.
@@ -609,19 +680,4 @@ final survival level.
 In other words, we would be measuring how quickly the text stabilizes,
 rather than how much agreement there was that the text belonged in
 the article.
-
-\subsection{The Triangle Inequality}
-
-We previously noted that our formulation of edit longevity does
-not precisely stay within the desired range of $[-1,+1]$,
-because our use of a greedy differencing algorithm does not
-guarantee the shortest edit script.
-In order to quantify how often such an error might crop up,
-we counted how many triangles were evaluated for our PAN-WVC-10
-revisions, and how many of those fell outside of the range $[-1,+1]$.
-
-\mynote{Need to flesh out this section, and include references
-to works that define when triangle inequality holds and when it
-doesn't.  Seems to be related to generalized levenshtein distance (GLD)
-and maybe normalized levenshtein distance.}
 

@@ -1,0 +1,42 @@
+\chapter{Edit Longevity Parameter Rankings}
+\label{app:editlong-data}
+
+Presented here is the complete rankings of each parameter
+variation explored for the evaluation of edit longevity
+presented in Chapter~\ref{ch:editquality}.
+In addition to the fields described in Chapter~\ref{ch:editquality},
+we also collected some additional measures of the work being
+done by the various combinations of parameters.
+
+\textbf{Num Revs} is how many PAN-WVC-10 revisions predictions
+were made for.
+We would like this to be as high as possible, but WikiTrust will skip
+calculating a quality for a revision if it believes the edit distance
+from the previous revision is 0; this is because the calculation
+includes a division.
+In hindsight, it might be better to inspect the edit script directly
+to determine when there is no change compare from the previous revision.
+When there is no change between revisions, each difference algorithm
+will identify a single \textbf{Mov} operation.
+This begs the question of how to compute the edit longevity when
+the edit distance is zero; a reasonable choice would be setting
+the edit longevity to zero when the edit distance is zero.
+This choice indicates that there is no bias toward believing that
+the revision is either high- or low-quality.
+
+Another measure of work (that is strongly related to the number
+of revisions for which predictions are made) is the number of
+triangles which are evaluated, \textbf{Total Triangles}, as
+illustrated by Figure~\ref{fig-editlong}.
+Each side of the triangle is calculated in the computation
+for edit longevity (see Eq.~\ref{eq:esurv}).
+The column \textbf{Bad Triangles} counts how many of the
+triangles evaluated fail to satisfy the triangle inequality.
+
+\input{part-Z20-editquality/quality-table-editlong}
+
+\section{Triangle Inequality}
+
+\mynote{Include more discussion of triangle inequality based
+on Time Warps book.}
+

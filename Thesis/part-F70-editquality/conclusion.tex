@@ -3,18 +3,14 @@
 We propose two measures of revision quality computed
 from Wikipedia's revision history, and evaluate them
 using the PAN-WVC-10 annotated dataset.
-Edit longevity performs quite well, at over 91\% ROC-AUC;
-very close to the performance of the winning solution from
-the Wikipedia Vandalism Detection competition~\cite{Potthast2010b}.
-The PR-AUC is more middling, near fourth place in the competition.
-Text longevity is a much poorer predictor of vandalism.
+Edit longevity performs much better than text longevity,
+and we explain that the geometric decay model is not
+a good choice for text which stabilizes.
 
-Overall, this result is very encouraging because it means that one can
-estimate the quality of revisions in a relatively simple way.
-Knowing the quality of edits, we can build up a reputation
-system for authors based on the quality of their work;
-we describe such a system in Chapter~\ref{ch:reputation}.
-
-
-\mynote{Cite Halfaker2009, Halfaker2011}
+OVerall, these results are encouraging for using edit
+longevity and text longevity as signals for inferring
+the community feedback of an author's edit.
+Knowing the quality of edits, we can build an author
+reputation system upon these signals; we describe such
+a system in Chapter~\ref{ch:reputation}.
 

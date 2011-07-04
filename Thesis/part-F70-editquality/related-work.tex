@@ -1,0 +1,34 @@
+\section{Related Work}
+
+The problem of quantifying the quality of an edit is one that has
+largely been side-stepped in research on the Wikipedia.
+Much of the literature uses the notion of edit quality as a basis
+for some other research goal, and so they use the gross measure
+of detecting reverts to signal a poor quality
+edit~\cite{Adler2007,Smets2008,Itakura2009,Belani2010}.
+
+The WikiTrust project introduces the idea of text and edit
+longevities~\cite{Adler2007}, which are finer grained than a
+binary classification and are the subject of this chapter.
+Similar to the notion of text longevity is the idea
+of Persistent Word Revision per
+word~\cite{Halfaker2009,Halfaker2011} (PWRpW),
+which counts the number of revisions that added words survive
+and normalizes that sum by the number of words added (that is,
+it computes the average number of revisions that added words survive).
+PWRpW differs from text longevity in that it is essentially computing
+the area under the curve of text survival (such as that depicted by
+Figure~\ref{fig:textsurvival}, for example),
+whereas text longevity is trying to model the curve as a
+geometric curve (see Figure~\ref{fig:textlongevity}).
+\mynote{This idea seems very plausible, and I wonder if I should
+implement it and compare the performance against our own work.}
+
+At a broader view, quantifying the quality of an edit is strongly
+related to the problem of detecting vandalism.
+Many machine learning models produce a probability that an edit
+should be classified as vandalism, and this probability can be
+directly taken as a quality score.
+We refer the interested reader to Section~\ref{sec:vandalism-related}
+for a discussion of the literature around this view of the problem.
+

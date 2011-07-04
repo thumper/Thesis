@@ -231,6 +231,12 @@ step are:
     Appendix~\ref{app:fasterdiffsrc-perl} demonstrates this
     modification, with some representative runtimes shown
     in Table~\ref{tab:comparediff}.
+    An optimization that we later implemented on top of
+    \textbf{longest match} is \textbf{prev matches}:
+    if a potential starting position for matched text is part of
+    a longer match, then the previous position would have
+    been in the set of matches returned by the index of
+    matching positions.
 
 \item[\textbf{header/trailer}] When users edit an article, the beginning
     and end of the article are not likely to change much.

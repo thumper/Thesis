@@ -253,16 +253,12 @@ varies from $-1$ to $+1$.
 
 There is just one problem with this analysis: it depends on
 the triangle inequality holding.
-Unfortunately, there is no guarantee that the triangle inequality
-holds because the edit difference we compute is done greedily
-and does not guarantee the shortest difference script.
-In order to account for this possible error in the resulting
-value of edit longevity, we explicitly check for when the
-computed value is outside the expected range of $[-1, +1]$
-and cap the value to the nearest end of the range.
-
-\mynote{See later note.  Need to add references to work showing
-when Levenshtein distance is a metric.}
+Unfortunately, this is not actually the case; we adjust for
+this by limiting the result to the range $-1$ to $+1$,
+with any value beyond that range being capped to the closest
+value within the range.
+\mynote{For additional discussion of the triangle inequality issue,
+see Appendix~\ref{app:editlong-data}.}
 
 \subsection{Edit Longevity Quality}
 
