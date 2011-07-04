@@ -20,7 +20,7 @@ open(my $textshout, ">$base-table-textlong-short.tex")
 
 my (%textcache, %textshcache, %editshcache);
 my (@editout, @textout, @editshout, @textshout);
-my (%runtimes);
+my (%runtimes, %editlongbyed);
 my $expt = undef;
 
 try {
@@ -46,7 +46,7 @@ try {
 	parsePerf($expt, 'text');
       } elsif (m/^COMPUTING THE STATISTICS/) {
 	$expt->{timing} = parseCPUTime();
-      } elsif (m/^new max heap:/) {
+      } elsif (m/^new max heap: \d+/) {
 	parseHeapInfo($expt, $_);
       }
     } otherwise {
@@ -92,9 +92,16 @@ close($editshout);
 close($textout);
 close($textshout);
 
-# Compute mean of runtimes
-my (%avgtime, %stddev);
-foreach my $diff (keys %runtimes) {
+generateRuntimeTable();
+generateEditlongByED();
+
+exit(0);
+
+sub generateRuntimeTable {
+  # Compute mean of runtimes and generate
+  # an abbreviated table for editlong comparison
+  my (%avgtime, %stddev);
+  foreach my $diff (keys %runtimes) {
     my $array = $runtimes{$diff};
     my $sum = sum @$array;
     my $elems = scalar(@$array);
@@ -104,10 +111,10 @@ foreach my $diff (keys %runtimes) {
     my $avgdiff = (sum @diffs) / $elems;
     $stddev{$diff} = sqrt($avgdiff);
     # warn "diff$diff: ".join(", ", @$array)."\n";
-}
-open(my $diffout, ">$base-table-timing.tex")
+  }
+  open(my $diffout, ">$base-table-timing.tex")
     || die "open(timing): $!";
-print $diffout <<'EOF';
+  print $diffout <<'EOF';
 \begin{table}[tbph]
 \begin{center}
 \begin{tabular}{|c||c|c|}
@@ -116,12 +123,12 @@ Diff & Avg Run Time & Std Dev RT  \\
 \hline
 \hline
 EOF
-foreach my $diff (sort { $avgtime{$a} <=> $avgtime{$b} } keys %runtimes) {
-  my $line = sprintf "diff%d & %dm & %0.2fm \\\\\n", $diff,
-    $avgtime{$diff}, $stddev{$diff};
-  print $diffout $line;
-}
-print $diffout <<'EOF';
+  foreach my $diff (sort { $avgtime{$a} <=> $avgtime{$b} } keys %runtimes) {
+    my $line = sprintf "diff%d & %dm & %0.2fm \\\\\n", $diff,
+      $avgtime{$diff}, $stddev{$diff};
+    print $diffout $line;
+  }
+  print $diffout <<'EOF';
 \hline
 \end{tabular}
 \end{center}
@@ -129,8 +136,42 @@ print $diffout <<'EOF';
 \label{tab:difftiming}
 \end{table}
 EOF
-close($diffout);
-exit(0);
+  close($diffout);
+}
+
+sub generateEditlongByED {
+  open(my $out, ">$base-table-editlongbyed.tex")
+    || die "open(editlongbyed): $!";
+  foreach my $ed (sort { $b <=> $a } keys %editlongbyed) {
+    print $out <<'EOF';
+\begin{table}[tbph]
+\begin{center}
+\begin{tabular}{|c|c||c|}
+\hline
+Diff & MatchQuality & PR-AUC  \\
+\hline
+\hline
+EOF
+  foreach my $apr (sort { $b <=> $a } keys %{ $editlongbyed{$ed} }) {
+    my $record = $editlongbyed{$ed}->{$apr};
+    my $line = sprintf "diff%d & mq%s & %0.3f\\%% \\\\\n",
+      $record->{diff},
+      join('', sort keys %{ $record->{mq} }),
+      $record->{APR} * 100.0;
+    print $out $line;
+  }
+    print $out <<EOF;
+\\hline
+\\end{tabular}
+\\end{center}
+\\caption{Performance of difference algorithms for
+  edit distance \\textbf{ed$ed}.}
+\\label{tab:editlongbyed$ed}
+\\end{table}
+EOF
+  }
+  close($out);
+}
 
 sub commify {
     my $result = "N/A";
@@ -181,9 +222,9 @@ EOF
     print $textshout <<'EOF';
 \begin{table}[tbph]
 \begin{center}
-\begin{tabular}{|c|c|c||c|c|c|}
+\begin{tabular}{|c||c|c|}
 \hline
-Diff & Match Quality & Edit Distance & PR-AUC & ROC-AUC & Num Revs \\
+Match Quality & PR-AUC & ROC-AUC \\
 \hline
 \hline
 EOF
@@ -236,7 +277,7 @@ EOF
 \\end{tabular}
 \\end{center}
 \\caption{Comparison of text longevity performance using
-    multiple difference algorithms, sorted by PR-AUC.}
+    multiple match quality functions, sorted by PR-AUC.}
 \\label{tab:textshout$counter}
 \\end{table}
 EOF
@@ -256,16 +297,40 @@ EOF
   };
 }
 
+sub recordEditlongByED {
+    my $expt = shift @_;
+
+    my $ed = $expt->{editdist};
+    my $d = $expt->{diff};
+    my $mq = $expt->{mq};
+    my $apr = $expt->{edit}->{APR};
+
+    $editlongbyed{$ed} = {} if !exists $editlongbyed{$ed};
+    $editlongbyed{$ed}->{$apr} = {} if !exists $editlongbyed{$ed}->{$apr};
+    my $record = $editlongbyed{$ed}->{$apr};
+    if (!exists $record->{diff}) {
+      $record->{diff} = $d;
+      $record->{mq} = {};
+      $record->{APR} = $apr;
+    }
+    die "Exactly the same APR"
+      if $record->{diff} != $d;
+    $record->{mq}->{$mq} = 1;
+}
+
 sub writeExpt {
     my $expt = shift @_;
     return if !defined $expt;
 
+    my $key = "d".$expt->{diff}."mq".$expt->{mq}."ed".$expt->{editdist};
     # if we don't have a complete record, just skip it.
-    return if !defined $expt->{tri_bad};
+    die "bad record: $key\n" if !defined $expt->{tri_bad};
 
     # Build data for running time table
     $runtimes{$expt->{diff}} = [] if !exists $runtimes{$expt->{diff}};
     push @{ $runtimes{$expt->{diff}} }, $expt->{timing};
+
+    recordEditlongByED($expt);
 
     # EDIT LONG
     my $val = sprintf 'diff%d & %s & mq%d & ed%d & %0.3f\\%% & %0.3f\\%% & %s & %dm & %s & %s & %s & %s \\\\'."\n",
@@ -283,14 +348,14 @@ sub writeExpt {
 
 
     # TEXT LONG
-    my $key = "d".$expt->{diff}."mq".$expt->{mq}."ed".$expt->{editdist};
     $val = sprintf 'diff%d & mq%d & ed%d & %0.3f\\%% & %0.3f\\%% & %s \\\\'."\n",
 	$expt->{diff}, $expt->{mq}, $expt->{editdist},
 	$expt->{text}->{APR} * 100.0,
 	$expt->{text}->{ROC} * 100.0,
 	commify($expt->{text}->{size});
     if (exists $textcache{$key}) {
-        die "text: conflicing data:\n1: $textcache{$key}\n2: $val\nfor key $key"
+        die "text: conflicting data:\n"
+	    ."1: $textcache{$key}\n2: $val\nfor key $key"
 	    if $textcache{$key} ne $val;
     } else {
       $textcache{$key} = $val;
@@ -328,11 +393,11 @@ sub writeExpt {
       ), $val];
 
     # TEXT LONG
-    $key = "d".$expt->{diff}."mq".$expt->{mq}."ed".$expt->{editdist};
-    $val = sprintf 'diff%d & mq%d & ed%d & %0.3f\\%% & %0.3f\\%% & %s \\\\'."\n",
-	$expt->{diff}, $expt->{mq}, $expt->{editdist},
-	$expt->{text}->{ROC} * 100.0, $expt->{text}->{APR} * 100.0,
-	commify($expt->{text}->{size});
+    $key = "mq".$expt->{mq};
+    $val = sprintf 'mq%d & %0.3f\\%% & %0.3f\\%% \\\\'."\n",
+	$expt->{mq},
+	$expt->{text}->{APR} * 100.0,
+	$expt->{text}->{ROC} * 100.0;
     if (exists $textshcache{$key}) {
         die "conflicing textlong data:\n1: $textshcache{$key}\n2: $val\nfor key $key"
 	    if $textshcache{$key} ne $val;
@@ -342,7 +407,7 @@ sub writeExpt {
     push @textshout,
       [Tuple->new(
 	$expt->{text}->{APR},
-	$expt->{diff}, $expt->{mq}, $expt->{editdist}
+	$expt->{mq}
       ), $val];
 }
 
@@ -411,16 +476,25 @@ sub parseSetSize {
 sub parseHeapInfo {
     my ($expt, $line) = @_;
     return if !defined $expt;
+    return if $line =~ m/List of/;
     my $heaplen = 0;
     my $maxmem = 0;
     if (m/^new max heap:\s+(\d+)/) {
 	$heaplen = 0+$1;
 	$expt->{heaplen} = $heaplen if $heaplen > ($expt->{heaplen} || 0);
     }
+    my $start = $.;
     while (<>) {
+	return if m/List of/;	    # early msg from next program
 	die "Error detected" if m/traceback/i;
 	chomp;
-	if (m/^debug: kbytes = (\d+) ;/) {
+	if (m/^debug: kbytes = (\d+)/) {
+	    my $found = $.;
+	    my $dist = $found - $start;
+	    if ($dist > 7) {
+	      warn "crazy: debug distance is $dist";
+	      die "Crazy: the debug line is too far at $dist lines";
+	    }
 	    $maxmem = (0 + $1) / 1024.0;
 	    $maxmem = int($maxmem + 0.5);
 	    $expt->{maxmem} = $maxmem if $maxmem > ($expt->{maxmem} || 0);
@@ -438,11 +512,11 @@ sub parsePerf {
     while (<>) {
 	die "Error detected" if m/traceback/i;
 	chomp;
-	if (m/^APR\b/) {
+	if (m/^APR\s/) {
 	    my @f = split(' ');
 	    $expt->{$type}->{APR} = $f[1];
 	    $c++;
-	} elsif (m/^ROC\b/) {
+	} elsif (m/^ROC\s/) {
 	    my @f = split(' ');
 	    $expt->{$type}->{ROC} = $f[1];
 	    $c++;
@@ -457,9 +531,9 @@ sub parseCPUTime {
     while (<>) {
 	die "Error detected" if m/traceback/i;
 	chomp;
-	if (m/^user\s+(\d+)m(\d+)\b/) {
+	if (m/^user\s+(\d+)m(\d+)/) {
 	    $total += $1 * 60 + $2;
-	} elsif (m/^sys\s+(\d+)m(\d+)\b/) {
+	} elsif (m/^sys\s+(\d+)m(\d+)/) {
 	    $total += $1 * 60 + $2;
 	    # sys comes last, so clean and finish
 	    $total /= 60.0;
