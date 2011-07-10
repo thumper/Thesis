@@ -17,6 +17,19 @@ readCSV($revids, [0, 1, 2, 3], sub {
 			    class => $class };
 });
 
+my @fields = qw(
+    RevId Anon PrevSameAuthor LogtimePrev HourOfDay
+    Delta OverallTrust
+    Hist0 Hist1 Hist2 Hist3 Hist4 Hist5 Hist6 Hist7 Hist8 Hist9
+    LogPrevLength LogLength
+    PPrevHist0 PPrevHist1 PPrevHist2 PPrevHist3 PPrevHist4
+    PPrevHist5 PPrevHist6 PPrevHist7 PPrevHist8 PPrevHist9
+    LDeltaHist0 LDeltaHist1 LDeltaHist2 LDeltaHist3 LDeltaHist4
+    LDeltaHist5 LDeltaHist6 LDeltaHist7 LDeltaHist8 LDeltaHist9
+  );
+
+print join(',', @fields), "\n";
+
 find({ wanted => \&wanted, no_chdir=>1 }, $sqldir);
 
 exit(0);
@@ -94,7 +107,7 @@ sub wanted {
 	    $row{"LDeltaHist$n"} = $log_d;
 	}
 
-	# TODO: print out line
+	print join(',', map { $row{$_} } @fields), "\n";
 
 	$prevline = $_;
       } else {
@@ -105,8 +118,6 @@ sub wanted {
     }
   }
   close($fh);
-
-  exit(0);
 }
 
 sub parseLine {

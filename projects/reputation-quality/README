@@ -4,8 +4,17 @@ corpus as a golden annotation for "bad edits".
 
 1. Follow the initial steps from "../edit-quality/README"
 
-2. Extract the ratings for the PAN revisions.
+2. Extract the reputation scores for the PAN revisions.
 
     ./extract-repsFrepfile.pl pan2010.csv \
 	/raid/thumper/util/tmp/output-enwiki/user_reputations.txt
+	> features-reputation.csv
+
+3. Extract other features from SQL files:
+    ./extract-dataFsql.pl pan2010.csv \
+	/raid/thumper/util/tmp/output-enwiki/sql
+	> features-sqlbased.csv
+
+    (Note that these steps are separate because they take so long
+    to run.  Having them separate allows us to rerun any single step.)
 

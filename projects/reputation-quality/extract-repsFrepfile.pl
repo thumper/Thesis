@@ -23,11 +23,10 @@ my @revids = sort { $panrevs->{$a} <=> $panrevs->{$b} } keys %$panrevs;
 
 my $nextrev = shift @revids;
 my $nexttime = $panrevs->{$nextrev}->{'time'};
-print "NEXT:  rev=$nextrev, time=$nexttime\n";
+warn "NEXT:  rev=$nextrev, time=$nexttime\n";
 my $authorRep = {};
 
-open(my $repf, ">perf-reputation.txt") || die "open: $!";
-print $repf "Time,Revid,Rep,RepBin,Vandalism\n";
+print "Time,Revid,Rep,RepBin,Vandalism\n";
 
 open(my $fh, "<", $repFile) || die "open($repFile): $!";
 while (defined ($_ = <$fh>) && defined $nextrev) {
@@ -40,12 +39,12 @@ while (defined ($_ = <$fh>) && defined $nextrev) {
     my $t = $fields[2];
     next if $t eq 'rev:';
     while (defined $nextrev && $t > $nexttime) {
-	print "t = $t\nt'= $nexttime\n";
+	warn "t = $t\nt'= $nexttime\n";
 	# Now it's safe to look up the rep of the author
 	my $a = $panrevs->{$nextrev}->{author};
 	my $rep = $authorRep->{$a} || [0, 0];
 	my $class = $panrevs->{$nextrev}->{class};
-	print $repf join(',', $nexttime, $nextrev, @$rep, $class), "\n";
+	print join(',', $nexttime, $nextrev, @$rep, $class), "\n";
 	$nextrev = shift @revids;
 	$nexttime = $panrevs->{$nextrev}->{'time'} if defined $nextrev;
     }
@@ -54,8 +53,6 @@ while (defined ($_ = <$fh>) && defined $nextrev) {
     $authorRep->{$author} = [$newrep, $newrepbin];
 }
 close($fh);
-
-close($repf);
 
 exit(0);
 
