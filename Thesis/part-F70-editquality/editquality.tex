@@ -12,13 +12,13 @@ style are valuable to the quality of the final product.
 Is there any notion equivalent to text survival for edits?
 In struggling to answer this question, we first had to measure
 the size of an ``edit contribution,'' which naturally led us to the
-\intro{edit distance}~\cite{Levenshtein1966,Tichy1984,Cormode2007,Adler2007}
+\intro{edit distance}~\cite{Damerau1964,Levenshtein1966,Tichy1984,Cormode2007}
 measure.
 
 \subsection{Edit Distances}
 \label{sec:eq-distances}
 
-Edit distance~\cite{Levenshtein1966} is typically used as a way to
+Edit distance~\cite{Damerau1964,Levenshtein1966} is typically used as a way to
 measure how many insertions, deletions, and replacements are needed to
 transform one string into another (the collection of these operations
 is called an \textit{edit script}), and is thus defined as the sum of the
@@ -142,8 +142,8 @@ the distance \dist{}{k,j} is larger than the distance \dist{}{k-1,j}.
 	look at the previous version \version{k-1} and some future
 	version \version{j}.
 	The three versions form a triangle, using
-	edit distance~\cite{Levenshtein1966} to define the separation
-	between each other.
+	edit distance~\cite{Damerau1964,Levenshtein1966} to
+        define the separation between each other.
 	Intuitively, we know that when \version{k} is good,
 	the distance to the future, $\dist{}{k, j}$,
 	will be shorter than if \version{k} is bad.
@@ -257,8 +257,6 @@ Unfortunately, this is not actually the case; we adjust for
 this by limiting the result to the range $-1$ to $+1$,
 with any value beyond that range being capped to the closest
 value within the range.
-\mynote{For additional discussion of the triangle inequality issue,
-see Appendix~\ref{app:editlong-data}.}
 
 \subsection{Edit Longevity Quality}
 

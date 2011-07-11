@@ -12,11 +12,12 @@ To evaluate our content-driven reputation, we considered two Wikipedias:
 
 \end{itemize}
 %
-In both wikipedias, we studied only ``NS\_MAIN'' pages, which
+In both Wikipedias, we studied only \texttt{NS\_MAIN} pages, which
 correspond to ordinary articles (other pages are used as comment
 pages, or have other specialized purposes). 
 Moreover, to allow the accurate computation of our quality
-measures, we used only revisions that occurred before October~31, 2005 for
+measures which require multiple judges,
+we used only revisions that occurred before October~31, 2005 for
 the Italian Wikipedia, and before July~31, 2006 for the French one. 
 Our algorithms for computing content-driven reputation depend on the
 value of six parameters, as mentioned earlier. 
@@ -36,6 +37,12 @@ Wikipedia as a training set; the values we determined are:
 Figure~\ref{fig:user-breakdown-by-rep} provides a breakdown of
 the amount of edits and text additions performed, according to the
 reputation of the author.
+We find an essentially bimodal distribution:
+the overwhelming majority of revisions are authored by the
+lowest and highest reputation users in the system.
+\mynote{How does this compare with Chapter~5?
+How does it compare to other works that describe the
+population?}
 
 \begin{figure}
 \begin{center}
@@ -50,8 +57,8 @@ reputation of the author.
 
 \subsection{Precision and Recall}
 
-We then analyzed the Italian and French Wikipedias using the above
-values. 
+We analyzed the Italian and French Wikipedias using the
+parameter values discovered by our optimization procedure.
 The results are summarized in Table~\ref{tbl:summary-results}. 
 The results are better for the larger French Wikipedia; in particular,
 the reputation's ability to predict short-lived edits is better on the
@@ -73,15 +80,15 @@ as likely as the average to be short-lived.
  & $\prece$ & $\prect$ & $\recalle$ & $\recallt$ & $\booste$ & $\boostt$ 
  & $\constrainte$ & $\constraintt$ \\[0.5ex] \hline 
 \textbf{Excluding anonymous authors: \quad} & & & & & & & & \\
-\qquad French Wikipedia          & 23.92 &  5.85 & 32.24 & 37.80 & 4.21 & 4.51 &  7.33 &  6.29 \\
-\qquad Italian Wikipedia         & 14.15 &  3.94 & 19.39 & 38.69 & 4.03 & 5.83 &  3.35 &  7.17 \\ \hline
+\qquad French Wikipedia          & 23.92\% &  5.85\% & 32.24\% & 37.80\% & $4.21\times$ & $4.51\times$ &  7.33 &  6.29 \\
+\qquad Italian Wikipedia         & 14.15\% &  3.94\% & 19.39\% & 38.69\% & $4.03\times$ & $5.83\times$ &  3.35 &  7.17 \\ \hline
 \textbf{Including anonymous authors: \quad} & & & & & & & & \\
-\qquad French Wikipedia          & 48.94 & 19.01 & 82.86 & 90.42 & 2.35 & 2.97 & 25.29 & 23.00 \\
-\qquad Italian Wikipedia         & 30.57 &  7.64 & 71.29 & 84.09 & 3.43 & 3.58 & 19.83 & 17.49 \\ \hline
+\qquad French Wikipedia          & 48.94\% & 19.01\% & 82.86\% & 90.42\% & $2.35\times$ & $2.97\times$ & 25.29 & 23.00 \\
+\qquad Italian Wikipedia         & 30.57\% &  7.64\% & 71.29\% & 84.09\% & $3.43\times$ & $3.58\times$ & 19.83 & 17.49 \\ \hline
 \end{tabular}
 \end{center}
-\caption{Summary of the performance of content-driven reputation over
-the Italian and French Wikipedias. All data are expressed as percentages.}
+\caption{Summary of the performance of content-driven reputation for
+the Italian and French Wikipedias.}
 \label{tbl:summary-results}
 \end{sidewaystable}
 
@@ -89,7 +96,7 @@ the Italian and French Wikipedias. All data are expressed as percentages.}
 \subsection{Manual Annotation}
 
 To investigate how many of the edits had a short life due to bad quality,
-we asked a group of~7 volunteers to rate revisions performed to the
+we asked a group of seven volunteers to rate revisions made to the
 Italian Wikipedia. 
 We selected the revisions to be ranked so that they contained
 representatives of all 4 combinations of high/low reputation author,
@@ -136,7 +143,7 @@ Other Wikipedia edits are administrative in nature, flagging pages that
 need work or formatting; when these flags are removed, we classify it
 as text deletion. 
 Furthermore, our algorithms do not track text across articles, so that
-when text is moved from one article to another, they classify it as
+when text is moved from one article to another, it is classified as
 deleted from the source article.
 
 From Table~\ref{tbl:summary-results}, we note that the precision is
@@ -162,6 +169,8 @@ Normal [0.2--1.0]   &    14  \% &    85 \% \\ \hline
 \end{center}
 \caption{User ranking of short-lived edits and text, as a
   function of author reputation, for the Italian Wikipedia.  
+  We presented edit differences to a test group of users,
+  and asked users to rate whether the edit was good or bad.
   In square brackets, we give the
   interval where the normalized value $\log(1+r) / \log (1 +
   \coeffmaxrep)$ of a reputation $r$ falls.  The precentages do not
@@ -171,7 +180,7 @@ Normal [0.2--1.0]   &    14  \% &    85 \% \\ \hline
 
 \subsection{Comparison with Edit-Count Reputation}
 
-\begin{table*}
+\begin{sidewaystable}
 \begin{center}
 \begin{tabular}{|l||c|c||c|c||c|c||c|c|} \hline
  & \multicolumn{2}{|c||}{Precision}
@@ -191,9 +200,17 @@ Normal [0.2--1.0]   &    14  \% &    85 \% \\ \hline
 \end{center}
 \caption{Summary of the performance of content-driven reputation over
 the Italian and French Wikipedias. All data are expressed as
-percentages. Anonymous authors are not included in the comparison.}
+percentages. Anonymous authors are not included in the comparison.
+Precision is the probability that the text or edit longevity is low,
+given that the reputation is low.
+Recall is the probability that the reputation is low, given
+that the text or edit longevity is low.
+}
 \label{tbl:comparison-with-count} 
-\end{table*}
+\end{sidewaystable}
+
+\mynote{Double-check the results of Halfaker2011 with this next
+``commonly believed'' statement.}
 
 We compared the performance of our content-driven reputation to 
 another basic form of reputation: {\em edit count.} 
@@ -206,10 +223,11 @@ We compare the performance of edit count, and of content-driven
 reputation, in Table~\ref{tbl:comparison-with-count}. 
 The comparison does not include anonymous authors, as we do not have a
 meaningful notion of edit-count for them. 
-As we can see, according to our metrics, content-driven reputation
+According to our metrics, content-driven reputation
 performs slightly better than edit-count reputation on both the Italian 
 and French Wikipedias. 
 
+\mynote{Again, double-check with Halfaker2011.}
 We believe that one reason edit-count based reputation performs well
 in our measurements is that authors, after performing edits that are
 often criticized and reverted, commonly either give up their identity

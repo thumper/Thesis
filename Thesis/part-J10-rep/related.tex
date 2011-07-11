@@ -4,8 +4,8 @@ The work most closely related to this one is \cite{Zeng2006}, where the
 revision history of a Wikipedia article is used to compute a trust
 value for the article.
 Dynamic Bayesian networks are used to model the
-evolution of trust level over the versions. 
-At each revision, the inputs to the network are a priori models of
+evolution of trust level over the revisions. 
+At each edit, the inputs to the network are a priori models of
 trust of authors (determined by their Wikipedia ranks), 
 and the amount of added and deleted text. 
 The paper shows that this approach can be used to predict the quality
@@ -24,7 +24,11 @@ the reputation in those systems is generally user-driven, rather than
 content-driven as in our case. 
 Related is also work on trust in social networks~\cite{Guha2004,Golbeck2005},
 as well as search ranking for web pages~\cite{Kleinberg1999,Page1999}.
+Closer to this work, vandalism detection is a closely related problem
+which we discuss in Section~\ref{sec:vandalism-related}.
 
+Our work is a form of analysis on the evolution of text over time;
+other research has also investigated such evolution.
 The history flow of text contributed by Wikipedia authors has
 been studied with flow visualization methods in~\cite{Viegas2004}; 
 the results have been used to analyze a number of interesting patterns

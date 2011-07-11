@@ -595,3 +595,30 @@ problem happening to the \mysql connection; maybe
 it needs to be closed before forking, or maybe it just
 needs to be closed and reopened periodically?
 
+\subsection{9-Jul-2011}
+
+After many tries at profiling, and even instrumenting
+inside of \file{online\_db.ml}, my conclusion is that
+there is a problem relating to \mysql.
+The delays always seem to fall on calls to \mysql, but
+there isn't a single call that is responsible; instead,
+sometimes the delay is on transaction start, or on a select
+or update\ldots it moves around regularly.
+My interpretation of that is that there is something wrong
+with the connection to \mysql; looking at the SQL statements,
+I do see that we accidentally generate nested transactions,
+which \mysql does not support.
+Since the changes actually are visible right away, I think
+that \mysql just commits all open transactions on a commit,
+but it seems possible that something internally is still amiss.
+
+As suggested in the last entry, I also tried closing the DB
+handles in the parent process, and then reopening them.
+This doesn't help, but it's possible that the \mysql library
+for OCaml is caching the connection.
+In the end, the only solution that works to keep the CPU load
+low is to regularly terminate the process and \function{exec}
+the dispatcher with the same arguments.
+So, essentially, this bug is patched over so that it isn't
+keeping me needlessly busy any longer.
+

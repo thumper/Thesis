@@ -147,3 +147,25 @@ the \texttt{VANDALREP} messages.
 I copied in the right file and am running the command again,
 this time without the sorting of stats.
 
+\subsection{9-Jul-2011}
+
+Just getting back to this while the edit quality evaluation runs.
+The reputations file is there and date 1-Jun-2011 @ 07:44,
+so it must take less than a day to run.
+
+Last weekend, I started looking again at the work we did
+for the PAN~2010 competition.
+This code is stored on SPCR, in
+\texttt{archives/2010/UCSC/redherring/vandalism}.
+Since I want to do a comparison of immediate vandalism
+detection with what we generated for the competition,
+I isolated the list of features we used for the immediate mode:
+RevId, Anon, PrevSameAuthor, LogtimePrev, HourOfDay,
+Delta, OverallTrust, Hist[0-9], LogPrevLength,
+LogLength, PPrevHist[0-9], LDeltaHist[0-9].
+In the PAN competition, this data comes from the mysql database.
+Looks like I need to be able to parse through the SQL files
+generated as part of the batch process.
+These files are in
+\texttt{gaston:/raid/thumper/util/tmp/output-enwiki/sql}.
+

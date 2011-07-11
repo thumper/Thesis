@@ -5,12 +5,14 @@ We had several concerns about this style of system: lack of adoption,
 Sybil attacks through puppet votes, block voting by cliques of users, and
 disrupting the current user experience of the Wikipedia community.
 This led us to the idea of \intro{implicit voting} through
-actions already taken by the community as part of their normal activities
-(an idea related to \intro{revealed preferences}~\cite{Samuelson1938}).
+actions already taken by the community as part of their normal activities,
+an idea related to \intro{revealed preferences}~\cite{Samuelson1938}.
 For example, reading an article and not making an edit to it is
 an implicit vote (though perhaps not a strong one)
 that the article is of good quality; the more page views an article
 has, the more we can believe that there are no errors in it.
+We call reputation systems that do not use explicit input
+from users \intro{content-driven}.
 
 
 The simplest idea for a content-driven reputation system would measure
@@ -20,27 +22,30 @@ two distinct ways that authors contribute to the Wikipedia: by adding
 new content, and by revising existing content.
 Both are important to consider, since several users will
 adopt one contribution style and not the other.
-We introduce in Chapter~\ref{ch:editquality} the notions of
-\intro{text survival}, which measures how much text survives
-into later revisions, and \intro{edit survival}, which measures
-how consistent an edit is with later revisions,
-to account for these different methods of contribution.
-We use the principle that every future author is
-implicitly making an evaluation on the work of past authors:
-edits and new text that are consistent with later revisions
-are judged ``good'' by the community.
-
-A reputation system must be able to recognize and reward
-``good'' work.
 In Chapter~\ref{ch:contrib}, we propose several different ways
 to measure the contribution of authors.
-Two of those models, \textlong and \editlong,
-form the underlying basis of the reputation system analyzed
+Two of those models, \tenrevs and \editlong,
+are the foundation of the reputation system analyzed
 in this chapter.
 There are several constants in our final model, which were assigned
 values by optimizing for the heuristic that author reputation at
 the time of an edit
 should be correlated with the edit longevity of that revision.
+We use the quality measures developed in Chapter~\ref{ch:editquality}
+to evaluate the performance of our reputation system.
+
+\begin{comment}
+We introduce in Chapter~\ref{ch:editquality} the notions of
+\intro{text longevity}, which describes how added text survives
+into later revisions, and \intro{edit longevity}, which measures
+how consistent an edit is with later revisions,
+to account for these different methods of contribution.
+We use the principle that every future author is
+implicitly making an evaluation on the work of past authors:
+edits and new text that are preserved with later revisions
+are judged ``good'' by the community.
+\end{comment}
+
 
 There are several possible applications of computing a reputation
 value for authors (for example, to grant or deny editing rights to

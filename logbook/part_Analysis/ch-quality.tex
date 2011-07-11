@@ -849,14 +849,74 @@ The new labels are:
 \end{description}
 
 
-\mynote{Waiting for memory test to finish on Gaston.}
+\subsection{4-Jul-2011}
 
+Worked on analysis of edit quality results this past weekend.
+While writing up the analysis, I noticed that \textbf{diff4}
+(according to the current definition in my thesis)
+was always in last place for edit longevity.
+This seemed odd, so I reviewed the definitions and decided
+that the following statements were intended to be true:
+\begin{itemize}
+\item Diff4 == Diff6
+\item Diff3 == Diff5
+\end{itemize}
+They weren't true, and when I investigated further it
+appears that they aren't true because of a bug in my implementation
+of the \textbf{prev matches} optimization.
+This means redoing most of the experiment,
+but this might be a good chance to implement another
+optimization based on the matched1/2 array:
+instead of recording just true or false, record
+how many words until the end of the match.
+That way, any loops can skip over large matched regions.
 
+In trying to benchmark the current code, I get
+the following timings on a loop of 20,000 iterations
+(of just the last unit test string pair):
+\begin{verbatim}
+diff0: new maxtime = 12.321750.
+diff1: new maxtime = 12.833539.
+diff2: new maxtime = 12.506446.
+diff3: new maxtime = 13.165413.
+diff4: new maxtime = 13.253027.
+diff5: new maxtime = 12.598839.
+diff8: new maxtime = 13.597368.
+diff9: new maxtime = 15.128454.
+\end{verbatim}
 
+\subsection{9-Jul-2011}
+
+While working on my laptop, I discovered that the times
+are dominated by the transformation from string to word list.
+So the timings from last weekend probably aren't a useful comparison.
+Instead, I should just run it on the PAN~2010 data set and
+see how it compares to the numbers I have been collecting.
+I implemented the change last night, but I am waiting for
+\textbf{diff8} to finish running so that I don't have to
+re-run it later.
 
 \section{Reverse Triangle Inequality}
 
 \subsection{12-Jun-2011}
 
 Luca has asked, ``why does the triangle inequality not hold?''
+
+\subsection{4-Jul-2011}
+
+There is much information in the Time Warps book by
+Sankoff and Kruskal.
+I believe what we are doing counts as the Damerau-Levenshtein
+distance, because we include transpositions (block copies).
+This form of the problem is less well studied.
+Chapter~7 of the time warp book has a nice, clear definition
+of how to define the distance, based on weights assigned
+to the elementary operations.
+This weight idea is how the distance is normally formulated.
+
+It turns out that there are three ways to think about generating
+the edit script: as a listing, as an alignment, and as a trace.
+Including transposition means using a looser definition of trace.
+Listings are the easiest to prove the triangle inequality for,
+but it depends on the fact of generated listings being minimal.
 

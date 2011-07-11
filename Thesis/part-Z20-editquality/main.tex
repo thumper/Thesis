@@ -33,10 +33,17 @@ for edit longevity (see Eq.~\ref{eq:esurv}).
 The column \textbf{Bad Triangles} counts how many of the
 triangles evaluated fail to satisfy the triangle inequality.
 
+With respect to the triangle inequality, the data shows that
+it is not a necessary property in order to achieve good performance.
+In fact, the combination of using a greedy approach to
+generating the edit script (which might not generate the
+shortest edit script) and our unusual definitions of edit distance
+make the triangle inequality an unlikely property.
+See~\cite{Sankoff1999} for discussion about when the triangle
+inequality might hold, especially in the more difficult case
+of including transpositions.
+\mynote{especially Sankoff1999, p. 309.  and Chapter 7.}
+
+
 \input{part-Z20-editquality/quality-table-editlong}
-
-\section{Triangle Inequality}
-
-\mynote{Include more discussion of triangle inequality based
-on Time Warps book.}
 
