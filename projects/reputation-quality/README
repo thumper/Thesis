@@ -12,7 +12,7 @@ corpus as a golden annotation for "bad edits".
 
 3. Extract other features from SQL files:
     ./extract-dataFsql.pl pan2010.csv \
-	/raid/thumper/util/tmp/output-enwiki/sql
+	/raid/thumper/util/tmp/output-enwiki/sql \
 	> features-sqlbased.csv
 
     (Note that these steps are separate because they take so long

@@ -30,7 +30,11 @@ my @fields = qw(
 
 print join(',', @fields), "\n";
 
+my $files_read = 0;
+
 find({ wanted => \&wanted, no_chdir=>1 }, $sqldir);
+
+warn "Read $files_read files.\n";
 
 exit(0);
 
@@ -38,6 +42,8 @@ sub wanted {
   my $file = $File::Find::name;
   return if -d $file;
   return if $file !~ m/\.sql$/;
+
+$files_read++;
 
   my $in_revision = 0;
   my $prevline = '';
@@ -67,6 +73,7 @@ sub wanted {
 	my %row = %{ parseLine($file, $_) };
 	my %prevrow = %{ parseLine($file, $prevline) };
 	# Figure out the features
+	$row{Anon} = ($row{UserId} == 0);
 	$row{PrevSameAuthor} = isSameAuthor(\%prevrow, \%row);
 	my $curTime = ParseDate( $row{TimeString} );
 	my $prevTime = ParseDate( $prevrow{TimeString} );
@@ -105,6 +112,10 @@ sub wanted {
 		$log_d = - log(1 - $d);
 	    }
 	    $row{"LDeltaHist$n"} = $log_d;
+	}
+
+	foreach (@fields) {
+	    die "No field $_" if !defined $row{$_};
 	}
 
 	print join(',', map { $row{$_} } @fields), "\n";
