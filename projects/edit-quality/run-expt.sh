@@ -26,16 +26,16 @@ function doexpt {
 	  --cmd_dir $OUTPUT/cmds \
 	  --dir $OUTPUT \
 	  $2 \
-          --do_compute_stats $PANDUMP)
+	  --do_compute_stats --do_pan $PANDUMP)
     (ulimit -v $MAXMEM2 -m $MAXMEM2 -d $MAXMEM2; cd $WORKDIR ; \
 	time $OUTPUT/cmds/batch_process.py --n_core $CORES2 \
 	  --cmd_dir $OUTPUT/cmds \
 	  --dir $OUTPUT \
 	  $2 \
-	  --do_sort_stats \
+	  --do_sort_stats --do_pan \
 	  --do_compute_rep $PANDUMP)
     (cd $WORKDIR ; $OUTPUT/cmds/extract-ratingsFrepfile.pl pan2010.csv \
-	$OUTPUT/user_reputations.txt )
+	$OUTPUT/../generate_reputations.vandalrep )
     if [ ! -e "perf-editlong.txt" ]; then
 	exit 1
     fi
@@ -44,7 +44,7 @@ function doexpt {
     echo TEXTLONG
     (cd $WORKDIR ; $OUTPUT/cmds/perf < perf-textlong.txt )
     (cd $WORKDIR ; wc perf-*.txt )
-    (cd $WORKDIR ; find $OUTPUT/stats -name "*.gz" -exec gunzip -c {} \; | grep triangles > triangles.tmp )
+    (cd $WORKDIR ; find $OUTPUT/stats -name "*.vandalrep" -exec cat {} \; | grep triangles > triangles.tmp )
     echo "TOTAL TRIANGLES"
     awk '{ print $4 }' $WORKDIR/triangles.tmp | awk -F: '{total+=$1} END{print total}'
     echo "BAD TRIANGLES"
@@ -73,6 +73,9 @@ function doexpt {
 # And then do the experiments
 
 ####################################################################
+
+#doexpt "diff=10 match-quality=8 edist=5" "--diff 10 --match_quality 8 --edit_distance 5"
+#exit 0
 
 for ed in {1..5}
 do
