@@ -3,7 +3,7 @@
 
 Finding the difference between two strings is a long-studied problem,
 known as the \intro{string-to-string correction} problem~\cite{Wagner1974}.
-Initial work on this problem revolved around finding the
+Initial work in Computer Science on this problem revolved around finding the
 Longest Common Subsequence (LCS)~\cite{Gusfield1999}, which identifies the
 sequence of symbols\footnote{Note that the symbols need not be sequential.}
 in common between the two strings.
@@ -12,22 +12,63 @@ set of insertions, deletions, and replacements to transform
 one string to the other.
 The well-known UNIX \texttt{diff} utility~\cite{Hunt1976} is based
 on this algorithm.
+Myers shows that LCS and shortest edit script are equivalent to finding
+shortest/longest paths in an edit graph~\cite{Myers1986}.
 
-Tichy advances the idea that finding the shortest edit script is a
-useful solution to the string-to-string correction problem, and
-introduces \intro{block moves} as a useful operation in edit
-scripts~\cite{Tichy1984}.
-The algorithm loops through the target string and greedily chooses
+The original string-to-string correction problem statement
+only permitted insertion and deletion operations, but other applications
+(for instance, spelling correction) require allowing \intro{transposition}
+of characters to be an available operation.
+Lowrance and Wagner~\cite{Lowrance1975} introduce this natural extension,
+and an algorithm to solve it using traces
+(see also~\cite{Wagner1975,Sankoff1999}).
+\mynote{This line of research seems to have died off.
+Tichy does not even cite them, although it's clearly the same problem.}
+
+
+There are a score of variations on the basic problem of
+comparing strings; an excellent survey of the field is
+presented in~\cite{Sankoff1999}.
+Our solution for WikiTrust greedily selects the \intro{best match}
+from the set of all possible matches between the set of strings, marks
+the match, and then proceeds to find the next available \textit{best match}.
+The general principle is the same as that used in the
+Smith-Waterman algorithm~\cite{Smith1981} (also~\cite[Ch.~10]{Sankoff1999})
+for \textit{local sequence alignment}, which iteratively locates the
+best local alignment between two nucleotide sequences.
+Our solution is a specialization that does not allow insertions
+and deletions within a \textit{best match} (in the context of
+Smith-Waterman, the score for an insertion or deletion is $-\infty$);
+this has the benefit of allowing us to avoid the expense of dynamic
+programming to compute the best match.
+While we forbid insertions and deletions to be components of
+a \textit{best match}, we still have other preferences on matching:
+we prefer matches to be similarly situated in their strings.
+To achieve this, we modify the overall score of a proposed match to take
+into account the position of the match in the source and target strings.
+
+Concerned with storing deltas as part of a revision control system,
+Tichy investigates the idea of finding the shortest edit script as
+the primary goal in solving the string-to-string correction problem.
+As part of achieving that goal, Tichy introduces \intro{block moves}
+that describe a section of text in the source string as exactly matching
+a section of text in the target string~\cite{Tichy1984}.
+This is the same notion as \intro{transpositions} by
+Lowrance and Wagner~\cite{Lowrance1975}, but Tichy is optimizing
+for shortest edit script where there is no penalty for transpositions
+of blocks of characters.
+Tichy's algorithm loops through the target string and greedily chooses
 the longest match from the source string, which Tichy proves as
 generating the shortest edit script transforming the source to the
 target string.
-This greedy solution is refined by in several way,
+This greedy solution is refined in several ways,
 by indexing on string prefixes~\cite{Obst1987},
 efficient generation of deletion operations~\cite{Reichenberger1991},
 and restricting block moves to be in sequence~\cite{Burns1997}.
-Interestingly,
-Myers shows that LCS and shortest edit script are equivalent to finding
-different paths in an edit graph~\cite{Myers1986}.
+Our work evolved from this line of research, but
+incorporates the notion of \textit{best match}
+in a way not dissimilar to that found in the Smith-Waterman
+algorithm~\cite{Smith1981}.
 
 Specific to the Wikipedia, our work presents a different
 dimension of the string-to-string correction problem.
@@ -40,7 +81,8 @@ We use the block moves of Tichy~\cite{Tichy1984}, but rather
 than using greedy selection of the longest match given a specific
 starting location, we perform a global greedy selection of the
 \textit{best match} (\eg the longest match) anywhere within the
-source and target strings.
+source and target strings, reminiscent of the Smith-Waterman
+algorithm~\cite{Smith1981}.
 Fong and Biuk-Aghai extend the WikiTrust work by applying
 the hierarchical differencing idea of
 Neuwirth~\etal~\cite{Neuwirth1992} to our differencing algorithm,

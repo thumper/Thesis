@@ -111,7 +111,7 @@
   volume = 7,
   number = 3,
   year = 1964,
-  month = March,
+  month = Mar,
 }
 
 @book{Sankoff1999,
@@ -252,5 +252,47 @@
 	linguistics, and this approach works better than the
 	blunt ``no phrases less than 4 words.''
     },
+}
+
+@article{Smith1981,
+    author = "T. F. Smith and M. S. Waterman",
+    title = "Identification of Common Molecular Subsequences",
+    journal = "Journal of Molecular Biology",
+    volume = 147,
+    pages = {195--197},
+    year = 1981,
+    annote = {This was a Letters to the Editor!
+      There is a Wikipedia article on this algorithm.
+
+      This algorithm looks for best scoring alignments,
+      and then resets the scores to find the next best
+      local alignment.  There is a resemblance to our work
+      here, except that we do not allow insertions and deletions
+      in the middle of our match.
+    }
+}
+
+@article{Lowrance1975,
+    author = {Roy Lowrance and Robert A. Wagner},
+    title = {An Extension of the String-to-String Correction Problem},
+    journal = {Journal of the Association for Computing Machinery},
+    volume = 22,
+    number = 2,
+    pages = {177--183},
+    month = Apr,
+    year = 1975,
+    annote = {Introduces swaps.},
+}
+
+@inproceedings{Wagner1975,
+  author = {Robert A. Wagner},
+  title = {On the Complexity of the Extended String-to-String
+    Correction Problem},
+  booktitle = "Proceedings of the 7th Annual ACM Symposium on
+    Theory of Computing",
+  series = {STOC 1975},
+  publisher = "{ACM}",
+  year = 1975,
+  annote = {Also in Sankoff1999, Ch 7.},
 }
 
