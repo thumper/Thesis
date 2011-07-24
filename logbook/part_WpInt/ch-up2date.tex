@@ -551,7 +551,7 @@ $ cat /raid/eswiki-20110318/user_reputations.txt | ../analysis/load_reputations 
 
 Also needed to fix the configs for: munin, apache, squid, wikitrust.
 And to \program{chown} the directory to be owned by the \texttt{wikitrust}
-user and group. 
+user and group.
 
 \section{The Creeping CPU Bug}
 
@@ -621,4 +621,19 @@ low is to regularly terminate the process and \function{exec}
 the dispatcher with the same arguments.
 So, essentially, this bug is patched over so that it isn't
 keeping me needlessly busy any longer.
+
+\section{The German Wikipedia}
+
+\subsection{23-Jul-2011}
+
+For the last week, Thomas has been pounding our servers.
+This has exposed a few problems in our system.
+The dominant problem is that our Toolserver script to get changed
+pages just isn't catching all the changed pages,
+so when Thomas hit us, our queue filled up rapidly with
+four days worth of work to process.
+
+A secondary problem is that we don't have enough \mysql
+connection allocated, so when he hits us like that, the
+dispatched crashes and we get pages stuck in the queue.
 

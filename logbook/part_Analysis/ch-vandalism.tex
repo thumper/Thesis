@@ -109,7 +109,7 @@ it speeds up as we get further into the history.)
 
 Now I need to sort the statistics and then generate the reputation.
 \begin{verbatim}
-$ ../batch_process --cmd_dir ./tools --dir output-enwiki --do\_sort\_stats /raid/dumps/enwiki-20100130-pages-meta-history.xml.bz2
+$ ../batch_process --cmd_dir ./tools --dir output-enwiki --do_sort_stats /raid/dumps/enwiki-20100130-pages-meta-history.xml.bz2
 \end{verbatim}
 
 \subsection{20-May-2011}
@@ -134,7 +134,7 @@ Now I have to recalculate the reputations.
 
 \begin{verbatim}
 $ cd /raid/thumper/util/tmp
-$ ../batch_process.py --cmd_dir ./tools --dir output-enwiki --do\_sort\_stats --do\_compute\_rep /raid/dumps/enwiki-20100130-pages-meta-history.xml.bz2
+$ ../batch_process.py --cmd_dir ./tools --dir output-enwiki --do_sort_stats --do_compute_rep /raid/dumps/enwiki-20100130-pages-meta-history.xml.bz2
 \end{verbatim}
 
 \subsection{31-May-2011}
@@ -168,4 +168,54 @@ Looks like I need to be able to parse through the SQL files
 generated as part of the batch process.
 These files are in
 \texttt{gaston:/raid/thumper/util/tmp/output-enwiki/sql}.
+
+\subsection{16-Jul-2011}
+
+Oh no, it turns out that the SQL files are generated during the
+\textit{trust} phase of the batch process.
+But that phase crashes because it tries to read the user reputation
+file, which I have corrupted with my \texttt{VANDALREP} lines.
+
+\begin{verbatim}
+$ cd /raid/thumper/util/tmp
+$ rm -rf output-enwiki/sql/*
+$ cd output-enwiki
+$ mv user_reputations.txt user_reputations.txt-VANDALREP
+$ grep -v VANDALREP user_reputations.txt-VANDALREP > user_reputations.txt
+$ ..
+$ ../batch_process.py --cmd_dir ./tools --dir output-enwiki --do_compute_trust /raid/dumps/enwiki-20100130-pages-meta-history.xml.bz2
+\end{verbatim}
+
+This still crashes after a few minutes, from a stack overflow.
+Trying to get a stack trace now.
+Tracked down the problem to the fact that the user rephistory file
+is ridiculously large; 58GB!
+
+\subsection{17-Jul-2011}
+
+After thinking about it for a while, I realized that the problem
+is that I had originally run the analysis back when not much about
+the code had changed.
+Then I made all my \texttt{VANDALREP} changes to track the increments
+to user reputation at every moment in time.
+And then somewhere along the line I allowed judgements to be made between
+revisions even if the authors were the same; this was because
+the PAN corpus was too small to get any real data for ever revision
+unless I disabled this.
+But then I reran the analysis for the whole enwiki because of
+the normalization error that I found, which happened to include this
+change.
+
+I went through the code and fixed everything to write
+\texttt{VANDALREP} to a separate file.
+I also added a boolean flag to \file{reputation\_analysis.ml}
+to decide whether to use the PAN style of judgements, or normal;
+this is a bit dangerous since it depends on me remembering that
+I did this.
+
+\begin{verbatim}
+$ time ../batch_process.py --cmd_dir ./tools --dir output-enwiki --do_split --do_compute_stats --do_sort_stats --do_compute_rep --do_compute_trust /raid/dumps/enwiki-20100130-pages-meta-history.xml.bz2
+\end{verbatim}
+
+TODO: This is running in screen 6: gaston:/raid/thumper/util/tmp.
 

@@ -64,3 +64,72 @@ After thinking on it, the reason must be that we calculate so many distances
 that using the history of previous revisions (or deleted chunks) is
 just prohibitive.
 
+\section{Reverse Triangle Inequality}
+
+\subsection{12-Jun-2011}
+
+Luca has asked, ``why does the triangle inequality not hold?''
+
+\subsection{4-Jul-2011}
+
+There is much information in the Time Warps book by
+Sankoff and Kruskal.
+I believe what we are doing counts as the Damerau-Levenshtein
+distance, because we include transpositions (block copies).
+This form of the problem is less well studied.
+Chapter~7 of the time warp book has a nice, clear definition
+of how to define the distance, based on weights assigned
+to the elementary operations.
+This weight idea is how the distance is normally formulated.
+
+It turns out that there are three ways to think about generating
+the edit script: as a listing, as an alignment, and as a trace.
+Including transposition means using a looser definition of trace.
+Listings are the easiest to prove the triangle inequality for,
+but it depends on the fact of generated listings being minimal.
+
+\subsection{23-Jul-2011}
+
+I have been reading the Time Warps~\cite{Sankoff1999} book the last few
+weekends.  I have to keep rereading it for the material to sink in.
+
+\mynote{Need to lookup Myers1980 for why an asymmetric distance function
+might be desireable~\cite[p.22]{Sankoff1999}.}
+
+Chapter~7, by Wagner, covers the ``extended string-to-string correction
+problem.''
+It is extended by allowing swaps; the analysis uses traces
+where there is no restriction on crossover.
+Does it allow the same source text to be used multiple times?
+What is interesting to me is that this is very related to
+the work by Tichy, but neither cites the other.
+Tichy does cite Wagner's earlier work~\cite{Wagner1974},
+but it's odd to me that there's no connection to this
+chapter which is clearly related.
+\mynote{I should review both more carefully and make the connection
+in my own related work.}
+I still don't understand the solution in this chapter,
+or whether it actually computes an edit script which I
+can use in my experiments.
+The work in this chapter is discussed later
+in Chapter~12~\cite[p.~302]{Sankoff1999}.
+
+\mynote{Should we be allowing text from the source revision
+to be reused as a move block into the target revision?
+Why did we not do this?}
+
+Chapter~12 points out that including swaps describes
+the case of two characters being replaced by two characters,
+and then generalizes and asks what can we know of the problem
+where \textit{x} characters can be replaced by \textit{y} characters.
+There is a big discussion about the triangle inequality,
+but I need to read it again to get anything out of it.
+A lot seems to hinge on how to define $d()$, but by the
+time I realize this the definition of $d()$ is not nearby.
+
+One important point related to today's reading:
+are we calculating a listing distance, alignment distance, or
+trace distance?
+I think we are technically calculating a trace distance,
+much the way that Chapter~7 is doing.
+

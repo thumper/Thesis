@@ -896,27 +896,18 @@ I implemented the change last night, but I am waiting for
 \textbf{diff8} to finish running so that I don't have to
 re-run it later.
 
-\section{Reverse Triangle Inequality}
+\subsection{16-Jul-2011}
 
-\subsection{12-Jun-2011}
-
-Luca has asked, ``why does the triangle inequality not hold?''
-
-\subsection{4-Jul-2011}
-
-There is much information in the Time Warps book by
-Sankoff and Kruskal.
-I believe what we are doing counts as the Damerau-Levenshtein
-distance, because we include transpositions (block copies).
-This form of the problem is less well studied.
-Chapter~7 of the time warp book has a nice, clear definition
-of how to define the distance, based on weights assigned
-to the elementary operations.
-This weight idea is how the distance is normally formulated.
-
-It turns out that there are three ways to think about generating
-the edit script: as a listing, as an alignment, and as a trace.
-Including transposition means using a looser definition of trace.
-Listings are the easiest to prove the triangle inequality for,
-but it depends on the fact of generated listings being minimal.
+Today's today items:
+\begin{itemize}
+\item Stitch together the output from the broken experiment run.
+  Specifically, diff8 is separate from the others.
+  Even though the broken experiment has bad data for any
+  diff using the \textbf{prev matches} optimization, I wanted to
+  get the output include here for reference.
+\item Generate partial analysis based on new experiment output
+  that is currently running.
+\item Verify that the assertions I believe to be true are holding.
+\item Work on bug reports from WikiPraise.
+\end{itemize}
 
