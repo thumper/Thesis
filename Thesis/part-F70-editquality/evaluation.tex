@@ -597,6 +597,19 @@ Diff4 and Diff6 should also be the same.
 \mynote{Since redoing some diffs, consider adding matchskip
 idea, for even better speedup.}
 
+In using edit distance as a component of the edit longevity
+formulation, we are trying to estimate the amount of \intro{effort}
+that an author puts into making a revision to an article.
+Whatever weight we choose for insertions and deletions in the edit
+distance computation, we know that the author took some
+\textit{explicit} action to effect the insertion or deletion.
+The same is not true for the Move operation: our use of
+Tichy's block moves~\cite{Tichy1984} obscures the information
+about what text stays in the same relative order in the
+transformation from the old revision to the new revision.
+
+\mynote{TODO: Continue this line of thinking and reference
+Sankoff and discuss reverse triangle inequality.}
 
 \subsubsection{Text Longevity}
 
@@ -608,7 +621,7 @@ which is a variation of the difference algorithm
 this functionality is available from Github,
 \url{http://www.github.com/collaborativetrust/WikiTrust},
 and corresponds to the function \texttt{text\_tracking}
-in file \texttt{chdiff.ml}.}
+in file~\texttt{chdiff.ml}.}
 Edit distance does not affect the text longevity calculation,
 so our only significant parameter is match quality;
 results are presented in Table~\ref{tab:textshoutA}.

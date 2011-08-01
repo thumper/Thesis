@@ -15,20 +15,54 @@ on this algorithm.
 Myers shows that LCS and shortest edit script are equivalent to finding
 shortest/longest paths in an edit graph~\cite{Myers1986}.
 
-The original string-to-string correction problem statement
-only permitted insertion and deletion operations, but other applications
-(for instance, spelling correction) require allowing \intro{transposition}
-of characters to be an available operation.
-Lowrance and Wagner~\cite{Lowrance1975} introduce this natural extension,
-and an algorithm to solve it using traces
-(see also~\cite{Wagner1975,Sankoff1999}).
-\mynote{This line of research seems to have died off.
-Tichy does not even cite them, although it's clearly the same problem.}
-
-
 There are a score of variations on the basic problem of
 comparing strings; an excellent survey of the field is
 presented in~\cite{Sankoff1999}.
+An important concept emphasized in~\cite{Sankoff1999} is that
+difference and distance analyses generally take one of
+three forms: \intro{trace}, \intro{alignment} and \intro{listing}.
+Traces are used to represent the common units (\eg letters or words)
+between the source and target strings.
+\begin{center}
+  \begin{tabular}{c c c c c}
+B & I & R & D & \\
+| &   & | &   & $\!\!\!\!\!\!\!\!\!\!$\textbackslash \\
+B & O & R & E & D \\
+  \end{tabular}
+\end{center}
+Alignments also find the commonality between the source and target
+strings, but allow more flexibility in the specification of
+the non-common portions.
+\begin{center}
+  \begin{tabular}{c c c c c c}
+B & -- & I & R & -- & D \\
+B & O & -- & R & E & D \\
+  \end{tabular}
+\end{center}
+Listings are the most general of all, being
+organized as a sequence of elementary edit operations
+to transform the source string into the target string.
+\begin{center}
+  \begin{tabular}{l l}
+  BIRD & \textit{Delete I} \\
+  BRD & \textit{Insert O} \\
+  BORD & \textit{Insert E} \\
+  BORED & \\
+  \end{tabular}
+\end{center}
+
+The original string-to-string correction problem statement
+only permitted insertion, deletion, and substitution operations,
+but other applications
+(for instance, spelling correction) require allowing \intro{transposition}
+of characters to be an available operation.
+Lowrance and Wagner~\cite{Lowrance1975} tackle this natural extension,
+and produce an algorithm to solve it using \textit{restricted traces}
+which allow simple transpositions.
+Wagner later develops another algorithm which allows unrestricted
+traces, essentially calculating the listing
+distance~\cite{Wagner1975,Sankoff1999}.
+
 Our solution for WikiTrust greedily selects the \intro{best match}
 from the set of all possible matches between the set of strings, marks
 the match, and then proceeds to find the next available \textit{best match}.
@@ -38,9 +72,7 @@ for \textit{local sequence alignment}, which iteratively locates the
 best local alignment between two nucleotide sequences.
 Our solution is a specialization that does not allow insertions
 and deletions within a \textit{best match} (in the context of
-Smith-Waterman, the score for an insertion or deletion is $-\infty$);
-this has the benefit of allowing us to avoid the expense of dynamic
-programming to compute the best match.
+Smith-Waterman, the score for an insertion or deletion is $-\infty$).
 While we forbid insertions and deletions to be components of
 a \textit{best match}, we still have other preferences on matching:
 we prefer matches to be similarly situated in their strings.
@@ -57,12 +89,14 @@ This is the same notion as \intro{transpositions} by
 Lowrance and Wagner~\cite{Lowrance1975}, but Tichy is optimizing
 for shortest edit script where there is no penalty for transpositions
 of blocks of characters.
+(It should also be noted that ``shortest'' specifically depends on
+the encoding of a block as a single edit operation.)
 Tichy's algorithm loops through the target string and greedily chooses
 the longest match from the source string, which Tichy proves as
 generating the shortest edit script transforming the source to the
 target string.
-This greedy solution is refined in several ways,
-by indexing on string prefixes~\cite{Obst1987},
+This greedy solution is refined by subsequent work in several ways:
+indexing on string prefixes~\cite{Obst1987},
 efficient generation of deletion operations~\cite{Reichenberger1991},
 and restricting block moves to be in sequence~\cite{Burns1997}.
 Our work evolved from this line of research, but
