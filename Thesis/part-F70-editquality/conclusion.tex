@@ -1,16 +1,48 @@
 \section{Conclusions}
 
 We propose two measures of revision quality computed
-from Wikipedia's revision history, and evaluate them
-using the PAN-WVC-10 annotated dataset.
-Edit longevity performs much better than text longevity,
-and we explain that the geometric decay model is not
-a good choice for text which stabilizes.
+from Wikipedia's revision history.
+The measure \textit{text longevity} is based on an intuitive
+model of computing the text added by authors at each revision
+and detecting how much of that text remains within the article
+in subsequent revisions; to account for the variation in
+the amount of preserved text over the subsequent revisions,
+we model the change as a geometrically decaying process
+and compute the decay rate as a single value to describe
+the variation.
+The measure \textit{edit longevity} was developed to address
+the reality that authors also delete and rearrange text,
+and that these are valuable contributions to the Wikipedia.
+Using edit distance~\cite{Levenshtein1966} to describe the
+amount of \intro{effort} that an author puts into making a
+revision to an article; we use this as the basis for computing
+edit longevity by estimating the amount of effort by an
+author that brings the article text closer to some future
+version of the article.
 
-OVerall, these results are encouraging for using edit
-longevity and text longevity as signals for inferring
-the community feedback of an author's edit.
-Knowing the quality of edits, we can build an author
-reputation system upon these signals; we describe such
-a system in Chapter~\ref{ch:reputation}.
+We evaluate these two measures using the PAN-WVC-10 dataset, which is
+manually annotated to indicate which revisions are vandalism and which
+are well-intentioned edits, and treat each as a predictor of vandalism.
+We find that edit longevity performs much better than text longevity,
+but even text longevity does better than chance at predicting vandalism.
+Overall, these results are encouraging for using edit longevity and text
+longevity as signals for inferring the community feedback of an author's
+edit.  Knowing the quality of edits, we can build an author reputation
+system upon these signals; we describe such a system in
+Chapter~\ref{ch:reputation}.
+
+
+\subsection{Triangle Inequality}
+
+
+Whatever weight we choose for insertions and deletions in the edit
+distance computation, we know that the author took some
+\textit{explicit} action to effect the insertion or deletion.
+The same is not true for the Move operation: our use of
+Tichy's block moves~\cite{Tichy1984} obscures the information
+about what text stays in the same relative order in the
+transformation from the old revision to the new revision.
+
+\mynote{TODO: Continue this line of thinking and reference
+Sankoff and discuss reverse triangle inequality.}
 

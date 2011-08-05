@@ -595,21 +595,8 @@ Redo: diff4, diff5, diff6.
 Diff4 and Diff6 should also be the same.
 }
 \mynote{Since redoing some diffs, consider adding matchskip
-idea, for even better speedup.}
-
-In using edit distance as a component of the edit longevity
-formulation, we are trying to estimate the amount of \intro{effort}
-that an author puts into making a revision to an article.
-Whatever weight we choose for insertions and deletions in the edit
-distance computation, we know that the author took some
-\textit{explicit} action to effect the insertion or deletion.
-The same is not true for the Move operation: our use of
-Tichy's block moves~\cite{Tichy1984} obscures the information
-about what text stays in the same relative order in the
-transformation from the old revision to the new revision.
-
-\mynote{TODO: Continue this line of thinking and reference
-Sankoff and discuss reverse triangle inequality.}
+idea, for even better speedup.  Hmm, matchskip didn't speed
+up; it seems to have slowed things down.  Rollback?}
 
 \subsubsection{Text Longevity}
 
