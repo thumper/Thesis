@@ -36,7 +36,7 @@ function doexpt {
 	  --do_compute_rep $PANDUMP)
     (cd $WORKDIR ; $OUTPUT/cmds/extract-ratingsFrepfile.pl pan2010.csv \
 	$OUTPUT/../generate_reputations.vandalrep )
-    if [ ! -e "perf-editlong.txt" ]; then
+    if [ ! -e "$WORKDIR/perf-editlong.txt" ]; then
 	exit 1
     fi
     echo EDITLONG
@@ -74,12 +74,12 @@ function doexpt {
 
 ####################################################################
 
-#doexpt "diff=10 match-quality=8 edist=5" "--diff 10 --match_quality 8 --edit_distance 5"
-#exit 0
+# doexpt "diff=0 match-quality=0 edist=0" "--diff 0 --match_quality 0 --edit_distance 0"
+# exit 0
 
-for ed in {1..5}
+for mq in {1..9}
 do
-  for mq in {1..9}
+  for ed in {1..5}
   do
     for diff in {1..8}
     do
