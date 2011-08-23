@@ -21,6 +21,9 @@ function doexpt {
     (cd $WORKDIR ; rm -rf $OUTPUT/sql)
     (cd $WORKDIR ; rm -rf $OUTPUT/stats)
     (cd $WORKDIR ; rm -rf $OUTPUT/user*)
+    rm -f $WORKDIR/perf-editlong.txt
+    rm -f $WORKDIR/perf-textlong.txt
+    rm -f $WORKDIR/triangles.tmp
     (ulimit -v $MAXMEM1 -m $MAXMEM1 -d $MAXMEM1; cd $WORKDIR ; \
 	time $OUTPUT/cmds/batch_process.py --n_core $CORES1 \
 	  --cmd_dir $OUTPUT/cmds \
@@ -49,24 +52,22 @@ function doexpt {
     awk '{ print $4 }' $WORKDIR/triangles.tmp | awk -F: '{total+=$1} END{print total}'
     echo "BAD TRIANGLES"
     awk '{ print $6 }' $WORKDIR/triangles.tmp | awk -F: '{total+=$1} END{print total}'
-    rm -f $WORKDIR/perf-editlong.txt
-    rm -f $WORKDIR/perf-textlong.txt
-    rm -f $WORKDIR/triangles.tmp
 }
 
 # First split the wiki once
 (cd $WORKDIR ; rm -rf $OUTPUT)
 (cd $WORKDIR ; mkdir -p $OUTPUT/cmds)
-(cp -a $WIKITRUST/analysis/*  $WORKDIR/$OUTPUT/cmds/)
-(rm -f $WORKDIR/$OUTPUT/cmds/*.o)
-(rm -f $WORKDIR/$OUTPUT/cmds/*.ml)
-(rm -f $WORKDIR/$OUTPUT/cmds/*.cm*)
-(rm -f $WORKDIR/$OUTPUT/cmds/*.annot)
-(cp -a ./extract-ratingsFrepfile.pl $WORKDIR/$OUTPUT/cmds/ )
-(cp -a ./perf.src/perf $WORKDIR/$OUTPUT/cmds/ )
-(cp -ar ./lib $WORKDIR/ )
-(cp -ar ./pan2010.csv $WORKDIR/ )
-(cp -a $WIKITRUST/util/batch_process.py  $WORKDIR/$OUTPUT/cmds/)
+mkdir -p $WORKDIR/$OUTPUT/cmds
+cp -a $WIKITRUST/analysis/*  $WORKDIR/$OUTPUT/cmds/
+rm -f $WORKDIR/$OUTPUT/cmds/*.o
+rm -f $WORKDIR/$OUTPUT/cmds/*.ml
+rm -f $WORKDIR/$OUTPUT/cmds/*.cm*
+rm -f $WORKDIR/$OUTPUT/cmds/*.annot
+cp -a ./extract-ratingsFrepfile.pl $WORKDIR/$OUTPUT/cmds
+cp -a ./perf.src/perf $WORKDIR/$OUTPUT/cmds
+cp -ar ./lib $WORKDIR/
+cp -ar ./pan2010.csv $WORKDIR/
+cp -a $WIKITRUST/util/batch_process.py  $WORKDIR/$OUTPUT/cmds/
 (cd $WORKDIR ; time $OUTPUT/cmds/batch_process.py --cmd_dir $OUTPUT/cmds \
     --dir $OUTPUT --do_split $PANDUMP)
 
@@ -74,8 +75,11 @@ function doexpt {
 
 ####################################################################
 
-# doexpt "diff=0 match-quality=0 edist=0" "--diff 0 --match_quality 0 --edit_distance 0"
-# exit 0
+#doexpt "diff=3 match-quality=1 edist=1" "--precise --diff 3 --match_quality 1 --edit_distance 1"
+#rsync -av --delete $WORKDIR  $WORKDIR.diff3.new4
+#doexpt "diff=5 match-quality=1 edist=1" "--precise --diff 5 --match_quality 1 --edit_distance 1"
+#rsync -av --delete $WORKDIR  $WORKDIR.diff5.new4
+#exit 0
 
 for mq in {1..9}
 do

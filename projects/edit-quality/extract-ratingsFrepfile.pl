@@ -9,6 +9,10 @@ use lib 'lib';
 use PAN;
 use MediawikiDump;
 use Carp;
+use Getopt::Long;
+
+my $debug = 0;
+GetOptions("debug" => \$debug);
 
 my ($revids, $repFile) = @ARGV;
 
@@ -39,6 +43,7 @@ while (<$fh>) {
 	$long = max($long, -1.0);
 	$long = (1 + $long) / 2;
 	$long = 1 - $long;
+        print $editlong "$revid " if $debug;
 	print $editlong "$class $long\n";
 	$panrevs->{$revid}->{editlong} = $long;
     } elsif ($fields[1] eq 'TextLong') {
@@ -46,6 +51,7 @@ while (<$fh>) {
 	$long = min($long, 1.0);
 	$long = max($long, 0);
 	$long = 1 - $long;
+        print $textlong "$revid " if $debug;
 	print $textlong "$class $long\n";
 	$panrevs->{$revid}->{textlong} = $long;
     }
