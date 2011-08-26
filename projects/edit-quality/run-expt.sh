@@ -2,11 +2,18 @@
 set -e
 set -x
 
-WORKDIR=/store/thumper/tmp
-OUTPUT=./output
+## Gaston settings
+#WORKDIR=/store/thumper/tmp
+#WIKITRUST=/store/thumper/research/WikiTrust
+#PANDUMP=/raid/thumper/pan2010dump.7z
 
-WIKITRUST=/store/thumper/research/WikiTrust
-PANDUMP=/raid/thumper/pan2010dump.7z
+## Redherring settings
+WORKDIR=/big/thumper/tmp
+WIKITRUST=/giant/thumper/research/WikiTrust
+PANDUMP=/giant/thumper/pan2010dump.7z
+
+
+OUTPUT=./output
 MAXMEM1=400000
 CORES1=3
 MAXMEM2=650000
