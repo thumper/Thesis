@@ -512,10 +512,7 @@ and \textbf{ed5} tries the hardest to estimate the amount of
 effort that goes into rearranging blocks of text.
 
 \mynote{Include some thoughts on relative performance of
-different diff algorithms.  Later mynote explains that there
-is bug in implementation of diff4, diff5, and diff6.
-Those need to be redone, so can't say anything until later.}
-
+different diff algorithms.}
 
 The typical measure used to compare difference algorithm is the
 running time, and so we include this value.
@@ -580,15 +577,19 @@ except for the use of the \textbf{header/trailer} optimization:
 and \textbf{diff6}/\textbf{diff7}.
 
 \mynote{Diff4 always performs the worst.  Why is that?}
+
 \mynote{Diff3 and Diff5 should be exactly the same, but they are not!
 I was expecting that the prev match optimization was only more efficient.
-I think that it gives different results because the i2 loop isn't guaranteed
-to call skipmatch for every value of i2; for example, if
-parts of w2 are already matched.
-Ah, looks like bug in my code: didn't set prev match to empty list
-if there was no match.
-I think this explains the problem with Diff4, as well.
-Redo: diff4, diff5, diff6.
+The reason for the discrepancy is an interaction between long matches
+and our rule to not look at over-frequent matches (greater than 50).
+The case I found, there was a 1400 word match at the beginning of the
+article.  For hashing, that entire segment was marked as matched.
+In prev-matches, an overly common word pair results in no matches,
+so that the skipmatch test doesn't correctly determine that we've
+already investigated a longer match.  This results in many more
+items in the priority queue than are necessary.}
+\mynote{ But they should be items which will only be rejected later.
+Why does the diff come out differently?  I can't remember now...
 }
 
 \mynote{
