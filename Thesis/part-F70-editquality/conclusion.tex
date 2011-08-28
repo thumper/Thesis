@@ -31,160 +31,20 @@ edit.  Knowing the quality of edits, we can build an author reputation
 system upon these signals; we describe such a system in
 Chapter~\ref{ch:reputation}.
 
-\subsection{Edit Longevity Outperforms Text Longevity}
-
-In comparison to edit longevity, the performance of ${\approx}29.26\%$
-PR-AUC is quite poor.
-Why does text longevity not do so well as edit longevity?
-As part of our investigation, we started looking at specific
-instances of text longevity values.
-In Figures~\ref{fig:ts-GeorgeWBush} and~\ref{fig:ts-SantaCruzBeachBoardwalk},
-we see the text survival for two different contributions;
-both do seem to have the general ``exponential'' shape
-that we previously described.
-Also computed in each figure is the text longevity measure based on
-the 20~revisions shown in each graph, but notice that the text
-longevity computed for
-Figure~\ref{fig:ts-GeorgeWBush} doesn't exhibit the curve we expect.
-
-\begin{figure}[tbph]
-\centering
-\framebox{\includegraphics[width=0.8\textwidth]{part-F70-editquality/graph-TS-GeorgeWBush-8574490}}
-\caption{The text survival graph for the text contributed early
-        in the history of article \textit{George W.~Bush}.
-	The graph also shows the text survival quality
-	computed based on 20~revisions.
-	}
-\label{fig:ts-GeorgeWBush}
-\end{figure}
-
-\begin{figure}[tbph]
-\centering
-\framebox{\includegraphics[width=0.8\textwidth]{part-F70-editquality/graph-TS-SantaCruzBeachBoardwalk}}
-\caption{The text survival graph for the text initially contributed
-	as part of the article \textit{Santa Cruz Beach Boardwalk}.
-	The majority of the editing to the contributed text happens
-	in the next few revisions, before the text stabilizes.
-	The graph also shows the text survival quality
-	computed based on 20~revisions.
-	}
-\label{fig:ts-SantaCruzBeachBoardwalk}
-\end{figure}
-
-The explanation for this discrepancy turns out to be a flaw in our
-thinking about the original model.
-While the text survival for contributions does seem to have an
-exponential look to it, exponentials do not approach some fixed
-non-zero value --- they approach zero.
-In order to fit the curve we are describing, the last value
-(in the case of the data shown in Figure~\ref{fig:ts-GeorgeWBush},
-the amount of text that survives after the $20^{th}$ revision)
-should be taken as the ``zero reference point'' which is subtracted
-from all the values.
-Applying our exponential curve fitting technique to these new values
-will give a much better approximation to the data.
-The problem with this better fit is that it changes the meaning of
-a score of zero; instead of meaning that the text was immediately deleted,
-a score of zero would mean that the text immediately reached its
-final survival level.
-In other words, we would be measuring how quickly the text stabilizes,
-rather than how much agreement there was that the text belonged in
-the article.
-
-\subsection{The Triangle Inequality}
-
-The intuition behind our formulation of edit longevity relies on
-the metaphor analogizing the \intro{distance} between two revisions
-with the \intro{work} or \intro{effort} that an author puts
-into making the edit from one revision to the other;
-in particular, it is the triangle inequality (one of the
-metric properties of distance) that allows us to say that we
-can compute how much effort was \textit{useful} in bringing
-the article closer to how it appears in a future revision.
-
-We have explored the use of several different definitions of
-the \intro{edit distance} to represent this distance, but
-noted that the triangle inequality did not completely hold;
-see~\cite{Sankoff1999} for a summary of known conditions under which
-the triangle inequality holds for 
-\intro{listing}, \intro{alignment}, or \intro{trace} distances.
-
-\mynote{Need a figure to demonstrate the three types of distances.}
-
-Our particular difference algorithm makes use of
-Tichy's block moves~\cite{Tichy1984}, which amounts to computing
-the trace that matches the source string to the target string.
-That matches are allowed between any parts of the two strings
-is equivalent to allowing transpositions as well as the usual
-insert and delete operations; the difference we compute does not support
-substitutions of one word with another.
-There is previous research on allowing
-transpositions~\cite{Lowrance1975,Wagner1975,Sankoff1999} in
-computing edit distance; our work primarily differs from this
-earlier work in that we prefer to select longest matches rather
-than minimizing the total edit distance computed.
-
-The various proposals for edit distance that we investigated are
-computations derived from the edit script we compute, so that our
-proposals are akin to listing distances.
-Tichy's original counter-example shows that globally greedy algorithms
-such as ours do not compute the minimum edit script
-(see Figure~\ref{fig:match-comparison}), making it unlikely that
-proposed edit distance formulas guarantee the triangle inequality.
-
-We present in Appendix~\ref{app:editlong-data} data on the frequency
-with which the triangle inequality holds for the various combinations
-of difference algorithm and edit distance formula; only formula \textbf{ed2}
-never violates the triangle inequality.
-The proof it always holds for \textbf{ed2} is a straight forward
-enumeration of the cases of a word appearing in any of three
-revisions and the resulting contribution to \textbf{ed2}.
-
-\begin{comment}
-cases:
-  word exists in all three, then M contribution is the same.
-  work exists in a,b, but not c.  then contributes to M(b), D(c), D(a->c).
-  word exists in a,c, but not b.  contributes to D(b),I(c), M(a->c)
-  word exists in b,c, but not a.  contributes to I(a),M(c), I(a->c)
-  word exists in a. D(b), xc, D(c)
-                 b. I(b), D(c), xa->c
-                 c. xb, I(c), I(a->c)
-\end{comment}
-
-
-\begin{figure}[htbp]
-\centering
-  \subfloat[
-    Example matching using globally longest match][
-    The matching obtained using the WikiTrust method of
-      determining all matches and selecting the longest matches first.
-    ]{
-    \framebox{
-      \includegraphics[width=0.4\textwidth]{part-F70-editquality/fig-MatchingGlobal}
-    }
-  }
-  \hspace{2ex}
-  \subfloat[
-    Example matching using best match in left-to-right scan of target
-    ][
-    The matching obtained using the Tichy method of scanning
-      the target string from left-to-right and selecting
-      the longest match found in the source string.
-    ]{
-    \framebox{
-      \includegraphics[width=0.4\textwidth]{part-F70-editquality/fig-MatchingLocal}
-    }
-  }
-\caption{
-  An example of how the matching between a source string and target string
-  can differ between WikiTrust's greedy preference for the longest match
-  anywhere between the two strongs, and Tichy's processing of the
-  target string from left-to-right and selecting the longest match
-  for the given starting position in the target string.
-  This example is based on Tichy's original example demonstrating that
-  a globally greedy algorithm does not result in the minimum number of
-  operations~\cite{Tichy1984}.
-}
-\label{fig:match-comparison}
-\end{figure}
+Examining the performance of \textbf{ed2} in
+Appendix~\ref{app:editlong-data}, we note that it was far from the best
+performing definition of edit distance in terms of predicting vandalism
+in the PAN-WVC-10 dataset.
+Although using an edit distance formulation that satisfies the triangle
+inequality is desirable, it is not sufficient to achieve good
+performance.
+The goal of an edit distance function in our context is to estimate
+the amount of \intro{effort} that an author expends in creating an
+edit from one revision to another.
+We chose to follow a model which prefers the longest possible match
+between source and target revisions, but another viable route is to
+minimize the amount of text which is rearranged (\ie minimize the
+number of transpositions)~\cite{Wagner1975}.
+We leave as an open question how to best characterize the work
+that an author does.
 
