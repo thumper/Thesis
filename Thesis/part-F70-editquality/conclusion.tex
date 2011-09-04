@@ -31,20 +31,3 @@ edit.  Knowing the quality of edits, we can build an author reputation
 system upon these signals; we describe such a system in
 Chapter~\ref{ch:reputation}.
 
-Examining the performance of \textbf{ed2} in
-Appendix~\ref{app:editlong-data}, we note that it was far from the best
-performing definition of edit distance in terms of predicting vandalism
-in the PAN-WVC-10 dataset.
-Although using an edit distance formulation that satisfies the triangle
-inequality is desirable, it is not sufficient to achieve good
-performance.
-The goal of an edit distance function in our context is to estimate
-the amount of \intro{effort} that an author expends in creating an
-edit from one revision to another.
-We chose to follow a model which prefers the longest possible match
-between source and target revisions, but another viable route is to
-minimize the amount of text which is rearranged (\ie minimize the
-number of transpositions)~\cite{Wagner1975}.
-We leave as an open question how to best characterize the work
-that an author does.
-

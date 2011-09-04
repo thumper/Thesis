@@ -188,53 +188,127 @@ proposed edit distance formulas guarantee the triangle inequality.
 
 We present in Appendix~\ref{app:editlong-data} data on the frequency
 with which the triangle inequality holds for the various combinations
-of difference algorithm and edit distance formula; only formula \textbf{ed2}
+of difference algorithm and edit distance formula; only formula~\textbf{ed2}
 never violates the triangle inequality.
-The proof that the triangle inequality always holds for \textbf{ed2} is
-a straight forward enumeration of the cases of a word appearing in any
-of three revisions and the resulting contribution to \textbf{ed2}.
-\begin{comment}
+This is relatively easy to see by an enumeration of the cases, but it
+is instructive to examine~\textbf{ed1} first.
 
-ED2
+To show that~\textbf{ed1} does not satisfy the triangle inequality, we
+note that the definition
+    \begin{equation*}
+    I_{tot} + D_{tot}
+    \end{equation*}
+is amenable to the \intro{weighted operation} notation used
+throughout~\cite{Sankoff1999}.
+In this notation, an insertion of word $x$ is said to
+contribute weight $w(\phi, x)$ to the final edit distance, and
+deletion of word $w$ contributes weight $w(x, \phi)$.
+We extend the notation to represent the contribution of a
+Move operation on $x$ as $w(x, x)$.
+Edit distance~\textbf{ed1} can then be described as the following
+assignment of weights:
+\begin{align*}
+  w(\phi, x) &= 1 \\
+  w(x, \phi) &= 1 \\
+  w(x, x) &= 0
+\end{align*}
+For convenience, we represent the situation where a word is in
+neither the source nor target revision as $w(\phi, \phi)$ and
+assign it a weight of zero.
 
-cases:
-  word exists in all three, then M contribution is the same.
-  work exists in a,b, but not c.  then contributes to M(b), D(c), D(a->c).
-  word exists in a,c, but not b.  contributes to D(b),I(c), M(a->c)
-  word exists in b,c, but not a.  contributes to I(a),M(c), I(a->c)
-  word exists in a. D(b), xc, D(c)
-                 b. I(b), D(c), xa->c
-                 c. xb, I(c), I(a->c)
+We consider three revisions, just as we did in analyzing
+edit longevity in Figure~\ref{fig-editcontr}: \version{k-1},
+\version{k}, and \version{j}.
+To verify the triangle inequality,
+\begin{equation*}
+  \dist{}{k-1,k} + \dist{}{k,j} \ge \dist{}{k-1,j},
+\end{equation*}
+we enumerate the possible cases of word $x$ existing in each
+revision:
+\begin{enumerate}
+\item word $x$ exists in revision \version{k-1}, but not in
+  \version{k} nor \version{j}.
+  This translates into deletion operations for \dist{}{k-1,k}
+  and \dist{}{k-1,j}, so that we have
+  \begin{align*}
+    w(x, \phi) + w(\phi, \phi) \ge w(x, \phi),
+  \end{align*}
+  which is true.
+\item word $x$ exists in revision \version{k}, but not in
+  \version{k-1} nor \version{j}.
+  \begin{align*}
+    w(\phi, x) + w(x, \phi) & \ge w(\phi, \phi).
+  \end{align*}
+\item word $x$ exists in revision \version{j}, but not in
+  \version{k-1} nor \version{k}.
+  \begin{align*}
+    w(\phi, \phi) + w(\phi, x) & \ge w(\phi, x).
+  \end{align*}
+\item word $x$ exists in revision \version{k-1} and \version{k}, but not in
+  \version{j}.
+  \begin{align*}
+    w(x, x) + w(x, \phi) & \ge w(x, \phi).
+  \end{align*}
+\item word $x$ exists in revision \version{k-1} and \version{j}, but not in
+  \version{k}.
+  \begin{align*}
+    w(x, \phi) + w(\phi, x) & \ge w(x, x).
+  \end{align*}
+\item word $x$ exists in revision \version{k} and \version{j}, but not in
+  \version{k-1}.
+  \begin{align*}
+    w(\phi, x) + w(x, x) & \ge w(\phi, x).
+  \end{align*}
+\item word $x$ exists in all of revisions \version{k-1}, \version{k},
+  and \version{j}.
+  \begin{align*}
+    w(x, x) + w(x, x) & \ge w(x, x).
+  \end{align*}
+\end{enumerate}
 
-ED1
+All of these statements are true, so it would seem that
+edit distance~\textbf{ed1} satisfy the triangle inequality.
+The complication arises in the requirement
+that there be a minimum number of words to be considered a
+Move operation.
+This restriction means that it is possible for a word to exist
+in both revisions, but be considered a Deletion and Insertion.
+For example, if word $x$ exists in all three revisions, a different
+possible analysis is:
+  \begin{align*}
+    w(x, x) + w(x, x) & \ge w(x, \phi) + w(\phi, x),
+  \end{align*}
+which does not hold true, and thus the triangle inequality sometimes
+will break down.
 
-d(a,b) + d(b,c) >= d(a,c)
+\bigskip
 
-cases:
-  i \in {a, b, c} : all in M, w(i,i) = 0.  TRUE.
-  i \in {a, b}.  w(i,i) + w(i,-) >= w(i,-)?
-                    0   +   1    >=   1?  TRUE
-  i \in {a, c}.  w(i,-) + w(-,i) >= w(i,i)?
-                    1   +   1    >=   0?  TRUE
-  i \in {b, c}.  w(-,i) + w(i,i) >= w(-,i)?
-                    1   +   0    >=   1?  TRUE
-  i \in {a}.   w(i,-) + w(-,-)   >= w(i,-)?
-                    1   +   0    >=   1?  TRUE
-  i \in {b}.   w(-,i) + w(i,-)   >= w(-,-)?
-                    1 +   1      >=   0?  TRUE
-  i \in {c}    w(-,-) + w(-,i)   >= w(-,i)?
-                  0   +    1     >=    1? TRUE
+The proof that edit distance~\textbf{ed2} always satisfies the
+triangle inequality follows a similar analysis, but using different
+weights:
+\begin{align*}
+  w(\phi, \phi) &= 0 \\
+  w(\phi, x) &= 1 \\
+  w(x, \phi) &= 1 \\
+  w(x, x) &= 1
+\end{align*}
+These weights result in every statement holding true, so that the
+full triangle inequality also holds true.
 
-This looks like it works.
-Must break down in the first case.  What if a work is in all three,
-but it switches from M to I?
-That is, what it it looks like
-         w(i,i) + w(i,i) >= w(i,-) + w(-,i)
-            0   +    0   >=    1   +    1
-which isn't true.
-
-
-\end{comment}
-
-
+Examining the performance of \textbf{ed2} in
+Appendix~\ref{app:editlong-data}, we note that it was far from the best
+performing definition of edit distance in terms of predicting vandalism
+in the PAN-WVC-10 dataset.
+Although using an edit distance formulation that satisfies the triangle
+inequality is desirable, it is not sufficient to achieve good
+performance.
+The goal of an edit distance function in our context is to estimate
+the amount of \intro{effort} that an author expends in creating an
+edit from one revision to another.
+We chose to follow a model which prefers the longest possible match
+between source and target revisions, but another viable route is to
+minimize the amount of text which is rearranged (\ie minimize the
+number of transpositions)~\cite{Wagner1975}.
+We leave as an open question how to best characterize the work
+that an author does.
 
