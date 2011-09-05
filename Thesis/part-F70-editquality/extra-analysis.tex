@@ -202,7 +202,7 @@ is amenable to the \intro{weighted operation} notation used
 throughout~\cite{Sankoff1999}.
 In this notation, an insertion of word $x$ is said to
 contribute weight $w(\phi, x)$ to the final edit distance, and
-deletion of word $w$ contributes weight $w(x, \phi)$.
+deletion of word $x$ contributes weight $w(x, \phi)$.
 We extend the notation to represent the contribution of a
 Move operation on $x$ as $w(x, x)$.
 Edit distance~\textbf{ed1} can then be described as the following
@@ -215,6 +215,9 @@ assignment of weights:
 For convenience, we represent the situation where a word is in
 neither the source nor target revision as $w(\phi, \phi)$ and
 assign it a weight of zero.
+Note that~\textbf{ed1} assigns a weight of zero to Move operations,
+so we do not need to concern ourselves with the location of word~$x$
+in the source and target strings.
 
 We consider three revisions, just as we did in analyzing
 edit longevity in Figure~\ref{fig-editcontr}: \version{k-1},

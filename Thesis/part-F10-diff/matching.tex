@@ -195,7 +195,7 @@ Some optimizations that we have implemented for the differencing
 step are:
 %
 \begin{description}
-\item[\textbf{min words}] 
+\item[\textbf{min words}]
     We can reduce the number of potential matches examined
     by the algorithm by requiring a minimum number of words to match
     before a string will be added to the priority queue.
@@ -212,7 +212,7 @@ step are:
     within a single article), then we believe that the string prefix
     is too common to really be considered to have been authored
     by a single individual.
-    WikiTrust ignore string prefixes which have more than 50 matches.
+    WikiTrust ignores string prefixes which have more than 50 matches.
 
 \item[\textbf{longest match}] Put only the longest possible match
     onto the priority queue, instead of every possible match (that is, don't
@@ -283,7 +283,7 @@ There are additional optimizations we can make for computing
 text authorship, as well.
 A very simple step is to reduce the size of the list of
 previous revisions given by \prevrevs{\version{i}}.
-As defined in Section~\ref{sec:diff-tracking}, \prevrevs{\version{i}} 
+As defined in Section~\ref{sec:diff-tracking}, \prevrevs{\version{i}}
 is the ordered list of all previous revisions,
 $\left[ \version{1}, \version{2}, \ldots, \version{i-1} \right]$.
 We use the full list of previous revisions to ensure that restored text

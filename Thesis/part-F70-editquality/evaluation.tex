@@ -578,19 +578,31 @@ and \textbf{diff6}/\textbf{diff7}.
 
 \mynote{Diff4 always performs the worst.  Why is that?}
 
-\mynote{Diff3 and Diff5 should be exactly the same, but they are not!
-I was expecting that the prev match optimization was only more efficient.
-The reason for the discrepancy is an interaction between long matches
-and our rule to not look at over-frequent matches (greater than 50).
-The case I found, there was a 1400 word match at the beginning of the
-article.  For hashing, that entire segment was marked as matched.
-In prev-matches, an overly common word pair results in no matches,
-so that the skipmatch test doesn't correctly determine that we've
-already investigated a longer match.  This results in many more
-items in the priority queue than are necessary.}
-\mynote{ But they should be items which will only be rejected later.
-Why does the diff come out differently?  I can't remember now...
-}
+Describing \textbf{prev matches} as an optimization, we would expect
+the running times of~\textbf{diff3} and~\textbf{diff5} to differ, but
+the predictive ability to be exactly the same; the results of
+\mynote{which table?} do not agree with those expectations.
+\begin{itemize}
+\item The timing is not improved because \textbf{prev matches} interacts
+  with the \textbf{max matches} optimization: by ignoring overly common
+  string prefixes, the ``previous match'' list is empty for the next
+  starting position; if there is a long match which spans several
+  overly common prefixes, \textbf{prev matches} loses track that it
+  is traversing a region which was already matched.
+  The net effect is that the matches for the prefix immediately after
+  one of these common points are inserted into the priority queue;
+  and because these common points are \textit{common}, this can happen
+  quite often in a large article.
+\item The predictive ability of match quality~\textbf{mq1} also differs
+  unexpectedly between~\textbf{diff3} and~\textbf{diff5}.
+  Inspection of a few differences led us to discover that the priority
+  queue will sometimes return results in a different order than they
+  were inserted into the queue, when the priorities are exactly the same.
+  Match quality~\textbf{mq8} enforces an ordering in which the priority
+  queue cannot reorder any entries, and we see that the predictive
+  ability of these two difference algorithms is exactly the same in
+  this case.
+\end{itemize}
 
 \mynote{
 Diff4 and Diff6 should also be the same.
