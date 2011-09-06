@@ -34,7 +34,7 @@ indicating that reverts or undos have occurred,
 but computation can detect
 them.\footnote{Detecting undos can be fairly expensive, so
 it is typical to restrict checking to a limited number of older revisions.}
-The second more significant issue is that reverts and undos
+The second, more significant issue is that reverts and undos
 are a very blunt feedback mechanism; they indicate only complete disapproval.
 There are no gradations in this evaluation, which does not make
 it a good measure for the quality of a revision, except for judging the very
@@ -46,9 +46,9 @@ Since the Wikipedia works due to the collective action of everybody
 reading the articles, we expected that pages that receive a lot of
 views would be more accurate because of the higher collective amount
 of scrutiny received.
-At the time, we abandoned this line of thinking because page view
+(At the time, we abandoned this line of thinking because page view
 information was not available.
-(Since then, Priedhorsky~\etal show how page views can be estimated
+Since then, Priedhorsky~\etal show how page views can be estimated
 from some available data sets~\cite{Priedhorsky2007}.
 Log files are also now
 available\footnote{\url{http://dammit.lt/wikistats/}} and
@@ -70,7 +70,7 @@ We know from the data available now that roughly 75 people a day
 read this article, so we have to wonder at how this error might
 have persisted for nearly a year.
 
-The data from the history of revisions seemed to be our primary, and only
+The data from the history of revisions seemed to be our only
 data source for community sentiment, so
 we began to examine edits and attempt manually to track how each
 edit fared in its future.
@@ -102,7 +102,7 @@ quality measure, \intro{edit quality}, which we explain in
 Section~\ref{sec:editquality}.
 
 Our motivation for the edit quality measure is that the future
-versions of an article represent decision by the community about
+versions of an article represent a consensus by the community about
 which contributions were useful and which were not.
 Each later author is implicitly making a commentary about the
 existing text when they decide to make an edit.
@@ -125,7 +125,7 @@ points to a host of potential quality measure, such as
 understandability, completeness, and reliability~\cite{wiki:SoftwareQuality}.
 The difficulty of these measures is that they cannot be measured
 in a programmatic way.
-As an example, the reliability of the Wikipedia was compared to that
+(As an example, the reliability of the Wikipedia was compared to that
 of the Encyclop{\ae}dia Brittanica by employing experts to review
-hand-selected articles from both reference works~\cite{Giles2005}.
+hand-selected articles from both reference works~\cite{Giles2005}.)
 

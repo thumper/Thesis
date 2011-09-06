@@ -86,8 +86,9 @@ location of the best match from a list of earlier revisions:
     \end{cases}
 \label{def:bestmatch}
 \end{equation}
-where $k < i$ since we are only interested in matches with earlier revisions;
-we will better describe this calculation in the next section.
+where $\version{k} \in \prevrevs{\version{i}}$ since we are only
+interested in matches with earlier revisions; we will better describe
+this calculation in the next section.
 
 Now it is possible to define the author of each word
 $w_j \in \words{\version{i}}$ as a recursive relation:

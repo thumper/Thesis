@@ -39,8 +39,9 @@ when determining how text is reorganized:
     when computing the edit distance from one version to another,
     where text in the same relative position does not increase the
     edit distance.  If the difference reflected block moves that
-    crossed over each other, then there would be a positive edit
-    distance contributed by the swapping of equivalent text.}
+    crossed over each other, then there might be a positive edit
+    distance contributed by the swapping of equivalent text,
+    depending on the definition of edit distance used.}
 \item We do not want to over-reward the first author to use common
     words (\eg ``the,'' ``of'').
 \item When text is deleted in one version and then restored in a later
@@ -79,10 +80,10 @@ is:
 \begin{eqnarray*}
 \mathrm{Matches}(\version{a}, \version{b}) = \{ (i,j,k) & |
             & \exists k \in \mathbb{N} \ .\  (
-    \forall f \in \mathbb{Z}, 0 \le f < k \ . \\
-    & & w^a_{i+f} \in \words{\version{a}} \\
-    & & \wedge w^b_{j+f} \in \words{\version{b}} \\
-    & & \wedge w^a_{i+f} = w^b_{j+f} ) \}.
+    \forall f \in \mathbb{Z}, 0 \le f < k, \\
+    & & \words{\version{a}} = [ p_1, p_2, \ldots, p_{l_a} ], \\
+    & & \words{\version{b}} = [ q_1, q_2, \ldots, q_{l_b} ] \ . \\
+    & & p_{i+f} = q_{j+f} ) \}.
 \end{eqnarray*}
 
 \item For each match, compute a quality score and insert the match into
@@ -106,8 +107,8 @@ Building our list of matches (as given by $\mathrm{Matches}$)
 roughly follows the work of other greedy differencing
 algorithms~\cite{Reichenberger1991,Burns1997}:
 build a hashtable of string prefixes that stores the list
-of locations where each prefix can be found in the target string.
-Then consider each position of the source string(s) by finding
+of locations where each prefix can be found in the source string.
+Then consider each position of the target string(s) by finding
 the list of matching string prefixes from the hashtable.
 For each match, find the extent of the match
 (beyond the length of the string prefix)
@@ -115,13 +116,12 @@ and add every matching substring into the priority queue
 as a separate match.
 
 The key to matches meeting the list of criteria we have
-defined above is in the quality function.\footnote{Except for
-multiple matching of source blocks, which cannot be handled
-by the quality
-function.  The source in Appendix~\ref{app:basicdiffsrc-perl}
-enables this feature by a flag.}
+defined at the beginning of this section is in the quality
+function.\footnote{Except for multiple matching of source blocks, which
+cannot be handled by the quality function.  The source in
+Appendix~\ref{app:basicdiffsrc-perl} enables this feature by a flag.}
 To prefer matches where the blocks are in similar positions,
-we can select a quality function, which compares the relative
+we can select a quality function which compares the relative
 positions of a match.
 Suppose that a match of length $k$ occurs at $i_1$ in the source
 string having length $l_1$, matching the same sequence of length $k$ at
@@ -134,7 +134,7 @@ q_{block} = -\left| \frac{i_1 + k/2}{l_1} - \frac{i_2 + k/2}{l_2} \right|
 This formula computes the midpoint of each match and compares
 the relative positions within the full strings; $q_{block}$ will be
 zero when the matches are in the same relative position
-and increases as the blocks move away from each other.
+and decreases as the blocks move away from each other.
 
 More important than matching blocks not crossing each other,
 we prefer longer matches of text.
@@ -143,7 +143,7 @@ Given that a match has a length of $k$, we can represent preferring
 longer matches over non-crossing blocks as $(k, q_{block})$.
 The use of a tuple for the priority reflects that we prefer
 matches of longer length, before considering the issue
-of match quality.  \mynote{Is this clear?}
+of match quality.
 
 So far, this discussion has applied equally to the task of
 computing a difference between two strings.
@@ -160,17 +160,6 @@ There are other possible quality tuples (\eg $(k, -c, q_{block})$,
 if the absolute longest match is preferred), and
 understanding the ramifications of choosing different quality
 functions is an area of potential further research.
-
-We also prefer not to reward authors that first use very common words
-or expressions.
-The ideal solution would use language analysis to determine
-$n$-gram frequencies and compute
-a score (\eg tf-idf~\cite{Jones1972}) for words and phrases.
-To reduce our computation requirements, we chose the simpler idea
-of checking the length of the match: if a match is less than three
-words, then we reject the match.
-(Note that the hashtable of string prefixes can then be indexed by
-word pairs without missing any potential matches.)
 
 Once we have an edit script that defines how text evolves from
 previous revisions to the target (current) revision, we can then propagate
@@ -199,10 +188,17 @@ step are:
     We can reduce the number of potential matches examined
     by the algorithm by requiring a minimum number of words to match
     before a string will be added to the priority queue.
-    WikiTrust accomplishes this by index word tuples in the
+    WikiTrust accomplishes this by indexing word tuples in the
     hashtable of matches computed for the greedy algorithm;
     for edit distances, we index word pairs, and for text authorship
     we track word triples.
+
+    This works out well, because we prefer not to reward authors that
+    first use very common words or expressions.
+    The ideal solution would use language analysis to determine
+    $n$-gram frequencies and compute
+    a score (\eg tf-idf~\cite{Jones1972}) for words and phrases.
+
 
 \item[\textbf{max matches}]
     The hashtable constructed for the greedy algorithm is used
@@ -231,12 +227,18 @@ step are:
     Appendix~\ref{app:fasterdiffsrc-perl} demonstrates this
     modification, with some representative runtimes shown
     in Table~\ref{tab:comparediff}.
+
+\item[\textbf{prev matches}]
     An optimization that we later implemented on top of
     \textbf{longest match} is \textbf{prev matches}:
     if a potential starting position for matched text is part of
     a longer match, then the previous position would have
     been in the set of matches returned by the index of
     matching positions.
+    That is, if we are examining position $j$ in the target string
+    and are considering match \textbf{Move}(i,j), we know that it
+    was part of a longer match if $i-1$ is one of the matches returned
+    for position $j-1$.
 
 \item[\textbf{header/trailer}] When users edit an article, the beginning
     and end of the article are not likely to change much.
@@ -311,7 +313,7 @@ When looking at older chunks, the fact that the target has already
 been partially matched will reject many potential matches.
 Appendix~\ref{app:basictextsrc-perl} shows an implementation of the
 basic text tracking algorithm, and Appendix~\ref{app:fastertextsrc-perl}
-shows the optimization; Table~\ref{tab:comparetext} shows representative
+shows our optimization; Table~\ref{tab:comparetext} shows representative
 running times.
 
 \begin{table}
@@ -464,7 +466,7 @@ this measure; do our calculations correlate well with
 human intuition?
 Is it even possible to survey a large number of people
 to generate edit scripts describing the transformation from
-one revision to the next, or can edit script only be generated
+one revision to the next, or can edit scripts only be generated
 by video taping editors caught in the act?
 Although we do not evaluate the performance of our difference
 algorithm directly, we speculate that it might be possible to

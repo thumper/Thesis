@@ -11,9 +11,9 @@ is a reliable indicator of future performance, so we were
 asking the question ``Does text added by some users \intro{survive}
 longer than text by other users?''
 Note that there are other possible measures of quality, for example:
-what size is the contribution; what is the reading level of the
-text\cite{Flesch1948,Gunning1952};
-how good is the grammar; and does the text seem to be related to
+what size is the contribution, what is the reading level of the
+text\cite{Flesch1948,Gunning1952},
+how good is the grammar, and does the text seem to be related to
 the topic of the article~\cite{Itakura2009}.
 We decided not to tackle these kinds of quality measures, both for
 the difficulty of natural language processing and because such
@@ -30,7 +30,6 @@ and then compute authorship again in later
 versions of the article to find those words with an
 authorship dating back to the revision we are trying
 to determine the quality of.
-
 In Chapter~\ref{ch:diff}, we describe how to track text authorship
 for the text in an article $\article{} \in \articles$.
 Just tracking authorship is not enough for tracking survival, since
@@ -90,7 +89,7 @@ Chapter~\ref{ch:contrib}, but present one novel quality measure here.
     that were introduced in \version{k} still present or
     \intro{live}, in \version{j}.
 }
-\label{fig:textsurvival} 
+\label{fig:textsurvival}
 \end{figure}
 
 
@@ -158,14 +157,14 @@ Let us call this common ratio the \intro{text decay quality},
 \quality{tdecay}{n}{k}.
 To compute \quality{tdecay}{n}{k}, we want to solve the following equation:
 \begin{align*}
-    \sum_{i=0}^n \tsurv{}{k,k+i} = {} & \tsurv{}{k,k} + \quality{tdecay}{n}{k} \cdot \tsurv{}{k,k+1} \\
-    & + (\quality{tdecay}{n}{k})^2 \cdot \tsurv{}{k,k+2} + \ldots \\
-    & + (\quality{tdecay}{n}{k})^n \cdot \tsurv{}{k,k+n} \\
+    \sum_{i=0}^n \tsurv{}{k,k+i} = {} & \tsurv{}{k,k} + \quality{tdecay}{n}{k} \cdot \tsurv{}{k,k} \\
+    & + (\quality{tdecay}{n}{k})^2 \cdot \tsurv{}{k,k} + \ldots \\
+    & + (\quality{tdecay}{n}{k})^n \cdot \tsurv{}{k,k} \\
     = {} & \tsurv{}{k,k} \cdot \sum_{i=0}^n (\quality{tdecay}{n}{k})^i \\
     = {} & \tsurv{}{k,k} \cdot \frac{1 - (\quality{tdecay}{n}{k})^{n+1}}{1 - \quality{tdecay}{n}{k}} \\
 \end{align*}
 
-To solve this for \quality{tdecay}{}{k}, we can use Newton's method
+To solve this for \quality{tdecay}{n}{k}, we can use Newton's method
 to solve for the zero of the related function:
 \begin{equation}
   f(\alpha) =
@@ -173,7 +172,7 @@ to solve for the zero of the related function:
         + (1 - \alpha) \cdot \sum_{i=0}^n \tsurv{}{k,k+i}
 \label{eq:soln-tdecay}
 \end{equation}
-where $\alpha = \quality{tdecay}{}{k}$.
+where $\alpha = \quality{tdecay}{n}{k}$.
 Newton's method involves making repeated estimations of the form
 \begin{equation*}
   \alpha_{j+1} = \alpha_j - \frac{f(\alpha_j)}{f'(\alpha_j)}

@@ -34,9 +34,9 @@ Alignments also find the commonality between the source and target
 strings, but allow more flexibility in the specification of
 the non-common portions.
 \begin{center}
-  \begin{tabular}{c c c c c c}
-B & -- & I & R & -- & D \\
-B & O & -- & R & E & D \\
+  \begin{tabular}{c c c c c c c c c c c c c}
+B & -- & I & R & -- & D & \qquad\qquad & B & I & -- & R & -- & D \\
+B & O & -- & R & E & D & \qquad\qquad  & B & -- & O & R & E & D \\
   \end{tabular}
 \end{center}
 Listings are the most general of all, being
@@ -64,6 +64,7 @@ traces, essentially calculating the listing
 distance~\cite{Wagner1975,Sankoff1999}.
 
 Our solution for WikiTrust greedily selects the \intro{best match}
+(according to some criteria we define later)
 from the set of all possible matches between the set of strings, marks
 the match, and then proceeds to find the next available \textit{best match}.
 The general principle is the same as that used in the
