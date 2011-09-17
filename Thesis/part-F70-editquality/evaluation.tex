@@ -73,7 +73,9 @@ and the precision-recall curve.
 
 \subsection{Difference Algorithms}
 
-Each formula for edit distance we have defined so far is calculated
+Each formula for edit distance we have defined so far
+\mynote{where do we define any?  give references}
+ is calculated
 from the operations within the edit script describing the transformation
 from the source revision to the target revision.
 This edit script is highly dependent on the algorithm used to
@@ -110,11 +112,10 @@ The list of algorithm variations that we tried are as follows:
     \end{description}
 
 \item[\textbf{diff3}]
-    The \textbf{prev matches} optimization is only applicable
-    on top of the \textbf{longest match} optimization.
-    On average, it has significantly reduced memory requirements
-    over \textbf{longest match} implemented with an associative array
-    to track matches made so far.
+    This is a WikiTrust variation of difference algorithm, which uses prefers
+    the globally \textbf{longest match} for a given starting position in the target revision.
+    Without the \textbf{prev matches} optimization, this version of the algorithm
+    uses an associative array to track the matches made so far.
     %
     \begin{description}
     \item[Includes:]
@@ -192,7 +193,7 @@ The list of algorithm variations that we tried are as follows:
     This diff algorithm implements exactly the matching
     we describe in Chapter~\ref{ch:diff}, with all optimizations except
     for the \textbf{header/trailer} optimization.
-    A Perl language implementation of
+    Additionally, a Perl language implementation of
     this algorithm is listed in Appendix~\ref{app:fasterdiffsrc-perl}.
     %
     \begin{description}
@@ -245,8 +246,7 @@ between two revisions, so we always have $c=0$.
 but is only used in the computation of text longevity.
 The match qualities computed by our system are tuples,
 with lexicographically smaller tuples considered to be
-of higher quality.\footnote{Note that this is the inverse ordering
-to that described in Section~\ref{sec:diff-greedy}.}
+of higher quality.
 
 
 The initial set of match quality functions we present form the baseline
@@ -362,7 +362,7 @@ of that idea:
     The final match quality tuple used is $(-k, -c, q')$.
 
 \item[\textbf{mq9}] This modification of \textbf{mq8}
-    changes the priority of the chunk index, to test
+    changes the priority of the chunk index to test
     the effect on text longevity.
     \begin{equation*}
     q' := \abs{\cfrac{ i_1 + \cfrac{k}{2} }{l_1}
@@ -389,8 +389,8 @@ how this choice impacts the quality of the results.
     \end{equation*}
 
 \item[\textbf{ed2}] Traditionally, edit distance functions incorporate
-    all the elements of an edit script, we define
-    this edit distance computes the sum of the lengths
+    all the elements of an edit script.  We define
+    this edit distance to compute the sum of the lengths
     of insertions, deletions, and move operations.
     \begin{equation*}
     I_{tot} + D_{tot} + M_{sum}
@@ -399,7 +399,9 @@ how this choice impacts the quality of the results.
     \begin{equation*}
     M_{sum}(m,n) = \sum_{\mathbf{Move}(i, j, k) \in E(m,n)} k \\
     \end{equation*}
-    Note that any text which appears in both revisions which are being
+    Note that any text\footnote{Technically, this should be ``most
+    text,'' because of the \textbf{min words} optimization.}
+    which appears in both revisions which are being
     compared will be counted as a move operation, even if it has not
     relocated within the document.
     For example, if there is no difference between two revisions of
@@ -445,7 +447,7 @@ same author are filtered out to leave only the last revision
 in the sequence.
 This would limit us in evaluating the performance of our
 quality measures, so we modified the system in the following way:
-we do not filter revisions annotated in the PAN-WVC-10 corpus,
+we do not filter the specific revisions annotated in the PAN-WVC-10 corpus,
 or the immediately preceding revision (even when they have the
 same author), but we do filter revisions \textit{after} the annotated
 revision in the usual way.

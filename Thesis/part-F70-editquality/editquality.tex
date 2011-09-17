@@ -305,7 +305,7 @@ returns the set of up-to $n$ versions that act as judges
 to version $\version{k} \in \versions{a}$, with the proviso
 that author of \version{i} does not act as his own judge:
 \begin{equation}
-\judges{a}{n}{k} = \{ j : \exists j \in \mathbb{Z}\ .\ 0 < j - k \le n
+\judges{a}{n}{k} = \{ j : j \in \mathbb{Z}\ .\ 0 < j - k \le n
     \wedge \revauthor{\version{k}} \ne \revauthor{\version{j}} \}
 \label{def:judges}
 \end{equation}

@@ -55,12 +55,12 @@ Thus, we propose the following rule:
 \label{rule-text}
   We update the reputation of \revauthor{\version{i}} by considering
   each of the ten following versions as judges,
-  $v \in \judges{a}{10}{i}$ and update the reputation by the amount:
+  $v_j \in \judges{a}{10}{i}$, and update the reputation by the amount:
   \[
     \coeffrep \cdot \coefftext \cdot \frac{\tsurv{a}{i,j}}{\tsurv{a}{i,i}} 
     \cdot (\tsurv{a}{i,i})^\lengthexp \cdot \log(1 + \rep(\version{j})),
   \]
-  where $j = \revpos{v}$ is the version position of $v$ in \versions{a}
+  where $j = \revpos{\version{j}}$ is the version position of $v$ in \versions{a}
   (and consequently, $0 < j - i \le 10$),
   $\coeffrep > 0$, $\coefftext \in [0,1]$, and $\lengthexp \in
   [0,1]$ are parameters, and where $\rep(\version{j})$ is the reputation of
@@ -141,7 +141,7 @@ only when
 $\dist{a}{i-1,i} < \dist{a}{i,j}$,
 that is,
 when \version{j} is closer to the version \version{i-1}
-(the \textit{preceding} version!), than to version \version{i}.
+(the \textit{preceding} version), than to version \version{i}.
 In other words, \revauthor{\version{j}}
 votes to lower the reputation of \revauthor{\version{i}}
 only when the preceding \version{i-1} is more like \version{j}
@@ -154,13 +154,13 @@ edit contributions.
 \label{rule-edit}
   We update the reputation of \revauthor{\version{i}} by
   using the three following revisions as judges,
-  $v \in \judges{a}{3}{i}$, to compute the following value:
+  $v_j \in \judges{a}{3}{i}$, to compute the following value:
 \begin{equation*}
 q = \frac{\slack \cdot \dist{a}{i-1,j} - \dist{a}{i,j}}
                         {\dist{a}{i-1,i}}
 \label{eq-edit-long}
 \end{equation*}
-where $j = \revpos{\version{}}$.
+where $j = \revpos{\version{j}}$.
 Since $q$ is undefined when \dist{a}{i-1,i} = 0,
 we take that to be a special case where no reputation
 should accrue to the author of version \version{i}

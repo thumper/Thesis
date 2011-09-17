@@ -14,3 +14,4 @@
 *.ind
 *.bak
 memoir
+*.fdb_latexmk
