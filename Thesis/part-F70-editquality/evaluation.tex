@@ -73,15 +73,14 @@ and the precision-recall curve.
 
 \subsection{Difference Algorithms}
 
-Each formula for edit distance we have defined so far
-\mynote{where do we define any?  give references}
- is calculated
+The formula for edit distance we defined in
+Section~\ref{sec:eq-distances} is calculated
 from the operations within the edit script describing the transformation
 from the source revision to the target revision.
 This edit script is highly dependent on the algorithm used to
 compute the difference between the revisions.
 To provide a more complete picture of how the choice of difference
-algorithm affects the performance of the quality measures,
+algorithms affects the performance of the quality measures,
 we present an evaluation of some variations of the algorithms;
 the OCaml source representing these algorithms appears
 in Appendix \ref{app:diffsrc-ocaml}.
@@ -513,13 +512,21 @@ to a value that is dominated by the size of the revisions,
 and \textbf{ed5} tries the hardest to estimate the amount of
 effort that goes into rearranging blocks of text.
 
-\mynote{Include some thoughts on relative performance of
-different diff algorithms.}
+In Tables~\ref{tab:editlongbyed5} through~\ref{tab:editlongbyed1},
+we present the predictive performance of the algorithms,
+controlling for edit distance.
+We find that match qualities \textbf{mq1}-\textbf{mq4}
+and \textbf{mq6}-\textbf{mq7} are always grouped together.
+That is because these match qualities only differ from each
+other in how they treat the chunk index, which is not used in the
+edit longevity computation.
+
+\input{part-F70-editquality/quality-table-timing}
 
 The typical measure used to compare difference algorithm is the
-running time, and so we include this value.
+running time, which we also measured.
 We find in Appendix~\ref{app:editlong-data} that the running time
-is not really affected by either the
+is usually affected by either the
 match quality or the edit distance calculations, so we
 summarize the results in Table~\ref{tab:difftiming} by
 computing the average and standard deviation of running times.
@@ -532,21 +539,10 @@ reputation scores for authors.
 (Text longevity uses a fixed difference algorithm and only varies
 the match quality function, so that it is essentially a constant
 overhead in the time.)
-
-The notable issue to our grouping the results of
-Table~\ref{tab:difftiming} by difference algorithm
-is the standard deviation of \textbf{diff6}.
-The values for \textbf{diff6} actually do depend on the
-match quality function, and are a bimodal distribution:
-match qualities \textbf{mq1} through \textbf{mq4} have
-running times of roughly 200~minutes, while
-\textbf{mq5} through \textbf{mq9} have running times
-of roughly 400~minutes.
-\mynote{I expect that this is some kind of timing
-mistake, since \textbf{diff7} should have shown the
-same behavior.}
-
-\input{part-F70-editquality/quality-table-timing}
+The most striking feature of Table~\ref{tab:difftiming} is the unusually
+large standard deviations of \textbf{diff6} and \textbf{diff7}.
+These two algorithms turn out to have a bimodal distribution.
+\mynote{Why?  Connected component algorithm?}
 
 With respect to the different optimizations, Table~\ref{tab:difftiming}
 provides some insights.
@@ -556,8 +552,11 @@ greedy algorithm by nearly a factor of two.
 We expect this sort of result because, while both algorithms
 inspect every possible match and then mark the actual
 match as used, the WikiTrust algorithm additionally
-re-traverses the non-longest matches to search for
+re-traverses each match to verify it or search for
 \textit{residual} matches.
+
+\vspace{1pc}
+
 The ordering of \textbf{diff3}, \textbf{diff4}, and \textbf{diff5}
 allows us to infer that the \textbf{header/trailer} optimization
 is more beneficial than the \textbf{prev matches} optimization.
@@ -577,38 +576,41 @@ There are three pairs of difference algorithms that are the same
 except for the use of the \textbf{header/trailer} optimization:
 \textbf{diff1}/\textbf{diff2}, \textbf{diff4}/\textbf{diff5},
 and \textbf{diff6}/\textbf{diff7}.
+Examining the data, there is no clear advantage to including or
+not including the \textbf{header/trailer} optimization in terms of
+predictive ability, but it does make a significant improvement in
+the running time for the WikiTrust difference algorithms.
 
-\mynote{Diff4 always performs the worst.  Why is that?}
+\vspace{1pc}
 
-Describing \textbf{prev matches} as an optimization, we would expect
-the running times of~\textbf{diff3} and~\textbf{diff5} to differ, but
-the predictive ability to be exactly the same; the results of
-\mynote{which table?} do not agree with those expectations.
-\begin{itemize}
-\item The timing is not improved because \textbf{prev matches} interacts
-  with the \textbf{max matches} optimization: by ignoring overly common
-  string prefixes, the ``previous match'' list is empty for the next
-  starting position; if there is a long match which spans several
-  overly common prefixes, \textbf{prev matches} loses track that it
-  is traversing a region which was already matched.
-  The net effect is that the matches for the prefix immediately after
-  one of these common points are inserted into the priority queue;
-  and because these common points are \textit{common}, this can happen
-  quite often in a large article.
-\item The predictive ability of match quality~\textbf{mq1} also differs
-  unexpectedly between~\textbf{diff3} and~\textbf{diff5}.
-  Inspection of a few differences led us to discover that the priority
-  queue will sometimes return results in a different order than they
-  were inserted into the queue, when the priorities are exactly the same.
-  Match quality~\textbf{mq8} enforces an ordering in which the priority
-  queue cannot reorder any entries, and we see that the predictive
-  ability of these two difference algorithms is exactly the same in
-  this case.
-\end{itemize}
+We proposed the \textbf{prev matches} optimization with the expectation
+that it would reduce the memory requirements of the algorithm without
+substantially changing the performance with respect to predictive
+ability.
+Comparing \textbf{diff5}, which implements \textbf{prev matches},
+with \textbf{diff3}, which does not, we find that the predictive ability
+is slightly different for match qualities \textbf{mq1} through
+\textbf{mq4}.
+We examined this difference more carefully and found that the priority
+queue implementation will sometimes return matches in a different
+(but equivalent with respect to the priority) order.
+Match quality \textbf{mq8} is defined in a way that eliminates this
+reordering possibility, and we see that \textbf{diff3} and
+\textbf{diff5} always perform the same in this case.
 
-\mynote{
-Diff4 and Diff6 should also be the same.
-}
+During our exploration of the differences between \textbf{diff5}
+and \textbf{diff3}, we also found that the \textbf{prev matches}
+optimization interacts with the \textbf{max matches} optimization.
+By ignoring overly common string prefixes, the ``previous match'' list
+is empty for the next starting position after the common string prefix.
+If there is a long match which spans several overly common prefixes,
+\textbf{prev matches} loses track that it is traversing a region which
+already had a longer match and needlessly adds smaller matches to the
+priority queue, creating extra work.
+The timing information presented in Table~\ref{tab:difftiming} reveals
+that \textbf{prev matches} still has the advantage, but there is perhaps
+more performance gains to be had here.
+
 \mynote{Since redoing some diffs, consider adding matchskip
 idea, for even better speedup.  Hmm, matchskip didn't speed
 up; it seems to have slowed things down.  Rollback?}
@@ -616,7 +618,6 @@ up; it seems to have slowed things down.  Rollback?}
 \mynote{Does longest match actually save CPU as we say when we define
 it?}
 
-\mynote{Does text longevity actually change when +c or -c?}
 
 \subsubsection{Text Longevity}
 
@@ -640,5 +641,7 @@ We believe this is because the possible edit scripts for
 each edit have a high degree of overlap; that is,
 the different algorithms generally produce the same edit script
 except for very minor differences.
+
+\mynote{Does text longevity actually change when +c or -c?}
 
 \input{part-F70-editquality/quality-table-textlong}
