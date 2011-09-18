@@ -1,5 +1,10 @@
 #!/usr/bin/perl
 
+# Used to compute the edit and text longevities for
+# revisions in a dump.  This was so slow that I didn't
+# end up using it; instead, I use the version of WikiTrust
+# from the thumper-vandalrep branch.
+
 use strict;
 use warnings;
 use Data::Dumper;
@@ -61,7 +66,7 @@ sub checkForWork {
     my $author1 = getAuthorFRev($filterq->[1]);
     my $rev = shift @$filterq;
     return if $author0 eq $author1;	# filter out this rev
-    
+
     # Otherwise, it's good.  First let's do some calculations.
     # We'll use the current work queue as the list of previous revisions.
     my $workq = $pageData->{filteredQ};

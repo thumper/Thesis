@@ -22,7 +22,10 @@ corpus as a golden annotation for "bad edits".
 	./compute-LongevityFeatures.pl /big/thumper/pan2010dump.xml > pan2010longevity.csv
 
    This step seems to take a very long time: about 30sec for text tracking
-   and 5min for edit distances, for each revision.  See below.
+   and 5min for edit distances, for each revision.  Given how long this
+   takes, and the divergence from how the calculation is done in OCaml,
+   I don't use this program any longer, and instead use the thumper-vandalrep
+   version of WikiTrust.
 
 5. Run the various tests for diff algo, match quality, etc.
 	time ./run-expt.sh > expt.out 2>&1
