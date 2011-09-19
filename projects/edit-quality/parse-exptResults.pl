@@ -62,7 +62,7 @@ try {
     };
   }
   writeExpt($expt);
-} otherwise { 
+} otherwise {
   warn $@;
 };
 foreach my $tuple ([\@editout, $editout, EDITOUT],
@@ -152,7 +152,14 @@ Diff & MatchQuality & PR-AUC  \\
 \hline
 \hline
 EOF
-  foreach my $apr (sort { $b <=> $a } keys %{ $editlongbyed{$ed} }) {
+  my $cmpfunc = sub {
+    my @afields = split(/,/, $a);
+    my @bfields = split(/,/, $b);
+    my $cmp = $bfields[0] <=> $afields[0];
+    $cmp = $bfields[0] cmp $afields[0] if $cmp == 0;
+    return $cmp;
+  };
+  foreach my $apr (sort $cmpfunc keys %{ $editlongbyed{$ed} }) {
     my $record = $editlongbyed{$ed}->{$apr};
     my $line = sprintf "diff%d & mq%s & %0.3f\\%% \\\\\n",
       $record->{diff},
@@ -206,13 +213,13 @@ EOF
   \begin{center}
     \begin{tabular}{|c|c|c|c||c|c||c|c|c|c|}
 \hline
- &  & Match & Edit 
+ &  & Match & Edit
         & ROC & PR
         & Num & Run
         & Total & Bad
 	& Heap & Memory \\
 Diff & Precise & Quality & Dist
-        & AUC & AUC 
+        & AUC & AUC
         & Revs & Time
         & Triangles & Triangles
 	& Size & Usage \\
@@ -308,15 +315,20 @@ sub recordEditlongByED {
     my $apr = $expt->{edit}->{APR};
 
     $editlongbyed{$ed} = {} if !exists $editlongbyed{$ed};
-    $editlongbyed{$ed}->{$apr} = {} if !exists $editlongbyed{$ed}->{$apr};
-    my $record = $editlongbyed{$ed}->{$apr};
+    $editlongbyed{$ed}->{"$apr,$d"} = {}
+      if !exists $editlongbyed{$ed}->{"$apr,$d"};
+    my $record = $editlongbyed{$ed}->{"$apr,$d"};
     if (!exists $record->{diff}) {
       $record->{diff} = $d;
       $record->{mq} = {};
       $record->{APR} = $apr;
     }
-    die "Exactly the same APR but bad diff $d"
-      if $record->{diff} != $d;
+
+    ## Diffs 8 and 4, and 5 and 3 turn out to be the same.
+    ## This code caught that similarity.
+    #die "Exactly the same APR but bad diff $d and ".$record->{diff}
+    #  if $record->{diff} != $d;
+
     $record->{mq}->{$mq} = 1;
 }
 
