@@ -8,16 +8,21 @@ set -x
 #PANDUMP=/raid/thumper/pan2010dump.7z
 
 ## Redherring settings
-WORKDIR=/big/thumper/tmp
-WIKITRUST=/giant/thumper/research/WikiTrust
-PANDUMP=/giant/thumper/pan2010dump.7z
+#WORKDIR=/big/thumper/tmp
+#WIKITRUST=/giant/thumper/research/WikiTrust
+#PANDUMP=/giant/thumper/pan2010dump.7z
+
+## Dev settings
+WORKDIR=/data/users/thumper/research/tmp
+WIKITRUST=/data/users/thumper/research/WikiTrust
+PANDUMP=/data/users/thumper/research/pan2010dump.7z
 
 
 OUTPUT=./output
-MAXMEM1=400000
-CORES1=3
-MAXMEM2=650000
-CORES2=2
+MAXMEM1=2000000
+CORES1=8
+MAXMEM2=2000000
+CORES2=8
 
 function doexpt {
     echo "**************************************"
@@ -32,13 +37,13 @@ function doexpt {
     rm -f $WORKDIR/perf-textlong.txt
     rm -f $WORKDIR/triangles.tmp
     (ulimit -v $MAXMEM1 -m $MAXMEM1 -d $MAXMEM1; cd $WORKDIR ; \
-	time $OUTPUT/cmds/batch_process.py --n_core $CORES1 \
+	time python $OUTPUT/cmds/batch_process.py --n_core $CORES1 \
 	  --cmd_dir $OUTPUT/cmds \
 	  --dir $OUTPUT \
 	  $2 \
 	  --do_compute_stats --do_pan $PANDUMP)
     (ulimit -v $MAXMEM2 -m $MAXMEM2 -d $MAXMEM2; cd $WORKDIR ; \
-	time $OUTPUT/cmds/batch_process.py --n_core $CORES2 \
+	time python $OUTPUT/cmds/batch_process.py --n_core $CORES2 \
 	  --cmd_dir $OUTPUT/cmds \
 	  --dir $OUTPUT \
 	  $2 \
@@ -75,7 +80,7 @@ cp -a ./perf.src/perf $WORKDIR/$OUTPUT/cmds
 cp -ar ./lib $WORKDIR/
 cp -ar ./pan2010.csv $WORKDIR/
 cp -a $WIKITRUST/util/batch_process.py  $WORKDIR/$OUTPUT/cmds/
-(cd $WORKDIR ; time $OUTPUT/cmds/batch_process.py --cmd_dir $OUTPUT/cmds \
+(cd $WORKDIR ; time python $OUTPUT/cmds/batch_process.py --cmd_dir $OUTPUT/cmds \
     --dir $OUTPUT --do_split $PANDUMP)
 
 # And then do the experiments
