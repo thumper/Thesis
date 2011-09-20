@@ -36,7 +36,7 @@ With Luca's permission, I approached Andrew about a possible
 collaboration where we try to combine the signals from our respective
 solutions and see if we can get better performance.
 Andrew hadn't entered PAN~2010 because his data didn't go back that
-far, so we experimented on a corpus that Andrew had collected from 
+far, so we experimented on a corpus that Andrew had collected from
 his tool.
 First, we discovered that the \function{ADTree} algorithm under
 \package{Weka} out-performed Andrew's own \function{SVM}
@@ -217,5 +217,9 @@ I did this.
 $ time ../batch_process.py --cmd_dir ./tools --dir output-enwiki --do_split --do_compute_stats --do_sort_stats --do_compute_rep --do_compute_trust /raid/dumps/enwiki-20100130-pages-meta-history.xml.bz2
 \end{verbatim}
 
-TODO: This is running in screen 6: gaston:/raid/thumper/util/tmp.
+\subsection{21-Sept-2011}
+
+About that boolean flag to do PAN judgements, I added an option
+\texttt{--do_pan} which triggers the PAN style computation.
+So the above command is safe to run.
 

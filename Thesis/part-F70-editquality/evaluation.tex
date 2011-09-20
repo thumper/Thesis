@@ -202,19 +202,6 @@ The list of algorithm variations that we tried are as follows:
 	\textbf{prev matches}, \textbf{header trailer}.
     \end{description}
 
-\item[\textbf{diff9}]
-    This version is the basic difference algorithm we describe,
-    where every possible match (including substring matches) are
-    added to the heap.  This is too slow and uses too much memory.
-    %
-    \begin{description}
-    \item[Includes:]
-	\textbf{min wordlen}, \textbf{max matches},
-	\textbf{header/trailer}.
-    \item[Excludes:]
-	\textbf{longest match}, \textbf{prev matches}.
-    \end{description}
-
 \end{description}
 
 
@@ -549,11 +536,14 @@ provides some insights.
 The most notable conclusion is that Reichenberger's
 difference algorithm is faster than the WikiTrust
 greedy algorithm by nearly a factor of two.
-We expect this sort of result because, while both algorithms
+With hindsignt, we expect this sort of result because, while both algorithms
 inspect every possible match and then mark the actual
 match as used, the WikiTrust algorithm additionally
 re-traverses each match to verify it or search for
 \textit{residual} matches.
+
+\mynote{longest match prediction earlier.  Diff9 was crazy slow.  Tichy
+also picks longest match.}}
 
 \vspace{1pc}
 
@@ -610,13 +600,6 @@ priority queue, creating extra work.
 The timing information presented in Table~\ref{tab:difftiming} reveals
 that \textbf{prev matches} still has the advantage, but there is perhaps
 more performance gains to be had here.
-
-\mynote{Since redoing some diffs, consider adding matchskip
-idea, for even better speedup.  Hmm, matchskip didn't speed
-up; it seems to have slowed things down.  Rollback?}
-
-\mynote{Does longest match actually save CPU as we say when we define
-it?}
 
 
 \subsubsection{Text Longevity}

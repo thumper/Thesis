@@ -911,3 +911,30 @@ Today's today items:
 \item Work on bug reports from WikiPraise.
 \end{itemize}
 
+\subsection{22-Sept-2011}
+
+I implemented the matchskip idea mentioned in the entry for 4-Jul,
+but the runtime turned out to be somewhat longer.
+Not fully sure of that result; maybe I screwed up the implementation?
+
+Also tried to run diff9, and gave it 4GB of memory, but it never
+was able to run successfully.  Finally gave up.
+The final description that I used was:
+
+\begin{description}
+\item[\textbf{diff9}]
+    This version is the basic difference algorithm we describe,
+    where every possible match (including substring matches) are
+    added to the heap.  This is too slow and uses too much memory.
+    %
+    \begin{description}
+    \item[Includes:]
+        \textbf{min wordlen}, \textbf{max matches},
+        \textbf{header/trailer}.
+    \item[Excludes:]
+        \textbf{longest match}, \textbf{prev matches}.
+    \end{description}
+
+\end{description}
+
+
