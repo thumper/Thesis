@@ -16,7 +16,8 @@ corpus as a golden annotation for "bad edits".
 
 	./count-matchingRevids.pl pan2010.csv /raid/thumper/pan2010dump.xml
 
-4. Compute the text and edit longevity measures for all the
+(4) This step is no longer valid.
+   Compute the text and edit longevity measures for all the
    revisions in the dump.
 
 	./compute-LongevityFeatures.pl /big/thumper/pan2010dump.xml > pan2010longevity.csv
@@ -24,44 +25,14 @@ corpus as a golden annotation for "bad edits".
    This step seems to take a very long time: about 30sec for text tracking
    and 5min for edit distances, for each revision.  Given how long this
    takes, and the divergence from how the calculation is done in OCaml,
-   I don't use this program any longer, and instead use the thumper-vandalrep
-   version of WikiTrust.
 
-5. Run the various tests for diff algo, match quality, etc.
+   I don't use this program any longer, and instead use the thumper-vandalrep
+   version of WikiTrust.  See next step.
+
+4. Run the various tests for diff algo, match quality, etc.
 	time ./run-expt.sh > expt.out 2>&1
 
-6. Compute the latex tables from the output
+5. Compute the latex tables from the output
 	./parse-exptResults.pl expt.out
     output will be in expt.out-table-textlong.tex and expt.out-table-editlong.tex
-
-==========
-
-This is the manual version of how to run the experiments.
-There is now a script, "run-expt.sh" which automates this process.
-
-   Since this program takes so long, I instead instrumented our
-   OCaml code to print out the values that I want.
-   In the thumper-vandalrep branch, you need to run:
-      ./batch_process.py --cmd_dir ../analysis --dir output \
-          --do_split --do_compute_stats --do_sort_stats \
-	  --do_compute_rep /raid/thumper/pan2010dump.7z
-
-5. Extract the ratings for the PAN revisions.
-
-    ./extract-ratingsFrepfile.pl pan2010.csv \
-	/store/thumper/research/WikiTrust/util/output/user_reputations.txt
-
-6. Evaluate performance.
-   Download the 'perf' program from
-   http://kodiak.cs.cornell.edu/kddcup/software.html
-
-    ./perf.src/perf < perf-editlong.txt
-    ./perf.src/perf < perf-textlong.txt
-
-7. Count the number of triangles computed by the system
-    find output/stats -name "*.gz" -exec gunzip -c {} \; | grep triangles > triangles.tmp
-   The total number of triangles computed by the system is given by:
-     awk '{ print $4 }' triangles.tmp | awk -F: '{total+=$1} END{print total}'
-   The number of bad triangles (no triangle inequality) is given by:
-     awk '{ print $6 }' triangles.tmp | awk -F: '{total+=$1} END{print total}'
 

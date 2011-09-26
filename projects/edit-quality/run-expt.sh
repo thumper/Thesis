@@ -97,7 +97,7 @@ for mq in {1..9}
 do
   for ed in {1..5}
   do
-    for diff in {1..8}
+    for diff in {9..9}
     do
       doexpt "diff=$diff precise match-quality=$mq edist=$ed" "--diff $diff --precise --match_quality $mq --edit_distance $ed"
     done
