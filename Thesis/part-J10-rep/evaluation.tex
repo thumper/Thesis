@@ -43,23 +43,25 @@ we define the probability mass to scale a revision by as:
 
 We define our categories by choosing a partition for each measure,
 and define three random variables $S_e, S_t, L: \versions{}
-\mapsto \set{0,1}$ as follows,
-for all $\version{i} \in \versions{}$ where $i = \revpos{v}$:
-\begin{itemize} 
+\mapsto \set{0,1}$ as follows:
+\begin{itemize}
 \item We say that the new text added in version \version{i}
   is \intro{short-lived text} if \quality{tdecay}{10}{i} is at
   the low end of the range.
   We define $S_t(\version{i})=1$ if $\quality{tdecay}{10}{i} \leq  0.2$,
-  and $S_t(\version{i})=0$ otherwise.
+  and $S_t(\version{i})=0$ otherwise.\footnote{Recall that
+  $\quality{tdecay}{10}{i}$ is given by the solution to
+  Equation~\ref{eq:soln-tdecay}.}
   This indicates that at most 20\% of new text, on
-  average, survives from one version to the next. 
+  average, survives from one version to the next.
 
 \item We say that the edit performed in taking version
   \version{i-1} to version \version{i}
   is a \textit{short-lived edit} if
   \quality{elong}{3}{i} is low.
   Specifically, $S_e(\version{i})=1$ if $\quality{elong}{3}{i} \leq -0.8$,
-  and $S_e(\version{i})=0$ otherwise.
+  and $S_e(\version{i})=0$ otherwise.\footnote{The quality,
+  $\quality{elong}{3}{i}$, is given by Definition~\ref{def:elong}.}
 
 \item We also partition revisions according to whether
   they are \intro{low-reputation} or not.
@@ -77,41 +79,41 @@ for all $\version{i} \in \versions{}$ where $i = \revpos{v}$:
 \end{itemize}
 %
 The precision $\prect$ and recall $\recallt$
-for short-lived text, and 
+for short-lived text, and
 the precision $\prece$ and recall $\recalle$
 for short-lived edits, are defined as:
 %
 \begin{align*}
-    \prect & = \textstyle\Pr(S_t{=}1 \mid L{=}1) 
+    \prect & = \textstyle\Pr(S_t{=}1 \mid L{=}1)
   & \recallt & = \textstyle\Pr(L{=}1 \mid S_t{=}1) \\
-    \prece & = \textstyle\Pr(S_e{=}1 \mid L{=}1) 
+    \prece & = \textstyle\Pr(S_e{=}1 \mid L{=}1)
   & \recalle & = \textstyle\Pr(L{=}1 \mid S_e{=}1).
 \end{align*}
 \begin{comment}
 \ifshort
-For short-lived text, the {\em precision\/} is 
+For short-lived text, the {\em precision\/} is
 $
   \textstyle \prect = \Pr(S_t=1 \mid L=1)
 $,
-and the {\em recall\/} is 
+and the {\em recall\/} is
 $
   \textstyle \recallt = \Pr(L=1 \mid S_t=1)
 $.
-Similarly, for short-lived edits, we define the 
-precision is $\prece = \Pr(S_e=1 \mid L=1)$, 
+Similarly, for short-lived edits, we define the
+precision is $\prece = \Pr(S_e=1 \mid L=1)$,
 and the recall is $\recalle = \Pr(L=1 \mid S_e=1)$.
 \fi
 \end{comment}
-These quantities can be computed as usual; for instance, 
+These quantities can be computed as usual; for instance,
 \begin{equation*}
-  {\textstyle \Pr} (S_e=1 \mid L=1) = 
+  {\textstyle \Pr} (S_e=1 \mid L=1) =
   \frac{\sum_{v \in \versions{}} S_e(v) \cdot L(v) \cdot \editmass(v)}{%
     \sum_{v \in \versions{}} L(v) \cdot \editmass(v)}.
 \end{equation*}
 
 
 We also define the \intro{boost} that knowing reputation gives
-to predicting a short-lived revision: 
+to predicting a short-lived revision:
 %
 \begin{align*}
   \booste & = \frac{\Pr(S_e=1 \mid L=1)}{\Pr(S_e=1)}
@@ -122,30 +124,30 @@ to predicting a short-lived revision:
 %
 Intuitively, $\booste$ indicates how much more likely than average
 it is that edits produced by low-reputation authors are short-lived.
-The quantity $\boostt$ has a similar meaning. 
+The quantity $\boostt$ has a similar meaning.
 
 Our last indicators of quality are the
 \textit{coefficients of constraint}~\cite{Coombs1970,Cover1991}:
-\[ 
+\[
   \constrainte = I_e(S_e,L) / H_e(L)
-  \qquad 
+  \qquad
   \constraintt = I_t(S_t,L) / H_t(L),
 \]
 where $I_e$ is the {\em mutual information\/} of $S_e$ and $L$,
 and $H_e$ is the entropy of $L$;
 similarly for $I_t(S_t,L)$ and $H_t(L)$.
 The quantity $\constrainte$ is the fraction of the entropy of the
-edit longevity which can be explained by the reputation of the author; 
-this is an information-theoretic measure of correlation. 
-The quantity $\constraintt$ has an analogous meaning. 
+edit longevity which can be explained by the reputation of the author;
+this is an information-theoretic measure of correlation.
+The quantity $\constraintt$ has an analogous meaning.
 
 To assign a value to the coefficients $\coeffrep$, $\slack$,
-$\coeffpunish$, $\coefftext$, $\lengthexp$, and $\coeffmaxrep$, 
+$\coeffpunish$, $\coefftext$, $\lengthexp$, and $\coeffmaxrep$,
 we implemented a search procedure, whose goal was to find values for
-the parameters that maximized a given objective function. 
+the parameters that maximized a given objective function.
 We applied the search procedure to the Italian Wikipedia, reserving
 the French Wikipedia for validation once the coefficients were
-determined. 
+determined.
 We experimented with $\constrainte$ and $\prece \cdot \recalle$
-as objective functions, and they gave very similar results. 
+as objective functions, and they gave very similar results.
 

@@ -1,29 +1,23 @@
 \section{Conclusions}
 
-\mynote{Need to finish this section.}
+In this chapter, we propose a reputation system for authors to allow us
+to make an educated guess at the quality of a revision when it is first
+made.
+This reputation system is build atop notions developed as quality
+measures in Chapter~\ref{ch:editquality}, and which themselves are
+in turn built atop a difference algorithm defined in Chapter~\ref{ch:diff}.
 
-We have proposed a reputation system that is
-based on metric derived from the content evolution
-of a versioned document.
+To evaluate the effectiveness of our WikiTrust reputation system, we
+test several different metrics and achieve results much better than
+random chance.
+We also compare favorably against a reputation based purely on the
+number of edits made by authors (the so-called \intro{edit count}
+reputation~\cite{Cross2006}), without the same exposure to simple
+attacks.
 
-The most significant challenge of this part of our work
-was in developing evaluations to measure our performance.
-
-As mentioned previously, our system has low precision because,
-as part of our attempt to prevent vandals from avoiding a
-negative reputation by reregistering,
-we assume that new authors are equivalent to proven offenders.
-On reflection, I think that an alternative is to assign an
-initial (low) reputation based on information from vandalism
-detection models such as those discussed in Chapter~\ref{ch:vandalism}.
-This follows the idea that reputation is predictor of future
-behavior based on past behavior; when there is no past behavior
-of the individual, there is still past behavior of other users
-that are somehow similar to the user in question.
-
-Reputations should be allowed to go negative.
-Although a motivated vandal can reregister for a fresh account,
-they might not be sophisticated enough to do so.
-Or, a bot might go bad, and a negative reputation
-would identify it more quickly to administrators.
+Our methods are orthogonal to most validation detection techniques, so
+that combining our reputation system with other systems has the
+potential for improved results.
+This idea has since been tested to good effect in later
+research~\cite{Adler2011}.
 
