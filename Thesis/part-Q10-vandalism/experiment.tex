@@ -26,6 +26,8 @@ These reputation stores are then merged with the collection
 of features used by the WikiTrust submission in the PAN~2010
 competition~\cite{Adler2010}, and used to build a model to predict
 whether an edit is vandalism.
-We used Weka~\cite{Weka09} to construct the models using both
-the Random Forest and Alternating Decision Tree algorithms.
+The analysis we present here considers only \intro{zero-delay} vandalism
+detection; that is, detecting vandalism using only features which are
+available at the moment an edit is made.
 
+\input{part-Q10-vandalism/features}

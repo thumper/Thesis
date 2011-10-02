@@ -1,102 +1,51 @@
 \newcommand{\sign}{{{\textrm{sign}}}}
 
-\section{Features and Classification}
+\subsection{Features and Classification}
 
 The WikiTrust vandalism detection tool follows a standard two-phase machine learning architecture, consisting of a feature-extraction component followed by a classifier.
 
-\subsection{Features}
+\subsubsection{Features}
 
 In selecting the features to feed to the classifier, we have limited our consideration to the features that can be readily derived from the information available in the database tables used by WikiTrust, or by the Mediawiki software that serves the Wikipedia.
 This constraint was imposed so that the resulting tool could work on-line, in real-time, providing vandalism detection for any Wikipedia revision in a fraction of a second.
 As the WikiTrust database tables replicate some of the information present in the Mediawiki database tables, in practice we could derive all features from the WikiTrust tables alone: this enabled us to implement the vandalism detection tool as a self-contained web API on top of the WikiTrust database at UC~Santa~Cruz.
 
 We describe below the features we extracted.
-We annotate with ``H'' the features that were extracted for use by the historical classifier, and we annotate with ``Z'' those that were extracted for use by the zero-delay classifier; we also indicate in brackets the feature name used by the classifier.
 Not all features we extracted for use by a classifier ended up being used: many were discarded by the classifier training process, as they were of too little significance to be worth using.
 %
 \begin{itemize}
 
-\item \textbf{Author reputation [Reputation] (H).}  Author reputation is an obvious feature to use, since vandalism tends to be performed predominantly by anonymous or novice users, both of which have reputation 0 in the system.
-In the WikiTrust vandalism detection tool, this feature is included both for zero-delay and for historical vandalism detection: author reputation is in fact available at any time for any user.
-However, for the purposes of the PAN~2010 Workshop evaluation, we have had to forego this feature, due to the time lag between the revisions, entered in November-December 2009, and the values of reputation available to us, updated as of May 2010.
+\item \textbf{Author reputation [Reputation].}  Author reputation is an obvious feature to use, since vandalism tends to be performed predominantly by anonymous or novice users, both of which have reputation 0 in the system.
 
-\item \textbf{Author is anonymous [Anon] (H,Z).}  In addition to author reputation, we also considered the fact whether the author was anonymous or not.
+\item \textbf{Author is anonymous [Anon].}  In addition to author reputation, we also considered the fact whether the author was anonymous or not.
 Interestingly, whenever author reputation was included as a feature, the feature stating whether the author was anonymous or not was not used by the classifier.
 Evidently, knowing that a revision was authored by a low-reputation author was enough information: whether the author was anonymous, or a novice, did not seem to matter.
 
-\item \textbf{Time interval to the previous revision [Logtime\_prev] (H,Z), time interval to the next revision [Logtime\_next] (H).}
+\item \textbf{Time interval to the previous revision [Logtime\_prev].}
 We provided as features the quantities $\log(1 + t)$, where $t$ is amount of time from the preceding revision, or to the following revision.
 We thought this feature might be useful, as spam is usually reverted promptly.
 Indeed, the Logtime\_next feature was used, but with a very low threshold of 2.74, corresponding to a delay of only a dozen seconds between a revision and the next one.
 
-\item \textbf{Hour of day when revision was created [Hour\_of\_day] (H,Z).}
+\item \textbf{Hour of day when revision was created [Hour\_of\_day].}
 We observed a correlation between the probability of vandalism, and the hour of the day at which the revision was created (timing signals have been used in a more sophisticated way for vandalism detection in \cite{West2010}).  The classifier did not use this feature: either it was unable to exploit it, or the information it contained was subsumed by that contained in other, more significant features.
 
-\item \textbf{Minimum revision quality [Min\_quality] (H).}  In WikiTrust, every revision $r$ is judged with respect to several past and future revisions.
-In detail, the quality $q(r \mid r^{-}, r^{+})$ of $r$ with respect to a past revision $r^{-}$ and a future revision $r^{+}$ is defined by
-\[
-  q(r \mid r^{-}, r^{+}) = \frac{d(r^{-}, r^{+}) - d(r, r^{+})}{d(r^{-}, r)}.
-\]
-where $d(r,r')$ represents the edit distance between $r$ and $r'$ (for the details on this edit distance, see \cite{www07}).
-To understand this formula, it is useful to consider it from the point of view of the author $A^{+}$ of the future revision $r^{+}$.
-From the point of view of $A^{+}$, the distance $d(r^{-}, r^{+}) - d(r, r^{+})$ represents how much closer to $A^{+}$'s work the revision has become, and thus, it measures the improvement done by $r$ upon $r^{-}$.
-The amount $d(r^{-}, r)$ measures the amount of change done by introducing $r$.
-Thus, $q(r \mid r^{-}, r^{+})$ is a measure of the improvement, divided by the total change: it is equal to -1 for entirely reverted revisions (where $r^{-} = r^{+}$), and to +1 if the change introduced by $r$ with respect to $r^-$ is perfectly preserved in $r^{+}$.
+\item \textbf{Delta [Delta].}  This feature measures the edit distance $d(r, r^{-})$ between a revision and the previous one.  This feature was used by the classifiers, mainly to treat very small edits in a more lenient way than longer ones.
 
-Every revision is evaluated with respect to up to 6 past and 6 future revisions \cite{AIsec08}.
-The minimum revision quality is the minimum quality computed with respect to all past and future revisions considered.
-A low value for the minimum revision quality indicates that at least one future author has reverted, in part or entirely, the edit that led to the revision.
-Minimum revision quality was the most influential feature for detecting vandalism in the historical vandalism detection tool.
+\item \textbf{Revision comment length [Comment\_len].}  The length of the comment is another feature we considered, as we assumed that vandalism tended to be associated with short comments.
 
-\item \textbf{Total weight of judges [Judge\_weight] (H).}
-Not all triples $(r^{-}, r, r^{+})$ used to compute the quality of revision $r$ are given the same weight.  The higher the reputation ${\textrm{rep}}(A^{+})$  of the author $A^{+}$ of $r^{+}$, the higher the weight we give to the computed quality $q(r \mid r^{-}, r^{+})$.
-Additionally, if $r^{+}$ is very different from both $r^{-}$ and $r$, then the computed quality is given less weight, as it it difficult to compute what fraction of the change from $r^{-}$ to $r$ has been preserved in $r^{+}$.
-Thus, we give to each judging triple $(r^{-}, r, r^{+})$ the weight
-\[
-\exp \left( -
-\frac{\min(d(r^{-}, r^{+}), d(r, r^{+}))}{3 \cdot (1 + d(r^{-}, r))} \right)
-\cdot \log(1 + {\textrm{rep}}(A^{+})).
-\]
-The total weight of the judges is the total weight of all triples used to judge the revision $r$.
-This feature was not used by any classifier.
-
-\item \textbf{Average revision quality [Avg\_quality] (H).} In addition to the minimum revision quality mentioned above, we have also considered the {\em average\/} quality of a revision, with respect to the past and future revisions with which it has been compared, weighed as above.
-In cases in which the minimum revision quality was above the $-0.662$ threshold, the average quality was a strong signal, with a discrimination threshold of $0.156$.
-
-\item \textbf{Maximum dissent [Max\_dissent] (H).}  The maximum dissent of a revision measures how close the average revision quality is to the minimum revision quality.
-This feature turned out to be useful in the classifier.
-
-\item \textbf{Delta [Delta] (H, Z).}  This feature measures the edit distance $d(r, r^{-})$ between a revision and the previous one.  This feature was used by the classifiers, mainly to treat very small edits in a more lenient way than longer ones.
-
-\item \textbf{Revision comment length [Comment\_len] (H,Z).}  The length of the comment is another feature we considered, as we assumed that vandalism tended to be associated with short comments.
-The classifier made use of this feature only for the zero-delay detection, and even there the feature did not carry much weight.
-
-\item \textbf{Next revision comment length [Next\_comment\_len] (H).}  We also considered as a feature the length of the comment of the revision following the revision to classify.
-Somewhat to our surpise, this feature turned out to be useful: if the next comment was longer than 110 characters, this made it slightly more likely that the revision under consideration was vandalism.
-
-\item \textbf{Next comment mentioned a revert [Next\_comment\_revert] (H).}  We considered whether the comment of the next revision mentioned a revert or undo.  We expected this to be an important feature: after all, most editors label in such a way the corrective actions they take in presence of vandalism.  However, our classifier did not make use of this feature: the features of minimum and average revision quality turned out to be much more reliable and less noisy.
-
-\item \textbf{Previous text trust histogram [P\_prev\_hist0 \ldots P\_prev\_hist9] (H,Z).}
+\item \textbf{Previous text trust histogram [P\_prev\_hist0 \ldots P\_prev\_hist9].}
 Whenever a revision is created, WikiTrust computes the {\em reputation\/} of each word of the revision, where the reputation is an integer in the interval $0, \ldots, 9$ \cite{WikiTrust08}.
 The reputation of a word indicates how well the word has been revised by reputable authors; in particular, words that have been just entered or displaced by authors without reputation (including both novice and anonymous authors) are assigned a reputation of~0.
 When the revision is created, WikiTrust also computes a 10-column histogram detailing how many words of the revision have each of the 10 possible reputation values, and stores the histogram in the database, in an entry associated with the revision.
 We renormalized the histogram, so that the columns summed to~1, and we used the renormalized value of each column as a feature.
-This turned out to be an important feature in the historical vandalism detection tool, and even more so in the zero-delay detection tool.
-We tried many different renormalizations for the histograms, such as ensuring that the columns sum to~1 (as in this case), or taking the logarithms of every column value (as in the histogram difference, explained later).
-The different normalizations led to essentially the same classifier performance.
 
-\item \textbf{Current text trust histogram [Hist0 \ldots Hist9] (H,Z).}  The current value of the text trust histogram was also provided as a feature, in this case without any renormalization.
-This feature turned out to be useful in most models, and in particular, in the models for zero-delay vandalism detection.
+\item \textbf{Current text trust histogram [Hist0 \ldots Hist9].}  The current value of the text trust histogram was also provided as a feature, in this case without any renormalization.
 
-\item \textbf{Histogram difference [L\_delta\_hist0 \ldots L\_delta\_hist9] (H, Z).}  For each possible text trust value $i \in \{0, \ldots, 9\}$, we also included a measure of $\log(1 + |h(i) - h^{-}(i)|) \cdot \sign(h(i) - h^{-}(i))$, where $h$ is the text trust histogram for the current revision, and $h^{-}$ is the text trust histogram for the previous revision.
-This feature turned out to be useful in both the zero-delay and the historical vandalism tools: an increase in the number of words with reputation~0 was associated with vandalism.
+\item \textbf{Histogram difference [L\_delta\_hist0 \ldots L\_delta\_hist9].}  For each possible text trust value $i \in \{0, \ldots, 9\}$, we also included a measure of $\log(1 + |h(i) - h^{-}(i)|) \cdot \sign(h(i) - h^{-}(i))$, where $h$ is the text trust histogram for the current revision, and $h^{-}$ is the text trust histogram for the previous revision.
 
 \end{itemize}
 %
-In the historical vandalism detection tool, we found that the behavior of the classifier essentially depended on two strong features: [Min\_quality] and [Reputation].  The addition of other features increased performance somewhat, but the set of other features considered was not particularly critical.
-In the zero-delay tool, on the other hand, the features related to the trust histogram of words played an important role, since they were used in part as proxies for the user reputation feature, which could not be used.
-
-\subsection{The Classifier}
+\subsubsection{The Classifier}
 
 We based our vandalism tools on standard classifiers, and precisely, on the alternating decision tree classifier available as part of Weka~\cite{Weka09}.
 We experimented with various classifiers provided as part of Weka, and the alternating decision tree classifier (ADTree) was the one that at the same time peformed best, and let to the classification models that were the simplest, and the easiest to implement in a web-based API.
