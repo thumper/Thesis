@@ -211,9 +211,8 @@ EOF
   }
   case EDITOUT {
     print $editout <<'EOF';
-\begin{sidewaystable}[!ph]
-  \begin{center}
-    \begin{tabular}{|c|c|c|c||c|c||c|c|c|c|}
+\begin{landscape}
+    \begin{longtable}{|c|c|c|c||c|c||c|c|c|c|}
 \hline
  &  & Match & Edit
         & ROC & PR
@@ -227,6 +226,7 @@ Diff & Precise & Quality & Dist
 	& Size & Usage \\
 \hline
 \hline
+\endhead
 EOF
   }
   case TEXTSHOUT {
@@ -275,11 +275,10 @@ EOF
   case EDITOUT {
     print $editout <<'EOF';
 \hline
-\end{tabular}
-\end{center}
 \caption{Comparison of edit longevity performance,
     sorted by PR-AUC.}
-\end{sidewaystable}
+\end{longtable}
+\end{landscape}
 \clearpage
 EOF
   }
