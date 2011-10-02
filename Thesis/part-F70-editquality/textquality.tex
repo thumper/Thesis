@@ -37,7 +37,8 @@ we need to know what specific revision a word came from.
 Let us define another recursive relation, like the definition
 for $\txtauthor{}$ in Definition~\ref{def:txtauthor},
 which defines the revision where a word was first introduced.
-For a word $w_j \in \words{\version{i}}$, we define:
+For a word $w_j \in \words{\version{i}}$ (where
+$\version{i} \in \versions{\article{}}$), we define:
 \begin{equation*}
 \txtsrcrev{\version{i}, j} =
     \begin{cases}
@@ -151,7 +152,7 @@ that people can agree on until it eventually no longer changes.
 \end{figure}
 
 To measure the overall quality of a single text contribution
-made in revision \version{k}, we need to compute the common ratio
+made in revision $\version{k} \in \versions{\article{}}$, we need to compute the common ratio
 that best describes the sequence of $n$ text survival values,
 \tsurv{}{k,j}, after \version{k}, where $k < j \le k+n$.
 Let us call this common ratio the \intro{text decay quality},

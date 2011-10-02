@@ -38,9 +38,8 @@ is used throughout this work.
     consecutive revisions by the same author.
     Thus, throughout this work, we assume that two consecutive revisions
     of an article never have the same author.
-    \mynote{Take this out?}
-    Sometimes for convenience, we take version \version{0} to be
-    an empty revision that precedes all other revisions.
+    % Sometimes for convenience, we take version \version{0} to be
+    % an empty revision that precedes all other revisions.
 \item \versions{} \ -- the chronologically ordered list of all
     revisions, across all articles in \articles.
     That is,
@@ -77,12 +76,11 @@ is used throughout this work.
     \version{i} in the text of previous revisions.
     For further description and development, see
     Equation~\ref{def:bestmatch} and the accompanying text.
-        \mynote{Include $a$ in notation?  Take out $v$ part?}
-        \mynote{Move this into definition location.}
 
 \item \dist{a}{i,j} -- is the edit distance between revisions
     \version{i} and \version{j} of article $a \in \articles$.
-    \mynote{Put in reference to chapter section.}
+    Chapter~\ref{ch:diff} explores several possible definitions for
+    edit distance.
 
 \item \tsurv{a}{i,j} -- for article $a \in \articles$, measures the
     amount of text introduced in revision \version{i}
@@ -109,10 +107,9 @@ is used throughout this work.
     after \version{k}.
     The value of this quality is given by the solution to
     Equation~\ref{eq:soln-tdecay}.
-    \mynote{Make article explicit, as with elong!}
 
 \item \quality{elong}{a,n}{k} -- the edit longevity quality of
-    revision $\version{k} \in \article{a}$, as judged by up to
+    revision $\version{k} \in \versions{\article{}}$, as judged by up to
     $n$ judging revisions after \version{k}.
     See Definition~\ref{def:elong}.
 
@@ -125,7 +122,6 @@ is used throughout this work.
 \item \revpos{\version{i}} -- the revisions of an article form a
     chronological sequence; this function gives back the position
     of the revision in the sequence of revisions for the article.
-    \mynote{Add in article a?}
 
 \end{itemize}
 
