@@ -1,0 +1,36 @@
+
+The Wikipedia is a shared resource of the global community, but it depends on
+the continued participation of that community to update it and keep it relevant.
+Anyone can edit the Wikipedia: this is both its strength,\footnote{The Wikipedia
+was initially a side-project of Nupedia enabling collaboration on content
+before entering a more formal peer-review process~\cite{wiki:Nupedia}.}
+and its weakness.
+Multiple studies have found that roughly 7\% of edits are
+vandalism~\cite{Potthast2008,Potthast2010a}.
+To combat the vandalism, a group of volunteers scans the list of recent changes
+to catch obvious vandalism quickly~\cite{wiki:RCPatrol}.
+
+In the chapters leading to this one, we have detailed the technologies
+necessary to build a content-driven reputation system for authors.
+We first constructed a difference algorithm to compute the work done in a
+revision, doing so in a way which models how users think about the units of
+language while maintaining performance such that the entire English Wikipedia
+could be evaluated in a tractable amount of time.
+We then propose two methods for evaluating the quality of the work done by the
+users in their revisioning: text longevity and edit longevity.
+Finally, we use these quality measures as the basis for rules in a reputation
+system.
+The output of this reputation system is an estimate of the balance of past
+positive contributions over past negative contributions, which we evaluate
+as a predictor of the future quality of revisions by the same author.
+
+As part of the PAN 2010 Workshop on vandalism
+detection\footnote{\url{http://www.webis.de/research/events/pan-10}, Task 2},
+a competition was organized to test out vandalism detection systems with a
+single evaluation measure.
+Our research group submitted a system based on features derived from
+WikiTrust~\cite{Adler2010}, leaving out the actual reputation scores due
+to our lack of historical reputation values for authors.
+In this chapter, we revisit that work and extend it by including as a feature
+the reputation score of authors at the time of their edits.
+

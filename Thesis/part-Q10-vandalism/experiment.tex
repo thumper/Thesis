@@ -1,7 +1,7 @@
 \section{Experiment}
 
 To test our user reputation system's effectiveness, we
-decided to evaluate its performance as part of a vandalism
+evaluate its performance as part of a vandalism
 detection system.
 The PAN-WVC-10 corpus is a corpus of 32,439 edits manually
 annotated by at least three people as part of an Amazon
@@ -13,7 +13,7 @@ feature in building a model to predict vandalized edits in
 the PAN-WVC-10 corpus.
 We instrumented the batch processing mode of the WikiTrust
 code base to output the reputation score of each author as
-it was adjusted over time, creating a chronology of reputation scores.
+it is adjusted over time, creating a chronology of reputation scores.
 This revised code was used to process the English Wikipedia
 dump from 30-Jan-2010, which includes the time period of
 edits from the PAN-WVC-10 corpus.
@@ -23,8 +23,9 @@ we locate its position in the chronology and then work backwards
 to find the most recent reputation score of the author
 that appears \textit{before} the edit was made.
 These reputation stores are then merged with the collection
-of features used in the PAN~2010 competition~\cite{Adler2010},
-and used to build a model to predict whether an edit is vandalism.
+of features used by the WikiTrust submission in the PAN~2010
+competition~\cite{Adler2010}, and used to build a model to predict
+whether an edit is vandalism.
 We used Weka~\cite{Weka09} to construct the models using both
 the Random Forest and Alternating Decision Tree algorithms.
 
