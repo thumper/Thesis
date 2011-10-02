@@ -27,14 +27,16 @@ We thought this feature might be useful, as spam is usually reverted promptly.
 Indeed, the Logtime\_next feature was used, but with a very low threshold of 2.74, corresponding to a delay of only a dozen seconds between a revision and the next one.
 
 \item \textbf{Hour of day when revision was created [Hour\_of\_day].}
-We observed a correlation between the probability of vandalism, and the hour of the day at which the revision was created (timing signals have been used in a more sophisticated way for vandalism detection in \cite{West2010}).  The classifier did not use this feature: either it was unable to exploit it, or the information it contained was subsumed by that contained in other, more significant features.
+We observed a correlation between the probability of vandalism, and the hour of the day at which the revision was created (timing signals have been used in a more sophisticated way for vandalism detection in~\cite{West2010}).  The classifier did not use this feature: either it was unable to exploit it, or the information it contained was subsumed by that contained in other, more significant features.
 
 \item \textbf{Delta [Delta].}  This feature measures the edit distance $d(r, r^{-})$ between a revision and the previous one.  This feature was used by the classifiers, mainly to treat very small edits in a more lenient way than longer ones.
 
 \item \textbf{Revision comment length [Comment\_len].}  The length of the comment is another feature we considered, as we assumed that vandalism tended to be associated with short comments.
 
 \item \textbf{Previous text trust histogram [P\_prev\_hist0 \ldots P\_prev\_hist9].}
-Whenever a revision is created, WikiTrust computes the {\em reputation\/} of each word of the revision, where the reputation is an integer in the interval $0, \ldots, 9$ \cite{WikiTrust08}.
+Whenever a revision is created, WikiTrust computes the {\em
+reputation\/} of each word of the revision, where the reputation is an
+integer in the interval $0, \ldots, 9$~\cite{Adler2008b}.
 The reputation of a word indicates how well the word has been revised by reputable authors; in particular, words that have been just entered or displaced by authors without reputation (including both novice and anonymous authors) are assigned a reputation of~0.
 When the revision is created, WikiTrust also computes a 10-column histogram detailing how many words of the revision have each of the 10 possible reputation values, and stores the histogram in the database, in an entry associated with the revision.
 We renormalized the histogram, so that the columns summed to~1, and we used the renormalized value of each column as a feature.
