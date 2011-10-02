@@ -132,7 +132,8 @@ EOF
 \hline
 \end{tabular}
 \end{center}
-\caption{Average running time of difference algorithms.}
+\caption[Average running time of difference algorithms]
+  {Average running time of difference algorithms.}
 \label{tab:difftiming}
 \end{table}
 EOF
@@ -171,7 +172,8 @@ EOF
 \\hline
 \\end{tabular}
 \\end{center}
-\\caption{Performance of difference algorithms for
+\\caption[Comparison of diff algorithm using edit distance \\textbf{ed$ed}]{
+  Performance of difference algorithms for
   edit distance \\textbf{ed$ed}.  Where multiple match
   quality functions resulted in the same performance, they
   have been grouped together.}
@@ -264,7 +266,8 @@ sub writeFooter {
 \hline
 \end{tabular}
 \end{center}
-\caption{Comparison of text longevity performance using
+\caption[Text longevity using differen match qualities]]
+    {Comparison of text longevity performance using
     multiple difference algorithms, sorted by PR-AUC.}
 \end{table}
 EOF

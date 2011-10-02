@@ -25,7 +25,7 @@ Figure~\ref{fig:ts-GeorgeWBush} doesn't exhibit the curve we expect.
 \begin{figure}[tbph]
 \centering
 \subfloat
-  [Text survival for article \textit{George W.~Bush}]
+  [article \textit{George W.~Bush}]
   [The text survival graph for the text contributed early
     in the history of article \textit{George W.~Bush}.]
   {
@@ -34,14 +34,14 @@ Figure~\ref{fig:ts-GeorgeWBush} doesn't exhibit the curve we expect.
   }
 \hspace{1ex}
 \subfloat
-  [Text survival for article \textit{Santa Cruz Beach Boardwalk}]
+  [article \textit{Santa Cruz Beach Boardwalk}]
   [The text survival graph for the text initially contributed
 	as part of the article \textit{Santa Cruz Beach Boardwalk}.]
   {
     \framebox{\includegraphics[width=0.45\textwidth]{part-F70-editquality/graph-TS-SantaCruzBeachBoardwalk}}
     \label{fig:ts-SantaCruzBeachBoardwalk}
   }
-\caption{
+\caption[The text survival quality graphs for two articles]{
   The text survival quality of two different articles, computed
   based on 20~revisions.
   The majority of the editing happens in the
@@ -93,7 +93,7 @@ the triangle inequality holds for
 \begin{figure}[htbp]
 \centering
   \subfloat[
-    Example of computing listing distance][
+    listing distance][
     Listing distance is computed by finding the shortest edit script.
     ]{
     \framebox{
@@ -102,7 +102,7 @@ the triangle inequality holds for
   }
   \hspace{2ex}
   \subfloat[
-    Example of computing trace distance
+    trace distance
     ][
     Simple trace distance is computed by establishing a correspondence
     between the source and target strings, such that trace lines
@@ -114,7 +114,7 @@ the triangle inequality holds for
   }
   \\
   \subfloat[
-    Example of computing alignment distance
+    alignment distance
     ][
     Alignment distance is computed by finding an alignment which
     results in the minimum number of insertions and deletions.
@@ -123,7 +123,7 @@ the triangle inequality holds for
       \includegraphics[width=0.4\textwidth]{part-F70-editquality/fig-DiffAlignment}
     }
   }
-\caption{
+\caption[Examples of three different styles for computing edit distance]{
   Examples of the three different methods typically used to compute
   edit distance.  See~\cite{Sankoff1999} for an in-depth discussion
   on the distinctions between these methods.
@@ -154,7 +154,7 @@ proposed edit distance formulas guarantee the triangle inequality.
 \begin{figure}[htbp]
 \centering
   \subfloat[
-    Example matching using globally longest match][
+    WikiTrust uses the globally longest match][
     The matching obtained using the WikiTrust method of
       determining all matches and selecting the longest matches first.
     ]{
@@ -164,7 +164,7 @@ proposed edit distance formulas guarantee the triangle inequality.
   }
   \hspace{2ex}
   \subfloat[
-    Example matching using best match in left-to-right scan of target
+    Tichy uses best match from left-to-right
     ][
     The matching obtained using the Tichy method of scanning
       the target string from left-to-right and selecting
@@ -174,10 +174,10 @@ proposed edit distance formulas guarantee the triangle inequality.
       \includegraphics[width=0.4\textwidth]{part-F70-editquality/fig-MatchingLocal}
     }
   }
-\caption{
+\caption[An example of when WikiTrust and Tichy differ in matching.]{
   An example of how the matching between a source string and target string
   can differ between WikiTrust's greedy preference for the longest match
-  anywhere between the two strongs, and Tichy's processing of the
+  anywhere between the two strings, and Tichy's processing of the
   target string from left-to-right and selecting the longest match
   for the given starting position in the target string.
   This example is based on Tichy's original example demonstrating that

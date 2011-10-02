@@ -5,7 +5,7 @@ We next present the correlations between the various measures
 in Table~\ref{cor-tab}.
 These are correlations with respect to the amount of contributions
 made by all non-anonymous authors, excluding those we've classified
-as vandals.  
+as vandals.
 % \mynote{Vishwa: why did we exclude vandals?  Maybe we
 % should explain.  -Bo}
 %
@@ -25,24 +25,24 @@ $TextWPen$         & -0.320  &-0.326  &  0.27  &         0.886  & 0.897  &  0.82
         \hline
 \end{tabular}
 \end{center}
-\caption[Correlations of our measures]{
-This table gives the pairwise correlations of the different measures we 
+\caption[Correlations between author contribution measures]{
+This table gives the pairwise correlations of the different measures we
 have defined in this paper.
 }\label{cor-tab}
 \end{sidewaystable}
 %
 From the correlation table, we notice that text based measures are
 better positively correlated with each other.
-Similarly, the edit based measures are better positively correlated 
+Similarly, the edit based measures are better positively correlated
 with each other as we expected.
-The measures \editlong and \editonly are highly correlated as 
+The measures \editlong and \editonly are highly correlated as
 borne out by the fact that a large percentage of the edits are of
 good quality.
 We notice that the same is true for \textlong and \textonly.
 The correlation between \punish and the absolute measure
 \editonly is low, demonstrating that \punish
 penalizes authors for bad edits, gives no credit to good edits,
-and accumulates the quality discounted text contribution measure 
+and accumulates the quality discounted text contribution measure
 \textlong.
 Therefore, authors need to contribute high quality text, while
 ensuring that they have no bad edits to get a high score on
@@ -54,7 +54,7 @@ with the other text contribution measures \textonly and
 expect, since the majority of contributions are deemed good by
 each of the quality measures.
 
-While \textonly and \editonly appear to be reasonable measures 
+While \textonly and \editonly appear to be reasonable measures
 of author contribution, we have found evidence that vandals
 accrue large contributions against these measures.
 For instance, we found that author $1065172$ is in the 99\superscript{th}
@@ -68,12 +68,12 @@ page!
 From the edits made by this author, we saw that he is a spammer.
 On the other hand, using \textlong instead of \textonly we
 noticed that the author was below the 25\superscript{th} percentile.
-On the \editlong measure, this author was below the 
+On the \editlong measure, this author was below the
 $0.001$ quantile; among the lowest in rank.
-Therefore, we argue that the measures that discount \textonly and 
+Therefore, we argue that the measures that discount \textonly and
 \editonly by a text or edit quality measure are more indicative
 of the ``useful'' work added to the Wikipedia.
-We argue that \numedits is not as good a measure, since 
+We argue that \numedits is not as good a measure, since
 vandals and bots can easily make large numbers of bad edits.
 
 We present two figures, Figure~\ref{fig-zoom-editonly-editlong}
@@ -87,7 +87,7 @@ that have negative edit quality, as measured by $\quality{elong}{10}{}$.
 The worse the quality of edits made by authors the less they
 accumulate of the \editlong measure, whereas the \editonly
 measure, being oblivious to edit quality, attributes the same
-contribution to an author whose contributions persists as it 
+contribution to an author whose contributions persists as it
 does to an author whose contributions do not.
 On the negative side of \editlong, there are points that represent
 vandals, who edit large sections of existing pages, which are
@@ -98,10 +98,10 @@ them very low.
 
 In Figure~\ref{fig-zoom-textonly-textlong},
 we see a similar vee shape; in this case, \textlong
-cannot go below zero as the text quality measure is always 
-non-negative, so vandals, by our definition, receive no 
+cannot go below zero as the text quality measure is always
+non-negative, so vandals, by our definition, receive no
 contribution.
-As before, the measure that incorporates quality can 
+As before, the measure that incorporates quality can
 distinguish vandals from non-vandals and attribute a contribution
 measure to authors that is proportional to the merit of their
 contribution.
@@ -129,7 +129,7 @@ We explain this in the subsection on bots.
     \begin{center}
     \includegraphics[width=0.70\textwidth]{part-I10-contrib/graphs/score-zoom-editonly-editlong}
     \end{center}
-    \caption[EditOnly vs EditLong]{
+    \caption[\editonly vs \editlong]{
     	Comparing the absolute edit contribution of a user
 	with the edit longevity.
 	Notice that authors who are ``all bad''
@@ -142,7 +142,7 @@ We explain this in the subsection on bots.
     \begin{center}
     \includegraphics[width=0.70\textwidth]{part-I10-contrib/graphs/score-zoom-textonly-textlong}
     \end{center}
-    \caption[TextOnly vs TextLong]{
+    \caption[\textonly vs \textlong]{
     	Comparing the absolute text contribution with the contribution
 	as measured by text longevity.
 	We see that large contributors are either ``all bad''
@@ -155,7 +155,7 @@ We explain this in the subsection on bots.
     \begin{center}
     \includegraphics[width=0.70\textwidth]{part-I10-contrib/graphs/score-zoom-textonly-textwithpunish}
     \end{center}
-    \caption[TextOnly vs TextWithPunish]{
+    \caption[\textonly vs \punish]{
     	Comparing the absolute text contribution of an author with
 	their contribution as measured by \punish.
     }

@@ -129,19 +129,20 @@ the distance \dist{}{k,j} is larger than the distance \dist{}{k-1,j}.
 \begin{figure}[t]
 \centering
 \subfloat[
-  Graphical representation of a good edit contribution.][
+  a good edit contribution][
   Graphical representation of a good edit contribution.]{
   \label{fig-editcontr-a}
   \framebox{\includegraphics[width=0.35\textwidth]{part-F70-editquality/editcontr-good}}
 }
 \hspace{1ex}
 \subfloat[
-  Graphical representation of a bad edit contribution.][
+  a bad edit contribution][
   Graphical representation of a bad edit contribution.]{
   \label{fig-editcontr-b}
   \framebox{\includegraphics[width=0.40\textwidth]{part-F70-editquality/editcontr-bad}}
 }
-\caption{To measure the quality of version \version{k}, we also
+\caption[Edit distance triangles allow us to compute quality]{
+        To measure the quality of version \version{k}, we also
 	look at the previous version \version{k-1} and some future
 	version \version{j}.
 	The three versions form a triangle, using
@@ -177,7 +178,8 @@ then the contribution could be said to be so-so.
 \begin{figure}
 \centering
 \framebox{\includegraphics[width=0.35\textwidth]{part-F70-editquality/edit-longevity}}
-\caption{Quality is measured by calculating how much \textit{progress}
+\caption[Quality is progress towards the future, divided by the work done]{
+        Quality is measured by calculating how much \textit{progress}
 	is made towards the future version of the article,
 	and dividing that by the amount of \textit{work done}
 	during the edit.}

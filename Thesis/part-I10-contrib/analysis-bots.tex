@@ -21,11 +21,11 @@ We noticed that bots create a large number of revisions with
 high quality.
 We found that $69.56\%$ of the revisions made by
 bots have a text quality measure of $\quality{tdecay}{10}{} > 0.95$.
-The percentage of revisions made by bots with 
+The percentage of revisions made by bots with
 $\quality{tdecay}{10}{} \le 0.05$ was $9.2\%$.
 We found that $66.92\%$ of the new text added by bots were with
 $\quality{tdecay}{10}{} > 0.95$ and $14.14\%$ of the new text added by
-bots were with $\quality{tdecay}{10}{} = 0$, which means they were 
+bots were with $\quality{tdecay}{10}{} = 0$, which means they were
 immediately reverted.
 Similarly, on the edit contributions of bots we found that
 $54.42\%$ of the revisions with edits made by bots were of
@@ -33,7 +33,7 @@ high edit quality, with $\quality{elong}{10}{} > 0.9$.
 The number of revisions having $\quality{elong}{10}{} < -0.9$ being
 negligible; $1\%$ from our analysis.
 When we counted all edit revisions that had a negative edit
-quality we saw that $12.73\%$ of the revisions were judged to 
+quality we saw that $12.73\%$ of the revisions were judged to
 be of poor quality with $\quality{elong}{10}{} < 0$.
 We found that $93.3\%$ of the edit contributions made by bots
 had positive edit quality and the remaining $6.4\%$ had
@@ -43,7 +43,7 @@ towards good bots, $65.20\%$ of the edit contributions made
 by bots had $\quality{elong}{10}{} > 0.9$, indicating that
 the work is generally regarded as high quality.
 The contributions with $\quality{elong}{10}{} < -0.9$ are $1.8\%$.
-This indicates that a large part of the text additions made by bots 
+This indicates that a large part of the text additions made by bots
 and a large part of the edit contributions made by bots survive
 indefinitely.
 
@@ -52,10 +52,10 @@ edit contributions compared to text contributions; the ratio
 of the size of edits \editonly to the size of new text \textonly
 for all bots is $11.61$.
 Since the penalizing measure \punish does not credit authors for
-good edits but reduces their \textlong contributions, by the 
-amount of their bad edits as measured by \editlong, we notice that 
-edits judged as being of poor quality overwhelm the smaller text 
-contributions of bots in general, and \textit{AntiVandalBot} in particular, 
+good edits but reduces their \textlong contributions, by the
+amount of their bad edits as measured by \editlong, we notice that
+edits judged as being of poor quality overwhelm the smaller text
+contributions of bots in general, and \textit{AntiVandalBot} in particular,
 resulting in a small overall contribution.
 We also note here that \textit{SmackBot} did much better on this
 measure.
@@ -71,7 +71,7 @@ up with a lower score on \punish when compared to \textit{SmackBot}.
     \includegraphics[scale=0.75]{part-I10-contrib/graphs/allbots_anti_hist}
     }
     \end{center}
-    \caption[Measuring edit and text quality for all bots and \textit{AntiVandalBot}]{
+    \caption[Measuring edit and text quality for bots]{
     	This graph shows the edit quality measure $\quality{elong}{10}{}$
         and text quality $\quality{tdecay}{10}{}$ for all bots.
         A quality measure of $1$ indicates that all the changes
