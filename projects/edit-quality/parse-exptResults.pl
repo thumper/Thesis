@@ -74,18 +74,18 @@ foreach my $tuple ([\@editout, $editout, EDITOUT],
   my @sorted = sort { $b->[0] <=> $a->[0] } @$array;
   my $lines = 0;
   my $tablenum = 'A';
-  writeHeader($type);
+  writeHeader($type, $lines);
   foreach (@sorted) {
     $lines++;
     if ($lines >= 25) {
       writeFooter($type, $tablenum);
-      writeHeader($type);
+      writeHeader($type, $lines);
       $lines = 0;
       $tablenum++;
     }
     print $fh $_->[1];
   }
-  writeFooter($type, $tablenum);
+  writeFooter($type, $tablenum, 1);
 }
 close($editout);
 close($editshout);
@@ -172,7 +172,7 @@ EOF
 \\hline
 \\end{tabular}
 \\end{center}
-\\caption[Comparison of diff algorithm using edit distance \\textbf{ed$ed}]{
+\\caption[Comparison of diff algorithms using edit distance \\textbf{ed$ed}]{
   Performance of difference algorithms for
   edit distance \\textbf{ed$ed}.  Where multiple match
   quality functions resulted in the same performance, they
@@ -197,6 +197,7 @@ sub commify {
 
 sub writeHeader {
   my $file = shift @_;
+  my $lines = shift @_;
   switch ($file) {
   case TEXTOUT {
     print $textout <<'EOF';
@@ -241,10 +242,10 @@ Match Quality & PR-AUC & ROC-AUC \\
 EOF
   }
   case EDITSHOUT {
+    return if $lines != 0;
     print $editshout <<'EOF';
-\begin{sidewaystable}[!ph]
-  \begin{center}
-    \begin{tabular}{|c|c|c||c|c||c|c|c|c|}
+\begin{landscape}
+  \begin{longtable}{|c|c|c||c|c||c|c|c|c|}
 \hline
 Diff & Match Quality & Edit Dist
         & PR-AUC & ROC-AUC
@@ -252,6 +253,9 @@ Diff & Match Quality & Edit Dist
         & Total Triangles & Bad Triangles \\
 \hline
 \hline
+\endhead
+\hline
+\endfoot
 EOF
   }
   };
@@ -260,6 +264,7 @@ EOF
 sub writeFooter {
   my $type = shift @_;
   my $counter = shift @_;
+  my $last = shift @_ || 0;
   switch ($type) {
   case TEXTOUT {
     print $textout <<'EOF';
@@ -294,14 +299,14 @@ EOF
 EOF
   }
   case EDITSHOUT {
+    return if $last != 1;
     print $editshout <<EOF;
 \\hline
-\\end{tabular}
-\\end{center}
-\\caption{Comparison of edit longevity performance,
+  \\caption{Comparison of edit longevity performance,
     sorted by PR-AUC.}
-\\label{tab:editshout$counter}
-\\end{sidewaystable}
+  \\label{tab:editshout$counter}
+  \\end{longtable}
+\\end{landscape}
 \\clearpage
 EOF
   }
