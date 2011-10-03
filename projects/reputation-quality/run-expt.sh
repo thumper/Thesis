@@ -3,9 +3,9 @@ set -e
 set -x
 
 ## Gaston settings
-#WORKDIR=/store/thumper/tmp-rep
-#WIKITRUST=/store/thumper/research/WikiTrust
-#ENDUMP=/raid/dumps/enwiki-20100130-pages-meta-history.xml.bz2
+WORKDIR=/store/thumper/tmp-rep
+WIKITRUST=/store/thumper/research/WikiTrust
+ENDUMP=/raid/dumps/itwiki-20090911-pages-meta-history.xml.7z
 
 ## Redherring settings
 #WORKDIR=/big/thumper/tmp
@@ -17,8 +17,7 @@ WORKDIR=/mnt/archive3/tmp-rep
 WIKITRUST=/mnt/archive4/research/WikiTrust
 ENDUMP=/mnt/archive4/enwiki/enwiki-20100130-pages-meta-history.xml.bz2
 
-
-CORES=2
+CORES=3
 OUTPUT=./output
 
 mkdir -p $WORKDIR
