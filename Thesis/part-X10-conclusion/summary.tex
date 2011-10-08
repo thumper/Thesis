@@ -1,60 +1,109 @@
-\section{Conclusion}
+\section{Summary of this Work}
 
-\begin{comment}
-Used to filter too much information, as in page rank.
-But also used to encourage desirable behavior
-(and discourage undesirable behavior).
+The creation of a collaborative repository of knowledge is
+one of those inevitable ideas; we have been striving towards it
+for all of civilization.
+Our history is one of ever increasing communication and collaboration
+in our ambition to master our environment, from books and libraries
+to the telephone and the Internet.
+The Wikipedia seems a natural result of this history,
+And perhaps just as inevitable, there are people who seek to
+mar the collective goals of the Wikipedia for their own gain and amusement.
 
-Does a vandal to Wikipedia care that his reputation is
-tarnished?  What kind of punishment is this?
+The goal of our research was to develop a reputation system
+that could assist users by flagging content added by users who
+did not have a good track record.
+In reaching that goal, this work makes the following contributions:
+\begin{enumerate}
 
-Applications: peer review, text trust, sexual offender registry, job references.
-Can we use reputation to figure out whether people
-fit into a company culture?
+\item A proposal for determining the ``authorship'' of words in
+  revisioned documents.\footnote{This work is being explored further
+  by the German chapter of the Wikipedia:
+  \url{http://de.wikipedia.org/wiki/Benutzer:NetAction/WikiTrust}}
+  This proposal is a refinement of existing difference algorithms
+  already well-known in the literature.
 
-What if web search rankings were done incrementally
-instead of globally?  Would this give higher reputation
-to \textit{fresh} parts of the web, and gracefully
-phase out crufty parts?  Crucial to this would be the
-need to update reputation based on page views, or
-people following links from Facebook/Google, so that
-we know that a static page is still actually relevant.
-\end{comment}
+\item Two methods for determining the ``quality'' of a contribution.
+  We evaluate these methods using the PAN~2010 vandalism detection
+  corpus, and find a good ability to predict vandalism.
 
-What is reputation?  We know that it is a value, because your reputation goes
-up and down. It can be good or bad.
+\item A reputation system for authors and text.\footnote{Available
+  to users as a Firefox plugin:
+  \url{https://addons.mozilla.org/en-US/firefox/addon/wikitrust/}}
+  Our evaluation shows that the reputation system is capable of
+  flagging content by low-reputation authors as being four times
+  as likely as the average to be short-lived.
 
-What is less obvious is that reputation is multidimensional.  Some writers have
-a good reputation for writing engaging essays (\eg Malcolm Gladwell), and some
-have a good reputation for writing good children's fiction (\eg J. K. Rowling),
-but most of us would be doubtful if Gladwell and Rowling were to swap careers.
-Interestingly, we also relate reputation between
-dimensions --- for example, someone
-with a good reputation for community involvement and hard work we also presume
-to have a high reputation in regards to his behavior at home (for example,
-marital fidelity).
+\item An evaluation of features from our reputation system
+  against the PAN~2010 vandalism detection
+  corpus.\footnote{Our features are being utilized by the
+  STiki vandalism detection tool~\cite{wiki:STiki}.}
 
-After so many years of working with reputation, I have come to believe that
-internally we use reputation as something like a probability. That is, all
-other things being equal, reputation is the chance that you will meet some
-standard of performance in a situation that calls for it.  The trick is that
-things are never ``equal'' from situation to situation, so that there are
-unknown components of a reputation that we construct from what
-we know of a person's background and culture.
-The most direct example of this is racial stereotyping applied to
-someone we have never met before.
+\end{enumerate}
 
-Although reputation might lead us to jump to incorrect conclusions about
-someone based on limited information, they also help us to filter and
-sort through the overwhelming amount of information we are presented
-with each day.
-A modern application of reputation is in sorting search
-results (\eg PageRank~\cite{Page1999}), and we see companies
-like Google and Facebook incorporating viewer specific information
-to provide a greater context (of past search history and of
-the social graph) to the reputation function, providing a
-\textit{personalized} experience.
-Imagine if these same ideas could be applied to other
-problems, such as peer review of academic papers or
-job candidate evaluation through references.
+\subsection{Future Work}
+
+A critical part of the training received in graduate school
+is the ability to ask questions that creatively expand on your
+existing work.
+There are a great number of questions left to explore in the
+context of WikiTrust, some of which is described here.
+
+\begin{description}
+\item[\textbf{category reputation}]
+    This is probably the one idea that we hear the most from audiences.
+    Everyone has this intuitive understanding that a person can be
+    an expert in one area but not another, and that some people don't
+    recognize their lack of expertise.
+    By keeping track of separate reputation scores for every category,
+    the system should be more able to predict the longevity of an edit.
+    It is worth noting that, within the Wikipedia community, there
+    are those editors which specialize in grammar and style rather than
+    subject areas, so that there is some extra work that must go
+    into classifying the type of edit (\eg~\cite{Fong2010}).
+
+\item[\textbf{revision selection}]
+   In response to the fluid nature of Wikipedia content,
+    some users would like to identify versions which
+    are ``trustworthy;'' currently, the leading proposal
+    for finding these \textit{stable revisions}
+    involves manual voting by trusted editors.
+    Our own text trust system can highlight text in
+    an article which requires greater scrutiny, but
+    still requires a diligent user to review previous
+    revisions to understand how the article is evolving.
+    In a system like WikiTrust, an obvious idea would be to pick
+    a recent revision which is least likely to have vandalism.
+    An interesting modification to our existing system would be
+    to propagate the text trust information we learn from new edits
+    back to earlier revisions; in essence, once we know that some
+    text is trustworthy, we use that information to reanalyze the
+    trust of the revision where it was introduced.
+
+\item[\textbf{match quality}] Our greedy text differencing algorithm
+    uses a match quality function to prioritize which matches are
+    preferable according to the criteria described in Chapter~\ref{ch:diff}.
+    The evaluation in Chapter~\ref{ch:editquality}
+    suggests that as long as length
+    is the primary discriminant, there is not too much difference
+    between the different quality functions.
+    The evaluation used is one based on the resulting predictive ability
+    of edit quality, but is there some better way to evaluate a difference
+    algorithm whose aim is to model the human view of a text edit?
+
+\item[\textbf{reputation as probabilities}]  This view of reputation is
+    interesting because interpreting the results becomes clear.
+    It also introduces the significant question of how should probabilities
+    be adjusted as new information becomes available.
+    Owen Martin's work on estimating bug counts provides a nice example:
+    you are trying to build a rocketship, and you run many
+    tests to try to uncover bugs~\cite{Martin2011}.
+    If the test succeeds, your estimate
+    of the number of bugs (which is a form of reputation: ``what is
+    the probability that the system will fail?'') goes down.
+    If the test fails, how do revise your estimate of the number
+    of bugs?  And once the engineers have fixed the problem, can
+    you be sure they haven't introduced new problems?
+
+\end{description}
 

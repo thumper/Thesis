@@ -7,10 +7,10 @@ using the building blocks described in the last section.
 \subsection{Number of Edits}
 
 \noindent
-The simplest quantitative measure of contribution for 
+The simplest quantitative measure of contribution for
 authors is to compute the number of revisions they authored.
-In previous works, this is referred to as the 
-\intro{number of edits} made by an 
+In previous works, this is referred to as the
+\intro{number of edits} made by an
 author~\cite{Wales2005,Wilkinson2007,Kittur2007,SteinHess2007}.
 We follow the tradition, and define this precisely
 for some user $u \in \users$ as:
@@ -40,7 +40,7 @@ measure.
 \subsection{Edit Only}
 
 \noindent
-Correcting grammar, polishing the article structure,
+Correcting grammar, polishing the structure of article,
 and reverting vandalism are all chores~\cite{Burke2008}
 which must be done to keep the Wikipedia presentable.
 Counting the number of words added can partially account
@@ -75,7 +75,7 @@ text quality measure \quality{tdecay}{10}{\version{i}}, which describes
 how the text decays over the next several revision.
 %
 \[
-\textlong(u) = 
+\textlong(u) =
 \sum_{a \in \articles} \sum_{v \in E(u, a)} \quality{tdecay}{10}{v}
         \cdot \txt{}{v}
 \]
@@ -85,13 +85,13 @@ how the text decays over the next several revision.
 
 \noindent
 Similar to the text longevity measure, we define the edit longevity
-of a revision \version{i} as the edit contribution, discounted by the 
+of a revision \version{i} as the edit contribution, discounted by the
 average edit quality measure \quality{elong}{10}{\version{i}}.
-As with all the measures, we accumulate contributions based on 
+As with all the measures, we accumulate contributions based on
 edit longevity over all revisions edited by each user $u \in \users$:
 %
 \[
-\editlong(u) = \sum_{a \in \articles} \sum_{v \in E(u, a)} 
+\editlong(u) = \sum_{a \in \articles} \sum_{v \in E(u, a)}
 \quality{elong}{10}{v} \cdot \dist{}{v}
 \]
 %
@@ -107,15 +107,15 @@ smaller contributions have a slightly better chance of surviving
 for the entire ten revisions, thus encouraging change ---
 but not too much change.
 
-We consider the ten revisions that follow any revision $r_i$ of an 
-article, and accumulate the amount of text contribution that was made 
+We consider the ten revisions that follow any revision $r_i$ of an
+article, and accumulate the amount of text contribution that was made
 in $r_i$ that remained in each of those ten subsequent revisions
 of the article.
 We call this measure $\tenrevs$ and define it for each
 $u \in \users$ as follows:
 %
 \begin{gather*}
-\tenrevs(u) = 
+\tenrevs(u) =
 \sum_{a \in \articles} \sum_{v \in E(u, a)} \quality{tsurv}{10}{v}
         \cdot \txt{}{v}.
 \end{gather*}
@@ -123,8 +123,8 @@ $u \in \users$ as follows:
 \subsection{Text Longevity with Penalty}
 
 \noindent
-A last variation that we propose is to combine text longevity with 
-edit longevity in such a way that authors of new content are rewarded, 
+A last variation that we propose is to combine text longevity with
+edit longevity in such a way that authors of new content are rewarded,
 but vandals are actively punished for both inserting and deleting text.
 Text longevity, as we have defined it, already does not
 reward vandals --- vandals either insert no text, or the
@@ -136,7 +136,7 @@ authors with their vandalism.
 By only counting edit longevity when it is negative,
 we are able to punish vandals for any kind of vandalism
 which is reverted.
-This leads to the following definition of our punishing 
+This leads to the following definition of our punishing
 measure for every $u \in \users$:
 %
 \begin{gather*}

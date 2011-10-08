@@ -34,7 +34,8 @@ sub fix_author {
     my $mode = shift @$match;
     confess "Bad mode: $mode" if $mode ne 'Mov';
     my ($chunk, $i1, $i2, $len) = @$match;
-    #next if $len < $this->{minMatch};	    # reject small matches
+    # reject small matches
+    ## code: next if $len < $this->{minMatch};
     for (my $i = 0; $i < $len; $i++) {
       $this->{dst}->[$i2+$i]->[1] =
 	$prevrevs->[$chunk]->[$i1+$i]->[1];

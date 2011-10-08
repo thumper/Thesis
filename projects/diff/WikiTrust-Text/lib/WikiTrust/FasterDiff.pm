@@ -101,7 +101,8 @@ sub process_best_matches {
 	# skip too-short matches
 	if ($newK >= $this->{minMatch}) {
 	  my $qfunc = $this->{quality};
-	  my $q = $qfunc->($chunk, $newK, $i1+$start, $l1, $i2+$start, $l2);
+	  my $q = $qfunc->($chunk, $newK,
+            $i1+$start, $l1, $i2+$start, $l2);
 	  $this->{heap}->insert($q, WikiTrust::Tuple->new(
 	    $chunk, $newK, $i1+$start, $i2+$start
 	  ));

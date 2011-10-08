@@ -15,8 +15,9 @@ exception Heap_Too_Large
  *  them all, as we classify the word pair as not
  *  sufficiently distinctive.
  *)
-let max_matches = 50 
+let max_matches = 50
 let max_heaplen = ref 1000
+let thumper_min_copy_len = 3
 
 module Heap = Coda.PriorityQueue
 type match_quality_t = Coda.match_quality_t
@@ -25,96 +26,96 @@ type match_quality_t = Coda.match_quality_t
  * l is the length of the match.
  * len1 and len2 are the two lengths (in number of
  *      words) of the pieces being compared.
- * i1 and i2 are the two starting points. 
- * ch1_idx is the chunk number. 
+ * i1 and i2 are the two starting points.
+ * ch1_idx is the chunk number.
  * The lower the quality, the more the match is
  * considered, as elements are * removed starting
  * from the lowest from the priority queue.
  *)
 
 let quality_live (l: int) (i1: int) (len1: int)
-                (i2: int) (len2: int) (ch1_idx: int) 
-    : match_quality_t = 
-  let i1' = (float_of_int (2 * i1 + l)) /. 2. in 
-  let len1' = float_of_int len1 in 
-  let i2' = (float_of_int (2 * i2 + l)) /. 2. in 
-  let len2' = float_of_int len2 in 
+                (i2: int) (len2: int) (ch1_idx: int)
+    : match_quality_t =
+  let i1' = (float_of_int (2 * i1 + l)) /. 2. in
+  let len1' = float_of_int len1 in
+  let i2' = (float_of_int (2 * i2 + l)) /. 2. in
+  let len2' = float_of_int len2 in
   let q = abs_float ((i1' /. len1') -. (i2' /. len2'))
-  in 
+  in
   (-l, -ch1_idx, q)
 
 let quality_1 (l: int) (i1: int) (len1: int)
-            (i2: int) (len2: int) (ch1_idx: int) 
+            (i2: int) (len2: int) (ch1_idx: int)
     : match_quality_t = (-l, ch1_idx, 0.0)
 
 let quality_2 (l: int) (i1: int) (len1: int)
-            (i2: int) (len2: int) (ch1_idx: int) 
+            (i2: int) (len2: int) (ch1_idx: int)
     : match_quality_t = (-l, -ch1_idx, 0.0)
 
 let quality_3 (l: int) (i1: int) (len1: int)
-            (i2: int) (len2: int) (ch1_idx: int) 
+            (i2: int) (len2: int) (ch1_idx: int)
     : match_quality_t = (ch1_idx, -l, 0.0)
 
 let quality_4 (l: int) (i1: int) (len1: int)
-            (i2: int) (len2: int) (ch1_idx: int) 
+            (i2: int) (len2: int) (ch1_idx: int)
     : match_quality_t = (-ch1_idx, -l, 0.0)
 
 let quality_5 (l: int) (i1: int) (len1: int)
-            (i2: int) (len2: int) (ch1_idx: int) 
-    : match_quality_t = 
-  let i1' = (float_of_int (2 * i1 + l)) /. 2. in 
-  let len1' = float_of_int len1 in 
-  let i2' = (float_of_int (2 * i2 + l)) /. 2. in 
-  let len2' = float_of_int len2 in 
+            (i2: int) (len2: int) (ch1_idx: int)
+    : match_quality_t =
+  let i1' = (float_of_int (2 * i1 + l)) /. 2. in
+  let len1' = float_of_int len1 in
+  let i2' = (float_of_int (2 * i2 + l)) /. 2. in
+  let len2' = float_of_int len2 in
   let l' = float_of_int l in
   let correction = 0.3 *. abs_float ((i1' /. len1')
         -. (i2' /. len2')) in
   let q = l' /. (min len1' len2') -. correction
-  in 
+  in
   (0, -ch1_idx, 0.0 -. q)
 
 let quality_6 (l: int) (i1: int) (len1: int)
-            (i2: int) (len2: int) (ch1_idx: int) 
-    : match_quality_t = 
-  let i1' = (float_of_int (2 * i1 + l)) /. 2. in 
-  let len1' = float_of_int len1 in 
-  let i2' = (float_of_int (2 * i2 + l)) /. 2. in 
-  let len2' = float_of_int len2 in 
+            (i2: int) (len2: int) (ch1_idx: int)
+    : match_quality_t =
+  let i1' = (float_of_int (2 * i1 + l)) /. 2. in
+  let len1' = float_of_int len1 in
+  let i2' = (float_of_int (2 * i2 + l)) /. 2. in
+  let len2' = float_of_int len2 in
   let l' = float_of_int l in
   let correction = 0.3 *. abs_float ((i1' /. len1')
         -. (i2' /. len2')) in
   let q = l' /. (min len1' len2') -. correction
-  in 
+  in
   (-l, -ch1_idx, 0.0 -. q)
 
 let quality_7 (l: int) (i1: int) (len1: int)
-            (i2: int) (len2: int) (ch1_idx: int) 
-    : match_quality_t = 
-  let i1' = (float_of_int (2 * i1 + l)) /. 2. in 
-  let len1' = float_of_int len1 in 
-  let i2' = (float_of_int (2 * i2 + l)) /. 2. in 
-  let len2' = float_of_int len2 in 
+            (i2: int) (len2: int) (ch1_idx: int)
+    : match_quality_t =
+  let i1' = (float_of_int (2 * i1 + l)) /. 2. in
+  let len1' = float_of_int len1 in
+  let i2' = (float_of_int (2 * i2 + l)) /. 2. in
+  let len2' = float_of_int len2 in
   let l' = float_of_int l in
   let correction = 0.3 *. abs_float ((i1' /. len1')
         -. (i2' /. len2')) in
   let q = l' /. (min len1' len2') -. correction
-  in 
+  in
   (-l, ch1_idx, 0.0 -. q)
 
 let quality_8 (l: int) (i1: int) (len1: int)
-        (i2: int) (len2: int) (ch1_idx: int) 
+        (i2: int) (len2: int) (ch1_idx: int)
     : match_quality_t
   = quality_live l i1 len1 i2 len2 ch1_idx
 
 let quality_9 (l: int) (i1: int) (len1: int)
-        (i2: int) (len2: int) (ch1_idx: int) 
-    : match_quality_t = 
-  let i1' = (float_of_int (2 * i1 + l)) /. 2. in 
-  let len1' = float_of_int len1 in 
-  let i2' = (float_of_int (2 * i2 + l)) /. 2. in 
-  let len2' = float_of_int len2 in 
+        (i2: int) (len2: int) (ch1_idx: int)
+    : match_quality_t =
+  let i1' = (float_of_int (2 * i1 + l)) /. 2. in
+  let len1' = float_of_int len1 in
+  let i2' = (float_of_int (2 * i2 + l)) /. 2. in
+  let len2' = float_of_int len2 in
   let q = abs_float ((i1' /. len1') -. (i2' /. len2'))
-  in 
+  in
   (-l, ch1_idx, q)
 
 
@@ -132,21 +133,23 @@ let set_match_quality (i: int) =
   else if i = 8 then m_quality_func := quality_live
   else if i = 9 then m_quality_func := quality_9
 
-let make_index_diff (words: word array) : index_t = 
-  let len = Array.length words in 
+let make_index_diff (words: word array) : index_t =
+  let len = Array.length words in
   let idx = Hashtbl_bounded.create (1 + len)
-        (10 * max_matches) in 
-  for i = 0 to len - 2 do 
-    let word_tuple = (words.(i), words.(i + 1)) in 
+        (10 * max_matches) in
+  for i = 0 to len - 2 do
+    let word_tuple = (words.(i), words.(i + 1)) in
     Hashtbl_bounded.add idx word_tuple i
-  done; 
+  done;
   idx;;
 
-let get_matches idx word_tuple =
+let get_matches matched idx word_tuple =
   if Hashtbl_bounded.mem idx word_tuple then begin
-    let matches = Hashtbl_bounded.find_all idx word_tuple in 
-    if List.length (matches) > max_matches then begin
-      (* too many, so return empty list *)
+    let all_matches = Hashtbl_bounded.find_all idx word_tuple in
+    let filt i = matched.(i) = 0 in
+    let matches = List.filter filt all_matches in
+    if (List.length all_matches) > max_matches then begin
+      (* too many, so empty list *)
       Hashtbl_bounded.remove_all idx word_tuple;
       [];
     end else matches;
@@ -170,40 +173,39 @@ let build_reichenberger
       let k = !oldPos - !addStart in
       editscript := Del (!addStart, k) :: !editscript;
       for i = !addStart to !oldPos-1 do
-        matched1.(i) <- true;
+        matched1.(i) <- !oldPos - i;
       done;
     end
   in
   while !oldPos < l1 - 2 do
     (* for every unmatched word in w1,
      * find list of matches in w2 *)
-    if not matched1.(!oldPos) then begin
-      let word_tuple = (w1.(!oldPos), w1.(!oldPos+1)) in 
-      let matches = get_matches idx2 word_tuple in 
+    if matched1.(!oldPos) = 0 then begin
+      let word_tuple = (w1.(!oldPos), w1.(!oldPos+1)) in
+      let matches = get_matches matched2 idx2 word_tuple in
       let i1 = !oldPos in
-      let heap = Heap.create () in 
-      let process_match (i2: int) = 
-        if not matched2.(i2) then begin
-          let k = ref 1 in
-          while i1 + !k < l1 && i2 + !k < l2
-          && w1.(i1 + !k) = w2.(i2 + !k) do
-            k := !k + 1;
-          done;
-          let q = !m_quality_func !k i1 l1 i2 l2 0 in 
-          ignore (Heap.add heap (!k, i1, i2) q);
-        end
+      let heap = Heap.create () in
+      let process_match (i2: int) =
+        let k = ref 1 in
+        while i1 + !k < l1 && i2 + !k < l2
+        && w1.(i1 + !k) = w2.(i2 + !k) do
+          k := !k + 1;
+        done;
+        let q = !m_quality_func !k i1 l1 i2 l2 0 in
+        ignore (Heap.add heap (!k, i1, i2) q);
       in
-      List.iter process_match matches; 
+      List.iter process_match matches;
       if not (Heap.is_empty heap) then begin
         let m = Heap.take heap in
         let (copyLen, i1',  copyStart) = m.Heap.contents in
-        if copyLen > 2 then begin
+        if copyLen >= thumper_min_copy_len then begin
           emitAdd ();
           editscript := Mov (!oldPos, copyStart, copyLen)
             :: !editscript;
           for i = 0 to copyLen - 1 do
-            matched2.(copyStart + i) <- true;
-            matched1.(!oldPos + i) <- true;
+	    let nextMatch = copyLen - i in
+            matched2.(copyStart + i) <- nextMatch;
+            matched1.(!oldPos + i) <- nextMatch;
           done;
           oldPos := !oldPos + copyLen;
           addStart := !oldPos;
@@ -213,7 +215,7 @@ let build_reichenberger
         oldPos := !oldPos + 1;
     end else begin
       if !addStart < !oldPos then emitAdd ();
-      oldPos := !oldPos + 1;
+      oldPos := !oldPos + matched1.(!oldPos);
       addStart := !oldPos;
     end;
   done;
@@ -223,33 +225,34 @@ let build_reichenberger
 
 let compute_heap
             (w1: word array) (w2: word array)
-            matched2
+            matched1 matched2
             skipmatch eachk maxk =
-  let l1 = Array.length w1 in 
-  let l2 = Array.length w2 in 
+  let l1 = Array.length w1 in
+  let l2 = Array.length w2 in
   let idx1 = make_index_diff w1 in
-  let prev_matches = ref [] in 
-  for i2 = 0 to l2-2 do
-    (* for every unmatched word in w2,
-     * find list of matches in w1 *)
-    if not matched2.(i2) then begin
-      let word_tuple = (w2.(i2), w2.(i2+1)) in 
-      let matches = get_matches idx1 word_tuple in 
-      let process_match (i1: int) = 
-        if not (skipmatch i1 i2 prev_matches) then begin
+  let prev_matches = ref [] in
+  let i2 = ref 0 in
+  while !i2 < l2 - 1 do
+    let skip = matched2.(!i2) in
+    if skip = 0 then begin
+      let word_tuple = (w2.(!i2), w2.(!i2+1)) in
+      let matches = get_matches matched1 idx1 word_tuple in
+      let process_match (i1: int) =
+        if not (skipmatch i1 !i2 prev_matches) then begin
           let k = ref 1 in
-          eachk i1 l1 i2 l2 !k;
-          while i1 + !k < l1 && i2 + !k < l2
-          && w1.(i1 + !k) = w2.(i2 + !k) do
-            eachk i1 l1 i2 l2 (!k + 1);
+          eachk i1 l1 !i2 l2 !k;
+          while i1 + !k < l1 && !i2 + !k < l2
+          && w1.(i1 + !k) = w2.(!i2 + !k) do
+            eachk i1 l1 !i2 l2 (!k + 1);
             k := !k + 1;
           done;
-          maxk i1 l1 i2 l2 !k
+          maxk i1 l1 !i2 l2 !k
         end
       in
-      List.iter process_match matches; 
+      List.iter process_match matches;
       prev_matches := matches;
-    end;
+    end else prev_matches := [];
+    i2 := !i2 + (max 1 skip)
   done;;
 
 (**
@@ -260,8 +263,8 @@ let compute_heap
  *)
 let build_heap_fastpm
             (w1: word array) (w2: word array)
-            matched2 =
-  let heap = Heap.create () in 
+            matched1 matched2 =
+  let heap = Heap.create () in
   let skipmatch i1 i2 prev_matches =
     (* if (i1-1) is in prev_matches, then we've
      * already investigated a longer match
@@ -271,12 +274,12 @@ let build_heap_fastpm
   in
   let eachk i1 l1 i2 l2 k = () in
   let maxk i1 l1 i2 l2 k =
-    if k > 2 then begin
-      let q = !m_quality_func k i1 l1 i2 l2 0 in 
+    if k >= thumper_min_copy_len then begin
+      let q = !m_quality_func k i1 l1 i2 l2 0 in
       ignore (Heap.add heap (k, i1, i2) q);
     end
   in
-  compute_heap w1 w2 matched2 skipmatch eachk maxk;
+  compute_heap w1 w2 matched1 matched2 skipmatch eachk maxk;
   heap
 
 (** This version only puts the longest match into
@@ -286,11 +289,11 @@ let build_heap_fastpm
  *)
 let build_heap_fasthash
             (w1: word array) (w2: word array)
-            matched2 =
+            matched1 matched2 =
   let len1 = Array.length w1 in
   let len2 = Array.length w2 in
   let matched = Hashtbl.create (len1 + len2) in
-  let heap = Heap.create () in 
+  let heap = Heap.create () in
   let skipmatch i1 i2 prev_matches =
     let idx = (i1, i2) in
     try Hashtbl.find matched idx
@@ -298,16 +301,16 @@ let build_heap_fasthash
   in
   let eachk i1 l1 i2 l2 k = () in
   let maxk i1 l1 i2 l2 k =
-    if k > 2 then begin
+    if k >= thumper_min_copy_len then begin
       for i = 0 to (k-1) do
         let idx = (i1+i, i2+i) in
         Hashtbl.replace matched idx true
       done;
-      let q = !m_quality_func k i1 l1 i2 l2 0 in 
+      let q = !m_quality_func k i1 l1 i2 l2 0 in
       ignore (Heap.add heap (k, i1, i2) q);
     end
   in
-  compute_heap w1 w2 matched2 skipmatch eachk maxk;
+  compute_heap w1 w2 matched1 matched2 skipmatch eachk maxk;
   heap
 
 (** This version of heap building is the slowest,
@@ -320,42 +323,89 @@ let build_heap_fasthash
  *)
 let build_heap_slow
             (w1: word array) (w2: word array)
-            matched2 =
-  let heap = Heap.create () in 
+            matched1 matched2 =
+  let heap = Heap.create () in
   let skipmatch i1 i2 prev_matches = false
   in
-  let eachk i1 l1 i2 l2 k = 
-    if k > 2 then begin
-      let q = !m_quality_func k i1 l1 i2 l2 0 in 
+  let eachk i1 l1 i2 l2 k =
+    if k >= thumper_min_copy_len then begin
+      let q = !m_quality_func k i1 l1 i2 l2 0 in
       ignore (Heap.add heap (k, i1, i2) q);
     end
   in
-  let maxk i1 l1 i2 l2 k = () in    (* already done in eachk *)
-  compute_heap w1 w2 matched2 skipmatch eachk maxk;
+  let maxk i1 l1 i2 l2 k =
+    (* already done in eachk *)
+    ()
+  in
+  compute_heap w1 w2 matched1 matched2 skipmatch eachk maxk;
   heap
 
+(**
+ * Find a region where 'test' is 0,
+ * and return the bounds of that region.
+ * The 'test' parameter otherwise tells
+ * us an upper bound on how far forward
+ * we can safely skip.
+ *)
 let scan_and_test len test =
-  if len <= 0 then (-1, -1)
-  else begin
-    let start = ref 0 in
-    while !start < len && (test !start) do
-      start := !start + 1;
-    done;
-    if !start >= len then
-      (-1, -1)
+  let rec find_start curstart =
+    if curstart >= len then curstart
     else begin
-      let finish = ref (!start + 1) in
-      while !finish < len && not (test !finish) do
-        finish := !finish + 1;
-      done;
-      (!start, !finish)
+      let incr = test curstart in
+      if incr = 0 then curstart
+      else find_start (curstart + incr)
     end
-  end
+  in
+  let rec find_finish curend =
+    if curend >= len then curend
+    else begin
+      let incr = test curend in
+      if incr > 0 then curend
+      else find_finish (curend + 1)
+    end
+  in
+  let start = find_start 0 in
+  let finish = find_finish (start + 1) in
+  if start >= len then (-1, -1)
+  else (start, finish)
+  ;;
 
 let process_best_matches heap matched1 matched2 l1 l2 =
   let editscript = ref [] in
+  let record_match i1 i2 k =
+    editscript := Mov (i1, i2, k) :: !editscript;
+    for i = 0 to k-1 do
+      let nextMatch = k - i in
+      matched1.(i1 + i) <- nextMatch;
+      matched2.(i2 + i) <- nextMatch;
+    done
+  in
+  let make_test i1 i2 =
+    let is_matched offset =
+      max matched1.(i1 + offset) matched2.(i2 + offset)
+    in
+    is_matched
+  in
+  let rec add_smaller i1 i2 start finish limit =
+    if start >= 0 then begin
+      let k = finish - start in
+      let i1 = i1 + start in
+      let i2 = i2 + start in
+      if k >= thumper_min_copy_len then begin
+        let q = !m_quality_func k i1 l1 i2 l2 0 in
+        ignore (Heap.add heap (k, i1, i2) q)
+      end;
+      (* compute range for next possible sub-match *)
+      let i1 = i1 + k in
+      let i2 = i2 + k in
+      let limit = limit - finish in
+      let is_matched = make_test i1 i2 in
+      let (start, finish) = scan_and_test limit is_matched in
+      add_smaller i1 i2 start finish limit
+    end else ()
+  in
   let heaplen = Heap.length heap in
-  if heaplen > !max_heaplen then begin
+  if heaplen > !max_heaplen + 1000 then begin
     max_heaplen := heaplen;
     print_endline
       (Printf.sprintf "new max heap: %d" !max_heaplen);
@@ -367,48 +417,22 @@ let process_best_matches heap matched1 matched2 l1 l2 =
   while not (Heap.is_empty heap) do
     let m = Heap.take heap in
     let (k, i1,  i2) = m.Heap.contents in
-    let is_matched offset = begin
-        matched1.(i1 + offset) || matched2.(i2 + offset)
-    end in
-    let (start, finish) = scan_and_test k is_matched in
+    let (start, finish) = scan_and_test k (make_test i1 i2) in
     if start >= 0 then begin
       if finish - start = k then begin
         (* the whole sequence is still unmatched *)
-        editscript := Mov (i1, i2, k) :: !editscript;
-        (* and mark it matched *)
-        for i = start to finish-1 do
-          matched1.(i1 + i) <- true;
-          matched2.(i2 + i) <- true;
-        done;
+        record_match i1 i2 k
       end else begin
         (* found an unmatched subregion, but it's for less
          * than the size we were hoping for.  So we must add
          * the smaller matches back into the heap... starting
          * with the match we just found. *)
-        let rec add_smaller start finish =
-          if start >= 0 then begin
-            let k = finish - start in
-            if k > 2 then begin
-              let q = !m_quality_func k i1 l1 i2 l2 0 in 
-              ignore (Heap.add heap (k, i1, i2) q)
-            end;
-            (* compute range for next possible sub-match *)
-            let i1 = i1 + finish in
-            let i2 = i2 + finish in
-            let k = k - finish in
-            let is_matched offset = begin
-              matched1.(i1 + offset) || matched2.(i2 + offset)
-            end in
-            let (start, finish) =
-              scan_and_test k is_matched in
-            add_smaller start finish
-          end
-        in
-        add_smaller start finish
+        add_smaller i1 i2 start finish k
       end;
     end;
   done;
   editscript
+  ;;
 
 let cover_unmatched matched len editScript op =
   let i = ref 0 in
@@ -426,46 +450,53 @@ let cover_unmatched matched len editScript op =
       else complete := true
   done;
   editScript
+  ;;
+
+let match_endpoint (w1: word array) (w2: word array)
+            matched1 matched2 xform1 xform2 =
+  let l1 = Array.length w1 in
+  let l2 = Array.length w2 in
+  let k = min l1 l2 in
+  let rec find_first_nonmatch x =
+    if x >= k then k
+    else begin
+      let i1 = xform1 x in
+      let i2 = xform2 x in
+      if matched1.(i1) > 0 || matched2.(i2) > 0
+	|| w1.(i1) <> w2.(i2)
+      then x
+      else find_first_nonmatch (x + 1)
+    end
+  in
+  let nonmatch = find_first_nonmatch 0 in
+  if nonmatch > 0 then begin
+    let endpoint1 = max (xform1 (-1)) nonmatch in
+    let endpoint2 = max (xform2 (-1)) nonmatch in
+    for i = 0 to nonmatch - 1 do
+      matched1.(xform1 i) <- abs (endpoint1 - i);
+      matched2.(xform2 i) <- abs (endpoint2 - i);
+    done;
+    let beginpt1 = min (xform1 0) (xform1 (nonmatch-1)) in
+    let beginpt2 = min (xform2 0) (xform2 (nonmatch-1)) in
+    [ Mov (beginpt1, beginpt2, nonmatch) ];
+  end else [ ]
+  ;;
 
 let match_header (w1: word array) (w2: word array)
             matched1 matched2 =
-  let l1 = Array.length w1 in
-  let l2 = Array.length w2 in
-  let test x =
-    if not matched1.(x) && not matched2.(x)
-      && w1.(x) = w2.(x) then false
-      else true
-  in
-  let k = min l1 l2 in
-  let (start, finish) = scan_and_test k test in
-  if start = 0 then begin
-    for i = 0 to finish - 1 do
-      matched1.(i) <- true;
-      matched2.(i) <- true;
-    done;
-    [ Mov (0, 0, finish) ];
-  end else [ ]
+  let xform1 x = x in
+  let xform2 x = x in
+  match_endpoint w1 w2 matched1 matched2 xform1 xform2
+  ;;
 
 let match_trailer (w1: word array) (w2: word array)
         matched1 matched2 =
   let l1 = Array.length w1 in
   let l2 = Array.length w2 in
-  let k = (min l1 l2) in
-  let test x =
-    let i1 = l1 - x - 1 in
-    let i2 = l2 - x - 1 in
-    if not matched1.(i1) && not matched2.(i2)
-      && w1.(i1) = w2.(i2) then false
-      else true
-  in
-  let (start, finish) = scan_and_test k test in
-  if start = 0 then begin
-    for i = 0 to finish - 1 do
-      matched1.(l1 - i - 1) <- true;
-      matched2.(l2 - i - 1) <- true;
-    done;
-    [ Mov (l1 - finish, l2 - finish, finish) ];
-  end else [ ]
+  let xform1 x = l1 - x - 1 in
+  let xform2 x = l2 - x - 1 in
+  match_endpoint w1 w2 matched1 matched2 xform1 xform2
+  ;;
 
 let match_nothing (w1: word array) (w2: word array)
         matched1 matched2 = [ ]
@@ -475,13 +506,15 @@ let makeIns i l = Ins (i, l)
 let core_diff w1 w2 mkHeader mkTrailer mkEditScript =
   let l1 = Array.length w1 in
   let l2 = Array.length w2 in
-  let matched1 = Array.make l1 false in
-  let matched2 = Array.make l2 false in
+  let matched1 = Array.make l1 0 in
+  let matched2 = Array.make l2 0 in
   let header = mkHeader w1 w2 matched1 matched2 in
   let trailer = mkTrailer w1 w2 matched1 matched2 in
   let editScript = mkEditScript w1 w2 matched1 matched2 l1 l2 in
-  let editScript = cover_unmatched matched1 l1 editScript makeDel in
-  let editScript = cover_unmatched matched2 l2 editScript makeIns in
+  let editScript = cover_unmatched matched1 l1
+    editScript makeDel in
+  let editScript = cover_unmatched matched2 l2
+    editScript makeIns in
   header @ !editScript @ trailer
 
 let diff_1 (w1: word array) (w2: word array) =
@@ -500,7 +533,7 @@ let diff_2 (w1: word array) (w2: word array) =
 
 let diff_3 (w1: word array) (w2: word array) =
   let myCore w1 w2 matched1 matched2 l1 l2 =
-    let heap = build_heap_fasthash w1 w2 matched2 in
+    let heap = build_heap_fasthash w1 w2 matched1 matched2 in
     process_best_matches heap matched1 matched2 l1 l2
   in
   core_diff w1 w2
@@ -509,7 +542,7 @@ let diff_3 (w1: word array) (w2: word array) =
 
 let diff_4 (w1: word array) (w2: word array) =
   let myCore w1 w2 matched1 matched2 l1 l2 =
-    let heap = build_heap_fastpm w1 w2 matched2 in
+    let heap = build_heap_fastpm w1 w2 matched1 matched2 in
     process_best_matches heap matched1 matched2 l1 l2
   in
   core_diff w1 w2
@@ -518,7 +551,7 @@ let diff_4 (w1: word array) (w2: word array) =
 
 let diff_5 (w1: word array) (w2: word array) =
   let myCore w1 w2 matched1 matched2 l1 l2 =
-    let heap = build_heap_fastpm w1 w2 matched2 in
+    let heap = build_heap_fastpm w1 w2 matched1 matched2 in
     process_best_matches heap matched1 matched2 l1 l2
   in
   core_diff w1 w2
@@ -527,7 +560,7 @@ let diff_5 (w1: word array) (w2: word array) =
 
 let diff_8 (w1: word array) (w2: word array) =
   let myCore w1 w2 matched1 matched2 l1 l2 =
-    let heap = build_heap_fasthash w1 w2 matched2 in
+    let heap = build_heap_fasthash w1 w2 matched1 matched2 in
     process_best_matches heap matched1 matched2 l1 l2
   in
   core_diff w1 w2
@@ -536,12 +569,14 @@ let diff_8 (w1: word array) (w2: word array) =
 
 let diff_9 (w1: word array) (w2: word array) =
   let myCore w1 w2 matched1 matched2 l1 l2 =
-    let heap = build_heap_slow w1 w2 matched2 in
+    let heap = build_heap_slow w1 w2 matched1 matched2 in
     process_best_matches heap matched1 matched2 l1 l2
   in
   core_diff w1 w2
         match_header match_trailer
         myCore
+
+
 
 let diff_func = ref diff_1
 
@@ -556,74 +591,4 @@ let set_diff (i: int) =
 
 let edit_diff (words1: word array) (words2: word array)
   : edit list = !diff_func words1 words2
-
-
-(** Unit test for edit diff *)
-if true then 
-  begin 
-    let text1a = "la capra canta contenta sotto la collina sopra la panca la capra campa" in
-    let text1b = "sotto la panca la capra crepa e la capra canta" in
-    
-    let text2a = "nel bel mezzo del cammin di nostra vita mi trovai in una selva oscura che la diritta via era smarrita" in
-    let text2b = "nel frammezzo del cammin di nostra esistenza mi trovai nel bel mezzo di una selva oscura dove la via era smarrita e non mi trovai nel cammin di casa nostra" in
-    
-    let text3a = "a b c d e f g m n o p q r" in
-    let text3b = "a b c d e f g e f g m n o p q r" in
-    
-    let test_edit_diff t1 t2 = 
-      let w1 = Text.split_into_words false false (Vec.singleton t1) in 
-      let w2 = Text.split_into_words false false (Vec.singleton t2) in 
-      let e = edit_diff w1 w2 in 
-      Text.print_words w1; 
-      print_newline ();
-      Text.print_words w2;  
-      print_diff e;
-      print_newline ()
-    in
-
-    set_diff 1;
-    test_edit_diff text1a text1b;
-    set_diff 2;
-    test_edit_diff text1a text1b;
-    set_diff 3;
-    test_edit_diff text1a text1b;
-    set_diff 4;
-    test_edit_diff text1a text1b;
-    set_diff 5;
-    test_edit_diff text1a text1b;
-    set_diff 8;
-    test_edit_diff text1a text1b;
-    set_diff 9;
-    test_edit_diff text1a text1b;
-
-    set_diff 1;
-    test_edit_diff text2a text2b;
-    set_diff 2;
-    test_edit_diff text2a text2b;
-    set_diff 3;
-    test_edit_diff text2a text2b;
-    set_diff 4;
-    test_edit_diff text2a text2b;
-    set_diff 5;
-    test_edit_diff text2a text2b;
-    set_diff 8;
-    test_edit_diff text2a text2b;
-    set_diff 9;
-    test_edit_diff text2a text2b;
-
-    set_diff 1;
-    test_edit_diff text3a text3b;
-    set_diff 2;
-    test_edit_diff text3a text3b;
-    set_diff 3;
-    test_edit_diff text3a text3b;
-    set_diff 4;
-    test_edit_diff text3a text3b;
-    set_diff 5;
-    test_edit_diff text3a text3b;
-    set_diff 8;
-    test_edit_diff text3a text3b;
-    set_diff 9;
-    test_edit_diff text3a text3b;
-  end;;
 

@@ -9,7 +9,7 @@ account for the existence of multiple authors and the possibility
 of restoring text from older revisions.
 
 Chapter~\ref{ch:editquality} then looks at measuring the size of
-an author contribution.
+an author edit.
 The well-known answer is to use edit distance~\cite{Levenshtein1966},
 but we discover that the traditional formulation must be adjusted
 to take into account the rearranging of text that some editors contribute.
@@ -17,14 +17,14 @@ We refine the definition to build on the result computed by the
 algorithm in Chapter~\ref{ch:diff}, and account for the rearranging
 and substitution of text.
 Finally, we conclude the foundational elements by developing a measure
-of edit quality in Chapter~\ref{ch:editquality}.
+of edit quality.
 We construct this measure to estimate the approval or disapproval of
 later authors on the same article.
 By aggregating the judgement of multiple later authors, we arrive at
 a value that represents the community's assessment of an edit.
 
 In Chapter~\ref{ch:contrib} we propose a simple model to combine
-quality measures into a measure of an author's \textit{contribution}.
+quality measures into a measure of the positive value of an author's \textit{contribution}.
 Chapter~\ref{ch:reputation} constructs a reputation system
 out of the contribution measure, and evaluates the performance
 via several different metrics.
