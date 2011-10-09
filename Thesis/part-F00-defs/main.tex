@@ -86,15 +86,6 @@ is used throughout this work.
     amount of text introduced in revision \version{i}
     that survives to \version{j}.
 
-\item \judges{a}{n}{i} -- a function that returns the set of
-    \intro{judging} revisions associated with revision \version{i}
-    of article $a \in \articles$.
-    A judging revision for revision \version{i} is a revision \version{j}
-    such that $0 < j - i \le n$ and
-    $\revauthor{\version{i}} \not= \revauthor{\version{j}}$.
-    Thus, the set is limited to, at most, $n$ revisions which are nearest
-    to \version{i} in time.  See Definition~\ref{def:judges}.
-
 \end{itemize}
 
 \section{Chapter~\ref{ch:editquality} -- Contribution Quality}
@@ -107,6 +98,15 @@ is used throughout this work.
     after \version{k}.
     The value of this quality is given by the solution to
     Equation~\ref{eq:soln-tdecay}.
+
+\item \judges{a}{n}{i} -- a function that returns the set of
+    \intro{judging} revisions associated with revision \version{i}
+    of article $a \in \articles$.
+    A judging revision for revision \version{i} is a revision \version{j}
+    such that $0 < j - i \le n$ and
+    $\revauthor{\version{i}} \not= \revauthor{\version{j}}$.
+    Thus, the set is limited to, at most, $n$ revisions which are nearest
+    to \version{i} in time.  See Definition~\ref{def:judges}.
 
 \item \quality{elong}{a,n}{k} -- the edit longevity quality of
     revision $\version{k} \in \versions{\article{}}$, as judged by up to
@@ -121,7 +121,7 @@ is used throughout this work.
 
 \item \revpos{\version{i}} -- the revisions of an article form a
     chronological sequence; this function gives back the position
-    of the revision in the sequence of revisions for the article.
+    of the revision in the sequence of revisions for the single article.
 
 \end{itemize}
 
