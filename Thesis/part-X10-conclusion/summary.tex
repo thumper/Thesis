@@ -6,14 +6,15 @@ for all of civilization.
 Our history is one of ever increasing communication and collaboration
 in our ambition to master our environment, from books and libraries
 to the telephone and the Internet.
-The Wikipedia seems a natural result of this history,
-And perhaps just as inevitable, there are people who seek to
+The Wikipedia seems a natural result of this history.
+And perhaps just as inevitably, there are people who seek to
 mar the collective goals of the Wikipedia for their own gain and amusement.
 
 The goal of our research was to develop a reputation system
 that could assist users by flagging content added by users who
-did not have a good track record.
-In reaching that goal, this work makes the following contributions:
+did not have a good track record, making the task of understanding
+the short-term history of an article easier to grasp with a glance.
+In working towards that goal, this research makes the following contributions:
 \begin{enumerate}
 
 \item A proposal for determining the ``authorship'' of words in
@@ -24,8 +25,14 @@ In reaching that goal, this work makes the following contributions:
   already well-known in the literature.
 
 \item Two methods for determining the ``quality'' of a contribution.
-  We evaluate these methods using the PAN~2010 vandalism detection
-  corpus, and find a good ability to predict vandalism.
+  We evaluate these methods (and the underlying difference algorithms)
+  using the PAN~2010 vandalism detection corpus, and find that both
+  measures perform much better than a random vandalism detector.
+  Our \intro{text longevity} measure performs very competitively
+  compared to the vandalism detectors participating in the
+  PAN~2010 competition~\cite{Potthast2010b}, with the proviso that
+  text longevity uses information ``from the future'' of an edit,
+  which was not available to entrants of the competition.
 
 \item A reputation system for authors and text.\footnote{Available
   to users as a Firefox plugin:

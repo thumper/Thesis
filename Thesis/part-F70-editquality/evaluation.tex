@@ -41,7 +41,7 @@ we use information ``from the future'' to calculate our
 quality values for the annotated revisions.
 Standard vandalism detection tools make their determination
 immediately as the edit is made, so that any vandalism can be
-quickly repaired by others.
+quickly repaired by other users.
 The necessity for a quick classification precludes waiting
 for future edits or rating to corroborate the edit being judged;
 we term this variation of the problem \textit{immediate vandalism detection}.
@@ -90,7 +90,8 @@ The list of algorithm variations that we tried are as follows:
 
 \item[\textbf{diff1}]
     Implementation of the Tichy greedy algorithm, including optimizations
-    suggested by Obst and Reichenberger.
+    suggested by Obst~\cite{Obst1987} and
+    Reichenberger~\cite{Reichenberger1991}.
     \begin{description}
     \item[Includes:]
         \textbf{min wordlen}, \textbf{max matches},
@@ -101,8 +102,9 @@ The list of algorithm variations that we tried are as follows:
 
 \item[\textbf{diff2}]
     Implementation of the Tichy greedy algorithm, including optimizations
-    suggested by Obst and Reichenberger.  Also includes the
-    \textbf{header/trailer} optimization.
+    suggested by Obst~\cite{Obst1987} and
+    Reichenberger~\cite{Reichenberger1991}.
+    Also includes the \textbf{header/trailer} optimization.
     \begin{description}
     \item[Includes:]
         \textbf{min wordlen}, \textbf{max matches}, \textbf{header/trailer}
@@ -213,7 +215,7 @@ The list of algorithm variations that we tried are as follows:
 The match quality formula is the key to our greedy algorithm
 choosing matches which meet the desired properties outlined
 in Chapter~\ref{ch:diff}.
-We experimented with the following nine definitions,
+We experimented with the nine definitions enumerated below,
 which take as parameters the length of the match (parameter $k$),
 the matching positions in the source and target revisions
 (parameters $i_1$ and $i_2$), and the total length of
@@ -544,8 +546,17 @@ match as used, the WikiTrust algorithm additionally
 re-traverses each match to verify it or search for
 \textit{residual} matches.
 
-\mynote{longest match prediction earlier.  Diff9 was crazy slow.  Tichy
-also picks longest match.}
+In our original justification for the \textbf{longest match}
+optimization, we argued that it would save CPU time to not have to test
+all the partial matches.
+We attempted to test this idea by implementing a version of the
+WikiTrust algorithm without the \textbf{longest match} optimization, and
+found that the memory requirements were too great to execute on our machines.
+Although the optimization is clearly a useful one to make, we note that
+Table~\ref{tab:difftiming} shows that the Tichy algorithm with
+optimizations still has a significant advantage in runtime performance,
+and very similar vandalism prediction performance compared to the
+WikiTrust variations.
 
 \vspace{1pc}
 
@@ -626,7 +637,5 @@ We believe this is because the possible edit scripts for
 each edit have a high degree of overlap; that is,
 the different algorithms generally produce the same edit script
 except for very minor differences.
-
-\mynote{Does text longevity actually change when +c or -c?}
 
 \input{part-F70-editquality/quality-table-textlong}
