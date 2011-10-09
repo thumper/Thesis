@@ -4,14 +4,16 @@ In this chapter, we propose a reputation system for authors to allow us
 to make an educated guess at the quality of a revision when it is first
 made.
 This reputation system is build atop notions developed as quality
-measures in Chapter~\ref{ch:editquality}, and which themselves are
-in turn built atop a difference algorithm defined in Chapter~\ref{ch:diff}.
+measures in Chapter~\ref{ch:editquality}, which are in turn built atop a
+difference algorithm defined in Chapter~\ref{ch:diff}.
 
-To evaluate the effectiveness of our WikiTrust reputation system, we
-test several different metrics and achieve results much better than
-random chance.
+To validate the effectiveness of the WikiTrust reputation system, we
+evaluate a variety of measures.
+We find that short-lived text and edits are correlated with low-reputation,
+and that manual examination of the edits by a small group of reviewers
+has high agreement with the assessment by our reputation system.
 We also compare favorably against a reputation based purely on the
 number of edits made by authors (the so-called \intro{edit count}
-reputation~\cite{Cross2006}), without the same exposure to simple
-attacks.
+reputation~\cite{Cross2006}), but without the same exposure to simple
+reputation attacks such as breaking up a large edit into smaller edits.
 

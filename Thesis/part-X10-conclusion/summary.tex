@@ -17,29 +17,36 @@ the short-term history of an article easier to grasp with a glance.
 In working towards that goal, this research makes the following contributions:
 \begin{enumerate}
 
-\item A proposal for determining the ``authorship'' of words in
+\item An algorithm for determining the ``authorship'' of words in
   revisioned documents.\footnote{This work is being explored further
-  by the German chapter of the Wikipedia:
+  by the German chapter of the Wikipedia: \\
   \url{http://de.wikipedia.org/wiki/Benutzer:NetAction/WikiTrust}}
-  This proposal is a refinement of existing difference algorithms
+  This algorithm is a refinement of existing difference algorithms
   already well-known in the literature.
 
 \item Two methods for determining the ``quality'' of a contribution.
   We evaluate these methods (and the underlying difference algorithms)
   using the PAN~2010 vandalism detection corpus, and find that both
   measures perform much better than a random vandalism detector.
-  Our \intro{text longevity} measure performs very competitively
+  Our \intro{text longevity} measure uses authorship information to
+  compute the amount of contributed text and how it survives over
+  future revisions (it's ``rate of decay'').
+  Our \intro{edit longevity} measure uses edit distances to estimate
+  how much ``work'' of an edit goes to making an article more like a
+  future instance of the article.
+  Edit longevity performs very competitively
   compared to the vandalism detectors participating in the
   PAN~2010 competition~\cite{Potthast2010b}, with the proviso that
-  text longevity uses information ``from the future'' of an edit,
+  edit longevity uses information ``from the future'' of an edit,
   which was not available to entrants of the competition.
 
-\item A reputation system for authors and text.\footnote{Available
-  to users as a Firefox plugin:
+\item A reputation system for authors and text,\footnote{A visualization
+  tool is available to users as a Firefox plugin: \\
   \url{https://addons.mozilla.org/en-US/firefox/addon/wikitrust/}}
-  Our evaluation shows that the reputation system is capable of
-  flagging content by low-reputation authors as being four times
-  as likely as the average to be short-lived.
+  which adjusts the reputation of an author based on quality feedback
+  from later authors using the ideas of text and edit longevity.
+  Our evaluation shows that content by low-reputation authors is
+  four times as likely as the average to be short-lived.
 
 \item An evaluation of features from our reputation system
   against the PAN~2010 vandalism detection
@@ -111,6 +118,15 @@ context of WikiTrust, some of which is described here.
     If the test fails, how do revise your estimate of the number
     of bugs?  And once the engineers have fixed the problem, can
     you be sure they haven't introduced new problems?
+
+\item[\textbf{authorship}]  As described in the concluding remarks of
+    Chapter~\ref{ch:diff}, there are further refinements to be
+    considered in how to assign authorship in a collaborative work.
+    Identifying common idioms in the language (\eg through the use of
+    tf-idf~\cite{Jones1972}) and common phrases within a topic area
+    are two cases where authorship needs to be more carefully considered.
+    The greatest challenge in pursuing this avenue will be in
+    determining a suitable evaluation for comparing solutions.
 
 \end{description}
 
