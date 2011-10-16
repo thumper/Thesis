@@ -42,16 +42,16 @@ $\version{i} \in \versions{\article{}}$), we define:
 \begin{equation*}
 \txtsrcrev{\version{i}, j} =
     \begin{cases}
-        \txtsrcrev{\version{k}, s}, & \text{ if }
-        \match{\version{i}, j, \prevrevs{\version{i}}} = (\version{k}, s) \\
-        i, & \text{ if there is no best match text. } \\
+        \txtsrcrev{\version{k}, s}, & \text{if}
+        \ \match{\version{i}, j, \prevrevs{\version{i}}} = (\version{k}, s) \\
+        i, & \text{if there is no best match text.} \\
     \end{cases}
 \end{equation*}
 Now we can define the text survival of words to be the number of
 words introduced in \version{m} still present in \version{n}:
 \begin{equation}
 \tsurv{\article{}}{m,n} = \left| \left\{ j \colon
-    \exists j \in \mathbb{Z} . ( \txtsrcrev{\version{n},j} = m ) \right\} \right| \\
+    \exists j \in \mathbb{Z}~.~( \txtsrcrev{\version{n},j} = m ) \right\} \right| \\
 \label{eq:tsurv}
 \end{equation}
 
@@ -140,8 +140,8 @@ that people can agree on until it eventually no longer changes.
 \begin{figure}[tbph]
 \centering
 \framebox{\includegraphics[width=0.9\textwidth]{part-F70-editquality/text-longevity}}
-\caption[Text longevity is modeled as a geometric curve]{
-    To calculate the \intro{text longevity} of the contribution
+\caption[Text longevity is modeled as a geometric curve]
+    {To calculate the \intro{text longevity} of the contribution
     of $T_k$ words, we model the text survival as a geometric curve
     and compute a single number that describes how the text evolves
     over several revisions.
