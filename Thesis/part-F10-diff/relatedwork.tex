@@ -73,7 +73,7 @@ for \textit{local sequence alignment}, which iteratively locates the
 best local alignment between two nucleotide sequences.
 Our solution is a specialization that does not allow insertions
 and deletions within a \textit{best match} (in the context of
-Smith-Waterman, the score for an insertion or deletion is $-\infty$).
+Smith-Waterman, the score for an insertion or deletion would be $-\infty$).
 While we forbid insertions and deletions to be components of
 a \textit{best match}, we still have other preferences on matching:
 we prefer matches to be similarly situated in their strings.

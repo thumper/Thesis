@@ -45,7 +45,7 @@ quickly repaired by other users.
 The necessity for a quick classification precludes waiting
 for future edits or rating to corroborate the edit being judged;
 we term this variation of the problem \textit{immediate vandalism detection}.
-By definition, our two longevity metrics use later edits to
+By construction, our two longevity metrics use later edits to
 measure the quality of the revision being judged; we call
 this the \textit{historical vandalism detection} problem.
 Historical vandalism detection has its own set of important
@@ -68,7 +68,7 @@ As in the PAN-WVD~2010 competition~\cite{Potthast2010b}, we use the
 \texttt{perf}\footnote{\url{http://osmot.cs.cornell.edu/kddcup/software.html}}
 package to evaluate the performance of our quality measures
 by computing the areas under the receiver operating characteristic
-curve \footnote{\url{http://en.wikipedia.org/wiki/Receiver_operating_characteristic}},
+curve\footnote{\url{http://en.wikipedia.org/wiki/Receiver_operating_characteristic}},
 and the precision-recall curve.
 
 \subsection{Difference Algorithms}
@@ -81,9 +81,12 @@ This edit script is highly dependent on the algorithm used to
 compute the difference between the revisions.
 To provide a more complete picture of how the choice of difference
 algorithms affects the performance of the quality measures,
-we present an evaluation of some variations of the algorithms;
+we present an evaluation of some variations of the algorithms.
+Our evaluation for this chapter was implemented in OCaml for performance
+reasons\footnote{Compare the performance in Table~\ref{tab:difftiming}
+with that in Tables~\ref{tab:comparediff} and~\ref{tab:comparetext}.};
 the OCaml source representing these algorithms appears
-in Appendix \ref{app:diffsrc-ocaml}.
+in Appendix~\ref{app:diffsrc-ocaml}.
 The list of algorithm variations that we tried are as follows:
 %
 \begin{description}
@@ -113,8 +116,9 @@ The list of algorithm variations that we tried are as follows:
     \end{description}
 
 \item[\textbf{diff3}]
-    This is a WikiTrust variation of difference algorithm, which uses prefers
-    the globally \textbf{longest match} for a given starting position in the target revision.
+    This is a WikiTrust variation of difference algorithm, which prefers
+    the globally \textbf{longest match} between the source and target
+    revisions.
     Without the \textbf{prev matches} optimization, this version of the algorithm
     uses an associative array to track the matches made so far.
     %
@@ -127,12 +131,12 @@ The list of algorithm variations that we tried are as follows:
     \end{description}
 
 \item[\textbf{diff4}]
-    This variation of our difference algorithm explores another
+    This variation of our WikiTrust difference algorithm explores another
     combination of optimizations.
     We believe that the \textbf{header/trailer} optimization generates
     an edit script which is closer to a human understanding of text
     differencing, so that we expect this variation to perform worse
-    than \textbf{diff5}.
+    than \textbf{diff5}, which includes that optimization.
     %
     \begin{description}
     \item[Includes:]
@@ -539,7 +543,10 @@ With respect to the different optimizations, Table~\ref{tab:difftiming}
 provides some insights.
 The most notable conclusion is that Reichenberger's
 difference algorithm is faster than the WikiTrust
-greedy algorithm by nearly a factor of two.
+greedy algorithm by nearly a factor of two.\footnote{The live
+production version of our WikiTrust code includes another technique
+for speeding up the difference computation, so that the performance
+more closely rivals the runtime of the Reichenberger versions.}
 With hindsignt, we expect this sort of result because, while both algorithms
 inspect every possible match and then mark the actual
 match as used, the WikiTrust algorithm additionally
@@ -554,7 +561,8 @@ WikiTrust algorithm without the \textbf{longest match} optimization, and
 found that the memory requirements were too great to execute on our machines.
 Although the optimization is clearly a useful one to make, we note that
 Table~\ref{tab:difftiming} shows that the Tichy algorithm with
-optimizations still has a significant advantage in runtime performance,
+optimizations (\textbf{diff1} and \textbf{diff2})
+still has a significant advantage in runtime performance,
 and very similar vandalism prediction performance compared to the
 WikiTrust variations.
 

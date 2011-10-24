@@ -3,8 +3,8 @@
 The results presented in the last section raised two
 additional questions.
 In comparison to edit longevity, the performance of ${\approx}29.26\%$
-PR-AUC is quite poor; why does text longevity not do so well as edit
-longevity?
+PR-AUC by text longevity is quite poor;
+why does text longevity not do so well as edit longevity?
 Our second question is about the triangle inequality:
 how important is it that our edit distance function satisfy
 this property to be a good predictor of vandalism?
@@ -21,6 +21,8 @@ Also computed in each figure is the text longevity measure based on
 the 20~revisions shown in each graph, but notice that the text
 longevity computed for
 Figure~\ref{fig:ts-GeorgeWBush} doesn't exhibit the curve we expect.
+Instead of following the text survival, the curve goes below the
+level of text which survives each revision.
 
 \begin{figure}[tbph]
 \centering
@@ -55,7 +57,8 @@ thinking about the original model.
 While the text survival for contributions does seem to have an
 exponential look to it, exponentials do not approach some fixed
 non-zero value --- they approach zero.
-In order to fit the curve we are describing, the last value
+In order to fit the curve to closely follow the points of text survival,
+the last value
 (in the case of the data shown in Figure~\ref{fig:ts-GeorgeWBush},
 the amount of text that survives after the $20^{th}$ revision)
 should be taken as the ``zero reference point'' which is subtracted
@@ -84,7 +87,7 @@ can compute how much effort was \textit{useful} in bringing
 the article closer to how it appears in a future revision.
 
 We have explored the use of several different definitions of
-the \intro{edit distance} to represent this distance, but
+the \intro{edit distance} to represent this effort, but
 noted that the triangle inequality did not completely hold;
 see~\cite{Sankoff1999} for a summary of known conditions under which
 the triangle inequality holds for
@@ -189,7 +192,7 @@ proposed edit distance formulas guarantee the triangle inequality.
 
 We present in Appendix~\ref{app:editlong-data} data on the frequency
 with which the triangle inequality holds for the various combinations
-of difference algorithm and edit distance formula; only formula~\textbf{ed2}
+of difference algorithms and edit distance formulae; only formula~\textbf{ed2}
 never violates the triangle inequality.
 This is relatively easy to see by an enumeration of the cases, but it
 is instructive to examine~\textbf{ed1} first.
@@ -296,7 +299,8 @@ weights:
   w(x, \phi) &= 1 \\
   w(x, x) &= 1
 \end{align*}
-These weights result in every statement holding true, so that the
+These weights result in every statement holding true, even the
+alternative analysis, so that the
 full triangle inequality also holds true.
 
 Examining the performance of \textbf{ed2} in

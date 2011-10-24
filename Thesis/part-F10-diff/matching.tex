@@ -223,7 +223,8 @@ step are:
     then the residual non-matched parts of the string need to
     be placed into the priority queue for possible selection later.
     This makes the assumption that the quality function always
-    prefers longer matches over shorter matches.
+    prefers longer matches over shorter matches, so that we encounter
+    matches from the priority queue in the correct order.
     Appendix~\ref{app:fasterdiffsrc-perl} demonstrates this
     modification, with some representative runtimes shown
     in Table~\ref{tab:comparediff}.
@@ -239,6 +240,7 @@ step are:
     and are considering match \textbf{Move}(i,j), we know that it
     was part of a longer match if $i-1$ is one of the matches returned
     for position $j-1$.
+    In this case, we do not need to examine the match.
 
 \item[\textbf{header/trailer}] When users edit an article, the beginning
     and end of the article are not likely to change much.
@@ -341,8 +343,13 @@ Rev & Revs & BasicTextTracking & FasterTextTracking \\
     \textbf{fast} text tracking algorithms.]{
     Comparing the execution times of our
     \textbf{basic} and \textbf{fast} text tracking
-    algorithms, both written in perl, on selected versions of the article
-    ``Santa Cruz Beach Boardwalk.''}
+    algorithms, both written in Perl, on selected versions of the article
+    ``Santa Cruz Beach Boardwalk.''
+    Note that Perl is an interpreted language, slower than the
+    OCaml implementation evaluated in Chapter~\ref{ch:editquality}.
+    We present this data to give a flavor for the importance
+    of the optimizations.
+}
 \label{tab:comparetext}
 \end{table}
 
@@ -361,7 +368,8 @@ The size of deleted text in any revision is typically much smaller
 than the size of the live text, so our final optimization is
 to check for matches against the deleted text rather than the full
 live text of previous revisions.
-Note that this can change the size of matches that are found,
+Note that this can change the size of matches that are found
+if a piece of text only partially matches deleted text,
 so that the quality function might not select matches in a preferred way.
 
 \begin{comment}

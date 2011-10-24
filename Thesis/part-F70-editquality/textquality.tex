@@ -34,10 +34,10 @@ In Chapter~\ref{ch:diff}, we describe how to track text authorship
 for the text in an article $\article{} \in \articles$.
 Just tracking authorship is not enough for tracking survival, since
 we need to know what specific revision a word came from.
-Let us define another recursive relation, like the definition
+Let us define another recursive relation, like
 for $\txtauthor{}$ in Definition~\ref{def:txtauthor},
 which defines the revision where a word was first introduced.
-For a word $w_j \in \words{\version{i}}$ (where
+For a word $w_j$, the $j^{\text{th}}$ word of $\words{\version{i}}$ (where
 $\version{i} \in \versions{\article{}}$), we define:
 \begin{equation*}
 \txtsrcrev{\version{i}, j} =
@@ -71,7 +71,7 @@ For the purpose of building a reputation system, we want a measure
 that provides some insight into the community perception of the
 quality of the edit.
 Having defined the notion of text survival, a very simple quality measure
-could be ``What fraction of the text added in a revision survives
+could be ``what fraction of the text added in a revision survives
 ten revisions later?''
 We discuss some variations of these quality measures in
 Chapter~\ref{ch:contrib}, but present one novel quality measure here.
@@ -119,7 +119,7 @@ $A_k$ when they are focused elsewhere in the article.}
 Measuring the fraction of text introduced in
 revision \version{k} that survives to revision \version{j}
 (\ie computing $\tsurv{}{k,j} / \tsurv{}{k,k}$)
-gives useful information, but what if \version{j} happens to be
+gives useful information, but what if the author of \version{j} happens to be
 a vandal that blanks the page?
 One idea would be to average the text survival over the next
 several revisions (an idea explored in Chapter~\ref{ch:contrib}),
