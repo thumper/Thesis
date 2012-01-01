@@ -384,12 +384,15 @@ how this choice impacts the quality of the results.
 
 \item[\ed5] This is the edit distance computation used
     in the live production system of WikiTrust.
-    Please refer to the source code, available at
+    It models the matches between the two strings as a graph and uses
+    connected components to try to ascertain when an insertion and
+    deletion pair are actually replacements.
+    This particular formulation for edit distance falls outside the
+    scope of this work, but we include the evaluation of it for
+    comparison reasons.
+    Interested readers can examine the source code, available at
     Github,\footnote{\url{http://www.github.com/collaborativetrust/WikiTrust}}
     for the details of this implementation.
-    \mynote{Do I need to say more here?  This is using some
-    code to calculate over connected components, but I don't see
-    what the intuition of it is.}
 
 \end{description}
 
@@ -470,8 +473,8 @@ effort that goes into rearranging blocks of text.
 In Tables~\ref{tab:editlongbyed5} through~\ref{tab:editlongbyed1},
 we present the predictive performance of the algorithms,
 controlling for edit distance.
-We find that match qualities \mq1-\mq4
-and \mq6-\mq7 are always grouped together.
+We find that match qualities \mq1-\mq4 and \mq6-\mq9 are always grouped
+together (shown in the tables as \mq1234 and \mq6789).
 That is because these match qualities only differ from each
 other in how they treat the chunk index, which is not used in the
 edit longevity computation.
@@ -498,6 +501,18 @@ The most striking feature of Table~\ref{tab:difftiming} is the unusually
 large standard deviations of \diff6 and \diff7.
 These two algorithms turn out to have a bimodal distribution.
 \mynote{Why?  Connected component algorithm?}
+
+In terms of predictive performance of the difference algorithms
+themselves, there is no clear winner.
+The top two edit edit distance functions, \ed5 and \ed3,
+work best with the variations of the Tichy method of differencing ---
+but even considering only \ed5 (Table~\ref{tab:editlongbyed5})
+and \ed3 (Table~\ref{tab:editbylonged3}), the ranking between \diff1
+and \diff2 is exchanged.
+Even more telling, \diff1 gives the worst performance in the entire
+experiment when combined with \ed2 (Table~\ref{tab:editbylonged2}),
+implying that no single difference algorithm is the best choice for
+the WikiTrust application.
 
 With respect to the different optimizations, Table~\ref{tab:difftiming}
 provides some insights.
