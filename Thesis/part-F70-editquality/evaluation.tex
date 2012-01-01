@@ -87,131 +87,92 @@ reasons\footnote{Compare the performance in Table~\ref{tab:difftiming}
 with that in Tables~\ref{tab:comparediff} and~\ref{tab:comparetext}.};
 the OCaml source representing these algorithms appears
 in Appendix~\ref{app:diffsrc-ocaml}.
-The list of algorithm variations that we tried are as follows:
-%
-\begin{description}
 
-\item[\diff1]
-    Implementation of the Tichy greedy algorithm, including optimizations
-    suggested by Obst~\cite{Obst1987} and
-    Reichenberger~\cite{Reichenberger1991}.
-    \begin{description}
-    \item[Includes:]
-        \opt{min wordlen}, \opt{max matches},
-    \item[Excludes:]
-        \opt{header/trailer}.
-        \opt{longest match}, \opt{prev matches}.
-    \end{description}
+The basis for the WikiTrust method of text differencing is a greedy
+algorithm inspired by the work of Tichy~\cite{Tichy1984}.
+As described in Chapter~\ref{ch:diff}, our goal was to create an edit
+script that more closely followed a human understanding of the text
+transformation, rather than trying to optimize for shortest edit script.
+This led us to change the greedy step to be \textit{globally greedy};
+that is, we always prefer the longest unmatched sequence of words
+from anywhere in the source and target strings.
+This differs from the greedy step of the Tichy method, where the
+target string is constructed from left to right by selecting the longest
+match for the next unmatched position in the target.
+To judge the efficacy of this choice, we implement both methods as part
+of our evaluation, described in Table~\ref{tab:diff-combinations}.
+For the Tichy method, we implement the optimizations suggested by
+Obst~\cite{Obst1987} and Reichenberger~\cite{Reichenberger1991}.
 
-\item[\diff2]
-    Implementation of the Tichy greedy algorithm, including optimizations
-    suggested by Obst~\cite{Obst1987} and
-    Reichenberger~\cite{Reichenberger1991}.
-    Also includes the \opt{header/trailer} optimization.
-    \begin{description}
-    \item[Includes:]
-        \opt{min wordlen}, \opt{max matches}, \opt{header/trailer}
-    \item[Excludes:]
-        \opt{longest match}, \opt{prev matches}.
-    \end{description}
+In Section~\ref{sec:diff-optimizations}, we propose several different
+optimizations to improve the running time of the WikiTrust method;
+see Table~\ref{tab:diff-optimizations} for a summary.
+We include a few combinations of these optimizations in our evaluation.
+Of particular note, the WikiTrust methods implemented all include the
+\opt{longest match} optimization where only the longest possible match
+given starting positions in the source and target strings are placed
+onto the priority queue.
+We briefly experimented with placing the submatches onto the priority
+queue as well, but this resulted in memory requirements exceeding the
+capacity of our servers.
+We also include for comparison \diff6 and \diff7, which are the exact
+implementations of WikiTrust differencing algorithm used in our
+production service.
+These two implementations are based on the same ideas explained in
+Chapter~\ref{ch:diff}, but use code originally written
+for~\cite{Adler2007} with extra optimizations.
 
-\item[\diff3]
-    This is a WikiTrust variation of difference algorithm, which prefers
-    the globally \opt{longest match} between the source and target
-    revisions.
-    Without the \opt{prev matches} optimization, this version of the algorithm
-    uses an associative array to track the matches made so far.
-    %
-    \begin{description}
-    \item[Includes:]
-	\opt{min wordlen}, \opt{max matches},
-	\opt{header/trailer}, \opt{longest match}.
-    \item[Excludes:]
-	\opt{prev matches}.
-    \end{description}
 
-\item[\diff4]
-    This variation of our WikiTrust difference algorithm explores another
-    combination of optimizations.
-    We believe that the \opt{header/trailer} optimization generates
-    an edit script which is closer to a human understanding of text
-    differencing, so that we expect this variation to perform worse
-    than \diff5, which includes that optimization.
-    %
-    \begin{description}
-    \item[Includes:]
-	\opt{min wordlen}, \opt{max matches}, \opt{longest match},
-	\opt{prev matches}.
-    \item[Excludes:]
-	\opt{header/trailer}.
-    \end{description}
+\begin{table}[tbph]
+  \begin{center}
+    \begin{tabular}{r l}
+      \hline
+      \opt{min words} & minimum length of match from source to target.  \\
+      \opt{max matches} & ignore match starts that are too common in the source. \\
+      \opt{longest match} & only place longest match onto priority queue. \\
+      \opt{prev matches} & use matches from previous position to determine longest match. \\
+      \opt{header/trailer} & match beginning and end of article first.  \\
+      \hline
+    \end{tabular}
+  \end{center}
+  \caption[Summary of WikiTrust differencing optimizations.]%
+    {Summary of WikiTrust differencing optimizations.
+    See Section~\ref{sec:diff-optimizations} for a detailed explanation of each
+    optimization.}
+  \label{tab:diff-optimizations}
+\end{table}
 
-\item[\diff5]
-    This is an extension of \diff4 that includes the
-    \opt{header/trailer} optimization.
-    %
-    \begin{description}
-    \item[Includes:]
-	\opt{min wordlen}, \opt{max matches},
-	\opt{header/trailer}, \opt{longest match}, \\
-	\opt{prev matches}.
-    \item[Excludes:] \textit{none}.
-    \end{description}
 
-\item[\diff6] This is the original difference algorithm
-    for comparing two revisions in the WikiTrust system, as
-    described in~\cite{Adler2007}.
-    %
-    \begin{description}
-    \item[Includes:]
-	\opt{min wordlen}, \opt{max matches}, \opt{longest match},
-	\opt{prev matches}.
-    \item[Excludes:]
-	\opt{header/trailer}.
-    \end{description}
-    This version of the difference algorithm includes other
-    functionality not described here.
-    The source code implementing this version is available from
-    Github,\footnote{\url{http://www.github.com/collaborativetrust/WikiTrust}}
-    and corresponds to the function \texttt{edit\_diff\_core} in
-    file \texttt{chdiff.ml}.
-
-\item[\diff7]
-    This is the difference algorithm currently running on the live
-    production
-    WikiTrust system.
-    It is the same as \diff6, with the addition of the
-    \opt{header/trailer} optimization.
-    %
-    \begin{description}
-    \item[Includes:]
-	\opt{min wordlen}, \opt{max matches}, \opt{longest match},
-	\opt{prev matches}, \opt{header/trailer}.
-    \item[Excludes:] \textit{none}.
-    \end{description}
-    %
-    It is able to process user reputations and text trust fast enough
-    to keep up with each change being made to the English Wikipedia.
-    The source code implementing this version
-    corresponds to the function \texttt{edit\_diff} in
-    file \texttt{chdiff.ml}, available via Github.
-
-\item[\diff8]
-    This diff algorithm implements exactly the matching
-    we describe in Chapter~\ref{ch:diff}, with all optimizations except
-    for the \opt{header/trailer} optimization.
-    Additionally, a Perl language implementation of
-    this algorithm is listed in Appendix~\ref{app:fasterdiffsrc-perl}.
-    %
-    \begin{description}
-    \item[Includes:]
-	\opt{min wordlen}, \opt{max matches}, \opt{longest match}.
-    \item[Excludes:]
-	\opt{prev matches}, \opt{header/trailer}.
-    \end{description}
-
-\end{description}
-
+\begin{table}[tbph]
+  \begin{center}
+    \begin{tabular}{r|ccccc|l}
+      \hline
+      Algorithm
+        & \begin{sideways}\opt{min words}\end{sideways}
+        & \begin{sideways}\opt{max matches}\end{sideways}
+        & \begin{sideways}\opt{header/trailer}\;\end{sideways}
+        & \begin{sideways}\opt{longest match}\;\end{sideways}
+        & \begin{sideways}\opt{prev matches}\end{sideways}
+        & Description
+        \\
+      \hline
+      \diff1 & 3 & 50 &   &   &   & Tichy method \\
+      \diff2 & 3 & 50 & x &   &   & Tichy method \\
+      \diff3 & 3 & 50 & x & x &   & WikiTrust method \\
+      \diff4 & 3 & 50 &   & x & x & WikiTrust method \\
+      \diff5 & 3 & 50 & x & x & x & WikiTrust method \\
+      \diff6 & 3 & 50 &   & x & x & WikiTrust method, production \\
+      \diff7 & 3 & 50 & x & x & x & WikiTrust method, production \\
+      \diff8 & 3 & 50 &   & x &   & WikiTrust method \\
+      \hline
+    \end{tabular}
+  \end{center}
+\caption[Listing of optimizations used by each difference algorithm.] %
+  {Listing of optimizations used by each difference algorithm.
+  See Table~\ref{tab:diff-optimizations} for a one-line summary of each
+  optimization.}
+\label{tab:diff-combinations}
+\end{table}
 
 
 \subsection{Match Quality Formulas}
