@@ -71,9 +71,10 @@ the greedy algorithms
 by modifying the greedy step; instead of selecting a match
 based on length, we use a notion of \intro{match quality}.
 
-The basic procedure for our greedy-based differencing
+\index{basic differencing algorithm}
+The procedure for our greedy-based differencing
 algorithm\footnote{Appendix~\ref{app:basicdiffsrc-perl} lists a
-\textbf{perl} language implementation of this basic algorithm.}
+\perl language implementation of this basic algorithm.}
 is:
 \begin{enumerate}
 \item Compute all possible matches (of every length):
@@ -184,7 +185,7 @@ Some optimizations that we have implemented for the differencing
 step are:
 %
 \begin{description}
-\item[\textbf{min words}]
+\item[\opt{min words}]
     We can reduce the number of potential matches examined
     by the algorithm by requiring a minimum number of words to match
     before a string will be added to the priority queue.
@@ -200,7 +201,7 @@ step are:
     a score (\eg tf-idf~\cite{Jones1972}) for words and phrases.
 
 
-\item[\textbf{max matches}]
+\item[\opt{max matches}]
     The hashtable constructed for the greedy algorithm is used
     to find the initial string prefixes for all possible matches.
     If there are too many matching string prefixes (for example,
@@ -210,7 +211,7 @@ step are:
     by a single individual.
     WikiTrust ignores string prefixes which have more than 50 matches.
 
-\item[\textbf{longest match}] Put only the longest possible match
+\item[\opt{longest match}] Put only the longest possible match
     onto the priority queue, instead of every possible match (that is, don't
     place substrings of the longest match onto the priority queue).
     This saves a lot of CPU and memory by not having to store
@@ -229,9 +230,9 @@ step are:
     modification, with some representative runtimes shown
     in Table~\ref{tab:comparediff}.
 
-\item[\textbf{prev matches}]
+\item[\opt{prev matches}]
     An optimization that we later implemented on top of
-    \textbf{longest match} is \textbf{prev matches}:
+    \opt{longest match} is \opt{prev matches}:
     if a potential starting position for matched text is part of
     a longer match, then the previous position would have
     been in the set of matches returned by the index of
@@ -242,7 +243,7 @@ step are:
     for position $j-1$.
     In this case, we do not need to examine the match.
 
-\item[\textbf{header/trailer}] When users edit an article, the beginning
+\item[\opt{header/trailer}] When users edit an article, the beginning
     and end of the article are not likely to change much.
     If the first few words of an article are the same from one revision to
     the next, it is reasonable to conclude that they are a match
@@ -274,13 +275,16 @@ Rev & Rev & Words & BasicDiff & FasterDiff \\
 \end{tabular}
 \end{center}
 \caption[Comparing our basic diff algorithm to one implementing
-    \textbf{longest match}]{
-    Comparing the execution times of two simple perl
+    \opt{longest match}]{
+    \index{basic differencing algorithm}
+    \index{faster differencing algorithm}
+    Comparing the execution times of two simple \perl
     implementations of our difference  algorithm
     on the initial revisions of the article ``Santa Cruz Beach Boardwalk.''
-    The \texttt{FasterDiff} version implements our
-    \textbf{longest match} optimization.
-    Both versions have \textbf{min words} set to 2.
+    The \algo{FasterDiff} version implements our
+    \opt{longest match} optimization.
+    Both versions have \opt{min words} set to 2.
+    \mynote{Repeat for OCaml.}
     }
 \label{tab:comparediff}
 \end{table}
@@ -305,6 +309,7 @@ We arbitrarily limit the list of previous revisions to ten:
 but observe that better selections can be made, as described
 in~\cite{Chatterjee2008}.
 
+\index{faster text tracking}
 We can further speed up tracking authorship by reducing the number
 of potential matches, similar to the optimization for the differencing
 algorithm.
@@ -339,16 +344,21 @@ Rev & Revs & BasicTextTracking & FasterTextTracking \\
 \hline
 \end{tabular}
 \end{center}
-\caption[Comparing execution times of our \textbf{basic} and
-    \textbf{fast} text tracking algorithms.]{
+\caption[Comparing execution times of our basic and
+    faster text tracking algorithms.]{
+    \index{basic text tracking}
+    \index{faster text tracking}
     Comparing the execution times of our
-    \textbf{basic} and \textbf{fast} text tracking
-    algorithms, both written in Perl, on selected versions of the article
+    basic and fast text tracking
+    algorithms, both written in \perl, on selected versions of the article
     ``Santa Cruz Beach Boardwalk.''
-    Note that Perl is an interpreted language, slower than the
+    Note that \perl is an interpreted language, slower than the
     OCaml implementation evaluated in Chapter~\ref{ch:editquality}.
     We present this data to give a flavor for the importance
     of the optimizations.
+    The faster text tracking algorithm reduces amount of work
+    done by only matching against one revision at a time, eliminating
+    potential matches found in other revisions.
 }
 \label{tab:comparetext}
 \end{table}

@@ -230,18 +230,28 @@ every other revision.
 Using that model for our intuition, we can describe the evolution of
 an article from its creation to the most recent revision as a trajectory
 in the space.
-This is very much like a drunken walk across a bridge;
+This is very much like a drunken walk along a road from one place to another;
 there is a clear start and a clear end, but an inebriated
 pedestrian won't follow a straight line.
 Using the straight line between start and end as a reference,
 we can measure the pedestrian's forward progress, as well as
-how much wasted effort he puts into moving sideways along the bridge.
+how much wasted effort he puts into moving sideways along the road.
 Figure~\ref{fig-editlong} is applying that analogy in our
 edit distance based topology, and shows one way to measure
-the forward progress.
-(Another way to measure the progress would be to compute the
-angles of the triangle and multiply the sine of the
-``work done'' angle by its length.)
+the forward progress.\footnote{Another way to measure the progress would
+  be to compute the angles of the triangle created.
+  Note that the projection of \dist{}{k-1,k} onto \dist{}{k-1,j} is not
+  necessarily ``the useful work done'' because of the possibility of
+  \textit{overshooting the future}.
+  For example, an author might contribute completely good text but include
+  an extra paragraph that is removed in the next revision; in this case,
+  the triangle formed collapses to a straight line and we have
+  $\dist{}{k-1,k} > \dist{}{k-1,j}$.
+  To account for this, we can instead calculate the projection of
+  \dist{}{k,j} onto \dist{}{k-1,j}, and subtract that projection
+  from \dist{}{k-1,j}.
+  \mynote{Review with Luca.}
+}
 
 Continuing with the physical intuition of how revisions can be
 related to each other, the reverse triangle

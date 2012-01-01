@@ -91,83 +91,83 @@ The list of algorithm variations that we tried are as follows:
 %
 \begin{description}
 
-\item[\textbf{diff1}]
+\item[\diff1]
     Implementation of the Tichy greedy algorithm, including optimizations
     suggested by Obst~\cite{Obst1987} and
     Reichenberger~\cite{Reichenberger1991}.
     \begin{description}
     \item[Includes:]
-        \textbf{min wordlen}, \textbf{max matches},
+        \opt{min wordlen}, \opt{max matches},
     \item[Excludes:]
-        \textbf{header/trailer}.
-        \textbf{longest match}, \textbf{prev matches}.
+        \opt{header/trailer}.
+        \opt{longest match}, \opt{prev matches}.
     \end{description}
 
-\item[\textbf{diff2}]
+\item[\diff2]
     Implementation of the Tichy greedy algorithm, including optimizations
     suggested by Obst~\cite{Obst1987} and
     Reichenberger~\cite{Reichenberger1991}.
-    Also includes the \textbf{header/trailer} optimization.
+    Also includes the \opt{header/trailer} optimization.
     \begin{description}
     \item[Includes:]
-        \textbf{min wordlen}, \textbf{max matches}, \textbf{header/trailer}
+        \opt{min wordlen}, \opt{max matches}, \opt{header/trailer}
     \item[Excludes:]
-        \textbf{longest match}, \textbf{prev matches}.
+        \opt{longest match}, \opt{prev matches}.
     \end{description}
 
-\item[\textbf{diff3}]
+\item[\diff3]
     This is a WikiTrust variation of difference algorithm, which prefers
-    the globally \textbf{longest match} between the source and target
+    the globally \opt{longest match} between the source and target
     revisions.
-    Without the \textbf{prev matches} optimization, this version of the algorithm
+    Without the \opt{prev matches} optimization, this version of the algorithm
     uses an associative array to track the matches made so far.
     %
     \begin{description}
     \item[Includes:]
-	\textbf{min wordlen}, \textbf{max matches},
-	\textbf{header/trailer}, \textbf{longest match}.
+	\opt{min wordlen}, \opt{max matches},
+	\opt{header/trailer}, \opt{longest match}.
     \item[Excludes:]
-	\textbf{prev matches}.
+	\opt{prev matches}.
     \end{description}
 
-\item[\textbf{diff4}]
+\item[\diff4]
     This variation of our WikiTrust difference algorithm explores another
     combination of optimizations.
-    We believe that the \textbf{header/trailer} optimization generates
+    We believe that the \opt{header/trailer} optimization generates
     an edit script which is closer to a human understanding of text
     differencing, so that we expect this variation to perform worse
-    than \textbf{diff5}, which includes that optimization.
+    than \diff5, which includes that optimization.
     %
     \begin{description}
     \item[Includes:]
-	\textbf{min wordlen}, \textbf{max matches}, \textbf{longest match},
-	\textbf{prev matches}.
+	\opt{min wordlen}, \opt{max matches}, \opt{longest match},
+	\opt{prev matches}.
     \item[Excludes:]
-	\textbf{header/trailer}.
+	\opt{header/trailer}.
     \end{description}
 
-\item[\textbf{diff5}]
-    This is an extension of \textbf{diff4} that includes the
-    \textbf{header/trailer} optimization.
+\item[\diff5]
+    This is an extension of \diff4 that includes the
+    \opt{header/trailer} optimization.
     %
     \begin{description}
     \item[Includes:]
-	\textbf{min wordlen}, \textbf{max matches},
-	\textbf{header/trailer}, \textbf{longest match}, \\
-	\textbf{prev matches}.
+	\opt{min wordlen}, \opt{max matches},
+	\opt{header/trailer}, \opt{longest match}, \\
+	\opt{prev matches}.
     \item[Excludes:] \textit{none}.
     \end{description}
 
-\item[\textbf{diff6}] This is the original difference algorithm
+\item[\diff6] This is the original difference algorithm
     for comparing two revisions in the WikiTrust system, as
     described in~\cite{Adler2007}.
     %
     \begin{description}
     \item[Includes:]
-	\textbf{min wordlen}, \textbf{max matches}, \textbf{longest match},
-	\textbf{prev matches}.
+	\opt{min wordlen}, \opt{max matches}, \opt{longest match},
+	\opt{prev matches}.
     \item[Excludes:]
-	\textbf{header/trailer}.
+	\opt{header/trailer}.
     \end{description}
     This version of the difference algorithm includes other
     functionality not described here.
@@ -176,17 +176,17 @@ The list of algorithm variations that we tried are as follows:
     and corresponds to the function \texttt{edit\_diff\_core} in
     file \texttt{chdiff.ml}.
 
-\item[\textbf{diff7}]
+\item[\diff7]
     This is the difference algorithm currently running on the live
     production
     WikiTrust system.
-    It is the same as \textbf{diff6}, with the addition of the
-    \textbf{header/trailer} optimization.
+    It is the same as \diff6, with the addition of the
+    \opt{header/trailer} optimization.
     %
     \begin{description}
     \item[Includes:]
-	\textbf{min wordlen}, \textbf{max matches}, \textbf{longest match},
-	\textbf{prev matches}, \textbf{header trailer}.
+	\opt{min wordlen}, \opt{max matches}, \opt{longest match},
+	\opt{prev matches}, \opt{header trailer}.
     \item[Excludes:] \textit{none}.
     \end{description}
     %
@@ -196,18 +196,18 @@ The list of algorithm variations that we tried are as follows:
     corresponds to the function \texttt{edit\_diff} in
     file \texttt{chdiff.ml}, available via Github.
 
-\item[\textbf{diff8}]
+\item[\diff8]
     This diff algorithm implements exactly the matching
     we describe in Chapter~\ref{ch:diff}, with all optimizations except
-    for the \textbf{header/trailer} optimization.
+    for the \opt{header/trailer} optimization.
     Additionally, a Perl language implementation of
     this algorithm is listed in Appendix~\ref{app:fasterdiffsrc-perl}.
     %
     \begin{description}
     \item[Includes:]
-	\textbf{min wordlen}, \textbf{max matches}, \textbf{longest match}.
+	\opt{min wordlen}, \opt{max matches}, \opt{longest match}.
     \item[Excludes:]
-	\textbf{prev matches}, \textbf{header trailer}.
+	\opt{prev matches}, \opt{header trailer}.
     \end{description}
 
 \end{description}
@@ -224,8 +224,7 @@ which take as parameters the length of the match (parameter $k$),
 the matching positions in the source and target revisions
 (parameters $i_1$ and $i_2$), and the total length of
 each revision (parameters $l_1$ and $l_2$);
-a ``chunk index'' (parameter $c$
-\footnote{The \textit{chunk index} refers
+a ``chunk index'' (parameter $c$\footnote{The \textit{chunk index} refers
 to which chunk a block of text comes from.
 Chunk~0 refers to the full text of the older revision being compared.
 Chunk~1 refers to text from the revision previous to that which was
@@ -251,32 +250,32 @@ combinations.
 In these, and later match quality functions we define,
 we mark with a dagger ($\dagger$) those functions which are
 not compatible with the assumption that longest matches are
-preferred, used in our \textbf{longest match} optimization
+preferred, used in our \opt{longest match} optimization
 to the difference algorithms.
 %
 \begin{description}
-\item[\textbf{mq1}]
+\item[\mq1]
     This version uses a match quality tuple of $(-k, c, 0)$.
 
-\item[\textbf{mq2}]
+\item[\mq2]
     This version uses a match quality tuple of $(-k, -c, 0)$,
     changing the sign of the chunk index to instead prefer
     matches with older revisions.
     Since the chunks older than chunk~0 are only fragments of
     deleted text, potentially longer matches in more recent
     text will be missed; for that reason, we expect this
-    match qualiy function to perform worse than \textbf{mq1}.
+    match qualiy function to perform worse than \mq1.
 
-\item[\textbf{mq3}]
+\item[\mq3]
     This version uses a match quality tuple of $(c, -k, 0)$,
     making the matching revision the dominant factor.
     ${}^\dagger$
 
-\item[\textbf{mq4}]
+\item[\mq4]
     This version uses a match quality tuple of $(-c, -k, 0)$,
     reversing the preference for matches in the most recent revision.
     We expect this match quality function to perform
-    worse than \textbf{mq3}.
+    worse than \mq3.
     ${}^\dagger$
 
 \end{description}
@@ -287,30 +286,30 @@ original WikiTrust publication~\cite{Adler2007}.
 %
 \begin{description}
 
-\item[\textbf{mq5}]
+\item[\mq5]
     Define
     \begin{equation*}
     q := \cfrac{k}{\min{l_1, k_2}} - 0.3 \cdot
         \abs{\cfrac{ i_1 + \cfrac{k}{2} }{l_1}
             - \cfrac{ i_2 + \cfrac{k}{2} }{l_2} }
     \end{equation*}
-    The match quality tuple generated by \textbf{mq5} is $(0, -c, -q)$.
+    The match quality tuple generated by \mq5 is $(0, -c, -q)$.
     ${}^\dagger$
     This is exactly the match quality used in~\cite{Adler2007}.
 
-\item[\textbf{mq6}]
-    As with \textbf{mq5}, define
+\item[\mq6]
+    As with \mq5, define
     \begin{equation*}
     q := \cfrac{k}{\min{l_1, l_2}} - 0.3 \cdot
         \abs{\cfrac{ i_1 + \cfrac{k}{2} }{l_1}
             - \cfrac{ i_2 + \cfrac{k}{2} }{l_2} }
     \end{equation*}
-    To make \textbf{mq5} compatible with the \textbf{longest match}
+    To make \mq5 compatible with the \opt{longest match}
     optimization to the difference algorithm, we introduce the
     match length as the primary discriminant:
-    the match quality tuple for \textbf{mq6} is $(-k, -c, -q)$.
+    the match quality tuple for \mq6 is $(-k, -c, -q)$.
 
-\item[\textbf{mq7}] This is a modification of \textbf{mq6}
+\item[\mq7] This is a modification of \mq6
     to change the priority of the chunk index.
     Define
     \begin{equation*}
@@ -323,7 +322,7 @@ original WikiTrust publication~\cite{Adler2007}.
 \end{description}
 
 The difficulty in working with the original WikiTrust
-match quality functions, \textbf{mq5}--\textbf{mq7},
+match quality functions, \mq5-\mq7,
 is that the definition of $q$ is doing too much.
 It tries to balance length of the match as a fraction
 of the document length, against the relative positioning
@@ -331,7 +330,7 @@ of the matches.
 To get this balance right requires much experimentation across
 many documents, and even then might require revision as
 the dynamics of group collaboration in a document change over time.
-As part of the \textbf{longest match} optimization for the
+As part of the \opt{longest match} optimization for the
 difference algorithm, it became necessary to separate the
 concern for match length from that of relative positioning,
 resulting in our current scheme of tuples to represent
@@ -341,7 +340,7 @@ of that idea:
 %
 \begin{description}
 
-\item[\textbf{mq8}] This is the quality function used in the
+\item[\mq8] This is the quality function used in the
     live production WikiTrust system.
     Define
     \begin{equation*}
@@ -355,7 +354,7 @@ of that idea:
     the match is, the closer to zero $q'$ gets.
     The final match quality tuple used is $(-k, -c, q')$.
 
-\item[\textbf{mq9}] This modification of \textbf{mq8}
+\item[\mq9] This modification of \mq8
     changes the priority of the chunk index to test
     the effect on text longevity.
     \begin{equation*}
@@ -375,14 +374,14 @@ how this choice impacts the quality of the results.
 %
 \begin{description}
 
-\item[\textbf{ed1}] This edit distance computes the sum of the lengths
+\item[\ed1] This edit distance computes the sum of the lengths
     of insertions and deletions, that is, the amount of text which
     is either added or deleted from one revisions to the next:
     \begin{equation*}
     I_{tot} + D_{tot}
     \end{equation*}
 
-\item[\textbf{ed2}] Traditionally, edit distance functions incorporate
+\item[\ed2] Traditionally, edit distance functions incorporate
     all the elements of an edit script.  We define
     this edit distance to compute the sum of the lengths
     of insertions, deletions, and move operations.
@@ -394,7 +393,7 @@ how this choice impacts the quality of the results.
     M_{sum}(m,n) = \sum_{\mathbf{Move}(i, j, k) \in E(m,n)} k \\
     \end{equation*}
     Note that any text\footnote{Technically, this should be ``most
-    text,'' because of the \textbf{min words} optimization.}
+    text,'' because of the \opt{min words} optimization.}
     which appears in both revisions which are being
     compared will be counted as a move operation, even if it has not
     relocated within the document.
@@ -404,17 +403,17 @@ how this choice impacts the quality of the results.
     Thus, we expect that this function will perform poorly because
     it will be dominated by the size of the article.
 
-\item[\textbf{ed3}]
+\item[\ed3]
     The WikiTrust difference algorithms do not keep track of replacements
     in the text; instead, a replacement appears in the edit script as
     both a deletion and corresponding insertion at the same point in the text.
-    We modify \textbf{ed1} to apply a correction factor which
+    We modify \ed1 to apply a correction factor which
     assumes that some part of the work is always a replacement:
     \begin{equation*}
     I_{tot} + D_{tot} - \frac{\min(I_{tot}, D_{tot})}{2}
     \end{equation*}
 
-\item[\textbf{ed4}] This is the edit distance described in
+\item[\ed4] This is the edit distance described in
     Section~\ref{sec:eq-distances}, first proposed in
     the original WikiTrust paper~\cite{Adler2007}.
     \begin{equation*}
@@ -422,7 +421,7 @@ how this choice impacts the quality of the results.
 		+ M_{tot}
     \end{equation*}
 
-\item[\textbf{ed5}] This is the edit distance computation used
+\item[\ed5] This is the edit distance computation used
     in the live production system of WikiTrust.
     Please refer to the source code, available at
     Github,\footnote{\url{http://www.github.com/collaborativetrust/WikiTrust}}
@@ -493,25 +492,25 @@ The most striking thing about the results presented
 in Appendix~\ref{app:editlong-data} is the clustering
 by edit distance (and to a much lesser extent, of difference
 algorithm) that occurs.
-Clearly revealed is that use of \textbf{ed5} leads to the most superior
-predictions, while \textbf{ed2} makes the worst predictions
-(and \textbf{ed4}, the second worst).
+Clearly revealed is that use of \ed5 leads to the most superior
+predictions, while \ed2 makes the worst predictions
+(and \ed4, the second worst).
 These results align with the intuition that the choice
 of edit distance function measures of the amount
 of \textit{effort} done by an author in making an edit;
 the more closely that choice matches the human intuition,
 the better the ability to compute how much effort is \textit{useful}.
-In particular, \textbf{ed2} was expected to perform poorly
+In particular, \ed2 was expected to perform poorly
 because its inclusion of all \textbf{Mov} operations leads
 to a value that is dominated by the size of the revisions,
-and \textbf{ed5} tries the hardest to estimate the amount of
+and \ed5 tries the hardest to estimate the amount of
 effort that goes into rearranging blocks of text.
 
 In Tables~\ref{tab:editlongbyed5} through~\ref{tab:editlongbyed1},
 we present the predictive performance of the algorithms,
 controlling for edit distance.
-We find that match qualities \textbf{mq1}-\textbf{mq4}
-and \textbf{mq6}-\textbf{mq7} are always grouped together.
+We find that match qualities \mq1-\mq4
+and \mq6-\mq7 are always grouped together.
 That is because these match qualities only differ from each
 other in how they treat the chunk index, which is not used in the
 edit longevity computation.
@@ -535,7 +534,7 @@ reputation scores for authors.
 the match quality function, so that it is essentially a constant
 overhead in the time.)
 The most striking feature of Table~\ref{tab:difftiming} is the unusually
-large standard deviations of \textbf{diff6} and \textbf{diff7}.
+large standard deviations of \diff6 and \diff7.
 These two algorithms turn out to have a bimodal distribution.
 \mynote{Why?  Connected component algorithm?}
 
@@ -553,73 +552,73 @@ match as used, the WikiTrust algorithm additionally
 re-traverses each match to verify it or search for
 \textit{residual} matches.
 
-In our original justification for the \textbf{longest match}
+In our original justification for the \opt{longest match}
 optimization, we argued that it would save CPU time to not have to test
 all the partial matches.
 We attempted to test this idea by implementing a version of the
-WikiTrust algorithm without the \textbf{longest match} optimization, and
+WikiTrust algorithm without the \opt{longest match} optimization, and
 found that the memory requirements were too great to execute on our machines.
 Although the optimization is clearly a useful one to make, we note that
 Table~\ref{tab:difftiming} shows that the Tichy algorithm with
-optimizations (\textbf{diff1} and \textbf{diff2})
+optimizations (\diff1 and \diff2)
 still has a significant advantage in runtime performance,
 and very similar vandalism prediction performance compared to the
 WikiTrust variations.
 
 \vspace{1pc}
 
-The ordering of \textbf{diff3}, \textbf{diff4}, and \textbf{diff5}
-allows us to infer that the \textbf{header/trailer} optimization
-is more beneficial than the \textbf{prev matches} optimization.
+The ordering of \diff3, \diff4, and \diff5
+allows us to infer that the \opt{header/trailer} optimization
+is more beneficial than the \opt{prev matches} optimization.
 Incorporated into the Reichenberger algorithm, the
-\textbf{header/trailer} optimization makes little difference
+\opt{header/trailer} optimization makes little difference
 to the running time.
 
-The caveat to use of the \textbf{header/trailer} optimization
+The caveat to use of the \opt{header/trailer} optimization
 is that it can lead to different edit scripts being computed
 to describe the transformation from one revision to the next.
-Our hypothesis was that the \textbf{header/trailer} optimization
+Our hypothesis was that the \opt{header/trailer} optimization
 more naturally conforms to a human description of how to transform
 one revision into another, leading to improved predictions of
 vandalism; this is not born out by the data in
 Tables~\ref{tab:editlongbyed5} through~\ref{tab:editlongbyed1}.
 There are three pairs of difference algorithms that are the same
-except for the use of the \textbf{header/trailer} optimization:
-\textbf{diff1}/\textbf{diff2}, \textbf{diff4}/\textbf{diff5},
-and \textbf{diff6}/\textbf{diff7}.
+except for the use of the \opt{header/trailer} optimization:
+\diff1/\diff2, \diff4/\diff5,
+and \diff6/\diff7.
 Examining the data, there is no clear advantage to including or
-not including the \textbf{header/trailer} optimization in terms of
+not including the \opt{header/trailer} optimization in terms of
 predictive ability, but it does make a significant improvement in
 the running time for the WikiTrust difference algorithms.
 
 \vspace{1pc}
 
-We proposed the \textbf{prev matches} optimization with the expectation
+We proposed the \opt{prev matches} optimization with the expectation
 that it would reduce the memory requirements of the algorithm without
 substantially changing the performance with respect to predictive
 ability.
-Comparing \textbf{diff5}, which implements \textbf{prev matches},
-with \textbf{diff3}, which does not, we find that the predictive ability
-is slightly different for match qualities \textbf{mq1} through
-\textbf{mq4}.
+Comparing \diff5, which implements \opt{prev matches},
+with \diff3, which does not, we find that the predictive ability
+is slightly different for match qualities \mq1 through
+\mq4.
 We examined this difference more carefully and found that the priority
 queue implementation will sometimes return matches in a different
 (but equivalent with respect to the priority) order.
-Match quality \textbf{mq8} is defined in a way that eliminates this
-reordering possibility, and we see that \textbf{diff3} and
-\textbf{diff5} always perform the same in this case.
+Match quality \mq8 is defined in a way that eliminates this
+reordering possibility, and we see that \diff3 and
+\diff5 always perform the same in this case.
 
-During our exploration of the differences between \textbf{diff5}
-and \textbf{diff3}, we also found that the \textbf{prev matches}
-optimization interacts with the \textbf{max matches} optimization.
+During our exploration of the differences between \diff5
+and \diff3, we also found that the \opt{prev matches}
+optimization interacts with the \opt{max matches} optimization.
 By ignoring overly common string prefixes, the ``previous match'' list
 is empty for the next starting position after the common string prefix.
 If there is a long match which spans several overly common prefixes,
-\textbf{prev matches} loses track that it is traversing a region which
+\opt{prev matches} loses track that it is traversing a region which
 already had a longer match and needlessly adds smaller matches to the
 priority queue, creating extra work.
 The timing information presented in Table~\ref{tab:difftiming} reveals
-that \textbf{prev matches} still has the advantage, but there is perhaps
+that \opt{prev matches} still has the advantage, but there is perhaps
 more performance gains to be had here.
 
 
@@ -629,7 +628,7 @@ For measuring the performance of text longevity,
 we fixed the text matching algorithm to be the one
 used in the live production system of WikiTrust,
 which is a variation of the difference algorithm
-\textbf{diff7}.\footnote{The source code implementing
+\diff7.\footnote{The source code implementing
 this functionality is available from Github,
 \url{http://www.github.com/collaborativetrust/WikiTrust},
 and corresponds to the function \texttt{text\_tracking}

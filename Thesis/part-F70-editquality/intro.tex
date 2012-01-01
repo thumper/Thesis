@@ -45,7 +45,8 @@ use page views to get a measure of how well reviewed an article is.
 Since the Wikipedia works due to the collective action of everybody
 reading the articles, we expected that pages that receive a lot of
 views would be more accurate because of the higher collective amount
-of scrutiny received.
+of scrutiny received; the more eyes looking over the text, the better
+reviewed the article would be.
 (At the time, we abandoned this line of thinking because page view
 information was not available.
 Since then, Priedhorsky~\etal show how page views can be estimated
@@ -95,8 +96,9 @@ We could answer this by treating it as the complement of insertion
 penalty to the original delete), but measuring word rearrangement
 was a completely different beast.
 The answer came in thinking of the evolution of an article
-like a random walk across a bridge: there is a definite start and a
-definite end, but the steps along the way do not always form a neat path.
+like a drunken walk along a road from one village to the next:
+there is a definite start and a definite end, but the steps along the way
+do not always form a neat path and might even drift off the path for a time.
 Defining a measure of forward progress led to our second
 quality measure, \intro{edit quality}, which we explain in
 Section~\ref{sec:editquality}.
@@ -118,7 +120,7 @@ We believe that modeling user attention --- so that there is greater
 belief in our inference for text near the edits made, and less belief
 for portions of the article not modified ---
 can improve our confidence in the inference made.
-Exploring this idea, however, we leave for future work.
+We leave the exploration of this idea to future work.
 
 The analogy to software engineering raised in Chapter~\ref{ch:diff}
 points to a host of potential quality measures, such as
