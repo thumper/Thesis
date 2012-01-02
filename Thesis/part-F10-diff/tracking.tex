@@ -2,9 +2,8 @@
 \label{sec:diff-tracking}
 
 To answer the question of which author contributed what text to a
-collaborative document, we present first the general procedure to
-perform the calculation.
-We consider the problem, without loss of generality, for
+collaborative document
+we consider the problem, without loss of generality, for
 a single article $\article{} \in \articles$,
 with $n > 0$ revisions given by
 \begin{equation*}
@@ -18,13 +17,14 @@ given by:
 \label{def:words}
 \end{equation}
 For us, a \intro{word} is a whitespace-delimited sequence of
-characters in the Wiki markup language that produces a Wikipedia article:
+characters in the Wiki markup language:
 we work at the level of such markup language, rather than at the level
 of the HTML produced by the wiki engine.
 We also desire a function that gives the \intro{author} of a
 revision; for a user $u \in \users$
 that edited and committed article $a$ when version \version{i-1}
-was the most recent, we define:
+was the previous version which user $u$ edited to create \version{i},
+we define:
 \begin{equation}
 \revauthor{\version{i}} = u.
 \label{def:revauthor}
@@ -91,24 +91,26 @@ where $\version{k} \in \prevrevs{\version{i}}$ since we are only
 interested in matches with earlier revisions; we will better describe
 this calculation in the next section.
 
-This definition of $\match{}$ is extremely general; it merely
+This definition of $\match{}$ is extremely general in that it only
+defines the inputs and outputs of the function; it merely
 says that word $w_r$ of \version{i} matches with some other word $w_s$
 of \version{k}, where \version{k} is in the past of \version{i}.
 There is no restriction, in this definition, that $w_s$ be the earliest
-(or latest) match in the history of revisions.
-Just the fact that two words are the same is not enough to declare them
-a ``best match'' for authorship, because there will be many instances
-where the same word might have been used in different contexts and
-introduced by different authors.
-This notion of the context of a word is what guides our notion of
-authorship; for example, the word ``score'' in isolation is fairly
+(or latest) match in the history of revisions, or that it even be
+the exact same word (as in the case of misspellings).
+The details of the strategy to rank matches and determine the best match
+are application dependent, and you can imagine many refinements to how
+matches are made.
+For example, consider the word ``score'': in isolation is fairly
 unmemorable, but as part of the quotation ``four score and seven years
 ago'' it becomes a signature that allows nearly any school American
 school child to identify the author.
+We felt that identifying this ``context'' for a word was important to
+correctly finding matches, so WikiTrust gives preference to matching
+contiguous sequences of text.
+This is described in more detail in the next section.
 
-Ignoring, for the moment, the issue of the context of a word and how we
-specifically identify the best matching word from the history of an
-article, we can use the same idea of a recursive relation to define
+We can use the same idea of a recursive relation to define
 the author of each word $w_j \in \words{\version{i}}$:
 \begin{equation}
 \txtauthor{\version{i}, j} =

@@ -3,7 +3,7 @@
 
 Finding the difference between two strings is a long-studied problem
 known as \intro{string-to-string correction}~\cite{Wagner1974}.
-Initial work in Computer Science on this problem revolved around finding the
+Initial work in computer science on this problem revolved around finding the
 Longest Common Subsequence (LCS)~\cite{Gusfield1999}, which identifies the
 sequence of symbols\footnote{Note that the symbols need not be sequential.}
 in common between the two strings.
@@ -70,7 +70,12 @@ the match, and then proceeds to find the next available \textit{best match}.
 The general principle is the same as that used in the
 Smith-Waterman algorithm~\cite{Smith1981} (also~\cite[Ch.~10]{Sankoff1999})
 for \textit{local sequence alignment}, which iteratively locates the
-best local alignment between two nucleotide sequences.
+best local alignment between two nucleotide
+sequences.\footnote{Nucleotide sequences are more commonly referred to
+as DNA sequences, represented as sequences of A, C, T, and G to
+represent the nucleotide base pairs.  Matching between two sequences of
+DNA is important for understanding, among other things, the similarities
+and differences between species.}
 Our solution is a specialization that does not allow insertions
 and deletions within a \textit{best match} (in the context of
 Smith-Waterman, the score for an insertion or deletion would be $-\infty$).
@@ -105,14 +110,20 @@ incorporates the notion of \textit{best match}
 in a way not dissimilar to that found in the Smith-Waterman
 algorithm~\cite{Smith1981}.
 
-Specific to the Wikipedia, our work presents a different
+Our work presents a different
 dimension of the string-to-string correction problem.
 In previous formulations, solutions are optimized for abstract
 performance characteristics (\eg running time or
-edit distance~\cite{Damerau1964,Levenshtein1966});
-the Wikipedia instead computes text
-differences to present for human understanding.
-We use the block moves of Tichy~\cite{Tichy1984}, but rather
+edit distance~\cite{Damerau1964,Levenshtein1966}); these solutions sometimes
+result in edit scripts which are confusing to human readers.
+This confusion arises from ``unnatural'' edit scripts that ignore boundaries
+at the sentence or paragraph level to achieve efficiency, in contrast to
+how humans think of content at multiple levels of abstraction.
+For WikiTrust, our interest in string-to-string correction is in trying
+to estimate the amount of effort put forth by editors, so we prefer edit
+scripts which are more likely to describe the actions taken by human
+editors rather than those which are most efficient.
+To achieve this, we use the block moves of Tichy~\cite{Tichy1984}, but rather
 than using greedy selection of the longest match given a specific
 starting location, we perform a global greedy selection of the
 \textit{best match} (\eg the longest match) anywhere within the

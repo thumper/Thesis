@@ -1,9 +1,6 @@
 \section{Matching Text}
 \label{sec:diff-greedy}
 
-In defining the recursion for text authorship, we were intentionally
-vague about how to compute the best match for a piece of text
-from the history of revisions for an article.
 Our overall goal is to track \intro{text evolution},
 by which we mean observing how text shifts
 around and is added to or deleted from --- that is,
@@ -17,7 +14,7 @@ note only insertions and deletions, but we are also interested
 in noting whether text has been copied (or even just moved)
 to another part of the article so that we can assign authorship
 correctly.
-In fact, we think several properties are desirable
+We think several properties are desirable
 when determining how text is reorganized:
 \begin{itemize}
 \item When text is duplicated within an article, we prefer to assign
@@ -124,11 +121,10 @@ Appendix~\ref{app:basicdiffsrc-perl} enables this feature by a flag.}
 To prefer matches where the blocks are in similar positions,
 we can select a quality function which compares the relative
 positions of a match.
-Suppose that a match of length $k$ occurs at $i_1$ in the source
-string having length $l_1$, matching the same sequence of length $k$ at
-position $i_2$ in the target string having length $l_2$,
-then we can define a quality to preserve the
-ordering of blocks as:
+Consider a source string of length $l_1$ and a target string of
+length $l_2$, with a match occuring between them of length $k$
+at position $i_1$ in the source and $i_2$ in the target;
+then we can define a quality to preserve the ordering of blocks as:
 \begin{equation}
 q_{block} = -\left| \frac{i_1 + k/2}{l_1} - \frac{i_2 + k/2}{l_2} \right|
 \end{equation}
@@ -147,20 +143,21 @@ matches of longer length, before considering the issue
 of match quality.
 
 So far, this discussion has applied equally to the task of
-computing a difference between two strings.
-In the problem of computing text authorship, we actually
+computing a difference between two strings and the problem of computing
+text authorship.
+In the latter, we actually
 need to compute matches with multiple previous revisions
 to account for text that was deleted and then later restored.
 We describe these previous revisions as \intro{chunks} of text,
 and number them so that chunk~0 is the most recent revision.
 As stated before, we prefer matches with more recent revisions
 than with older
-revisions; if we let $c$ be the chunk that a match comes from,
-one possible quality tuple is $(-c, k, q_{block})$.
+revisions; if we let $c$ be the chunk number that a match comes from,
+one possible quality tuple is $(-c, k, q_{block})$.\footnote{%
 There are other possible quality tuples (\eg $(k, -c, q_{block})$,
 if the absolute longest match is preferred), and
 understanding the ramifications of choosing different quality
-functions is an area of potential further research.
+functions we leave to future research.}
 
 Once we have an edit script that defines how text evolves from
 previous revisions to the target (current) revision, we can then propagate

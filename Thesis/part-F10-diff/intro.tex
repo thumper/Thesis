@@ -2,25 +2,25 @@
 \section{Introduction}
 \label{sec:diff-intro}
 
-The Wikipedia is not one of a kind, either as a collaborative work or as
-a versioned document, although it is uniquely the largest such work
+The Wikipedia is both a collaborative work and
+a versioned document; it is uniquely the largest such work
 in colloquial language.
 Programming projects (especially open source projects)
 are also collaborative and versioned --- which makes for
 an interesting analogy because many of the same questions can be asked:
 \begin{enumerate}
-\item How fast did the project grow?
+%% \item How fast did the project grow?
 \item Who contributed how much to the project?
 \item How much do the different components interact?
 \item How do the components evolve over time?
 \item How many components are there in the project?
 \end{enumerate}
-Of these questions, we thought to focus on determining who contributed
+Of these questions, we focus on determining who contributed
 how much to the project; as a user contributes more, they gain experience
 in the community mores, and our working assumption is that their future
 contributions will be more valuable.
-That is, our first notion was to give credit to users for the words that
-they write\ldots\ and more words would lead to more credit.
+That is, our first principle was to give credit to users for the words that
+they write: more words would lead to more credit.
 
 In the field of software engineering, the question of ``who contributed
 how much'' is generally answered by the measure
@@ -33,7 +33,7 @@ The output of the algorithm allows us to determine which lines were added and
 deleted at each edit, and to attribute the insertions as contributions by the
 author of the second revision.
 In principle, the same technique works in the case of tracking authorship
-on the Wikipedia and should be easy to implement\ldots
+on the Wikipedia and should be easy to implement.
 
 There are a few problems with this initial model.
 The most obvious is that \textit{lines} are too granular
@@ -62,8 +62,7 @@ and in the context of the Wikipedia it seems obvious that Robert's
 work is valuable maintenance, but that Alice is the true ``author'' of the text.
 Thus, a better model of attribution (than just giving credit
 to the person who inserted the text most recently) would instead give credit
-to the author who originally created the text,
-regardless of edit wars.
+to the author who originally created the text.
 For example, the WikiTravel\footnote{\url{http://wikitravel.org}}
 site creates a tree representing
 the version history of an article: two consecutive versions
@@ -83,7 +82,7 @@ of the license agreement that applies to contributed content,
 so the problem is more than an academic one.}
 
 
-Given this framework of thinking,
+Given this framework,
 a second example is now easier to analyze for attribution:
 %
 \begin{quote}
@@ -115,5 +114,6 @@ to this end, we resort to a method based on greedy differencing
 algorithms~\cite{Reichenberger1991,Burns1997}.
 Using a greedy algorithm for computing the difference, we are
 able to find matches of old text and propagate authorship
-information to the target revision efficiently.
+information to the target revision fast enough to maintain a trust
+annotated copy of the Wikipedia in real-time on a single workstation.
 
