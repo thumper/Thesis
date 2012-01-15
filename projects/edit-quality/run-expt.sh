@@ -66,6 +66,14 @@ function doexpt {
     awk '{ print $6 }' $WORKDIR/triangles.tmp | awk -F: '{total+=$1} END{print total}'
 }
 
+# Make sure that source code is on the correct branch
+branch=$(cd $WIKITRUST; git symbolic-ref HEAD 2> /dev/null)
+branch=${branch#refs/heads/}
+if [ "$branch" != "thumper-vandalrep" ]; then
+  echo "ERROR: On wrong source branch!"
+  exit 1
+fi
+
 # First split the wiki once
 (cd $WORKDIR ; rm -rf $OUTPUT)
 (cd $WORKDIR ; mkdir -p $OUTPUT/cmds)

@@ -2,7 +2,12 @@ This directory contains code to evaluate
 reputation using the PAN2010
 corpus as a golden annotation for "bad edits".
 
-1. Follow the initial steps from "../edit-quality/README"
+1. Edit parameters in "run-expt.sh" and run as:
+    time ./run-expt.sh > expt.out 2>&1 &
+
+2. Double-check that there are no errors in the experiment:
+    grep -i trace expt.out
+    grep -i error expt.out
 
 2. Extract the reputation scores for the PAN revisions.
 

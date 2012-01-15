@@ -20,6 +20,15 @@ ENDUMP=/raid/dumps/enwiki-20100130-pages-meta-history.xml.bz2
 CORES=6
 OUTPUT=./output
 
+
+# Make sure that source code is on the correct branch
+branch=$(cd $WIKITRUST; git symbolic-ref HEAD 2> /dev/null)
+branch=${branch#refs/heads/}
+if [ "$branch" != "thumper-vandalrep" ]; then
+  echo "ERROR: On wrong source branch!"
+  exit 1
+fi
+
 mkdir -p $WORKDIR
 (cd $WORKDIR ; rm -rf $OUTPUT)
 (cd $WORKDIR ; mkdir -p $OUTPUT/cmds)
