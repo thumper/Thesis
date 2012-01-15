@@ -6,6 +6,7 @@ set -x
 WORKDIR=/raid/thumper/tmp-rep-enwiki
 WIKITRUST=/store/thumper/research/WikiTrust
 ENDUMP=/raid/dumps/enwiki-20100130-pages-meta-history.xml.bz2
+MAXMEM=2000000
 
 ## Redherring settings
 #WORKDIR=/big/thumper/tmp
@@ -42,7 +43,9 @@ cp -ar ./pan2010.csv $WORKDIR/
 cp -a $WIKITRUST/util/batch_process.py  $WORKDIR/$OUTPUT/cmds/
 
 
-(cd $WORKDIR ; time nice python $OUTPUT/cmds/batch_process.py --n_core $CORES \
+(ulimit -v $MAXMEM -m $MAXMEM -d $MAXMEM; cd $WORKDIR ; \
+  time nice python $OUTPUT/cmds/batch_process.py \
+  --n_core $CORES --nice \
   --cmd_dir $OUTPUT/cmds \
   --dir $OUTPUT --do_split --do_compute_stats --do_sort_stats \
   --do_compute_rep --do_compute_trust $ENDUMP)
