@@ -1,0 +1,26 @@
+Configure the list of hosts and working directories
+Example dist.cfg:
+===
+thumper@bsi-la.fastcoder.net	/mnt/archive3/WikiTrust/util/distribute/tmp
+thumper17@redherring.cse.ucsc.edu       /big/thumper/tmp
+===
+
+1. Build distribution on new servers
+    ./build_server.pl dist.cfg
+
+
+use the Makefile to build ocaml and all the libraries
+needed by WikiTrust.  Edit Makefile to give the path
+for where you want godi installed.
+
+Use dist_stat.pl to distribute the statistics computation across
+multiple hosts.  In file "dist.cfg" put in lines "<ssh-host>\t<dir>".
+The same host/dir pair can appear multiple times to have multiple
+evals running in parallel on the host.
+Then run as
+  ./dist_stats.pl --splits output-enwiki/split_wiki --stats output-enwiki/stats dist.cfg
+On each host, run "make dist_prep" to get the dir ready.
+
+If you are using EC2, then dist_mkcfg.pl will take the output from
+ec2-describe-instances, and generate the lines to add to dist.cfg
+
