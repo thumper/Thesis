@@ -55,7 +55,7 @@ wikitrust_src: $(SRCDIR)
 	cd $(SRCDIR); make allopt
 	mkdir -p $(WORKDIR)/cmds
 	mkdir -p $(WORKDIR)/stats
-	mkdir -p $(WORKDIR)/split_wiki
+	mkdir -p $(WORKDIR)/splits
 	cp -a $(SRCDIR)/analysis/evalwiki $(WORKDIR)/cmds
 
 

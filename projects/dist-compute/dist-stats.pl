@@ -30,6 +30,8 @@ while (@$files > 0) {
   } else {
     $task = shift @$files;
   }
+  my $left = scalar(@$files);
+  warn "There are $left files left.\n";
   do_stats($opts, $servers, $server, $task->{name});
   last if -f ".stop";
 }
