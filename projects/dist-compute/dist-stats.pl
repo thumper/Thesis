@@ -23,13 +23,13 @@ my $files = findTasks($opts);
 @$files = sort { $a->{size} <=> $b->{size} } @$files;
 while (@$files > 0) {
   my $server = getAvailServer($servers);
+  my $host = $server->{host};
   my $task = undef;
-  if ($server eq 'localhost') {
+  if ($host eq 'localhost') {
     $task = pop @$files;
   } else {
     $task = shift @$files;
   }
-  printf "working on %s, size=%d\n", $task->{name}, $task->{size};
   do_stats($opts, $servers, $server, $task->{name});
   last if -f ".stop";
 }
