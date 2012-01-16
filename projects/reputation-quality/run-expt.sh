@@ -2,25 +2,7 @@
 set -e
 set -x
 
-## Gaston settings
-WORKDIR=/raid/thumper/tmp-rep-enwiki
-WIKITRUST=/store/thumper/research/WikiTrust
-ENDUMP=/raid/dumps/enwiki-20100130-pages-meta-history.xml.bz2
-MAXMEM=2000000
-
-## Redherring settings
-#WORKDIR=/big/thumper/tmp
-#WIKITRUST=/giant/thumper/research/WikiTrust
-#PANDUMP=/giant/thumper/pan2010dump.7z
-
-## Bsi-la settings
-#WORKDIR=/mnt/archive3/tmp-rep
-#WIKITRUST=/mnt/archive4/research/WikiTrust
-#ENDUMP=/mnt/archive4/enwiki/enwiki-20100130-pages-meta-history.xml.bz2
-
-CORES=6
-OUTPUT=./output
-
+. ./vars.sh
 
 # Make sure that source code is on the correct branch
 branch=$(cd $WIKITRUST; git symbolic-ref HEAD 2> /dev/null)
@@ -43,10 +25,37 @@ cp -ar ./pan2010.csv $WORKDIR/
 cp -a $WIKITRUST/util/batch_process.py  $WORKDIR/$OUTPUT/cmds/
 
 
+# splitwiki step - must run on single host
 (ulimit -v $MAXMEM -m $MAXMEM -d $MAXMEM; cd $WORKDIR ; \
   time nice python $OUTPUT/cmds/batch_process.py \
-  --n_core $CORES --nice \
-  --cmd_dir $OUTPUT/cmds \
-  --dir $OUTPUT --do_split --do_compute_stats --do_sort_stats \
+  --n_core $CORES --nice --cmd_dir $OUTPUT/cmds --dir $OUTPUT \
+  --do_split $ENDUMP)
+
+# compute stats - can be parallelized
+
+(ulimit -v $MAXMEM -m $MAXMEM -d $MAXMEM; cd $WORKDIR ; \
+  time nice python $OUTPUT/cmds/batch_process.py \
+  --n_core $CORES --nice --cmd_dir $OUTPUT/cmds --dir $OUTPUT \
+  --do_compute_stats $ENDUMP)
+
+# sort stats - must run on single host
+
+(ulimit -v $MAXMEM -m $MAXMEM -d $MAXMEM; cd $WORKDIR ; \
+  time nice python $OUTPUT/cmds/batch_process.py \
+  --n_core $CORES --nice --cmd_dir $OUTPUT/cmds --dir $OUTPUT
+  --do_sort_stats $ENDUMP)
+
+# compute rep - must run on single host
+
+(ulimit -v $MAXMEM -m $MAXMEM -d $MAXMEM; cd $WORKDIR ; \
+  time nice python $OUTPUT/cmds/batch_process.py \
+  --n_core $CORES --nice --cmd_dir $OUTPUT/cmds --dir $OUTPUT \
   --do_compute_rep --do_compute_trust $ENDUMP)
+
+# compute trust - can be parallelized
+
+(ulimit -v $MAXMEM -m $MAXMEM -d $MAXMEM; cd $WORKDIR ; \
+  time nice python $OUTPUT/cmds/batch_process.py \
+  --n_core $CORES --nice --cmd_dir $OUTPUT/cmds --dir $OUTPUT \
+  --do_compute_trust $ENDUMP)
 
