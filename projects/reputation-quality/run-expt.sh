@@ -13,7 +13,7 @@ if [ "$branch" != "thumper-vandalrep" ]; then
 fi
 
 mkdir -p $WORKDIR
-(cd $WORKDIR ; rm -rf $OUTPUT)
+#(cd $WORKDIR ; rm -rf $OUTPUT)
 (cd $WORKDIR ; mkdir -p $OUTPUT/cmds)
 mkdir -p $WORKDIR/$OUTPUT/cmds
 cp -a $WIKITRUST/analysis/*  $WORKDIR/$OUTPUT/cmds/
@@ -30,6 +30,8 @@ cp -a $WIKITRUST/util/batch_process.py  $WORKDIR/$OUTPUT/cmds/
   time nice python $OUTPUT/cmds/batch_process.py \
   --n_core $CORES --nice --cmd_dir $OUTPUT/cmds --dir $OUTPUT \
   --do_split $ENDUMP)
+
+exit 0
 
 # compute stats - can be parallelized
 
