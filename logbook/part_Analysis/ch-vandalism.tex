@@ -87,7 +87,7 @@ for a single revision, as each judge modifies the authors reputation.
 While looking at the output, I noticed that the author reputation
 doesn't actually seem to change.
 I tracked this down to the \texttt{Computerep.store\_rep}
-function, which rounds reputations to the lower hundreth.
+function, which rounds reputations to the lower hundredth.
 On my small test file, this results in no reputations being
 adjusted --- but that's probably part of the ``robust reputation''
 work that has been added in.
@@ -220,6 +220,86 @@ $ time ../batch_process.py --cmd_dir ./tools --dir output-enwiki --do_split --do
 \subsection{21-Sept-2011}
 
 About that boolean flag to do PAN judgements, I added an option
-\texttt{--do_pan} which triggers the PAN style computation.
+\texttt{--do\_pan} which triggers the PAN style computation.
 So the above command is safe to run.
+
+\subsection{15-Jan-2012}
+
+To make sure that the computations could run to completion, I did a test
+run in October over the Italian Wikipedia.
+Since I have been having problems with remembering the arguments I want
+to use, I created the \file{projects/reputation-quality/run-expt.sh}
+script.
+It copies all the commands to a working directory so that I can't screw
+up by recompiling something while there is a run going.
+For this experiment, I want to use normal judgements rather than PAN
+judgements
+The run on the Italian Wikipedia looked to be successful, so I started
+again with trying to compute for the English
+
+After various problems, a run on the English Wikipedia recently finished
+on Gaston, in \file{/raid/thumper/tmp-rep-enwiki}.
+There are some problems:
+\begin{itemize}
+\item The \file{user\_reputations.txt} is empty; this doesn't seem
+right.
+\item There are no vandalrep files generated.
+\end{itemize}
+I looked into the vandalrep file issue; looking in directory
+\texttt{\$WORKDIR/output/cmds} the executables all have a timestamp of
+2011-10-09 14:15.
+Running
+\begin{verbatim}
+$ cd output/cmds
+$ strings * | grep -i vandal
+\end{verbatim}
+gives no results, so this appears to not be the correct branch of code.
+Related to that, I see in my source tree the same executables but the
+source tree is on branch \texttt{thumper} rather than
+\texttt{thumper-vandalrep}.
+
+I see that I committed to branch \texttt{thumper-vandalrep} on 2011-10-08.
+It looks like I compiled a new version of the dispatcher on 2011-10-09
+and installed it in \file{/home/wikitrust/bin}, and forgot that I was on
+the wrong branch when I restarted my experiment.
+
+That explains the second problem I discovered, by what about the first?
+The user reputation file is created by the program
+\program{generate\_reputations}, which I see ran without any reported error.
+It was invoked with \texttt{-write\_final\_reps} which only writes
+reputations at the end, so perhaps the program crashed and didn't leave
+an error?
+Ah, the program crashed as soon as it started, because the other branch
+still invokes \program{git} but I am not running from a \program{git}
+repository.
+And the \program{batch\_process.py} script does not actually check for a
+failed result from \program{generate\_reputations}, so this isn't
+captured in the log file.
+
+Now that I have figured out what happened, I have to see if I can reuse
+the partial results to redo the experiment without lengthy waiting.
+As part of my disk space saving attempts, I deleted part of the output
+from \program{splitwiki}; I've modified that program to skip over files
+that already exist (to avoid the I/O writes), and am regenerating those
+files.  The rest of the programs require rerunning to get all the
+reputation data, so I need to look at \program{dist\_stats.pl} again.
+
+Created a new project directory called \file{dist-compute}.
+Discovered a problem with using \program{git} on Gaston, where it won't
+access github.com;
+upgrading to a newer version of \program{git} improves this, but won't
+let me push back to the server.
+
+\begin{verbatim}
+$ ssh gaston
+...
+$ cd Thesis/projects/dist-compute
+$ make -f new-server.mk wikitrust_src SRCDIR=/store/thumper/research/WikiTrust WORKDIR=/store/thumper/tmp
+
+$ ssh redherring
+$ cd /giant/thumper/research/Thesis/projects/dist-compute
+$ make -f new-server.mk wikitrust_src SRCDIR=/giant/thumper/research/WikiTrust WORKDIR=/big/thumper/tmp
+$ export OUTPUT=/raid/thumper/tmp-rep-enwiki/output
+$ ./dist-stats.pl --split $OUTPUT/split_wiki --stats $OUTPUT/stats dist.cfg
+\end{verbatim}
 
