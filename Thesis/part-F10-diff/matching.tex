@@ -256,25 +256,25 @@ step are:
 
 \end{description}
 
+\begin{landscape}
 \begin{table}
 \begin{center}
-\begin{tabular}{| c | c || c || c | c |}
+\begin{tabular}{| c | c | c || c | c | c || c | c | c | c |}
 \hline
-Source & Target & Num & WikiTrust & WikiTrust \\
-Rev & Rev & Words & BasicDiff & FasterDiff \\
+  \multicolumn{2}{| c |}{} & \multicolumn{3}{| c |}{\perl} & \multicolumn{5}{| c |}{\ocaml} \\
 \hline
-8741260 & 12175065 & 641 & 12912.27s & 7.47s \\
-12175065 & 14057051 & 641 & 47.29s & 1.15s \\
-14057051 & 17039312 & 641 & 107.47s & 1.06s \\
-17039312 & 20060015 & 641 & 114.30s & 1.04s \\
-20060015 & 20551181 & 660 & 77580.38s & 15.51s \\
+Source & Target & Num & WikiTrust & WikiTrust & Num & Tichy & WikiTrust & WikiTrust & WikiTrust \\
+Rev & Rev & Words & BasicDiff & FasterDiff & Words & \diff1 & \diff5 & \diff8 & BasicDiff \\
+\hline
+8741260 & 12175065 & 641 & 12,912.27s & 7.47s & 587 & 128\microsec & 514\microsec & 808\microsec & 526,492\microsec \\
+12175065 & 14057051 & 641 & 47.29s & 1.15s & 589 & 125\microsec & 120\microsec & 791\microsec & 133\microsec \\
+14057051 & 17039312 & 641 & 107.47s & 1.06s & 588 & 122\microsec & 127\microsec & 893\microsec & 131\microsec \\
+17039312 & 20060015 & 641 & 114.30s & 1.04s & 588 & 117\microsec & 123\microsec & 1111\microsec & 132\microsec \\
+20060015 & 20551181 & 660 & 77,580.38s & 15.51s & 588 & 129\microsec & 153\microsec & 1053\microsec & 136\microsec \\
 \hline
 \end{tabular}
 \end{center}
-\caption[Comparing our basic diff algorithm to one implementing
-    \opt{longest match}]{
-    \index{basic differencing algorithm}
-    \index{faster differencing algorithm}
+\caption[Comparing the running times of diff algorithms]{%
     Comparing the execution times of two simple \perl
     implementations of our difference  algorithm
     on the initial revisions of the article ``Santa Cruz Beach Boardwalk.''
@@ -285,6 +285,7 @@ Rev & Rev & Words & BasicDiff & FasterDiff \\
     }
 \label{tab:comparediff}
 \end{table}
+\end{landscape}
 
 There are additional optimizations we can make for computing
 text authorship, as well.
