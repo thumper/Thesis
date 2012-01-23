@@ -16,7 +16,7 @@ sub new {
   my $this = bless {
     quality => \&match_quality,
     dst => [],
-    minMatch => 2,
+    minMatch => 3,
   }, $class;
   $this->init();
   return $this;
@@ -74,10 +74,11 @@ sub match_quality {
 sub make_index {
   my ($this, $words) = @_;
   my $idx = {};
-  for (my $i = 0; $i < @$words; $i++) {
-    my $w = $words->[$i];
-    $idx->{$w} = [] if !exists $idx->{$w};
-    push @{ $idx->{$w} }, $i;
+  for (my $i = 0; $i < @$words-1; $i++) {
+    my $w1 = $words->[$i];
+    my $w2 = $words->[$i+1];
+    $idx->{$w1,$w2} = [] if !exists $idx->{$w1,$w2};
+    push @{ $idx->{$w1,$w2} }, $i;
   }
   return $idx;
 }
@@ -90,11 +91,11 @@ sub compute_heap {
   my $l2 = scalar(@$w2);
   my $idx = $this->make_index($w1);
   my $prev_matches = [];
-  for (my $i2 = 0; $i2 < @$w2; $i2++) {
+  for (my $i2 = 0; $i2 < @$w2-1; $i2++) {
     # For every unmatched word in w2,
     # find the list of matches in w1
     next if $this->{matched_dst}->[$i2];
-    my $matches = $idx->{ $w2->[$i2] } || [];
+    my $matches = $idx->{ $w2->[$i2], $w2->[$i2+1] } || [];
     foreach my $i1 (@$matches) {
       # Do we want to skip this match for some reason?
       next if $skipmatch->($chunk, $i1, $i2, $prev_matches);
