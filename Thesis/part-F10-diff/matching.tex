@@ -256,36 +256,51 @@ step are:
 
 \end{description}
 
-\begin{landscape}
+
+To give an idea of the value of the optimizations, we implemented some
+variations of the text differencing algorithms and measured the
+execution time on differencing of the initial revisions of the
+article ``Santa Cruz Beach Boardwalk.''
+We used the well-known Tichy algorithm with its own
+optimization~\cite{Tichy1984,Obst1987,Reichenberger1991}
+as a baseline, and called this \diff1.
+The most basic implementation of the WikiTrust algorithm we called
+\diff9; it places \textit{every} potential match (including substrings
+of longer matches) on a priority queue
+before processing for matches.
+For \diff8, we incorporated the \opt{longest match} optimization which
+places only the longest matching sections (that is, no substrings of
+longer matches are considered) onto the priority queue.
+Our fourth variation is \diff5, which includes the \opt{header/trailer},
+\opt{prev matches}, and \opt{longest match} optimizations.
+The numbering of these algorithms is to remain consistent with the
+evaluation done in Chapter~\ref{ch:editquality}; see
+Table~\ref{tab:diff-combinations} for a breakdown of algorithm
+variations in that context.
+
+
 \begin{table}
 \begin{center}
-\begin{tabular}{| c | c | c || c | c | c || c | c | c | c |}
+\begin{tabular}{| c | c | c || c | c | c | c |}
 \hline
-  \multicolumn{2}{| c |}{} & \multicolumn{3}{| c |}{\perl} & \multicolumn{5}{| c |}{\ocaml} \\
+Source & Target & Num & Tichy & WikiTrust & WikiTrust & WikiTrust \\
+Rev & Rev & Words & \diff1 & \diff5 & \diff8 & \diff9 \\
 \hline
-Source & Target & Num & WikiTrust & WikiTrust & Num & Tichy & WikiTrust & WikiTrust & WikiTrust \\
-Rev & Rev & Words & BasicDiff & FasterDiff & Words & \diff1 & \diff5 & \diff8 & BasicDiff \\
-\hline
-8741260 & 12175065 & 641 & 12,912.27s & 7.47s & 587 & 128\microsec & 514\microsec & 808\microsec & 526,492\microsec \\
-12175065 & 14057051 & 641 & 47.29s & 1.15s & 589 & 125\microsec & 120\microsec & 791\microsec & 133\microsec \\
-14057051 & 17039312 & 641 & 107.47s & 1.06s & 588 & 122\microsec & 127\microsec & 893\microsec & 131\microsec \\
-17039312 & 20060015 & 641 & 114.30s & 1.04s & 588 & 117\microsec & 123\microsec & 1111\microsec & 132\microsec \\
-20060015 & 20551181 & 660 & 77,580.38s & 15.51s & 588 & 129\microsec & 153\microsec & 1053\microsec & 136\microsec \\
+8741260 & 12175065 & 587 & 128\microsec & 514\microsec & 808\microsec & 526,492\microsec \\
+12175065 & 14057051 & 589 & 125\microsec & 120\microsec & 791\microsec & 133\microsec \\
+14057051 & 17039312 & 588 & 122\microsec & 127\microsec & 893\microsec & 131\microsec \\
+17039312 & 20060015 & 588 & 117\microsec & 123\microsec & 1111\microsec & 132\microsec \\
+20060015 & 20551181 & 588 & 129\microsec & 153\microsec & 1053\microsec & 136\microsec \\
 \hline
 \end{tabular}
 \end{center}
 \caption[Comparing the running times of diff algorithms]{%
-    Comparing the execution times of two simple \perl
-    implementations of our difference  algorithm
+    The execution times of four text differencing algorithms, three of
+    which are variations of the WikiTrust algoritm,
     on the initial revisions of the article ``Santa Cruz Beach Boardwalk.''
-    The \algo{FasterDiff} version implements our
-    \opt{longest match} optimization.
-    Both versions have \opt{min words} set to 2.
-    \mynote{Repeat for OCaml.}
     }
 \label{tab:comparediff}
 \end{table}
-\end{landscape}
 
 There are additional optimizations we can make for computing
 text authorship, as well.
@@ -488,9 +503,9 @@ to generate edit scripts describing the transformation from
 one revision to the next, or can edit scripts only be generated
 by video taping editors caught in the act?
 Although we do not evaluate the performance of our difference
-algorithm directly, we speculate that it might be possible to
-indirectly evaluate the performance by examining and evaluating
-a different problem which uses a difference algorithm as a basis.
+algorithm directly for this metric, we speculate that it might be
+possible to indirectly evaluate the performance by examining and
+evaluating a different problem which uses a difference algorithm as a basis.
 We investigate this idea in the evaluation of our edit quality
 measures, presented in the next chapter.
 

@@ -83,8 +83,7 @@ To provide a more complete picture of how the choice of difference
 algorithms affects the performance of the quality measures,
 we present an evaluation of some variations of the algorithms.
 Our evaluation for this chapter was implemented in OCaml for performance
-reasons\footnote{Compare the performance in Table~\ref{tab:difftiming}
-with that in Tables~\ref{tab:comparediff} and~\ref{tab:comparetext}.};
+reasons;
 the OCaml source representing these algorithms appears
 in Appendix~\ref{app:diffsrc-ocaml}.
 
@@ -120,7 +119,10 @@ implementations of WikiTrust differencing algorithm used in our
 production service.
 These two implementations are based on the same ideas explained in
 Chapter~\ref{ch:diff}, but use code originally written
-for~\cite{Adler2007} with extra optimizations.
+for~\cite{Adler2007} with extra optimizations not described here.
+Although \diff9 is presented in Table~\ref{tab:diff-combinations},
+we do not include any results for it in this chapter because of the
+prohibitive running time.
 
 
 \begin{table}[tbph]
@@ -164,6 +166,7 @@ for~\cite{Adler2007} with extra optimizations.
       \diff6 & 3 & 50 &   & x & x & WikiTrust method, production \\
       \diff7 & 3 & 50 & x & x & x & WikiTrust method, production \\
       \diff8 & 3 & 50 &   & x &   & WikiTrust method \\
+      \diff9 & 3 & 50 &   &   &   & WikiTrust method \\
       \hline
     \end{tabular}
   \end{center}
