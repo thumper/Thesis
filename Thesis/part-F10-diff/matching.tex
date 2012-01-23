@@ -3,7 +3,7 @@
 
 Our overall goal is to track \intro{text evolution},
 by which we mean observing how text shifts
-around and is added to or deleted from --- that is,
+around and is added to or deleted from ---
 understanding how it is changed from version to version
 by examining the differences.
 This is exactly the output from algorithms solving the
@@ -77,8 +77,9 @@ is:
 \item Compute all possible matches (of every length):
 \begin{eqnarray*}
 \mathrm{Matches}(\version{a}, \version{b}) = \{ (i,j,k) & |
-            & \exists k \in \mathbb{N} \ .\  (
-    \forall f \in \mathbb{Z}, 0 \le f < k, \\
+            & \exists i \in \mathbb{N}, \exists j \in \mathbb{N},
+              \exists k \in \mathbb{N} \ .\  (
+    0 \le f < k, \\
     & & \words{\version{a}} = [ p_1, p_2, \ldots, p_{l_a} ], \\
     & & \words{\version{b}} = [ q_1, q_2, \ldots, q_{l_b} ] \ . \\
     & & p_{i+f} = q_{j+f} ) \}.

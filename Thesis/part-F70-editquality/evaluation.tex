@@ -119,7 +119,14 @@ implementations of WikiTrust differencing algorithm used in our
 production service.
 These two implementations are based on the same ideas explained in
 Chapter~\ref{ch:diff}, but use code originally written
-for~\cite{Adler2007} with extra optimizations not described here.
+for~\cite{Adler2007} with extra optimizations not described
+here.\footnote{%
+Both functions are in file
+\texttt{chdiff.ml} and can be examined from our Github repository at
+\url{http://www.github.com/collaborativetrust/WikiTrust}.
+Algorithm \diff6 corresponds to function \texttt{edit\_diff\_core}, and
+\diff7 corresponds to function \texttt{edit\_diff\_live}.}
+
 Although \diff9 is presented in Table~\ref{tab:diff-combinations},
 we do not include any results for it in this chapter because of the
 prohibitive running time.
@@ -503,7 +510,6 @@ overhead in the time.)
 The most striking feature of Table~\ref{tab:difftiming} is the unusually
 large standard deviations of \diff6 and \diff7.
 These two algorithms turn out to have a bimodal distribution.
-\mynote{Why?  Connected component algorithm?}
 
 In terms of predictive performance of the difference algorithms
 themselves, there is no clear winner.

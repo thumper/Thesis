@@ -36,11 +36,11 @@ In principle, the same technique works in the case of tracking authorship
 on the Wikipedia and should be easy to implement.
 
 There are a few problems with this initial model.
-The most obvious is that \textit{lines} are too granular
+The most obvious is that \textit{lines} are too coarse grained
 a unit for tracking the evolution of English prose;
 editors frequently come in and revise phrases or
 even specific words, so it is necessary to compute
-differences at a smaller granularity;
+differences at a finer granularity;
 we chose to work with white-space delimited \textit{words}.
 A bigger problem is that text is not only inserted
 or deleted; it can also be copied or moved around.
