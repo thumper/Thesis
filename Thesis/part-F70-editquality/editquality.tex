@@ -108,7 +108,7 @@ reverted, but the idea of mapping out the edit distances of
 multiple revisions led to another idea that we favor.
 
 Instead of trying to measure whether an edit is preserved,
-let us ask the question, ``Does this edit move us in the
+let us ask the question, ``does this edit move us in the
 direction of the future of the article or does it move us away
 from the future?''
 This suggests consideration of three revisions: the one being
@@ -238,19 +238,15 @@ we can measure the pedestrian's forward progress, as well as
 how much wasted effort he puts into moving sideways along the road.
 Figure~\ref{fig-editlong} is applying that analogy in our
 edit distance based topology, and shows one way to measure
-the forward progress.\footnote{Another way to measure the progress would
-  be to compute the angles of the triangle created.
-  Note that the projection of \dist{}{k-1,k} onto \dist{}{k-1,j} is not
-  necessarily ``the useful work done'' because of the possibility of
-  \textit{overshooting the future}.
+the forward progress.\footnote{%
+  In trying to measure ``the useful work done'' there is the temptation
+  to use the projection of \dist{}{k-1,k} onto \dist{}{k-1,j} by
+  computing the angles involved.
+  This isn't correct because of the possibility of \textit{overshooting the future}.
   For example, an author might contribute completely good text but include
   an extra paragraph that is removed in the next revision; in this case,
   the triangle formed collapses to a straight line and we have
   $\dist{}{k-1,k} > \dist{}{k-1,j}$.
-  To account for this, we can instead calculate the projection of
-  \dist{}{k,j} onto \dist{}{k-1,j}, and subtract that projection
-  from \dist{}{k-1,j}.
-  \mynote{Review with Luca.}
 }
 
 Continuing with the physical intuition of how revisions can be

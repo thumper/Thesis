@@ -300,8 +300,8 @@ Rev & Rev & Words & \diff1 & \diff5 & \diff8 & \diff9 \\
 \caption[Comparing the running times of diff algorithms]{%
     The execution times of four text differencing algorithms implemented
     in \ocaml, three of which are variations of the WikiTrust algoritm,
-    on the initial filtered revisions of the article ``Santa Cruz Beach
-    Boardwalk.'' The particularly slow difference for \diff9 is typical for
+    on the initial filtered revisions of the article \underline{Santa Cruz Beach
+    Boardwalk}. The particularly slow difference for \diff9 is typical for
     cases where both the beginning and end of an article are edited,
     defeating the \opt{header/trailer} optimization; in this case, an image
     was added near the beginning and a category was added to the end.
@@ -373,7 +373,8 @@ Rev & Revs & BasicTextTracking & FasterTextTracking \\
     algorithms, both written in \perl, on selected versions of the article
     \underline{Santa Cruz Beach Boardwalk}.
     Note that \perl is an interpreted language, slower than the
-    \ocaml implementation evaluated in Chapter~\ref{ch:editquality}.
+    \ocaml implementation evaluated in Table~\ref{tab:comparediff}
+    and Chapter~\ref{ch:editquality}.
     We present this data to give a flavor for the importance
     of the optimizations.
     The faster text tracking algorithm reduces amount of work
@@ -384,14 +385,14 @@ Rev & Revs & BasicTextTracking & FasterTextTracking \\
 \end{table}
 
 
-Another optimization is again with respect to the handling of the
-previous revisions.
+An additional optimization we can make is again with respect to the
+handling of the previous revisions.
 In defining the matching algorithm, we give preference to more recent
 versions before falling back to matches against older revisions.
 Let us consider the case where a piece of text does not match in the
 most recent revision \version{k},
 but does match in some earlier revision \version{i}, so that we have $i < k$.
-Since the text does not match in any \version{j} for $j > i$,
+Since the text does not match in any \version{j} for $i < j \le k$,
 the text must have been deleted in \version{i+1} and
 never restored.
 The size of deleted text in any revision is typically much smaller
