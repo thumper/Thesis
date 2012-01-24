@@ -374,6 +374,48 @@ There's a caveat to that, though; because the index is built
 by word pairs, there is actually a minimum match length of 2.
 Confusing!
 
+\subsection{5-Feb-2012}
+
+I was just reviewing the section on the edit quality metric in my thesis.
+There is a subsection on the reverse triangle inequality, and a footnote
+I wrote about the possibility of using projections.
+My original note was about using a projection of the original edit onto
+the final vector, but Luca wrote back about the possibility of
+``overshooting the future.''
+I rewrote the footnote to use a subtraction like in our current formula,
+but with a projection for the subtrahend.
+
+Just now, while reviewing this footnote, I realized that a projection
+(and even the original subtrahend) doesn't work at all in the case of
+overshooting the future.
+
+Consider the case I give in my footnote: an author writes exactly good
+material, but includes one extra paragraph that is deemed extraneous.
+It is removed in a future revision.
+In considering the topology of the edit distances, we have a collapsed
+triangle.
+According to the scenario described, the original contribution is
+\begin{equation}
+\dist{}{k-1,k} = \dist{}{k-1,j} + \dist{}{k,j}
+\end{equation}
+but what we actually compute for the numerator is
+$\dist{}{k-1,j} - \dist{}{k,j}$.
+
+The actual contribution as describe is \dist{}{k-1,j},
+unless we argue that we are punishing the author for their extra work.
+
+Now that I think of it, that was our reasoning for not doing a
+projection of \dist{}{k,j}: we want to punish the author by the amount
+of work that someone else had to do to bring the work into line with the
+future.
+But are they being double-punished, because they did that work which
+they don't get credit for?
+I think so; it seems like we should subtract off a projection, and only
+if $\dist{}{k-1,k} < \dist{}{k-1,j}$.
+In other words, I think we should use the projection of \dist{}{k-1,k}
+onto \dist{}{k-1,j}, but make sure that it's capped to \dist{}{k-1,j}.
+\mynote{Try running this experiment.}
+
 \section{Evaluation}
 
 \subsection{9-May-2011}
