@@ -261,15 +261,16 @@ step are:
 To give an idea of the value of the optimizations, we implemented some
 variations of the text differencing algorithms and measured the
 execution time on differencing of the initial revisions of the
-article ``Santa Cruz Beach Boardwalk.''
+article \underline{Santa Cruz Beach Boardwalk}.
 We used the well-known Tichy algorithm with its own
 optimization~\cite{Tichy1984,Obst1987,Reichenberger1991}
 as a baseline, and called this \diff1.
 The most basic implementation of the WikiTrust algorithm we called
 \diff9; it places \textit{every} potential match (including substrings
 of longer matches) on a priority queue
-before processing for matches.
-For \diff8, we incorporated the \opt{longest match} optimization which
+before processing for matches, and implements the \opt{header/trailer}
+optimization.
+For \diff8, we instead incorporate the \opt{longest match} optimization which
 places only the longest matching sections (that is, no substrings of
 longer matches are considered) onto the priority queue.
 Our fourth variation is \diff5, which includes the \opt{header/trailer},
@@ -298,7 +299,11 @@ Rev & Rev & Words & \diff1 & \diff5 & \diff8 & \diff9 \\
 \caption[Comparing the running times of diff algorithms]{%
     The execution times of four text differencing algorithms, three of
     which are variations of the WikiTrust algoritm,
-    on the initial revisions of the article ``Santa Cruz Beach Boardwalk.''
+    on the initial filtered revisions of the article ``Santa Cruz Beach
+    Boardwalk.'' The particularly slow difference for \diff9 is typical for
+    cases where both the beginning and end of an article are edited,
+    defeating the \opt{header/trailer} optimization; in this case, an image
+    was added near the beginning and a category was added to the end.
     }
 \label{tab:comparediff}
 \end{table}
@@ -365,7 +370,7 @@ Rev & Revs & BasicTextTracking & FasterTextTracking \\
     Comparing the execution times of our
     basic and fast text tracking
     algorithms, both written in \perl, on selected versions of the article
-    ``Santa Cruz Beach Boardwalk.''
+    \underline{Santa Cruz Beach Boardwalk}.
     Note that \perl is an interpreted language, slower than the
     OCaml implementation evaluated in Chapter~\ref{ch:editquality}.
     We present this data to give a flavor for the importance
