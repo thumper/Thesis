@@ -260,10 +260,10 @@ step are:
 
 To give an idea of the value of the optimizations, we implemented some
 variations of the text differencing algorithms and measured the
-execution time on differencing of the initial revisions of the
+execution time on differencing of the initial filtered revisions of the
 article \underline{Santa Cruz Beach Boardwalk}.
 We used the well-known Tichy algorithm with its own
-optimization~\cite{Tichy1984,Obst1987,Reichenberger1991}
+optimizations~\cite{Tichy1984,Obst1987,Reichenberger1991}
 as a baseline, and called this \diff1.
 The most basic implementation of the WikiTrust algorithm we called
 \diff9; it places \textit{every} potential match (including substrings
@@ -279,7 +279,8 @@ The numbering of these algorithms is to remain consistent with the
 evaluation done in Chapter~\ref{ch:editquality}; see
 Table~\ref{tab:diff-combinations} for a breakdown of algorithm
 variations in that context.
-
+See Appendix~\ref{app:diffsrc-ocaml} for the specific implementation details
+of each algorithm.
 
 \begin{table}
 \begin{center}
@@ -297,8 +298,8 @@ Rev & Rev & Words & \diff1 & \diff5 & \diff8 & \diff9 \\
 \end{tabular}
 \end{center}
 \caption[Comparing the running times of diff algorithms]{%
-    The execution times of four text differencing algorithms, three of
-    which are variations of the WikiTrust algoritm,
+    The execution times of four text differencing algorithms implemented
+    in \ocaml, three of which are variations of the WikiTrust algoritm,
     on the initial filtered revisions of the article ``Santa Cruz Beach
     Boardwalk.'' The particularly slow difference for \diff9 is typical for
     cases where both the beginning and end of an article are edited,
@@ -372,7 +373,7 @@ Rev & Revs & BasicTextTracking & FasterTextTracking \\
     algorithms, both written in \perl, on selected versions of the article
     \underline{Santa Cruz Beach Boardwalk}.
     Note that \perl is an interpreted language, slower than the
-    OCaml implementation evaluated in Chapter~\ref{ch:editquality}.
+    \ocaml implementation evaluated in Chapter~\ref{ch:editquality}.
     We present this data to give a flavor for the importance
     of the optimizations.
     The faster text tracking algorithm reduces amount of work
