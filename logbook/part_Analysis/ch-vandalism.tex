@@ -303,3 +303,23 @@ $ export OUTPUT=/raid/thumper/tmp-rep-enwiki/output
 $ ./dist-stats.pl --split $OUTPUT/split_wiki --stats $OUTPUT/stats dist.cfg
 \end{verbatim}
 
+\subsection{28-Jan-2012}
+
+As part of the recovery process, I modified splitwiki to generate only
+files which are missing.
+I then ran the first part of the batch process, as defined by the
+\program{run-expt.sh} program for \file{project/reputation-quality}.
+This takes a long time, and the output is buffered by
+\file{batch\_process.py}, but it eventually completes.
+I believe all the files exist again.
+
+The distributed stats computation has also been running, but it uses
+too much I/O and CPU on our production machines.
+I am experimenting today with moving the computation to host at
+Amazon EC2 which has a lot of CPU available.
+The distributed computation is also rather slow: there are still
+about 50K files to process, but each one takes around ten seconds
+to process.
+I've started trying to migrate the split-wiki and stats directories
+to this new instance.
+
