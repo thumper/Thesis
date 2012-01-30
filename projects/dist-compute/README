@@ -24,3 +24,8 @@ On each host, run "make dist_prep" to get the dir ready.
 If you are using EC2, then dist_mkcfg.pl will take the output from
 ec2-describe-instances, and generate the lines to add to dist.cfg
 
+=====
+
+	export OUTPUT=/mnt/thumper/tmp-rep-enwiki/output
+	./dist-stats.pl --splits $OUTPUT/split_wiki --stats $OUTPUT/stats dist.cfg
+
