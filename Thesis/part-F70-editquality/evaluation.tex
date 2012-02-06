@@ -27,7 +27,7 @@ We propose that we can grossly measure the sentiment of the
 community by recognizing that there is a generally agreed upon
 standard of articles being of ``encyclopedic quality''
 which allows people to recognize vandalism when they see it.
-Accepting that premise allows us to use the PAN-WVC-10
+Accepting that premise suggests that we can use the PAN-WVC-10
 corpus~\cite{Potthast2010a} as a manually annotated data set for
 such an evaluation.
 
@@ -83,8 +83,7 @@ To provide a more complete picture of how the choice of difference
 algorithms affects the performance of the quality measures,
 we present an evaluation of some variations of the algorithms.
 Our evaluation for this chapter was implemented in \ocaml for performance
-reasons;
-the \ocaml source representing these algorithms appears
+reasons; the \ocaml source representing these algorithms appears
 in Appendix~\ref{app:diffsrc-ocaml}.
 
 The basis for the WikiTrust method of text differencing is a greedy
@@ -99,24 +98,19 @@ This differs from the greedy step of the Tichy method, where the
 target string is constructed from left to right by selecting the longest
 match for the next unmatched position in the target.
 To judge the efficacy of this choice, we implement both methods as part
-of our evaluation, described in Table~\ref{tab:diff-combinations}.
+of our evaluation.
 For the Tichy method, we implement the optimizations suggested by
 Obst~\cite{Obst1987} and Reichenberger~\cite{Reichenberger1991}.
 
 In Section~\ref{sec:diff-optimizations}, we propose several different
-optimizations to improve the running time of the WikiTrust method;
-see Table~\ref{tab:diff-optimizations} for a summary.
-We include a few combinations of these optimizations in our evaluation.
-Of particular note, the WikiTrust methods implemented all include the
-\opt{longest match} optimization where only the longest possible match
-given starting positions in the source and target strings are placed
-onto the priority queue.
-We briefly experimented with placing the submatches onto the priority
-queue as well, but this resulted in memory requirements exceeding the
-capacity of our servers.
-We also include for comparison \diff6 and \diff7, which are the exact
-implementations of WikiTrust differencing algorithm used in our
-production service.
+optimizations to improve the running time of the WikiTrust method and we
+include a few combinations of these optimizations in our evaluation;
+see Table~\ref{tab:diff-optimizations} for a summary of the
+optimizations, and Table~\ref{tab:diff-combinations} for a matrix of
+how we labeled the combinations of optimizations in our evaluation.
+Note that we also include for comparison \diff6 and \diff7, which are
+the exact implementations of the WikiTrust differencing algorithm used
+in our production service.
 These two implementations are based on the same ideas explained in
 Chapter~\ref{ch:diff}, but use code originally written
 for~\cite{Adler2007} with extra optimizations not described
@@ -127,19 +121,14 @@ Both functions are in file
 Algorithm \diff6 corresponds to function \texttt{edit\_diff\_core}, and
 \diff7 corresponds to function \texttt{edit\_diff\_live}.}
 
-Although \diff9 is presented in Table~\ref{tab:diff-combinations},
-we do not include any results for it in this chapter because of the
-prohibitive running time.
-
-
 \begin{table}[tbph]
   \begin{center}
     \begin{tabular}{r l}
       \hline
       \opt{min words} & minimum length of match from source to target.  \\
-      \opt{max matches} & ignore match starts that are too common in the source. \\
+      \opt{max matches} & maximum number of matching substring prefixes. \\
       \opt{longest match} & only place longest match onto priority queue. \\
-      \opt{prev matches} & use matches from previous position to determine longest match. \\
+      \opt{prev matches} & use matches from previous position to determine longer match. \\
       \opt{header/trailer} & match beginning and end of article first.  \\
       \hline
     \end{tabular}
@@ -180,7 +169,10 @@ prohibitive running time.
 \caption[Listing of optimizations used by each difference algorithm.] %
   {Listing of optimizations used by each difference algorithm.
   See Table~\ref{tab:diff-optimizations} for a one-line summary of each
-  optimization.}
+  optimization.
+  Note that \diff9 results are not presented in this chapter because of
+  its prohibitive running time, which was evaluated in
+  Chapter~\ref{ch:diff}.}
 \label{tab:diff-combinations}
 \end{table}
 
@@ -214,7 +206,7 @@ of higher quality.
 
 
 The initial set of match quality functions we present form the baseline
-functions of what would be achieved using the standard greedy
+functions of what could be used in conjunction with the standard greedy
 algorithms for text differencing.
 They use the length of the match and the chunk index in various
 combinations.
@@ -223,7 +215,10 @@ we mark with a dagger ($\dagger$) those functions which are
 not compatible with the assumption that longest matches are
 preferred, used in our \opt{longest match} optimization
 to the difference algorithms.
-%
+The implementation of each match quality function can be examined
+in Appendix~\ref{app:diffsrc-ocaml}; the function names are of
+the form \texttt{quality\_\#}.
+
 \begin{description}
 \item[\mq1]
     This version uses a match quality tuple of $(-k, c, 0)$.
@@ -342,7 +337,7 @@ The edit longevity measure uses edit distance as a proxy for the
 amount of work that an author puts into an edit.
 We tested the following definitions of edit distance to understand
 how this choice impacts the quality of the results.
-%
+
 \begin{description}
 
 \item[\ed1] This edit distance computes the sum of the lengths
@@ -397,12 +392,11 @@ how this choice impacts the quality of the results.
     It models the matches between the two strings as a graph and uses
     connected components to try to ascertain when an insertion and
     deletion pair are actually replacements.
-    This particular formulation for edit distance falls outside the
-    scope of this work, but we include the evaluation of it for
-    comparison reasons.
+    We include the evaluation of this edit distance formula for
+    comparison purposes, but detailing the specifics of this algorithm
+    falls outside the scope of this work.
     Interested readers can examine the source code, available at
-    Github,\footnote{\url{http://www.github.com/collaborativetrust/WikiTrust}}
-    for the details of this implementation.
+    Github,\footnote{\url{http://www.github.com/collaborativetrust/WikiTrust}}.
 
 \end{description}
 
@@ -484,7 +478,7 @@ In Tables~\ref{tab:editlongbyed5} through~\ref{tab:editlongbyed1},
 we present the predictive performance of the algorithms,
 controlling for edit distance.
 We find that match qualities \mq1-\mq4 and \mq6-\mq9 are always grouped
-together (shown in the tables as \mq1234 and \mq6789).
+together (shown in the tables as \mq{1234} and \mq{6789}).
 That is because these match qualities only differ from each
 other in how they treat the chunk index, which is not used in the
 edit longevity computation.
@@ -494,7 +488,7 @@ edit longevity computation.
 The typical measure used to compare difference algorithm is the
 running time, which we also measured.
 We find in Appendix~\ref{app:editlong-data} that the running time
-is usually affected by either the
+is usually little affected by either the
 match quality or the edit distance calculations, so we
 summarize the results in Table~\ref{tab:difftiming} by
 computing the average and standard deviation of running times.
@@ -531,7 +525,7 @@ greedy algorithm by nearly a factor of two.\footnote{The live
 production version of our WikiTrust code includes another technique
 for speeding up the difference computation, so that the performance
 more closely rivals the runtime of the Reichenberger versions.}
-With hindsignt, we expect this sort of result because, while both algorithms
+With hindsight, we expect this sort of result because while both algorithms
 inspect every possible match and then mark the actual
 match as used, the WikiTrust algorithm additionally
 re-traverses each match to verify it or search for
@@ -559,7 +553,7 @@ Incorporated into the Reichenberger algorithm, the
 \opt{header/trailer} optimization makes little difference
 to the running time.
 
-The caveat to use of the \opt{header/trailer} optimization
+The caveat to the use of the \opt{header/trailer} optimization
 is that it can lead to different edit scripts being computed
 to describe the transformation from one revision to the next.
 Our hypothesis was that the \opt{header/trailer} optimization
