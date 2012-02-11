@@ -36,7 +36,6 @@ while (@$files > 0) {
   last if -f ".stop";
 }
 print "All done\n";
-exit(0);
 while (scalar(keys %{$servers->{byPid}}) > 0) {
     my @left = keys %{ $servers->{byPid} };
     my $left = scalar(@left);
