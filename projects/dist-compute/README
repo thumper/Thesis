@@ -28,4 +28,5 @@ ec2-describe-instances, and generate the lines to add to dist.cfg
 
 	export OUTPUT=/mnt/thumper/tmp-rep-enwiki/output
 	./dist-stats.pl --splits $OUTPUT/split_wiki --stats $OUTPUT/stats dist.cfg
+	./dist-sortbuckets.pl --buckets $OUTPUT/buckets dist.cfg
 

@@ -67,7 +67,7 @@ sub findTasks {
 	my $sorted = $File::Find::name . ".sorted";
         my $size_orig = -s $File::Find::name;
         my $size_sorted = -s $sorted;
-	return if -f $sorted && ($size_orig != $size_sorted);
+#	return if -f $sorted && ($size_orig == $size_sorted);
 	push @tasks, { name => $File::Find::name, size => $size_orig };
     };
     find({ wanted => $wanted, follow_fast => 1, no_chdir => 1 },
@@ -104,7 +104,7 @@ sub do_sorting {
 
     my $host = $server->{host};
     my $dir = $server->{dir};
-    die "Bad dir [$dir]" if !$dir;
+    die "Bad dir [$dir]" if !$dir || !-e $dir;
     my $pid = fork();
     if ($pid) { # parent process
 	print "$pid: $file ==> $host\n";
@@ -129,7 +129,7 @@ sub do_sorting {
       $cleanup = "ssh $host '$cleanup'";
     } else {
       $cphost = '';
-      $cmd .= "$file_orig > $file_sorted";
+      $cmd .= " $file_orig > $file_sorted";
     }
     system($cmd) == 0
 	or die "system(cmd: $cmd) failed: $?";
