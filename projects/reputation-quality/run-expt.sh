@@ -22,6 +22,7 @@ rm -f $WORKDIR/$OUTPUT/cmds/*.ml
 rm -f $WORKDIR/$OUTPUT/cmds/*.cm*
 rm -f $WORKDIR/$OUTPUT/cmds/*.annot
 cp -a $WIKITRUST/util/batch_process.py  $WORKDIR/$OUTPUT/cmds/
+cp enbots.txt $WORKDIR/$OUTPUT/
 
 #
 ## splitwiki step - must run on single host
@@ -43,24 +44,26 @@ cp -a $WIKITRUST/util/batch_process.py  $WORKDIR/$OUTPUT/cmds/
 
 # sort stats - must run on single host
 
-(ulimit -v $MAXMEM -m $MAXMEM -d $MAXMEM; cd $WORKDIR ; \
-  time python $OUTPUT/cmds/batch_process.py \
-  --n_core $CORES --cmd_dir $OUTPUT/cmds --dir $OUTPUT \
-  --do_sort_stats --max_n_stats_in_memory 1100000 $ENDUMP)
-
-exit 0
+#(ulimit -v $MAXMEM -m $MAXMEM -d $MAXMEM; cd $WORKDIR ; \
+#  time python $OUTPUT/cmds/batch_process.py \
+#  --n_core $CORES --cmd_dir $OUTPUT/cmds --dir $OUTPUT \
+#  --do_sort_stats --max_n_stats_in_memory 1100000 $ENDUMP)
 
 # compute rep - must run on single host
 
 (ulimit -v $MAXMEM -m $MAXMEM -d $MAXMEM; cd $WORKDIR ; \
   time python $OUTPUT/cmds/batch_process.py \
   --n_core $CORES --cmd_dir $OUTPUT/cmds --dir $OUTPUT \
-  --do_compute_rep --do_compute_trust $ENDUMP)
+  --do_compute_rep $ENDUMP)
 
 # compute trust - can be parallelized
 
-(ulimit -v $MAXMEM -m $MAXMEM -d $MAXMEM; cd $WORKDIR ; \
-  time python $OUTPUT/cmds/batch_process.py \
-  --n_core $CORES --cmd_dir $OUTPUT/cmds --dir $OUTPUT \
+## NOTE: Last step won't run with enwiki user reputations
+## because the rep history is too large to fit in memory.
+
+#(ulimit -v $MAXMEM -m $MAXMEM -d $MAXMEM; cd $WORKDIR ; \
+#  time python $OUTPUT/cmds/batch_process.py \
+#  --n_core $CORES --cmd_dir $OUTPUT/cmds --dir $OUTPUT \
+#  --robots $OUTPUT/enbots.txt \
   --do_compute_trust $ENDUMP)
 

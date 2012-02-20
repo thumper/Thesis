@@ -24,3 +24,5 @@ MAXMEM=4000000
 CORES=32
 OUTPUT=./output
 
+#export OCAMLRUNPARAM="b,l=500M"
+

@@ -12,8 +12,8 @@ corpus as a golden annotation for "bad edits".
 2. Extract the reputation scores for the PAN revisions.
 
     ./extract-repsFrepfile.pl pan2010.csv \
-	/raid/thumper/util/tmp/output-enwiki/user_reputations.txt
-	> features-reputation.csv
+	/mnt/thumper/tmp-rep-enwiki/generate_reputations.vandalrep
+	> data/features-reputation.csv
 
 3. Extract other features from SQL files:
     ./extract-dataFsql.pl pan2010.csv \
