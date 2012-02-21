@@ -5,6 +5,14 @@ corpus as a golden annotation for "bad edits".
 1. Edit parameters in "run-expt.sh" and run as:
     time ./run-expt.sh > expt.out 2>&1 &
 
+  Note that if you're running on a large corpus like enwiki, then I/O will be a
+  limiting factor.  Use a RAID-0 array with as many disks as you can.  I used
+  8x 1TB disks on Amazon EBS, which performed decently.
+
+  Also note that run-expt.sh is broken down into the separate steps,
+  and each step is annotated with whether it can be parallelized or not.
+  Use the code in projects/dist-compute to do the parallelization.
+
 2. Double-check that there are no errors in the experiment:
     grep -i trace expt.out
     grep -i error expt.out

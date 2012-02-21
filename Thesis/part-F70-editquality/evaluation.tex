@@ -171,8 +171,8 @@ Algorithm \diff6 corresponds to function \texttt{edit\_diff\_core}, and
   See Table~\ref{tab:diff-optimizations} for a one-line summary of each
   optimization.
   Note that \diff9 results are not presented in this chapter because of
-  its prohibitive running time, which was evaluated in
-  Chapter~\ref{ch:diff}.}
+  its prohibitive running time; some results at the revision level are
+  given in Table~\ref{tab:comparediff}.}
 \label{tab:diff-combinations}
 \end{table}
 
@@ -431,7 +431,7 @@ previous revision is zero.}
 The chief measure of performance that we consider is
 the area under the precision-recall curve (PR-AUC);
 we summarize the data here, with
-the full data is available in Appendix~\ref{app:editlong-data}.
+the full data available in Appendix~\ref{app:editlong-data}.
 We chose this as the primary measure because it gives better
 discrimination between predictive models for the PAN~2010
 corpus, as explained in~\cite{Potthast2010b}.
@@ -520,7 +520,7 @@ the WikiTrust application.
 With respect to the different optimizations, Table~\ref{tab:difftiming}
 provides some insights.
 The most notable conclusion is that Reichenberger's
-difference algorithm is faster than the WikiTrust
+variation of the Tichy difference algorithm is faster than the WikiTrust
 greedy algorithm by nearly a factor of two.\footnote{The live
 production version of our WikiTrust code includes another technique
 for speeding up the difference computation, so that the performance
@@ -549,7 +549,7 @@ WikiTrust variations.
 The ordering of \diff3, \diff4, and \diff5
 allows us to infer that the \opt{header/trailer} optimization
 is more beneficial than the \opt{prev matches} optimization.
-Incorporated into the Reichenberger algorithm, the
+Incorporated into the Tichy algorithm, the
 \opt{header/trailer} optimization makes little difference
 to the running time.
 
@@ -597,7 +597,7 @@ If there is a long match which spans several overly common prefixes,
 already had a longer match and needlessly adds smaller matches to the
 priority queue, creating extra work.
 The timing information presented in Table~\ref{tab:difftiming} reveals
-that \opt{prev matches} still has the advantage, but there is perhaps
+that \opt{prev matches} still has the advantage, but there are perhaps
 more performance gains to be had here.
 
 
@@ -612,7 +612,7 @@ this functionality is available from Github,
 \url{http://www.github.com/collaborativetrust/WikiTrust},
 and corresponds to the function \texttt{text\_tracking}
 in file~\texttt{chdiff.ml}.}
-Edit distance does not affect the text longevity calculation,
+Also, the edit distance formula does not affect the text longevity calculation,
 so our only significant parameter is match quality;
 results are presented in Table~\ref{tab:textshoutA}.
 Each variation made predictions for 28,453 revisions.
@@ -620,7 +620,8 @@ Each variation made predictions for 28,453 revisions.
 The match quality function has only a very small influence on
 the performance, mirroring the small influence it has on edit longevity.
 We believe this is because the possible edit scripts for
-each edit have a high degree of overlap; that is,
+each edit due to the different match quality functions
+have a high degree of overlap; that is,
 the different algorithms generally produce the same edit script
 except for very minor differences.
 

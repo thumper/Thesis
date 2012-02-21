@@ -143,7 +143,7 @@ insert and delete operations; the difference we compute does not support
 substitutions of one word with another.
 There is previous research on allowing
 transpositions~\cite{Lowrance1975,Wagner1975,Sankoff1999} in
-computing edit distance; our work primarily differs from this
+computing edit distance; the goal of our work differs from this
 earlier work in that we prefer to select longest matches rather
 than minimizing the total edit distance computed.
 
@@ -151,7 +151,7 @@ The various proposals for edit distance that we investigated are
 computations derived from the edit script we compute.
 Tichy's original counter-example shows that globally greedy algorithms
 such as ours do not compute the minimum edit script
-(see Figure~\ref{fig:match-comparison}), making it unlikely that
+(see Figure~\ref{fig:match-comparison}), making it unlikely that our
 proposed edit distance formulas guarantee the triangle inequality.
 
 \begin{figure}[htbp]
@@ -183,6 +183,8 @@ proposed edit distance formulas guarantee the triangle inequality.
   anywhere between the two strings, and Tichy's processing of the
   target string from left-to-right and selecting the longest match
   for the given starting position in the target string.
+  The WikiTrust algorithm describes the match as three operations, while
+  the Tichy algorithm is able to match with two operations.
   This example is based on Tichy's original example demonstrating that
   a globally greedy algorithm does not result in the minimum number of
   operations~\cite{Tichy1984}.
@@ -219,9 +221,6 @@ assignment of weights:
 For convenience, we represent the situation where a word is in
 neither the source nor target revision as $w(\phi, \phi)$ and
 assign it a weight of zero.
-Note that~\textbf{ed1} assigns a weight of zero to Move operations,
-so we do not need to concern ourselves with the location of word~$x$
-in the source and target strings.
 
 We consider three revisions, just as we did in analyzing
 edit longevity in Figure~\ref{fig-editcontr}: \version{k-1},
@@ -299,9 +298,9 @@ weights:
   w(x, \phi) &= 1 \\
   w(x, x) &= 1
 \end{align*}
-These weights result in every statement holding true, even the
-alternative analysis, so that the
-full triangle inequality also holds true.
+These weights result in every statement holding true (even the
+alternative analysis when a word match is lost because of the minimum
+words requirement) so that the full triangle inequality also holds true.
 
 Examining the performance of \textbf{ed2} in
 Appendix~\ref{app:editlong-data}, we note that it was far from the best
