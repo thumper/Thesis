@@ -102,7 +102,7 @@ to finish, so I spent the weekend working on a parallel process that
 would \texttt{rsync} files to EC2 instances, do the computation,
 and then bring the files back.
 That completed this morning; about 36hrs using 20 instances plus
-my 64-bit server in LA.
+my 64-bit server in Los Angeles.
 The program I wrote I call \program{dist\_stats.pl}.
 (Note that Gaston is about halfway done with processing, so
 it speeds up as we get further into the history.)
@@ -377,3 +377,57 @@ Looking into the issue more, I realized that even our submission to
 the PAN competition was flawed because it still included text trust
 distributions, and text trust was built to include information from
 the reputations calculated.
+
+\subsection{4-Mar-2012}
+
+Got some evaluations for the the thesis.
+For a while, I thought that we added only ``article length'' for the
+collaboration with Andrew West and Santiago Mola; looking again last
+night, I found that we added several bits of metadata.
+What is interesting to me is that if I combine all this extra metadata
+with author reputation, the final results aren't as good as when I just
+add author reputation.
+My thinking is that adding so many more features makes it harder for
+Random Forest to randomly grab a good set of features to combine; could
+probably increase the results by increasing the number of trees created.
+
+Also, while thinking about my current results, I realized that we only
+include author reputation for non-anonymous edits.
+About two-thirds of the edits are non-anonymous (that's quite high,
+isn't it?), but out of those non-anonymous edits we only mispredict 281 edits.
+Well, that rocks!
+
+I used this set of commands to analyze the data:
+\begin{verbatim}
+# editid of any mispredictions; orig file contains each cross-validation run
+grep '+' complete-features.randomforest.i500.preds  | awk '{ print $1 }' | sort | uniq > errors.txt
+# how many edits are anonymous
+bunzip2 -c ../../data/wikitrust-zerodelay.csv.bz2 | awk -F, '{print $1, $4}' | grep true | wc
+# which many edits are by registered users
+bunzip2 -c ../../data/wikitrust-zerodelay.csv.bz2 | awk -F, '{print $1, $4}' | grep false | awk '{print $1}' > non-anon-edits.tmp
+# build a new prediction file of just the non-anonymous edits
+## first need to pad ids so that we match only the editid column
+sed -e 's/^/ /' non-anon-edits.tmp | sed -e 's/$/  /' > non-anon-edits.txt
+## then actually do the extraction from original prediction file
+grep -f non-anon-edits.txt complete-features.randomforest.i500.preds  > non-anon.preds
+\end{verbatim}
+
+An interesting note about the resulting prediction file: it only
+contains the output for the test set from each fold, so 281 is
+underestimating the amount of misprediction.
+I am instead adding weka options to select only instances with
+anon=false.
+
+I increased the number of trees to 1000 when combining metadata and
+reputation, and did find that the PR and ROC AUC values increased
+as I was thinking.
+\begin{verbatim}
+PR-AUC = 0.6187206
+ROC-AUC = 0.9434244
+\end{verbatim}
+
+So far having trouble using Weka's MultiFilter to chain filter commands
+together.  I ended up using \texttt{vim} to find all the anonymous
+entries and filter then out of the ARFF file.
+
+

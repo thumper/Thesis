@@ -1,18 +1,40 @@
 \section{Conclusion}
 
-\mynote{Need to come up with a conclusion.  Here are some notes.}
+Our experiment of this chapter starts with the data used by the
+WikiTrust submission in the PAN~2010 vandalism detection
+task~\cite{Adler2010b}, and compares the performance achieved
+in~\cite{Potthast2010b}
+with the performance achieved by adding author reputation as a feature.
+The result is a notable increase in predictive ability, demonstrating
+the value of maintaining author reputation scores as described in
+Chapter~\ref{ch:reputation}.
+The current system is limited to tracking reputations only for
+registered users, which biases the results against our author reputation.
 
-What is the point of vandalism detection?
-To determine whether an edit needs further review.
+A second evaluation which considers only edits by registered users
+was performed.
+This evaluation computed \mynote{add precision and recall}.
+under ten-fold cross-validation.
 
-Ultimately, Druck~\etal are right when they proclaim that
-vandalism detection must look at the content of the
-edit~\cite{Druck2008}.
-Although metadata methods for identifying bad edits are
-fairly capable, they can always be fooled by a sufficiently
-motivated vandal.
-Mola-Velasco demonstrates that language-based
-models that are language independent can do quite
-well~\cite{Mola2011}.
+Although the results of our experiment were quite positive, there are
+several further avenues that can be explored.
+West~\etal~\cite{West2010} create reputations for several different
+``entities'' based on edit metadata (\eg article reputation, category
+reputation, and country reputation based on IP geolocation), but the
+entities and method of computing reputation are completely different
+from the choices made within WikiTrust.
+As shown in~\cite{Adler2011a}, the choice of entities is complementary
+between WikiTrust and STiki and performs well when combined, but the
+actual formulas employed to compute reputation are ad hoc in nature.
+Is there some principle by which reputation algorithms can be
+constructed to give better results?
+Or a set of design choices that can be laid out~\cite{Adler2011b} with
+known benefits and costs?
+How can we choose the scope of entities to construct reputations for?
+We leave these questions open to pursue in future works.
 
+% Choosing entities is a lot like choosing failure domains.
+% Can we choose entities by building ADTrees and selecting
+% high-information decision branches?  Or maybe use the "type"
+% of the decision branches to choose the categories?
 
