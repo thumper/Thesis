@@ -15,14 +15,14 @@ We instrumented the batch processing mode of the WikiTrust
 code base to output the reputation score of each author as
 it is adjusted over time, creating a chronology of reputation scores.
 This revised code was used to process the English Wikipedia
-dump from 30-Jan-2010, which includes the time period of
+dump of 30-Jan-2010, which includes the time period of
 edits from the PAN-WVC-10 corpus.
 
 Using the timestamp of each edit in the PAN-WVC-10 corpus,
 we locate its position in the chronology and then work backwards
 to find the most recent reputation score of the author
 that appears \textit{before} the edit was made.
-These reputation stores are then merged with the collection
+These reputation scores are then merged with the collection
 of features used by the WikiTrust submission in the PAN~2010
 competition~\cite{Adler2010b}, and used to build a model to predict
 whether an edit is vandalism.
