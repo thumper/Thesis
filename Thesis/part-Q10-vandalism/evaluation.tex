@@ -14,6 +14,8 @@ as determined by the Weka package.
 There is a large class imbalance in the distribution of vandalism versus
 regular edits, leading to a difficult prediction problem because of
 needing to balance the predictive ability over the two classes.
+
+
 For example, predicting that an edit is a regular contribution has a
 precision of 95.4\% and recall of 98.4\%;
 % Precision = tp / (tp + fp) = 29428 / (29428 + 1430) = 0.9537
@@ -24,8 +26,20 @@ to achieve a precision of 67.2\% and recall of 40.1\%.
 % Recall = tp / (tp + fn) = 957 / (957 + 1430) = 0.4009
 Figure~\ref{fig:vandalrep-prcurve} shows the corresponding
 precision-recall curve of the resulting predictions.
+Using evaluation measures for classification problems, we get
+the following performance for classifying edits as vandalism:
+% Positive Predicive Value (Precision) = tp / (tp + fp)
+% Sensitivity (Recall) = tp / (tp + fn)
+% Specificity = tn / (tn + fp)
+% Accuracy = (tp +tn) / (tp + tn + fp + fn)
+\begin{align*}
+\text{Positiv Predictive Value} &= 67.2\% \\
+\text{Sensitivity} &= 40.1\% \\
+\text{Specificity} &= 98.4\% \\
+\text{Accuracy}    &= 94.1\% \\
+\end{align*}
 
-\begin{table}[tbph]
+\begin{table}[b!tph]
   \begin{center}
     \begin{tabular}{| r | c c |}
       \hline
@@ -100,17 +114,6 @@ answering our motivating question in the affirmative.
 % 11027 anonymous edits
 % 21255 non-anonymous edits
 % =32283 total edits
-% 1843 mispredictions
+% 1843 mispredictions, but probably only in test set
 
-% of non-anonymous edits, only 281 were mispredicted.
-
-Although this is a positive result, the power of author reputation is
-partly masked by the nature of this particular experiment.
-The PAN-WVC-10 corpus includes edits by both anonymous and registered
-users, but the WikiTrust reputation system only tracks a score for
-registered users.
-Examining the data more closely, we find that about two-thirds of the
-corpus ($21,255$ edits, out of $32,283$) are by registered users.
-
-\mynote{Include cross-validation data.}
 
