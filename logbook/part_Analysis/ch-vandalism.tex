@@ -365,3 +365,15 @@ realtime =none extsz=4096 blocks=0, rtextents=0
 [root@ip-10-58-99-54 output]#
 \end{verbatim}
 
+\subsection{20-Feb-2012}
+
+Still trying to get enwiki analyzed.  Got through most of the analysis,
+but now it's failing on computing the trust.
+The problem is a stack overflow in reading in the user reputation file.
+The file is 171GB, so that makes sense as a problem, since it won't
+fit into memory, even if you compress it down.
+
+Looking into the issue more, I realized that even our submission to
+the PAN competition was flawed because it still included text trust
+distributions, and text trust was built to include information from
+the reputations calculated.
