@@ -3,17 +3,17 @@
 To test our user reputation system's effectiveness, we
 evaluate its performance as part of a vandalism
 detection system.
-The PAN-WVC-10 corpus is a corpus of 32,439 edits manually
+The PAN-WVC-10 is a corpus of 32,439 edits manually
 annotated by at least three people as part of an Amazon
 Mechanical Turk task~\cite{Potthast2010a}.
-Of these edits, 2,394 (that is, 7.97\%) were classified as vandalism.
+Of these edits, 2,394 (7.97\%) were classified as vandalism.
 
-Our goal is to include the WikiTrust user reputations as a
-feature in building a model to predict vandalized edits in
+Our goal is to incorporate the WikiTrust user reputations
+in building a model to predict vandalized edits in
 the PAN-WVC-10 corpus.
-We instrumented the batch processing mode of the WikiTrust
-code base to output the reputation score of each author as
-it is adjusted over time, creating a chronology of reputation scores.
+We modified the WikiTrust
+code base to output the reputation score of each author
+over time, creating a chronology, of reputation scores.
 This revised code was used to process the English Wikipedia
 dump of 30-Jan-2010, which includes the time period of
 edits from the PAN-WVC-10 corpus.

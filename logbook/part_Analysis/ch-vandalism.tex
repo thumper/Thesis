@@ -430,4 +430,18 @@ So far having trouble using Weka's MultiFilter to chain filter commands
 together.  I ended up using \texttt{vim} to find all the anonymous
 entries and filter then out of the ARFF file.
 
+\subsection{11-Mar-2012}
 
+The lesson that I learned by looking at only non-anonymous edits is that
+we don't do much at all in terms of predicting vandalism --- we probably
+just get more non-vandalism correct.
+
+Today, Karen Zukor asked me the question: how does reputation help?
+What are you predicting better (vandalism, or regular edits, or both)?
+At the stratified cross-validation phase, we only get about 4 more
+vandalism edits correct than if we look at the whole system.
+My instinct tells me that this is because the corpus is still rather
+small, and it's smaller still when you do stratified cross-validaton.
+Note that with random variations in runs, the performance can come quite
+close to the performance achieved when reputation is not used, which is
+partly why I believe there aren't enough instances.

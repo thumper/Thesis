@@ -1,46 +1,42 @@
 \section{Evaluation}
 
 The results of the PAN~2010 competition~\cite{Potthast2010b}
-provide a benchmark of comparison for vandalism detection systems.
-Although receiver operating characteristic was used to judge the
-competition, the analysis by Potthast~\etal points to the conclusion
-that the class imbalance between vandalized and regular edits
-leads to better discriminatory power by precision-recall curves.
+provide a benchmark for vandalism detection systems.
+Although the receiver operating characteristic was used to judge the
+competition, the analysis provided by Potthast~\etal suggests
+that the precision-recall curve provides better discriminatory power
+between models due to the larg
+class imbalance between vandalized and regular edits.
 We evaluate our predictions using both methods and place them into
 the context of other previously published results.
 
 In Table~\ref{tab:vandalrep-confusion}, we present the confusion matrix
 as determined by the Weka package during stratified ten-fold cross
 validation.
-There is a large class imbalance in the distribution of vandalism versus
-regular edits, leading to a difficult prediction problem because of
-needing to balance the predictive ability over the two classes.
-
-
-For example, predicting that an edit is a regular contribution has a
+Predicting that an edit is a regular contribution has a
 precision of 95.4\% and recall of 98.4\%;
 % Precision = tp / (tp + fp) = 29428 / (29428 + 1430) = 0.9537
 % Recall = tp / (tp + fn) = 29428 / (29428 + 467) = 0.9844
-in predicting vandalism, on the other hand, our model is only able
+in predicting vandalism, our model is only able
 to achieve a precision of 67.2\% and recall of 40.1\%.
 % Precision = tp / (tp + fp) = 957 / (957 + 467) = 0.6721
 % Recall = tp / (tp + fn) = 957 / (957 + 1430) = 0.4009
 Figure~\ref{fig:vandalrep-prcurve} shows the corresponding
 precision-recall curve of the resulting predictions.
-Using evaluation measures for classification problems, we get
+Calculating other evaluation measures for classification problems, we get
 the following performance for classifying edits as vandalism:
 % Positive Predicive Value (Precision) = tp / (tp + fp)
 % Sensitivity (Recall) = tp / (tp + fn)
 % Specificity = tn / (tn + fp)
 % Accuracy = (tp +tn) / (tp + tn + fp + fn)
 \begin{align*}
-\text{Positiv Predictive Value} &= 67.2\% \\
+\text{Positive Predictive Value} &= 67.2\% \\
 \text{Sensitivity} &= 40.1\% \\
 \text{Specificity} &= 98.4\% \\
 \text{Accuracy}    &= 94.1\% \\
 \end{align*}
 
-\begin{table}[b!tph]
+\begin{table}[t!]
   \begin{center}
     \begin{tabular}{| r | c c |}
       \hline
@@ -54,7 +50,7 @@ the following performance for classifying edits as vandalism:
   \end{center}
   \caption[Confusion matrix for vandalism prediction]{%
     The confusion matrix for predicting edits of the PAN-WVC-10
-    corpus as being regular edits or the work of vandals,
+    corpus as regular edits or the work of vandals,
     during stratified ten-fold cross validation.
     Note that there is a large class imbalance in the distribution
     of how edits are truly classified.}
@@ -83,7 +79,7 @@ the following performance for classifying edits as vandalism:
       PAN~2010 WikiTrust~\cite{Potthast2010b} & 0.49263 & 0.90351 \\
       STiki (Metadata)~\cite{Adler2011a} & 0.52534 & 0.91520 \\
       PAN 2010 WikiTrust + metadata~\cite{Adler2011a} & 0.61047 & 0.93647 \\
-      PAN 2010 WikiTrust + reputation & 0.61152 & 0.94257 \\
+      \textbf{PAN 2010 WikiTrust + reputation} & 0.61152 & 0.94257 \\
       Mola-Velasco (NLP)~\cite{Adler2011a} & 0.73121 & 0.94567 \\
       Mola-Velasco + topic~\cite{Mola2011} & 0.7541 & \textit{n/a} \\
       PAN'10 Meta Detector~\cite{Potthast2010b} & 0.77609 & 0.95689 \\
@@ -100,11 +96,15 @@ the following performance for classifying edits as vandalism:
   \label{tab:vandalrep-context}
 \end{table}
 
-Understanding how to interpret these evaluative numbers is difficult,
-so we provide the area under the precision-recall and receiver operating
-characteristic curves in Table~\ref{tab:vandalrep-context}; this table
-also contains those values for previously published results to give a
-context for comparison.
+Receiver operating characteristic curves are typically used to evaluate
+the performance of binary classification algorithms but they give
+optimistic results when there is a large class
+imbalance~\cite{DavisGoadrich2006}, which we see in
+Table~\ref{tab:vandalrep-context}.
+The area under the precision-recall curve gives another perspective,
+which is correlated with the ROC for the results we present; the table
+includes values from other published results to provide a greater
+context for the evaluation.
 From this data, we can answer our motivating question: does including
 reputation as a feature result in better predictions?
 Adding revision metadata features, and using the random forest
@@ -118,4 +118,9 @@ answering our motivating question in the affirmative.
 % =32283 total edits
 % 1843 mispredictions, but probably only in test set
 
-
+The feature set in~\cite{Adler2010b} includes a field indicating whether
+or not each edit is done by an anonymous user.
+The inclusion of reputation in our current experiment results in an
+increase in performance, from which we infer that the reputation system
+is providing information about registered users and the experience they
+have accrued in editing the Wikipedia.

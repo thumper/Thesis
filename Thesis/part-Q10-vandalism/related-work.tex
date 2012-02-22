@@ -24,10 +24,12 @@ vandalism has taken place~\cite{Smets2008,Itakura2009,Belani2010},
 Administrators~\cite{West2010},
 and \textbf{edit quality} generalizes the idea of measuring the
 sentiment of the community~\cite{Adler2007,Druck2008}.
-There is an obvious trend going from \textit{manual} to
-\textit{automatic} annotation, but equally important is to observe
-that there is a trend from external judgement, to internal explicit
-judgement, to internal implicit judgement.
+There is an obvious variation from \textit{manual} to
+\textit{automatic} annotation in these choices,
+but there is another difference between them:
+external judgement from outside the Wikipedia community,
+internal explicit judgement from within the community,
+and internal implicit judgement based on actions by the community.
 Ultimately, it is the community itself which decides what is
 vandalism (\eg observe the stark contrast between the communities of
 Slashdot\footnote{\url{http://slashdot.org}} and
@@ -41,25 +43,23 @@ detection is a specialized form of trying to measure the ``noise'' in
 a community.
 
 The earliest attempts at vandalism detection within the Wikipedia come
-directly from the user community and try to encode a human intuition
+directly from the user community, and try to encode a human intuition
 of vandalism detection into an expert system (some examples
 include~\cite{wiki:AntiVandalBot,wiki:MartinBot,wiki:ClueBot,Carter2007}).
-The largest disadvantage to this class of solution is that building
+The largest disadvantage to this class of solutions is that building
 an expert system requires extensive human labor to produce the manual
-annotation and analysis required to derive custom rules from the
-annotation.
+annotation and analysis required to derive custom rules.
 Primarily, the rules developed are based on features of the actual
 content of the edit rather than on metadata (\eg an edit containing
-only capital letters is indicative of vandalism).
+profanity is indicative of vandalism).
 
-The idea that the content is the primary source of features that
-reveal the intent of the author is a natural one, and is investigated
-by several different research groups
+The idea that the content reveals the intent of the author is a natural
+one, and has been investigated by several different research groups
 (\eg~\cite{Potthast2008,Smets2008,Druck2008,Itakura2009,Chin2010}).
-Casting the problem as a machine learning binary classification
-problem, Potthast~\etal~\cite{Potthast2008} manually identify and
-inspect 301~incidents of vandalism to generate a feature set based on
-metadata and content-level features and build a classifier using
+Casting the problem as a binary classification problem to be solved by
+machine learning, Potthast~\etal~\cite{Potthast2008} manually identify
+and inspect 301~incidents of vandalism to generate a feature set based
+on metadata and content, and build a classifier using
 logistic regression.
 Smets~\etal~\cite{Smets2008} applies the ``naive bayes'' machine
 learning technique to a bag-of-words model of the edit text.
@@ -92,13 +92,12 @@ many previous works have some small dependence on metadata
 features~\cite{Potthast2008,Druck2008,Belani2010}, but only
 as far as it encoded some aspect of human intuition about vandalism.
 Drawing inspiration from other areas of research,
-West~\etal~\cite{West2010} demonstrate astonishing results because
-they are based entirely on metadata (some of which is processed into
+West~\etal~\cite{West2010} published astonishing results
+based entirely on metadata (some of which are processed into
 \textit{reputations}) that indicate there is more relatedness between
 vandals than is readily apparent to the human eye.
 One particularly interesting result was that using IP geolocation
-to cluster users leads to better predictions, presumably because
-anti-US sentiment also tends to cluster by geographic region.
+to cluster users led to better predictions.
 
 The first systematic review and organization of features appears
 by Potthast~\etal~\cite{Potthast2010b} as part of the competition
@@ -114,12 +113,12 @@ based on the nine entries and discover that the result performs
 significantly better than any single entry.
 
 User reputation systems~\cite{Zeng2006,WikiMTWtrust06,Adler2007}
-have been previously proposed as an underlying technology for
+have been proposed as an underlying technology for
 vandalism prevention or detection, and the second place entry in
 the PAN~2010 competition was a system based on the
 WikiTrust project~\cite{Adler2010b}.
 In that entry, the WikiTrust user reputation system was not
-directly used as a feature due to not having a historical record
+directly used due to not having a historical record
 of the reputation values.
 The work presented in this chapter updates the results of~\cite{Adler2010b} by
 tracking the historical user reputation values and using that

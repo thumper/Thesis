@@ -15,9 +15,6 @@ described in~\cite{Adler2010b}, a feature measuring the length
 of the article for~\cite{Adler2011a}.}
 using a random forest classifier and discovered that the performance was
 increased.
-For the experiment in this chapter, we use the same features
-from~\cite{Adler2010b} and include the author reputation at the time of
-each edit as an additional feature,
 Anonymous users have no reputation in the WikiTrust system, and receive
 a reputation score of zero within the feature set.
 
@@ -38,7 +35,7 @@ The Weka command line we used was:
 We select a set of features based on the information that is readily
 available within the pre-existing WikiTrust system, and only those which
 are available at the instant an edit is made.
-The purpose of our experiment in this work is to answer the question,
+The purpose of our experiment is to answer the question,
 ``does the WikiTrust reputation computation provide information about
 whether an edit is vandalism?''
 In order to make that judgement, we use the same features chosen
@@ -47,14 +44,12 @@ The total set of features we used are:
 %
 \begin{itemize}
 
-\item \textbf{Author reputation [Reputation].}  Author reputation is an
-obvious feature to use, since vandalism tends to be performed
+\item \textbf{Author reputation [Reputation].}
+Vandalism tends to be performed
 predominantly by anonymous or novice users, both of which have
 reputation zero in the system.
 
-\item \textbf{Author is anonymous [Anon].}  In addition to author
-reputation, we also considered the fact of whether the author was
-anonymous or not.
+\item \textbf{Author is anonymous [Anon].}
 
 \item \textbf{Time interval since the previous revision [Logtime\_prev].}
 We compute the quantity $\log(1 + t)$, where $t$ is amount of time since
@@ -73,29 +68,28 @@ revision being examined and the previous revision in the same article.
 
 \item \textbf{Revision comment length [Comment\_len].}
 The length of the comment attached to the revision.
-It seems unlikely that vandals would put any additional effort into
-providing this piece of metadata, so we included it as a trivial feature
-to compute.
+It seems unlikely that vandals would provide a comment,
+so we included it as a trivial feature to compute.
 
 \item \textbf{Previous text trust histogram [P\_prev\_hist0 \ldots P\_prev\_hist9].}
 Whenever a revision is created, WikiTrust computes the reputation (which
 we also call \intro{trust} when applied to text) of each word of the
 revision, where the reputation is an
 integer in the interval $0, \ldots, 9$~\cite{Adler2008b}.  The
-reputation of a word indicates how well the word has been revised by
-reputable authors; in particular, words that have are inserted or
+reputation of a word indicates how much the word has been revised by
+other reputable authors; in particular, words that have are inserted or
 moved by authors without reputation (including both novice and
 anonymous authors) are assigned a reputation of zero.  When the revision is
 created, WikiTrust also computes a ten column histogram detailing how
 many words of the revision have each of the ten possible reputation
-values, and stores the histogram in the database, in an entry associated
+values, and stores the histogram in the database in an entry associated
 with the revision.
-In the case of this set of features, we normalize the histogram (so that
+We normalize the histogram (so that
 the columns sum to one) of the previous revision in the same article history.
 
 \item \textbf{Current text trust histogram [Hist0 \ldots Hist9].}
-The values of the text trust histogram for the current revision were also
-provided as a feature, in this case without any normalization.
+The values of the text trust histogram for the current revision,
+without any normalization.
 
 \item \textbf{Histogram difference [L\_delta\_hist0 \ldots L\_delta\_hist9].}
 For each possible text trust value $i \in \{0, \ldots, 9\}$, we also
