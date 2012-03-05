@@ -3,16 +3,22 @@
 set -x
 set -e
 
-WEKA=/home/thumper/Downloads/tmp/weka-3-6-6
+WEKA=/home/thumper/Downloads/tmp/weka-3-7-5
 DATASET_DIR=../data
-RESULTS_DIR=results
+RESULTS_DIR=results+rep+nonanonfiltered
 
 mkdir -p $RESULTS_DIR
 
 do_the_monkey_dance() {
     local dataset=$1
     local results=$2
+    ## normal validation
     java -Xmx2G -classpath $WEKA/weka.jar weka.classifiers.meta.FilteredClassifier -t $dataset -p 1 -F "weka.filters.unsupervised.attribute.Remove -R 1,2,3" -W weka.classifiers.trees.RandomForest -- -I 500 > $results.preds
+    ## select only non-anonymous edits.
+    ## Except that this gives an error about the test instance not being available.
+    ## Instead, edit complete-features.arff, and do cmd: :g/\v^\d+,\d+,\d+,true,/d
+    ## and run normal validation
+    # java -Xmx2G -classpath $WEKA/weka.jar weka.classifiers.meta.FilteredClassifier -t $dataset -p 1 -F "weka.filters.MultiFilter -F \"weka.filters.unsupervised.instance.RemoveWithValues -C 4 -H -L 1\" -F \"weka.filters.unsupervised.attribute.Remove -R 1,2,3\"" -W weka.classifiers.trees.RandomForest -- -I 500 > $results.preds
     python graphs.py $results.preds > $results.prcurve.dat
     python to_perf.py $results.preds > $results.perf_preds
     cat $results.perf_preds | awk '{ print $2" "$1 }' > $results.perf_preds_reverse

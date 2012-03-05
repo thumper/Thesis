@@ -69,7 +69,7 @@ do {
       $revid_col = $hdr_index->{newid};
       die "Bad column spec" if !defined $revid_col;
 
-#      print "\@attribute Reputation numeric\n";
+      print "\@attribute Reputation numeric\n";
       #print "\@attribute RepBin numeric\n";
       print "\@attribute Vandalism {false,true}\n";
       print "\@data\n";
@@ -88,7 +88,7 @@ do {
         print $_[ $col_idx ], ",";
       }
 
-#      print $reps->{$revid}->{rep}, ",";
+      print $reps->{$revid}->{rep}, ",";
       #print $reps->{$revid}->{bin}, ",";
 
       my $true_class = $panrevs->{$revid}->{class} eq 'vandalism' ? 'true' : 'false';
