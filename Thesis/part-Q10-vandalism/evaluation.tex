@@ -10,7 +10,8 @@ We evaluate our predictions using both methods and place them into
 the context of other previously published results.
 
 In Table~\ref{tab:vandalrep-confusion}, we present the confusion matrix
-as determined by the Weka package.
+as determined by the Weka package during stratified ten-fold cross
+validation.
 There is a large class imbalance in the distribution of vandalism versus
 regular edits, leading to a difficult prediction problem because of
 needing to balance the predictive ability over the two classes.
@@ -53,7 +54,8 @@ the following performance for classifying edits as vandalism:
   \end{center}
   \caption[Confusion matrix for vandalism prediction]{%
     The confusion matrix for predicting edits of the PAN-WVC-10
-    corpus as being regular edits or the work of vandals.
+    corpus as being regular edits or the work of vandals,
+    during stratified ten-fold cross validation.
     Note that there is a large class imbalance in the distribution
     of how edits are truly classified.}
   \label{tab:vandalrep-confusion}
