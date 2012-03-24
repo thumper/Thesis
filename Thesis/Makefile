@@ -18,15 +18,16 @@ paper.dvi: paper*.tex paper-*/*.tex *.sty bib/*.bib part-*/*.tex
 # erase the default rule for building dvi files
 # The default rule always just tries to run tex, which isn't
 # what I want to do, in this case.
-%.dvi: %.tex
-	latexmk $<
 
-#%.pdf: %.tex %.bib
-#	latexmk -pdf $<
+paper.pdf: paper*.tex paper-*/*.tex *.sty bib/*.bib part-*/*.tex
+	latexmk -pdfdvi $<
 
-%.pdf: %.dvi
-	dvipdf $<
-
-%.ps: %.dvi
-	dvips $<
+#%.dvi: %.tex
+#	latexmk $<
+#
+#%.pdf: %.dvi
+#	dvipdf $<
+#
+#%.ps: %.dvi
+#	dvips $<
 

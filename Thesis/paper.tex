@@ -2,37 +2,53 @@
 \usepackage[T1]{fontenc}
 \usepackage{ucthesis}
 
-\usepackage{amsmath}
-\usepackage{amsthm}
-\usepackage{amssymb}
 \usepackage{xspace}
 \usepackage{graphics}
 \usepackage[pdflatex]{graphicx}
 
-\usepackage{macro}
-\usepackage{ifthen}
+\usepackage{macro}              % my own customizations
+
+%\usepackage{ifthen}
+
 \usepackage{times}
+
 \usepackage{amsfonts}
-\usepackage{latexsym}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+
+%\usepackage{latexsym}
 \usepackage{marvosym}
-\usepackage{enumerate}
+
+%\usepackage{enumerate}         % to change the style of enumeration
 \usepackage{texpoint}
+
+%% Use package{url} instead, so that links aren't clickable
 %\usepackage{hyperref}
 \usepackage{url}
-\usepackage{epic,eepic}
+
+%\usepackage{epic,eepic}
+
 \usepackage[lofdepth,lotdepth]{subfig}
-\usepackage{multirow}
+%\usepackage{multirow}
+
+% for sidewaystable environment
 \usepackage{rotating}
+
+% To format the final giant table in the appendix
 \usepackage{lscape}
 \usepackage{longtable}
-\usepackage{textcomp}
-%\usepackage[ruled,vlined]{algorithm2e}
+
+%\usepackage{textcomp}
+
+% formatting of source code in appendix
 \usepackage{listings}
+
 \usepackage{setspace}
 \doublespacing
-%\usepackage{makeidx}
 
-\makeindex
+%\usepackage{makeidx}
+%\makeindex
 
 \newif \iflong \longfalse
 \newif \ifshort \shorttrue
@@ -89,6 +105,7 @@
 
 \chapterstyle{normal}
 \singlespacing
+
 %\printindex
 
 %\bibliographystyle{plain-annote}
