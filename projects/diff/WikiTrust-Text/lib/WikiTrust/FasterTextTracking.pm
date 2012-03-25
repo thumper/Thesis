@@ -8,15 +8,17 @@ use WikiTrust::BasicTextTracking;
 
 our @ISA = qw(WikiTrust::BasicTextTracking);
 
-# Compute the edit script to transform src into dst.
-# But we only care about mov operations, so don't compute the INS and DEL
-# operations.
+# Compute the edit script to transform src into dst.  But we
+# only care about mov operations, so don't compute the INS
+# and DEL operations.
 sub edit_diff {
   my ($this, $chunk, $src) = @_;
-  # Don't call $this->init() because we want to maintain the matched_dst data,
-  # which is tracking which words have already been matched in the target
-  # string.  The heap itself will already be empty, because
-  # $this->process_best_matches() always deals with the entire heap.
+  # Don't call $this->init() because we want to maintain the
+  # matched_dst data, which is tracking which words have
+  # already been matched in the target string.  The heap
+  # itself will already be empty, because
+  # $this->process_best_matches() always deals with the
+  # entire heap.
   $this->build_heap($chunk, $src);
   my $editScript = $this->process_best_matches(
     1, $src, []

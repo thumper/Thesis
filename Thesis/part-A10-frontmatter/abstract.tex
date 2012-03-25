@@ -1,17 +1,15 @@
 \chapter{Abstract}
-\begin{comment}
-WikiTrust: Measuring Group Collaboration
-by
-B. Thomas Adler
-\end{comment}
+\begin{center}
+\textbf{WikiTrust: Content-Driven Reputation for the Wikipedia}\\
+\textbf{B. Thomas Adler}
+\end{center}
 
-The Wikipedia was initially created as the sub-project of another
-online encyclopedia, to promote collaboration between writers
-before submitting their work to a peer review process because
-the parent project was moving at a glacial pace.
+The Wikipedia was initially created to promote collaboration between writers
+before submitting their work to a peer review process, to address
+complaints about the speed of peer review.
 Ironically, the criticism most widely levied against the Wikipedia
 is the lack of accountability
-for authors (which is what allowed it to grow when the parent did not),
+for authors,
 and the potential to misinform readers.
 There is a large community around the Wikipedia project which actively
 fixes errors as they are discovered, but an unending
@@ -22,21 +20,16 @@ We suggest that vandalism detection systems can be used to help direct
 the volunteer effort on changes more likely to be a problem,
 making more efficient use of the project's human resources.
 
-We develop measures to quantify the effort of authors
-(based solely on the revision history of the Wikipedia),
-and show how these might be combined into an author
-reputation system.
+We use edit distance to quantify the effort of authors, and propose
+automated methods to evaluate the quality of this effort
+and how they might be combined into an author reputation system.
 We desire that an author's reputation be correlated with the
 stability of the text they contribute ---
 low reputation should be a predictor of future author
 contributions being edited or deleted.
 Reputation can then be another input to a vandalism detection system.
 
-We propose automated methods for evaluating the quality of
-authors, and the text they create.
-By relying on the history of edits, we can draw inferences about
-the quality of the text that has come earlier in the history.
-Instead of measuring ``truth,'' our quality ideas
+Instead of measuring the ``truth'' of contributions, our quality ideas
 measure the ``group consensus'' in a piece of text.
 As the article text stabilizes over time, we conclude that
 it has reached a form which most members of the community can

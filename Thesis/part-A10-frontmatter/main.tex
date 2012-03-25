@@ -2,8 +2,9 @@
 \begin{singlespace}
     \pagestyle{titlingpage}
 
-    \input{part-A10-frontmatter/halftitle}
-    \cleardoublepage
+%% Don't display halftitle for official submission
+%    \input{part-A10-frontmatter/halftitle}
+%    \cleardoublepage
 
     \pagenumbering{roman}
     \setcounter{page}{1}
@@ -29,7 +30,11 @@
 \pagestyle{empty}
 \input{part-A10-frontmatter/abstract}
 
-\pagestyle{plain}
 \chapterstyle{none}
+\pagestyle{plain}
 \input{part-A10-frontmatter/dedication}
+
+\chapterstyle{ucfront}
+\pagestyle{plain}
+\input{part-A10-frontmatter/acknowledgements}
 

@@ -45,26 +45,22 @@ sub fix_author {
 
 sub track_text {
   my ($this, $prevrevs) = @_;
-
   $this->init();
   my $chunk_matches = [];
-  # Instead of matching against a single previous rev,
-  # we need to build a heap of matching chunks for
-  # all the previous revs.
+
+  # Build a heap of matching chunks for all the previous revs.
   for (my $chunk = 0; $chunk < @$prevrevs; $chunk++) {
     $chunk_matches->[$chunk] = [];
     my $src = $prevrevs->[$chunk];
     $this->build_heap($chunk, $src);
   }
-  # And then find the best matches
 
+  # And then find the best matches
   my $editScript = $this->process_best_matches(1,
     $prevrevs, $chunk_matches);
-  # And copy the proper authors from the prev revs
   $this->fix_author($editScript, $prevrevs);
 
   return $this->{dst};
 }
-
 
 1;

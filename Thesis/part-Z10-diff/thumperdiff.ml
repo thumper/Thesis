@@ -145,7 +145,8 @@ let make_index_diff (words: word array) : index_t =
 
 let get_matches matched idx word_tuple =
   if Hashtbl_bounded.mem idx word_tuple then begin
-    let all_matches = Hashtbl_bounded.find_all idx word_tuple in
+    let all_matches =
+        Hashtbl_bounded.find_all idx word_tuple in
     let filt i = matched.(i) = 0 in
     let matches = List.filter filt all_matches in
     if (List.length all_matches) > max_matches then begin
@@ -510,7 +511,8 @@ let core_diff w1 w2 mkHeader mkTrailer mkEditScript =
   let matched2 = Array.make l2 0 in
   let header = mkHeader w1 w2 matched1 matched2 in
   let trailer = mkTrailer w1 w2 matched1 matched2 in
-  let editScript = mkEditScript w1 w2 matched1 matched2 l1 l2 in
+  let editScript =
+      mkEditScript w1 w2 matched1 matched2 l1 l2 in
   let editScript = cover_unmatched matched1 l1
     editScript makeDel in
   let editScript = cover_unmatched matched2 l2
@@ -533,7 +535,8 @@ let diff_2 (w1: word array) (w2: word array) =
 
 let diff_3 (w1: word array) (w2: word array) =
   let myCore w1 w2 matched1 matched2 l1 l2 =
-    let heap = build_heap_fasthash w1 w2 matched1 matched2 in
+    let heap =
+        build_heap_fasthash w1 w2 matched1 matched2 in
     process_best_matches heap matched1 matched2 l1 l2
   in
   core_diff w1 w2

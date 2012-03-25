@@ -42,8 +42,9 @@ $\version{i} \in \versions{\article{}}$), we define:
 \begin{equation*}
 \txtsrcrev{\version{i}, j} =
     \begin{cases}
-        \txtsrcrev{\version{k}, s}, & \text{if}
-        \ \match{\version{i}, j, \prevrevs{\version{i}}} = (\version{k}, s) \\
+        \txtsrcrev{\version{k}, s}, & \text{if }
+          \match{\version{i}, j, \prevrevs{\version{i}}} \\
+          & \qquad = (\version{k}, s) \\
         i, & \text{if there is no best match text.} \\
     \end{cases}
 \end{equation*}

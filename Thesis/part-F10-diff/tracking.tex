@@ -82,7 +82,7 @@ we need a function which will return the location of the so-called
 \begin{equation}
     \match{\version{i}, r, \prevrevs{\version{i}}} =
     \begin{cases}
-	(\version{k}, s) & \text{if there is a best match $w_s$ occurring in \version{k}.} \\
+	(\version{k}, s) & \text{for a best match $w_s$ occurring in \version{k}.} \\
 	\emptyset & \text{if there is no match.} \\
     \end{cases}
 \label{def:bestmatch}
@@ -116,7 +116,8 @@ the author of each word $w_j \in \words{\version{i}}$:
 \txtauthor{\version{i}, j} =
     \begin{cases}
 	\txtauthor{\version{k}, s}, & \text{if }
-	\match{\version{i}, j, \prevrevs{\version{i}}} = (\version{k}, s) \\
+	\match{\version{i}, j, \prevrevs{\version{i}}} \\
+                                    & \qquad = (\version{k}, s) \\
 	\revauthor{\version{i}}, & \text{if there is no best match text. } \\
     \end{cases}
 \label{def:txtauthor}

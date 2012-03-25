@@ -120,27 +120,31 @@
 
 
 % left, right margins and textwidth
-\setlrmarginsandblock{1.5in}{1in}{*}
+\setlrmarginsandblock{1.5in}{1.25in}{*}
 
 
-%% for main body, bottom of text at 1in, footer below
+%% for main body, bottom of text at 1.25in, footer below
 %% top of header at 1in, first text line double spaced
 %% below base of header
 \newlength{\linespace}
 \setlength{\linespace}{\baselineskip} % current equivalent of \onelineskip
+
 \setlength{\headheight}{\onelineskip}
 \setlength{\headsep}{\linespace}
 \addtolength{\headsep}{-\topskip}
-\setlength{\uppermargin}{1in}
-\addtolength{\uppermargin}{\headheight}
-\addtolength{\uppermargin}{\headsep}
+
+%% The upper margin should be 1.25, but we actually have no running
+%% headers, so we can subtract that amount.
+\setlength{\uppermargin}{1.25in}
+\addtolength{\uppermargin}{-\headsep}
 %% and for the bottom
-\setlength{\lowermargin}{1in}
+\setlength{\lowermargin}{1.25in}
+\addtolength{\lowermargin}{\headheight}
 \setlength{\textheight}{\paperheight}
 \addtolength{\textheight}{-\uppermargin}
 \addtolength{\textheight}{-\lowermargin}
 %% footnote settings
-\setlength{\footskip}{\onelineskip}
+\setlength{\footskip}{2\onelineskip}
 \setlength{\footnotesep}{\onelineskip}
 
 
@@ -160,8 +164,8 @@
   \setlength{\beforechapskip}{-\topfiddle}
   \setlength{\midchapskip}{1.0\onelineskip}
   \setlength{\afterchapskip}{1.0\onelineskip}
-  \renewcommand*{\chaptitlefont}{\normalfont\Huge}
-  \renewcommand*{\printchaptername}{\centering}}
+  \renewcommand*{\chaptitlefont}{\normalfont\bfseries\Large}
+  \renewcommand*\printchaptertitle[1]{\chaptitlefont\centering ##1\par}}
 
 
 
