@@ -4,7 +4,7 @@ The creation of a collaborative repository of knowledge is
 one of those inevitable ideas; we have been striving towards it
 for all of civilization.
 Our history is one of ever increasing communication and collaboration
-in our ambition to master our environment, from books and libraries
+in our ambition to master our environment, from books and libraries,
 to the telephone and the Internet.
 The Wikipedia seems a natural result of this history.
 And perhaps just as inevitably, there are people who seek to
@@ -30,7 +30,7 @@ In working towards that goal, this research makes the following contributions:
   measures perform much better than a random vandalism detector.
   Our \intro{text longevity} measure uses authorship information to
   compute the amount of contributed text and how it survives over
-  future revisions (it's ``rate of decay'').
+  future revisions (its ``rate of decay'').
   Our \intro{edit longevity} measure uses edit distances to estimate
   how much ``work'' of an edit goes to making an article more like a
   future instance of the article.
@@ -67,8 +67,8 @@ context of WikiTrust, some of which are described here.
 \begin{description}
 \item[\textbf{category reputation}]
     This is probably the one idea that we hear the most from audiences.
-    Everyone has this intuitive understanding that a person can be
-    an expert in one area but not another, and that some people don't
+    A person can be
+    an expert in one area but not another, but some people don't
     recognize their lack of expertise.
     By keeping track of separate reputation scores for every category,
     the system should be more able to predict the longevity of an edit.
@@ -110,8 +110,8 @@ context of WikiTrust, some of which are described here.
     of edit quality, but is there some better way to evaluate a difference
     algorithm whose aim is to model the human view of a text edit?
 
-\item[\textbf{reputation as probabilities}]  This view of reputation is
-    interesting because interpreting the results becomes clear.
+\item[\textbf{reputation as probabilities}]  This view of reputation
+    clarifies how to best interpret the results.
     It also introduces the significant question of how should probabilities
     be adjusted as new information becomes available.
     Owen Martin's work on estimating bug counts provides a nice example:
@@ -130,7 +130,7 @@ context of WikiTrust, some of which are described here.
     Identifying common idioms in the language (\eg through the use of
     tf-idf~\cite{Jones1972}) and common phrases within a topic area
     are two cases where authorship needs to be more carefully considered.
-    The greatest challenge in pursuing this avenue will be in
+    The greatest challenge here is
     determining a suitable evaluation for comparing solutions.
 
 \end{description}
