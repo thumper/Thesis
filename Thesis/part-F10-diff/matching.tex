@@ -226,8 +226,7 @@ step are:
     prefers longer matches over shorter matches, so that we encounter
     matches from the priority queue in the correct order.
     Appendix~\ref{app:fasterdiffsrc-perl} demonstrates this
-    modification, with some representative runtimes shown
-    in Table~\ref{tab:comparediff}.
+    modification.
 
 \item[\opt{prev matches}]
     An optimization that we later implemented on top of
@@ -281,7 +280,17 @@ evaluation done in Chapter~\ref{ch:editquality}; see
 Table~\ref{tab:diff-combinations} for a breakdown of algorithm
 variations in that context.
 See Appendix~\ref{app:diffsrc-ocaml} for the specific implementation details
-of each algorithm.
+of each algorithm; some representative run times are shown
+in Table~\ref{tab:comparediff}.
+The difference in run times between \diff8 and \diff9 reveal that the
+\opt{header/trailer} optimization is the most significant in reducing
+the run time; notice that \diff1 (the Tichy-based algorithm) performs
+extremely well without the \opt{header/trailer} optimization, but also
+doesn't really benefit from including it (revealed by timings in
+Table~\ref{tab:difftiming}).\footnote{The Tichy algorithm matches the
+initial ``header'' of the target revision as its first step, so the
+\opt{header/trailer} optimization does not significantly reduce the work
+performed by the algorithm.}
 
 \begin{table}
 \begin{center}

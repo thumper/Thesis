@@ -22,7 +22,8 @@ In working towards that goal, this research makes the following contributions:
   by the German chapter of the Wikipedia: \\
   \url{http://de.wikipedia.org/wiki/Benutzer:NetAction/WikiTrust}}
   This algorithm is a refinement of existing difference algorithms
-  already well-known in the literature.
+  already well-known in the literature, but we additionally outline
+  some of the ambiguities in the definition of ``authorship.''
 
 \item Two methods for determining the ``quality'' of a contribution.
   We evaluate these methods (and the underlying difference algorithms)
@@ -36,12 +37,14 @@ In working towards that goal, this research makes the following contributions:
   future instance of the article.
   Edit longevity performs very competitively
   compared to the vandalism detectors participating in the
-  PAN~2010 competition~\cite{Potthast2010b}, with the constraint that
+  PAN~2010 competition~\cite{Potthast2010b}, with the proviso that
   edit longevity uses information ``from the future'' of an edit,
   which was not available to entrants of the competition.
 
-\item A reputation system for authors and text,\footnote{A visualization
-  tool is available to users as a Firefox plugin: \\
+\item A reputation system for authors,\footnote{Our group also
+  developed a reputation system for text~\cite{Adler2008b},
+  and created a visualization
+  tool that is available to users as a Firefox plugin: \\
   \url{https://addons.mozilla.org/en-US/firefox/addon/wikitrust/}}
   which adjusts the reputation of an author based on quality feedback
   from later authors using the ideas of text and edit longevity.
@@ -51,7 +54,7 @@ In working towards that goal, this research makes the following contributions:
 \item An evaluation of features from our reputation system
   against the PAN~2010 vandalism detection
   corpus.\footnote{In further evidence of the utility of the WikiTrust
-  system , our features are being utilized by the STiki vandalism
+  system, our features are being utilized by the STiki vandalism
   detection tool~\cite{wiki:STiki}.}
 
 \end{enumerate}
