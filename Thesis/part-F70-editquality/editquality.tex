@@ -107,12 +107,41 @@ contributions are completely preserved or completely
 reverted, but the idea of mapping out the edit distances of
 multiple revisions led to another idea that we favor.
 
+
 Instead of trying to measure whether an edit is preserved,
 let us ask the question, ``does this edit move us in the
 direction of the future of the article or does it move us away
 from the future?''
-This suggests consideration of three revisions: the one being
-evaluated, one in its past, and one in its future.
+Let us consider a physical analogy to see how this might work:
+suppose that grad school was as simple as a hike through the
+Forest of Research, with graduation on the far side of it.
+The grad student starts off on a direct path towards graduation,
+but inevitably gets lost and wanders deep into the forest.
+At some point, the advisor gets involved and rescues the grad
+student, guiding him towards graduation.
+There are three distances that are involved in this scenario:
+\begin{enumerate}
+\item the work done by the grad student, from the start to
+  the point where he is rescued,
+\item the work done by the advisor, from the point of rescue
+  until graduation, and
+\item the direct path distance from start to graduation.
+\end{enumerate}
+Our original question then becomes, ``how much of the grad student's
+work contributes towards his reaching graduation?''
+From the grad student's perspective, this is easy: a triangle is formed
+by the three distances, and to calculate the ``useful work'' one
+merely drops a normal from the point of rescue to the direct path.
+The advisor has a different perspective on this calculation, however:
+his time is much more valuable, so he calculates the grad student's
+contribution by taking the minimum work necessary to go from start to
+graduation and then subtracting the amount of effort he had to put in
+himself.
+
+
+Applying this metaphor back to Wikipedia, we must take into consideration
+three revisions:
+the one being evaluated, one in its past, and one in its future.
 Figure~\ref{fig-editcontr} visually represents two cases in
 evaluating revision \version{k}, using \version{k-1}
 and \version{j} (where $j > k$) as guide posts for the general
@@ -130,14 +159,14 @@ the distance \dist{}{k,j} is larger than the distance \dist{}{k-1,j}.
 \centering
 \subfloat[
   a good edit contribution][
-  Graphical representation of a good edit contribution.]{
+  Graphical representation of a good edit contribution.]{%
   \label{fig-editcontr-a}
   \framebox{\includegraphics[width=0.35\textwidth]{part-F70-editquality/editcontr-good}}
 }
 \hspace{1ex}
 \subfloat[
   a bad edit contribution][
-  Graphical representation of a bad edit contribution.]{
+  Graphical representation of a bad edit contribution.]{%
   \label{fig-editcontr-b}
   \framebox{\includegraphics[width=0.40\textwidth]{part-F70-editquality/editcontr-bad}}
 }
