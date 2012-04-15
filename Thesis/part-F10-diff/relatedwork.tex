@@ -1,6 +1,16 @@
 \section{Related Work}
 \label{sec:diff-related}
 
+Traditionally, the \intro{author attribution} problem is one of
+identifying the anonymous author of a work, based on characteristics of
+writing style and word choice~\cite{Juola2006}.
+Our context is different: we analyze a revisioned collaborative
+document, where the author of each revision is known.
+The difficulty in our situation is determining how to assign ``credit''
+for words when they might be a reintroduction of older text.
+To approach this problem, we consider difference algorithms as a
+starting point.
+
 Finding the difference between two strings is a long-studied problem
 known as \intro{string-to-string correction}~\cite{Wagner1974}.
 Initial work in computer science on this problem revolved around finding the
