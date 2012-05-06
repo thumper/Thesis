@@ -17,14 +17,6 @@ the short-term history of an article easier to grasp with a glance.
 In working towards that goal, this research makes the following contributions:
 \begin{enumerate}
 
-\item An algorithm for determining the ``authorship'' of words in
-  revisioned documents.\footnote{This work is being explored further
-  by the German chapter of the Wikipedia: \\
-  \url{http://de.wikipedia.org/wiki/Benutzer:NetAction/WikiTrust}}
-  This algorithm is a refinement of existing difference algorithms
-  already well-known in the literature, but we additionally outline
-  some of the ambiguities in the definition of ``authorship.''
-
 \item Two methods for determining the ``quality'' of a contribution.
   We evaluate these methods (and the underlying difference algorithms)
   using the PAN~2010 vandalism detection corpus, and find that both
@@ -55,6 +47,7 @@ In working towards that goal, this research makes the following contributions:
   into the STiki vandalism detection tool~\cite{wiki:STiki}.}
 
 \end{enumerate}
+
 
 \subsection{Future Work}
 
@@ -124,7 +117,15 @@ context of WikiTrust, some of which are described here.
     of bugs?  And once the engineers have fixed the problem, can
     you be sure they haven't introduced new problems?
 
-\item[\textbf{authorship}]  As described in the concluding remarks of
+\item[\textbf{authorship}]
+    Wedevised an algorithm for determining the ``authorship'' of words in
+    revisioned documents.\footnote{This work is being explored further
+      by the German chapter of the Wikipedia: \\
+        \url{http://de.wikipedia.org/wiki/Benutzer:NetAction/WikiTrust}}
+    This algorithm is a refinement of existing difference algorithms
+    already well-known in the literature, but we additionally outline
+    some of the design considerations for this particular application.
+    As described in the concluding remarks of
     Chapter~\ref{ch:diff}, there are further refinements to be
     considered in how to assign authorship in a collaborative work.
     Identifying common idioms in the language (\eg through the use of

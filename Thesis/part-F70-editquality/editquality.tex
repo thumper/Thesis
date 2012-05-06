@@ -108,13 +108,57 @@ reverted, but the idea of mapping out the edit distances of
 multiple revisions led to another idea that we favor.
 
 
+\begin{figure}[tbph]
+  \centering
+  \framebox{\includegraphics[width=0.95\textwidth]{part-F70-editquality/fig-CartoonHike}}
+  \caption[Grad school is like hiking through the forest]{%
+    Grad school can be likened to hiking through a forest, where the
+    grad student inevitably leaves the direct path and ends up far from
+    his intended goal.  When the advisor rides to the rescue and guides
+    the grad student to graduation, we ask the question ``how much
+    useful work did each contribute by their efforts?''
+    (Character illustrations courtesy of~\cite{Cham2009}.)
+  }
+  \label{fig-gradhike}
+\end{figure}
+
+\begin{figure}[tbph]
+\centering
+\subfloat[%
+  the grad student's perspective][%
+  The grad student measures his useful effort in the traditional way,
+  by dropping a normal to the direct path.]{%
+  \label{fig-viewpoints-a}
+  \framebox{\includegraphics[width=0.95\textwidth]{part-F70-editquality/fig-GradViewpoint}}
+}
+\\
+\subfloat[%
+  the advisor's perspective][%
+  The advisor measures the useful effort of the grad student by
+  subtracting his own total effort from the minimum effort that
+  should have been necessary.  From the advisor's perspective,
+  his own effort is completely useful, and would have been unnecessary
+  if the grad student had followed the path as directed.]{%
+  \label{fig-viewpoints-b}
+  \framebox{\includegraphics[width=0.95\textwidth]{part-F70-editquality/fig-AdvisorViewpoint}}
+}
+\caption[How to measure useful effort]{%
+  How should we calculate the useful effort that the grad student in
+  Figure~\ref{fig-gradhike} contributed towards his own graduation?
+  Here are two perspectives on how to measure that.
+}
+\label{fig-viewpoints}
+\end{figure}
+
+
 Instead of trying to measure whether an edit is preserved,
 let us ask the question, ``does this edit move us in the
 direction of the future of the article or does it move us away
 from the future?''
 Let us consider a physical analogy to see how this might work:
 suppose that grad school was as simple as a hike through the
-Forest of Research, with graduation on the far side of it.
+Forest of Research, with graduation on the far side of it (see
+Figure~\ref{fig-gradhike}).
 The grad student starts off on a direct path towards graduation,
 but inevitably gets lost and wanders deep into the forest.
 At some point, the advisor gets involved and rescues the grad
@@ -129,11 +173,14 @@ There are three distances that are involved in this scenario:
 \end{enumerate}
 Our original question then becomes, ``how much of the grad student's
 work contributes towards his reaching graduation?''
-From the grad student's perspective, this is easy: a triangle is formed
-by the three distances, and to calculate the ``useful work'' one
-merely drops a normal from the point of rescue to the direct path.
-The advisor has a different perspective on this calculation, however:
-his time is much more valuable, so he calculates the grad student's
+From the grad student's perspective (Figure~\ref{fig-viewpoints-a}), this
+is easy: a triangle is formed by the three distances, and to calculate
+the ``useful work'' one merely drops a normal from the point of rescue
+to the direct path.
+The advisor has a different perspective (Figure~\ref{fig-viewpoints-b})
+on this calculation, however: his time and expertise directly and
+efficiently contribute to guiding the student to graduation, so he
+calculates the grad student's
 contribution by taking the minimum work necessary to go from start to
 graduation and then subtracting the amount of effort he had to put in
 himself.
