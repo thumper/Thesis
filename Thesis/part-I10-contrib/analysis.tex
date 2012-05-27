@@ -39,7 +39,7 @@ continues to extend the online encyclopedia in a useful way.
 \end{figure}
 
 Delving directly into the data for text quality, we observe
-that $10\%$ of the revisions made had 
+that $10\%$ of the revisions made had
 $\quality{tdecay}{10}{} \le 0.05$ while $66.67\%$ of the revisions had
 $\quality{tdecay}{10}{} > 0.95$.
 When $\quality{tdecay}{10}{} = 0$, the text is immediately deleted
@@ -63,13 +63,17 @@ reverted.
 From these statistics, we conclude that authors mostly do good
 edits, but that contributions are massaged a bit by later editors.
 
-Figure~\ref{fig-revs-contrib} shows the absolute text and edit 
+Figure~\ref{fig-revs-contrib} shows the absolute text and edit
 contributions, \txt{}{\version{i}} and \dist{}{\version{i}}, for the sets of sampled revisions.
 It is important to note that these two graphs are using
 the logarithm of the size of contribution, along the $x$-axis;
 edit sizes can fall below $+1$, due to the way we compute
-edit distance for moved words as a fraction of how much of
-the document they move across.
+edit distance.
+For moved words, they are included as a fraction of how much of
+the document they move across;
+if words are replaced with an equivalent number of words (as
+can happen with synonyms replaced for clarity), the next contribution
+to edit distance is zero.
 Thus, the frequency count for edit sizes between $0$ and $1$
 suggests that a good fraction of revisions involve rearranging
 of text.
@@ -84,7 +88,7 @@ by text added or by edit distance, are predominantly under
     }
     \end{center}
     \caption[Measuring total edit and text contribution over revisions]{
-        This graph shows the absolute text and edit contributions 
+        This graph shows the absolute text and edit contributions
         on a log scale, for 5 million randomly selected records
 	of each type.
     }
@@ -94,8 +98,8 @@ by text added or by edit distance, are predominantly under
 
 In Figure~\ref{fig-user-quality} we show the average edit quality
 and average text quality for all non-anonymous authors.
-In order to compute this, we took all revisions created by each 
-author and took an average of the text and edit qualities of 
+In order to compute this, we took all revisions created by each
+author and took an average of the text and edit qualities of
 those revisions.
 We notice that $15.9\%$ of authors had $\quality{tdecay}{10}{} \le 0.05$
 and $6.3\%$ of authors had $\quality{elong}{10}{} \le -0.9$.
@@ -105,7 +109,7 @@ This sharp increase in the number of authors at the lowest end
 of our quality measures, combined with our previous analysis
 of revisions and contributions with respect to quality, gives
 us some justification to define vandals as those
-authors who have either $\quality{tdecay}{10}{} \le 0.05$ or 
+authors who have either $\quality{tdecay}{10}{} \le 0.05$ or
 $\quality{elong}{10}{} \le -0.9$ on average.
 We state that the identification of vandals can be made more
 precise using more sophisticated analyses of our data, but we
@@ -186,24 +190,24 @@ We looked at the list of all blocked authors.~\footnote{Retrieved
 on May 8, 2008, directly from the Wikipedia database.
 It corresponds to the data available at
 \url{http://en.wikipedia.org/wiki/Wikipedia:List_of_banned_users}.}
-We separated them from the others with the objective of determining 
+We separated them from the others with the objective of determining
 how many of these authors met our definition of vandals.
-We were surprised to note that over $51\%$ of authors had 
-$\quality{tdecay}{10}{} > 0.95$ and $39\%$ of authors had 
+We were surprised to note that over $51\%$ of authors had
+$\quality{tdecay}{10}{} > 0.95$ and $39\%$ of authors had
 $\quality{elong}{10}{} > 0.9$.
-In fact, over $47\%$ of the blocked authors make text contributions 
+In fact, over $47\%$ of the blocked authors make text contributions
 that have an average text quality over $0.95$.
 Similarly, over $32\%$ of the these authors make edit contributions
 that have an average edit quality over $0.9$.
 We note that $11.2\%$ of these authors qualify as vandals by our measure,
 based on their average edit quality and $24.9\%$ qualify as vandals
 based on their average text quality.
-But a large percentage of the authors in the blocked authors 
+But a large percentage of the authors in the blocked authors
 list are not vandals, as determined by our definition.
 
-A couple of cases in point are those of authors $3362$ and 
+A couple of cases in point are those of authors $3362$ and
 $10784$.
-They are both blocked, but are over the $99th$ percentile on 
+They are both blocked, but are over the $99th$ percentile on
 \editlong, \textlong and \punish.
 One was blocked by Jimbo Wales and the other was blocked as he
 was suspected of using multiple accounts.
