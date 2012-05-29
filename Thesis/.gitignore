@@ -1,5 +1,5 @@
 *.aux
-*.pdf
+paper.pdf
 *.dvi
 *.log
 *.bbl

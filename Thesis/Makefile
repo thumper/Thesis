@@ -20,7 +20,7 @@ paper.dvi: paper*.tex paper-*/*.tex *.sty bib/*.bib part-*/*.tex
 # what I want to do, in this case.
 
 paper.pdf: paper*.tex paper-*/*.tex *.sty bib/*.bib part-*/*.tex
-	latexmk -pdfdvi $<
+	latexmk -pdf $<
 
 #%.dvi: %.tex
 #	latexmk $<
@@ -30,4 +30,7 @@ paper.pdf: paper*.tex paper-*/*.tex *.sty bib/*.bib part-*/*.tex
 #
 #%.ps: %.dvi
 #	dvips $<
+
+fixeps:
+	find . -name "*.eps" -exec ./eps2pdf.sh {} \;
 
