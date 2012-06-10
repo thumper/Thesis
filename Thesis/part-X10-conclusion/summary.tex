@@ -27,26 +27,46 @@ In working towards that goal, this research makes the following contributions:
   Our \intro{edit longevity} measure uses edit distances to estimate
   how much ``work'' of an edit goes to making an article more like a
   future instance of the article.
-  Edit longevity performs very competitively
-  compared to the vandalism detectors participating in the
-  PAN~2010 competition~\cite{Potthast2010b}, with the proviso that
-  edit longevity uses information ``from the future'' of an edit,
-  which was not available to entrants of the competition.
 
-\item A reputation system for authors,\footnote{Our group also
-  developed a reputation system for text~\cite{Adler2008b},
-  and created a visualization
-  tool that is available to users as a Firefox plugin:
-  \url{https://addons.mozilla.org/en-US/firefox/addon/wikitrust/}}
+\item A reputation system for authors,
   which adjusts the reputation of an author based on quality feedback
   from later authors using the ideas of text and edit longevity.
   Our evaluation shows that content by low-reputation authors is
   four times as likely as the average to be short-lived, and that better
   precision-recall can be achieved when used as part of a vandalism
-  detection system.\footnote{Our features have also been incorporated
-  into the STiki vandalism detection tool~\cite{wiki:STiki}.}
+  detection system.
 
 \end{enumerate}
+
+During the course of developing and studying these primary contributions,
+we have also had several smaller accomplishements.
+\mynote{FIX THIS}
+Our group also
+  developed a reputation system for text~\cite{Adler2008b},
+  and created a visualization
+  tool that is available to users as a Firefox plugin:
+  \url{https://addons.mozilla.org/en-US/firefox/addon/wikitrust/}
+Our features have also been incorporated
+  into the STiki vandalism detection tool~\cite{wiki:STiki}.
+Wikipedia Offline.
+
+\textbf{revision selection}
+   In response to the fluid nature of Wikipedia content,
+    some users would like to identify versions which
+    are ``trustworthy;'' currently, the leading proposal
+    for finding these \textit{stable revisions}
+    involves manual voting by trusted editors.
+    Our own text trust system can highlight text in
+    an article which requires greater scrutiny, but
+    still requires a diligent user to review previous
+    revisions to understand how the article is evolving.
+    In a system like WikiTrust, an obvious idea would be to pick
+    a recent revision which is least likely to have vandalism.
+    An interesting modification to our existing system would be
+    to propagate the text trust information we learn from new edits
+    back to earlier revisions; in essence, once we know that some
+    text is trustworthy, we use that information to reanalyze the
+    trust of the revision where it was introduced.
 
 
 \subsection{Future Work}
@@ -74,24 +94,6 @@ context of WikiTrust, some of which are described here.
     here we mean that reputation is multidimensional and an author can
     have differing reputations in different categories.
 
-\item[\textbf{revision selection}]
-   In response to the fluid nature of Wikipedia content,
-    some users would like to identify versions which
-    are ``trustworthy;'' currently, the leading proposal
-    for finding these \textit{stable revisions}
-    involves manual voting by trusted editors.
-    Our own text trust system can highlight text in
-    an article which requires greater scrutiny, but
-    still requires a diligent user to review previous
-    revisions to understand how the article is evolving.
-    In a system like WikiTrust, an obvious idea would be to pick
-    a recent revision which is least likely to have vandalism.
-    An interesting modification to our existing system would be
-    to propagate the text trust information we learn from new edits
-    back to earlier revisions; in essence, once we know that some
-    text is trustworthy, we use that information to reanalyze the
-    trust of the revision where it was introduced.
-
 \item[\textbf{match quality}] Our greedy text differencing algorithm
     uses a match quality function to prioritize which matches are
     preferable according to the criteria described in Chapter~\ref{ch:diff}.
@@ -118,7 +120,7 @@ context of WikiTrust, some of which are described here.
     you be sure they haven't introduced new problems?
 
 \item[\textbf{authorship}]
-    Wedevised an algorithm for determining the ``authorship'' of words in
+    We devised an algorithm for determining the ``authorship'' of words in
     revisioned documents.\footnote{This work is being explored further
       by the German chapter of the Wikipedia: \\
         \url{http://de.wikipedia.org/wiki/Benutzer:NetAction/WikiTrust}}

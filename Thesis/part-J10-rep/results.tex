@@ -45,6 +45,9 @@ especially Figures~\ref{fig-revs-quality} and~\ref{fig-user-quality};
 we again see a bimodal distribution with an immediate drop-off beyond
 the lowest reputation, and an upwards trend for frequency as we move
 towards the higher end of the reputation spectrum.
+We believe that this might reflect the bimodal behavior of the
+community; many users tend to make only a small number of edits, and a few users
+contribute a great deal (see Figure~\ref{fig-hist-numedits}).
 
 
 \begin{figure}
@@ -65,7 +68,7 @@ We analyzed the Italian and French Wikipedias using the
 parameter values discovered by our optimization procedure.
 The results are summarized in Table~\ref{tbl:summary-results}.
 The results are better for the larger French Wikipedia; in particular,
-the reputation's ability to predict short-lived edits is better on the
+our reputation's ability to predict short-lived edits is better on the
 French than on the Italian Wikipedias.
 We are not sure whether this depends on different dynamics in the two
 Wikipedias, or whether it is due to the greater age (and size) of the
@@ -257,7 +260,7 @@ on the part of the authors.
 
 \subsection{Text Age and Author Reputation as Trust Criteria}
 
-The age of text in the Wikipedia is often considered as an
+The age of text in the Wikipedia is often considered an
 indicator of text trustworthiness, the idea being that text that has
 been part of an article for a longer time has been vetted by more
 contributors, and thus, it is more likely to be correct~\cite{Cross2006}.
@@ -281,5 +284,7 @@ trustworthiness.
 Indeed, as remarked above, since text can be deleted for a number of
 reasons aside from bad quality, author reputation is most likely a
 better indicator of trustworthiness than these figures indicate.
+We investigate a method for computing the ``reputation of text'' that
+is based on the ideas presented here in~\cite{Adler2008b}.
 
 

@@ -5,7 +5,7 @@ order to preserve the current user experience of the Wikipedia.
 There are two behaviors that we choose to promote as desirable:
 contributing text to articles, and editing text.
 Adding text to articles is a necessary behavior for the Wikipedia
-to acquire new knowledge and continue to expand.
+to acquire new knowledge and continue to expand existing articles.
 However, adding text is not sufficient to make the Wikipedia a
 useful resource --- the text must be edited for formatting and
 readability, and vandalism must be removed, so the removal and
@@ -13,7 +13,8 @@ rearrangement of text is also very important.
 
 To measure text contributions and the amount of editing performed
 by an author, we examine only the revision history of each article
-and use a text differencing algorithm to assist in computing these values.
+and use the text differencing algorithm of Chapter~\ref{ch:diff} to
+assist in computing these values.
 Deriving implicit judgements from the history was an important
 challenge in this work, and our reputation system builds upon
 the ideas developed in Chapter~\ref{ch:editquality} for judgements.
@@ -24,8 +25,7 @@ computed judgement by the reputation of the judge, so that high-reputation
 judges have a larger influence on improving the reputation of the
 author being judged.
 This limits the damage that vandals can cause by creating multiple
-anonymous accounts, and has the side-effect that a user must make
-positive contributions that outweigh their negative contributions.
+anonymous accounts.
 
 \subsection{Text Contributions}
 
@@ -38,47 +38,50 @@ We would like to increase the reputation of the author making
 the text contribution by an amount relative to the size of their
 contribution (thus encouraging larger contributions),
 but also factoring in the reputation of the judge so as to reduce
-the weight of low-reputation users, who might be vandals.
+the weight of low-reputation users (who might be vandals).
 
 Formally, for an article, $a \in \articles$,
 we consider two versions, $\version{i}, \version{j} \in \versions{a}$,
 where $i < j$ so that $A_i = \revauthor{\version{i}}$ is the author we are
 adjusting the reputation of, and $A_j = \revauthor{\version{j}}$ is the author
-making the implicit judgement, where $A_i \not = A_j$.\footnote{Recall
+making the implicit judgement, where we choose $j$ such that $A_i \not = A_j$.\footnote{Recall
 from the definition of \versions{\article{}} in Chapter~\ref{ch:defs}
 that the revisions are \intro{filtered} so that there are no consecutive
 revisions by the same author.
 Where the same author edits multiple revisions in a row, only the
-most recent is kept.}
+most recent is kept.  This has the effect of collapsing multiple
+checkpoint revisions into a single edit.}
 The amount of text contributed in \version{i} that survives
 to \version{j} is then given by \tsurv{a}{i,j}, as defined in
 Equation~\ref{eq:tsurv}.
 Thus, we propose the following rule:
 
-\begin{regola}
-\textbf{(reputation update due to text survival)} \\
-\label{rule-text}
-  We update the reputation of \revauthor{\version{i}} by considering
-  each of the ten following versions as judges,\footnote{See
-  Definition~\ref{def:judges}.}
-  $v_j \in \judges{a}{10}{i}$, and update the reputation by the amount:
-  \[
-    \coeffrep \cdot \coefftext \cdot \frac{\tsurv{a}{i,j}}{\tsurv{a}{i,i}}
-    \cdot (\tsurv{a}{i,i})^\lengthexp \cdot \log(1 + \rep(\version{j})),
-  \]
-  where $j = \revpos{\version{j}}$ is the version position of \version{j}
-  in \versions{a} (and consequently, $0 < j - i \le 10$),
-  $\coeffrep > 0$, $\coefftext \in [0,1]$, and $\lengthexp \in
-  [0,1]$ are parameters, and where $\rep(\version{j})$ is the reputation of
-  \revauthor{\version{j}} at the time \version{j} is performed.
-\end{regola}
+\begin{quote}
+  \begin{regola}
+  \textbf{(reputation update due to text survival)} \\
+  \label{rule-text}
+    We update the reputation of \revauthor{\version{i}} by considering
+    each of the ten following revisions as judges,\footnote{See
+    Definition~\ref{def:judges}.}
+    $v_j \in \judges{a}{10}{i}$, and update the reputation by the amount:
+    \[
+      \coeffrep \cdot \coefftext \cdot \frac{\tsurv{a}{i,j}}{\tsurv{a}{i,i}}
+      \cdot (\tsurv{a}{i,i})^\lengthexp \cdot \log(1 + \rep(\version{j})),
+    \]
+    where $j = \revpos{\version{j}}$ is the version position of \version{j}
+    in \versions{a} (and consequently, $0 < j - i \le 10$),
+    $\coeffrep > 0$, $\coefftext \in [0,1]$, and $\lengthexp \in
+    [0,1]$ are parameters, and where $\rep(\version{j})$ is the reputation of
+    \revauthor{\version{j}} at the time \version{j} is performed.
+  \end{regola}
+\end{quote}
 
 \noindent
 In this rule, $\tsurv{a}{i,j} / \tsurv{a}{i,i}$ is the fraction of text
 introduced at version \version{i} that is still present in version \version{j};
 this is a measure of the ``quality'' of \version{i}.
 The quantity $\log(1 + \rep(\version{j}))$ is the ``weight'' of the
-reputation of \revauthor{\version{j}},
+reputation of \revauthor{\version{j}};
 that is, how much the reputation of \revauthor{\version{j}} lends
 credibility to the judgements made by \revauthor{\version{j}}.
 In Chapter~\ref{ch:contrib}, we saw that for any measure we investigated,
@@ -96,7 +99,7 @@ $\lengthexp = 1$, then the increment is proportional to the length of
 the original contribution; if $\lengthexp = 0$, then the increment
 does not depend on the length of the original contribution.
 The parameter $\coeffrep$ specifies how much the reputation should
-vary in response to an individual feedback.
+vary in response to individual feedback.
 The parameter $\coefftext$ specifies how much the feedback should
 depends on residual text (Rule~\ref{rule-text}) or residual edit
 (Rule~\ref{rule-edit}, presented later).
@@ -137,15 +140,14 @@ For two consecutive edits \version{i}, \version{i+1},
 if \version{i} is completely undone in \version{i+1}
 (as is common when \version{i} introduces spam or is some other
 kind of vandalism), then $\esurv{a}{i,i-1,i+1} = -1$;
-if \version{i+1} entirely preserves the work of \version{i},
+if \version{i+1} completely preserves the work of \version{i},
 then $\esurv{a}{i,i-1,i+1} = +1$.
-For more distant edits, $\esurv{a}{i,i-1,j}$ is a measure of how much of the
-edit performed for version \version{i}
-is undone (value $-1$) or preserved (value $+1$) in version \version{j}.
+Values in between the two extremes represent how much of the edit is
+preserved or undone through revisions up to and including \version{j}.
 
 Note that $\esurv{a}{i,i-1,j} < 0$
 only when
-$\dist{a}{i-1,i} < \dist{a}{i,j}$,
+$\dist{a}{i-1,j} < \dist{a}{i,j}$,
 that is,
 when \version{j} is closer to the version \version{i-1}
 (the \textit{preceding} version), than to version \version{i}.
@@ -156,48 +158,51 @@ than \version{i} is.
 We use the following rule for updating reputations based on
 edit contributions.
 
-\begin{regola}
-\textbf{(reputation update due to edit survival)} \\
-\label{rule-edit}
-  We update the reputation of \revauthor{\version{i}} by
-  using the three following revisions as judges,
-  $v_j \in \judges{a}{3}{i}$, to compute the following value:
-\begin{equation*}
-q = \frac{\slack \cdot \dist{a}{i-1,j} - \dist{a}{i,j}}
-                        {\dist{a}{i-1,i}}
-\label{eq-edit-long}
-\end{equation*}
-where $j = \revpos{\version{j}}$.
-Since $q$ is undefined when \dist{a}{i-1,i} = 0,
-we take that to be a special case where no reputation
-should accrue to the author of version \version{i}
-(\ie we set $q = 0$ in that case).
-We also define a \intro{punishing} function
-\begin{equation*}
-    p(q) =
-        \begin{cases}
-            1 & \text{if $q \ge 0$,} \\
-            \coeffpunish & \text{if $q < 0$.} \\
-        \end{cases}
-\end{equation*}
+\begin{quote}
+  \begin{regola}
+  \textbf{(reputation update due to edit survival)} \\
+  \label{rule-edit}
+    We update the reputation of \revauthor{\version{i}} by
+    using the three following revisions as judges,
+    $v_j \in \judges{a}{3}{i}$, to compute the following value:
+  \begin{equation*}
+  q = \frac{\slack \cdot \dist{a}{i-1,j} - \dist{a}{i,j}}
+                          {\dist{a}{i-1,i}}
+  \label{eq-edit-long}
+  \end{equation*}
+  where $j = \revpos{\version{j}}$.
+  Since $q$ is undefined when \dist{a}{i-1,i} = 0,
+  we take that to be a special case where no reputation
+  should accrue to the author of version \version{i}
+  (\ie we set $q = 0$ in that case).
+  We also define a \intro{punishing} function
+  \begin{equation*}
+      p(q) =
+          \begin{cases}
+              1 & \text{if $q \ge 0$,} \\
+              \coeffpunish & \text{if $q < 0$.} \\
+          \end{cases}
+  \end{equation*}
 
-The reputation of \revauthor{\version{i}} is then increased
-according to the following formula:
-\begin{equation*}
-q \cdot p(q)
-  \cdot \coeffrep \cdot (1 - \coefftext) \cdot
-        (\dist{a}{i-1,i})^\lengthexp \cdot \log(1 + \rep(\version{j}))
-\end{equation*}
+  The reputation of \revauthor{\version{i}} is then increased
+  according to the following formula:
+  \begin{equation*}
+  q \cdot p(q)
+    \cdot \coeffrep \cdot (1 - \coefftext) \cdot
+          (\dist{a}{i-1,i})^\lengthexp \cdot \log(1 + \rep(\version{j}))
+  \end{equation*}
 
-  In this rule, $\coeffpunish \geq 1$, $\slack \geq 1$, $\coeffrep > 0$,
-  $\coefftext \in [0,1]$, and $\lengthexp \in [0,1]$ are parameters,
-  and $\rep(\version{j})$ is the reputation of \revauthor{\version{j}}
-  at the time version \version{j} is created.
-\end{regola}
+    In this rule, $\coeffpunish \geq 1$, $\slack \geq 1$, $\coeffrep > 0$,
+    $\coefftext \in [0,1]$, and $\lengthexp \in [0,1]$ are parameters,
+    and $\rep(\version{j})$ is the reputation of \revauthor{\version{j}}
+    at the time version \version{j} is created.
+  \end{regola}
+\end{quote}
 
+\noindent
 We constructed this rule to use a modified form of
 Equation~\ref{eq:esurv};
-the parameter $\slack > 1$ is used to spare $a_i$ from punishment when
+the parameter $\slack$, when it is greater than one, is used to spare $a_i$ from punishment when
 the revision from \version{i-1} to \version{i} is only slightly
 counterproductive.
 On the other hand, when punishment is incurred, its magnitude is
@@ -233,10 +238,10 @@ judged by the revision being process,
 and update the reputations of those authors accordingly.
 When updating reputations, we ensure that they never become negative,
 and that they never grow beyond a bound $\coeffmaxrep > 0$.
-The bound $\coeffmaxrep$ prevents frequent contributors from
+The constant $\coeffmaxrep$ prevents frequent contributors from
 accumulating unbounded amounts of reputation, and becoming essentially
 immune to negative feedback.
-The value of $\coeffmaxrep$ was once again determined via
+The value of $\coeffmaxrep$ was also determined via
 optimization techniques, as described in Section~\ref{sec:rep-eval}.
 
 Wikipedia allows users to register and create an {\em author\/}
@@ -254,8 +259,8 @@ is to use the methods of vandalism detectors (discussed
 in Section~\ref{sec:vandalism-related}) to determine an
 initial reputation based on other factors about the edit.}
 This is a contributing factor to our reputation having low
-{\em precision:\/} many authors who have low reputation still perform
-very good quality revisions, as they are simply new authors, rather than
+precision; many authors who have low reputation still perform
+very good quality revisions, as they are simply new authors rather than
 proven offenders.
 %% We conjecture that content-driven reputation systems for the Wikipedia
 %% would have better predictive value if creating a new author identity

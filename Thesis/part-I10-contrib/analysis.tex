@@ -54,8 +54,9 @@ The data is less stark for edit quality.
 When we looked at revisions, we saw that $1.9\%$ of the revisions
 had $\quality{elong}{10}{} \le -0.9$, whereas $51.12\%$ had
 $\quality{elong}{10}{} > 0.9$.
-In fact, $84.71\%$ had positive edit quality.
-In terms of edit contributions, we noticed that $7.5\%$ of the
+In fact, $84.71\%$ of revisions had positive edit quality.
+When taking the size of each edit (the edit contribution) into
+account, we noticed that $7.5\%$ of the
 edit contributions had $\quality{elong}{10}{} \le -0.9$, whereas
 $61.39\%$ had $\quality{elong}{10}{} > 0.9$.
 Moreover, $1.6\%$ of the edit contributions were immediately
@@ -72,9 +73,9 @@ edit distance.
 For moved words, they are included as a fraction of how much of
 the document they move across;
 if words are replaced with an equivalent number of words (as
-can happen with synonyms replaced for clarity), the next contribution
+can happen with synonyms replaced for clarity), the net contribution
 to edit distance is zero.
-Thus, the frequency count for edit sizes between $0$ and $1$
+Thus, the frequency count for edit sizes between $0$ ad $1$
 suggests that a good fraction of revisions involve rearranging
 of text.
 Beyond that, we can conclude that contributions, as measured
@@ -111,9 +112,9 @@ of revisions and contributions with respect to quality, gives
 us some justification to define vandals as those
 authors who have either $\quality{tdecay}{10}{} \le 0.05$ or
 $\quality{elong}{10}{} \le -0.9$ on average.
-We state that the identification of vandals can be made more
-precise using more sophisticated analyses of our data, but we
-don't deal with that in this paper.
+The identification of vandals can be made more
+precise using more sophisticated analysis of our data,
+as is done in Chapter~\ref{ch:vandalism}.
 %
 \begin{figure}[tbhp]
     \begin{center}
@@ -171,7 +172,7 @@ entire quality range (except for the two extreme values).
     \end{center}
     \caption[Edit quality of authors with one edit]{
         This plot shows the $\quality{elong}{10}{}$ of the
-	non-anonymous authors who made a single edit contribution.
+	non-anonymous authors who made only a single edit.
     }
     \label{fig-singles-quality}
 \end{figure}
@@ -204,16 +205,10 @@ based on their average edit quality and $24.9\%$ qualify as vandals
 based on their average text quality.
 But a large percentage of the authors in the blocked authors
 list are not vandals, as determined by our definition.
-
-A couple of cases in point are those of authors $3362$ and
-$10784$.
-They are both blocked, but are over the $99th$ percentile on
+For example, authors $3362$ and $10784$ are both blocked, but are over
+the $99th$ percentile on
 \editlong, \textlong and \punish.
-One was blocked by Jimbo Wales and the other was blocked as he
-was suspected of using multiple accounts.
 
-We end this subsection, by mentioning the top rankers against all
-measures.
 The highest ranks across all contributions were secured by
 authors $3903$ and \textit{AntiVandalBot}.
 Author $3903$ had the top rank with respect to measures

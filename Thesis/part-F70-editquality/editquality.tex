@@ -49,8 +49,8 @@ to the target string \words{\version{n}},
 then we can define terms for the total amount of insertions and
 deletions by summing over all the matching elements:
 \begin{align*}
-  I_{tot}(m,n) =& \sum_{\mathbf{Insert}(i, k) \in E(m,n)} k \\
-  D_{tot}(m,n) =& \sum_{\mathbf{Delete}(i, k) \in E(m,n)} k \\
+  I_{tot}(m,n) =& \sum_{\mathbf{Insert}(i, k) \in \authorrevs{m, n}} k \\
+  D_{tot}(m,n) =& \sum_{\mathbf{Delete}(i, k) \in \authorrevs{m, n}} k \\
 \end{align*}
 %
 We must take more care in quantifying how much \textit{movement}
@@ -71,8 +71,8 @@ then given by:
 %
 \begin{align*}
   M_{tot}(m,n) =& \sum_{\substack{
-        \mathbf{Move}(i_1, i_2, k) \in E(m,n) \\
-        \mathbf{Move}(i'_1, i'_2, k') \in E(m,n) \\
+        \mathbf{Move}(i_1, i_2, k) \in \authorrevs{m, n} \\
+        \mathbf{Move}(i'_1, i'_2, k') \in \authorrevs{m, n} \\
         i_1 < i'_1 \;\And\; i_2 > i'_2
         }} \frac{k \cdot k'}{\max(l_m, l_n)} \\
 \end{align*}

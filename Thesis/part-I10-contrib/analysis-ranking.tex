@@ -15,8 +15,6 @@ that we had classified as vandals, and then plotted
 them in 3-dimensional histograms; see
 Figures~\ref{fig-prct-editlong-textlong}
 and~\ref{fig-prct-editlong-textwithpunish}.
-The correlation
-structure implied by Table~\ref{cor-tab} becomes apparent.
 An important point to remember about
 Figures~\ref{fig-prct-editlong-textlong}
 and~\ref{fig-prct-editlong-textwithpunish}
@@ -24,6 +22,21 @@ is that the low-lying regions of the graph are
 rarely zero --- there are roughly between one and ten
 authors at each intersection, but this is so small compared
 to the areas that correlate that we cannot see it on the graph.
+Both figures show a high degree of correlation that wasn't evident
+from the correlation scores in Table~\ref{tab:measure-correlations}.
+Figure~\ref{fig-prct-editlong-textlong} shows that \textlong and
+\editlong generally agree in the ranking of users, except for the lowest
+scorers of \textlong.
+The lowest scorers of \textlong all receive a score of zero, but the
+``fence'' seen in the figure is an indication of the fact that there are
+an enormous number of users which \textlong ranks equivalently but
+\editlong is able to further distinguish between.
+By contract, Figure~\ref{fig-prct-editlong-textwithpunish} shows that
+\punish roughly agrees with \editlong for all users except for a thin
+branch that score zero under \punish but get a positive score under
+\editlong.
+This thin branch represents the group of users which do not add text,
+but instead only rearrange it or delete vandalism.
 %
 \begin{figure}[tbhp]
     \begin{center}
@@ -70,7 +83,7 @@ measure to achieve a high rank, while doing bad work.
     \end{center}
     \caption[Comparing the number of edits made with the reputation function]{
     	The \contribrep measure had the highest correlation to \numedits,
-	in Table~\ref{cor-tab}.
+	in Table~\ref{tab:measure-correlations}.
 	Notice that \numedits does not distinguish well
 	between users.
     }

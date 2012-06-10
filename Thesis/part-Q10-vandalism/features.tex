@@ -18,20 +18,8 @@ increased.
 Anonymous users have no reputation in the WikiTrust system, and receive
 a reputation score of zero within the feature set.
 
-As in~\cite{Adler2011a}, we use the random forest algorithm to build our
-prediction model and the standard ten-fold cross-validation to evaluate
-the predictive ability.
-The Weka command line we used was:
-%
-{\small
-\begin{verbatim}
-    weka.classifiers.meta.FilteredClassifier
-      -t combined-features.arff -p 1 -F
-      "weka.filters.unsupervised.attribute.Remove -R 1,2,3"
-      -W weka.classifiers.trees.RandomForest -- -I 500
-\end{verbatim}
-}
-
+As in~\cite{Adler2011a}, we use the random forest algorithm (set to
+create 500 tree) to build our prediction model.
 We select a set of features based on the information that is readily
 available within the pre-existing WikiTrust system, and only those which
 are available at the instant an edit is made.
@@ -77,7 +65,7 @@ we also call \intro{trust} when applied to text) of each word of the
 revision, where the reputation is an
 integer in the interval $0, \ldots, 9$~\cite{Adler2008b}.  The
 reputation of a word indicates how much the word has been revised by
-other reputable authors; in particular, words that have are inserted or
+other reputable authors; in particular, words that are inserted or
 moved by authors without reputation (including both novice and
 anonymous authors) are assigned a reputation of zero.  When the revision is
 created, WikiTrust also computes a ten column histogram detailing how

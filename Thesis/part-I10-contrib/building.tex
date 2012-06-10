@@ -21,9 +21,9 @@ account the amount of text added or edits performed by the author
 and the quality of those changes.
 We would like to measure contributions both in absolute terms,
 as the amount of text that was added by an author or the
-amount of edits made by an author, and in relative terms, 
+amount of edits made by an author, and in relative terms,
 where we take into account the quality of the edits.
-The contributions of all authors is cumulative over the 
+The contributions of all authors is cumulative over the
 entire revision history of the Wikipedia;
 for our experiments, we picked revisions of all articles
 previous to October~1, 2006.
@@ -32,18 +32,18 @@ For every article, $a \in \articles$, in the Wikipedia,
 we consider each version $\version{i} \in \versions{a}$
 to be edited by the author $A_i = \revauthor{\version{i}}$.
 Each of the subsequent authors $A_{i+1}, A_{i+2}, \ldots$ can either
-retain, or remove, the edits performed by $A_i$ in bringing
+retain, or remove, the changes performed by $A_i$ in bringing
 version \version{i-1} to \version{i}.
 These authors who edit article $a$ after \version{i}
 are implicitly providing feedback on the content of \version{i}, and hence
 act as \intro{judges} of the contribution made by author $A_i$.
-We therefore define \judges{a}{n}{i} to return a set of up to $n$ versions
-after \version{i} that will act as judges of \version{i}.
-For this work, we take \judges{a}{n}{i} to be the \textbf{next} $n$
-versions such that the author of each $\version{} \in \judges{a}{n}{i}$
+We therefore define \judges{a}{n}{i} to return the set of up to $n$
+\textbf{next} revisions after \version{i},
+such that the author of each $\version{} \in \judges{a}{n}{i}$
 is restricted to $\revauthor{\version{}} \ne \revauthor{\version{i}}$.
 It should be noted that other formulations of \judges{a}{n}{i}
-are possible, such as the one proposed in~\cite{Chatterjee2008}.
+are possible, such as the one proposed in~\cite{Chatterjee2008}
+where only high-reputation authors are selected as judges.
 
 Recalling that
 \begin{equation*}
