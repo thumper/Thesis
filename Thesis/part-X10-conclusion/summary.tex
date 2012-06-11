@@ -105,17 +105,6 @@ context of WikiTrust, some of which are described here.
     here we mean that reputation is multidimensional and an author can
     have differing reputations in different categories.
 
-\item[\textbf{match quality}] Our greedy text differencing algorithm
-    uses a match quality function to prioritize which matches are
-    preferable according to the criteria described in Chapter~\ref{ch:diff}.
-    The evaluation in Chapter~\ref{ch:editquality}
-    suggests that as long as length
-    is the primary discriminant, there is not too much difference
-    between the different quality functions.
-    The evaluation used is one based on the resulting predictive ability
-    of edit quality, but is there some better way to evaluate a difference
-    algorithm whose aim is to model the human view of a text edit?
-
 \item[\textbf{reputation as probabilities}]  This view of reputation
     clarifies how to best interpret the results.
     It also introduces the significant question of how should probabilities
@@ -129,6 +118,25 @@ context of WikiTrust, some of which are described here.
     If the test fails, how do revise your estimate of the number
     of bugs?  And once the engineers have fixed the problem, can
     you be sure they haven't introduced new problems?
+
+\item[\textbf{contribution types}]
+    Some users contribute text while others perform maintenance duties,
+    which we were able to identify by comparing different metrics in
+    Chapter~\ref{ch:contrib}.
+    Categorizing contributions by these metrics can help in the awarding
+    of barnstars, but also might be useful as additional features in a
+    vandalism detection system.
+
+\item[\textbf{match quality}] Our greedy text differencing algorithm
+    uses a match quality function to prioritize which matches are
+    preferable according to the criteria described in Chapter~\ref{ch:diff}.
+    The evaluation in Chapter~\ref{ch:editquality}
+    suggests that as long as length
+    is the primary discriminant, there is not too much difference
+    between the different quality functions.
+    The evaluation used is one based on the resulting predictive ability
+    of edit quality, but is there some better way to evaluate a difference
+    algorithm whose aim is to model the human view of a text edit?
 
 \item[\textbf{authorship}]
     We devised an algorithm for determining the ``authorship'' of words in
