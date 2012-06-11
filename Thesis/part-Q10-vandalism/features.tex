@@ -19,7 +19,7 @@ Anonymous users have no reputation in the WikiTrust system, and receive
 a reputation score of zero within the feature set.
 
 As in~\cite{Adler2011a}, we use the random forest algorithm (set to
-create 500 tree) to build our prediction model.
+create 500 trees) to build our prediction model.
 We select a set of features based on the information that is readily
 available within the pre-existing WikiTrust system, and only those which
 are available at the instant an edit is made.
@@ -36,12 +36,21 @@ The total set of features we used are:
 Vandalism tends to be performed
 predominantly by anonymous or novice users, both of which have
 reputation zero in the system.
+This is the only feature which is new, compared to the experiment
+conducted in~\cite{Adler2010b}.
 
 \item \textbf{Author is anonymous [Anon].}
+The Wikipedia software associates either a username or an IP address
+with every edit.
+WikiTrust only tracks registered usernames, and records every other edit
+as an anonymous edit.
+Vandalism is often committed under the cover of anonymity, although many
+good edits are also made anonymously.
 
 \item \textbf{Time interval since the previous revision [Logtime\_prev].}
 We compute the quantity $\log(1 + t)$, where $t$ is amount of time since
 the preceding revision of the same article.
+
 
 \item \textbf{Hour of day when revision was created [Hour\_of\_day].}
 We expect that the time of day at which the revision was created
@@ -51,7 +60,7 @@ but a more sophisticated version proved to contain much
 information~\cite{West2010}.
 
 \item \textbf{Delta [Delta].}
-This feature measures the edit distance $d(r, r^{-})$ between the
+This feature measures the edit distance \dist{}{\version{i}, \version{i-1}} between the
 revision being examined and the previous revision in the same article.
 
 \item \textbf{Revision comment length [Comment\_len].}
@@ -59,11 +68,11 @@ The length of the comment attached to the revision.
 It seems unlikely that vandals would provide a comment,
 so we included it as a trivial feature to compute.
 
-\item \textbf{Previous text trust histogram [P\_prev\_hist0 \ldots P\_prev\_hist9].}
-Whenever a revision is created, WikiTrust computes the reputation (which
-we also call \intro{trust} when applied to text) of each word of the
-revision, where the reputation is an
-integer in the interval $0, \ldots, 9$~\cite{Adler2008b}.  The
+\item \textbf{Previous text reputation histogram [P\_prev\_hist0 \ldots P\_prev\_hist9].}
+Whenever a revision is created, WikiTrust computes a separate reputation
+for each word of the article, where the reputation is an
+integer in the interval $0, \ldots, 9$ (see~\cite{Adler2008b} for
+details of how we calculate text reputation).  The
 reputation of a word indicates how much the word has been revised by
 other reputable authors; in particular, words that are inserted or
 moved by authors without reputation (including both novice and

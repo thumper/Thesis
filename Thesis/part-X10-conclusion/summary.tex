@@ -39,34 +39,45 @@ In working towards that goal, this research makes the following contributions:
 \end{enumerate}
 
 During the course of developing and studying these primary contributions,
-we have also had several smaller accomplishements.
-\mynote{FIX THIS}
-Our group also
-  developed a reputation system for text~\cite{Adler2008b},
-  and created a visualization
-  tool that is available to users as a Firefox plugin:
-  \url{https://addons.mozilla.org/en-US/firefox/addon/wikitrust/}
-Our features have also been incorporated
-  into the STiki vandalism detection tool~\cite{wiki:STiki}.
-Wikipedia Offline.
+we have also had several smaller accomplishements with enabling other
+technologies based on our reputation data:
+\begin{description}
+\item \textbf{text reputation}
+  Our group developed a reputation system for text~\cite{Adler2008b},
+  and created a visualization tool that is available to users as a Firefox
+  plugin.\footnote{\url{https://addons.mozilla.org/en-US/firefox/addon/wikitrust/}}
 
-\textbf{revision selection}
-   In response to the fluid nature of Wikipedia content,
-    some users would like to identify versions which
-    are ``trustworthy;'' currently, the leading proposal
-    for finding these \textit{stable revisions}
-    involves manual voting by trusted editors.
-    Our own text trust system can highlight text in
-    an article which requires greater scrutiny, but
-    still requires a diligent user to review previous
-    revisions to understand how the article is evolving.
-    In a system like WikiTrust, an obvious idea would be to pick
-    a recent revision which is least likely to have vandalism.
-    An interesting modification to our existing system would be
-    to propagate the text trust information we learn from new edits
-    back to earlier revisions; in essence, once we know that some
-    text is trustworthy, we use that information to reanalyze the
-    trust of the revision where it was introduced.
+\item \textbf{vandalism detection}
+  The work of Chapter~\ref{ch:vandalism} grew out of an entry into a
+  vandalism detection competition.
+  That effort led to a joint publication~\cite{Adler2011a} presenting
+  results that outperformed previously published results.
+  Our features have also been incorporated
+  into the STiki vandalism detection tool~\cite{wiki:STiki}.
+
+\item \textbf{revision selection}
+  The Wikipedia Offline project published a CD-ROM of a selection of
+  Wikipedia content, which is distributed to school children across
+  America.
+  Due to space constraints, the project only selects one revision for
+  each article, but manually reviews each choice to check for vandalism
+  or questionable changes.
+  We developed a system based on our vandalism detection work (and
+  coining the term ``historic vandalism detection'') to
+  identify revisions that were likely to be vandalism, narrowing the
+  list of revisions that needed manual review.
+
+\end{description}
+
+As part of this work, we also investigated text difference algorithms
+and outlined several design issues in how author attribution is
+determined in a collaborative document.
+With respect to text difference algorithms, we ultimately discovered
+that the difference algorithm did not have a very dramatic impact on the
+performance of the edit longevity measure (shown in
+Tables~\ref{tab:editlongbyed5} to~\ref{tab:editlongbyed1});
+we would have achieved substantially similar results simply using the
+fastest performing algorithm.
 
 
 \subsection{Future Work}

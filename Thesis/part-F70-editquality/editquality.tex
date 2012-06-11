@@ -114,7 +114,7 @@ multiple revisions led to another idea that we favor.
   \caption[Grad school is like hiking through the forest]{%
     Grad school can be likened to hiking through a forest, where the
     grad student inevitably leaves the direct path and ends up far from
-    his intended goal.  When the advisor rides to the rescue and guides
+    his intended goal.  When the advisor steps in with advice and guides
     the grad student to graduation, we ask the question ``how much
     useful work did each contribute by their efforts?''
     (Character illustrations courtesy of~\cite{Cham2009}.)
@@ -126,10 +126,10 @@ multiple revisions led to another idea that we favor.
 \centering
 \subfloat[%
   the grad student's perspective][%
-  The grad student measures his useful effort in the traditional way,
+  The grad student measures his ``forward progress'' in the traditional way:
   by dropping a normal to the direct path.]{%
   \label{fig-viewpoints-a}
-  \framebox{\includegraphics[width=0.95\textwidth]{part-F70-editquality/fig-GradViewpoint}}
+  \framebox{\includegraphics[width=0.90\textwidth]{part-F70-editquality/fig-GradViewpoint}}
 }
 \\
 \subfloat[%
@@ -140,7 +140,7 @@ multiple revisions led to another idea that we favor.
   his own effort is completely useful, and would have been unnecessary
   if the grad student had followed the path as directed.]{%
   \label{fig-viewpoints-b}
-  \framebox{\includegraphics[width=0.95\textwidth]{part-F70-editquality/fig-AdvisorViewpoint}}
+  \framebox{\includegraphics[width=0.90\textwidth]{part-F70-editquality/fig-AdvisorViewpoint}}
 }
 \caption[How to measure useful effort]{%
   How should we calculate the useful effort that the grad student in
@@ -176,25 +176,42 @@ work contributes towards his reaching graduation?''
 From the grad student's perspective (Figure~\ref{fig-viewpoints-a}), this
 is easy: a triangle is formed by the three distances, and to calculate
 the ``useful work'' one merely drops a normal from the point of rescue
-to the direct path.
-The advisor has a different perspective (Figure~\ref{fig-viewpoints-b})
-on this calculation, however: his time and expertise directly and
-efficiently contribute to guiding the student to graduation, so he
-calculates the grad student's
-contribution by taking the minimum work necessary to go from start to
-graduation and then subtracting the amount of effort he had to put in
-himself.
+to the direct path; the remaining distance represents the contribution
+of the advisor.
+What if the student overshoots his target, so that the ``forward
+progress'' is more than the minimum necessary?
+
+In the physical setting, the student has not reached the goal so we
+should reject any computation that discounts the advisor's contribution.
+Reasoning that his time and expertise directly and efficiently
+contribute to guiding the student to the goal, the advisor proposes a
+different scheme (see Figure~\ref{fig-viewpoints-b}) for computing the
+grad student's contribution: take the minimum work necessary to go from
+start to graduation and then subtract the amount of effort put in by the
+advisor.
+This has the effect of discounting the effort of the grad student,
+rather than the advisor, and has the benefit of a natural interpretation
+of when a contribution has ``forward'' (instead of ``backward'') progress.
 
 
-Applying this metaphor back to Wikipedia, we must take into consideration
-three revisions:
+Applying this metaphor back to the Wikipedia, we must take into
+consideration three revisions:
 the one being evaluated, one in its past, and one in its future.
+We say that the edit being evaluated was useful if it brings the article
+closer to how it will look in the future.
+Of course, an author can ``overshoot the future'' by adding a mixture of
+content, some of which is kept and some of which is rejected; the
+efforts of the author are discounted by the amount of work that
+subsequent authors must do to transform article into its final (that is,
+some future) state, so that even a situation of overshooting the future
+has a reasonable interpretation.
+
 Figure~\ref{fig-editcontr} visually represents two cases in
 evaluating revision \version{k}, using \version{k-1}
 and \version{j} (where $j > k$) as guide posts for the general
 path that the evolution of the article is taking.
 If a contribution moves us in the general direction of
-the future but has some extraneous text that is deleted,
+the future but has some extraneous text that is deleted (for example),
 we get the case shown in Figure~\ref{fig-editcontr-a}:
 the distance \dist{}{k,j} is smaller than the distance \dist{}{k-1,j}.
 If the edits of \version{k} do not contribute at all to the
