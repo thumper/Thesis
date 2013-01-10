@@ -635,5 +635,22 @@ four days worth of work to process.
 
 A secondary problem is that we don't have enough \mysql
 connection allocated, so when he hits us like that, the
-dispatched crashes and we get pages stuck in the queue.
+dispatcher crashes and we get pages stuck in the queue.
+
+\section{Post-Thesis Maintenance}
+
+\subsection{9-Jan-2013}
+
+The dispatcher has been broken for a few months.
+Luca and I met over Google chat today to investigate.
+We found that the dispatcher would run for a little bit, but then stop.
+Tonight I investigated more, and added the \texttt{-debug\_level} option
+to the dispatcher to assist with tracking problems.
+The culprit in this case turned out to be a change in the Wikipedia API,
+from property \texttt{rvstartid} to \texttt{rvcontinue} in naming the
+continuation revision id for downloading revisions for a page.
+
+We also couldn't find the root password for our \mysql instance.
+I just looked, and I found \file{/etc/mysql/.mypass} on gaston.
+This turns out to be the root password in redherring as well.
 
